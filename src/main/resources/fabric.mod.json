@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "armorstands",
+  "version": "${version}",
+  "name": "Armor Stands",
+  "description": "Place, pose, and dress armor stands with an easy-to-use UI.",
+  "authors": [
+    "Roundaround"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/roundaround-armor-stands",
+    "sources": "https://github.com/Roundaround/mc-fabric-armor-stands",
+    "issues": "https://github.com/Roundaround/mc-fabric-armor-stands/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/armorstands/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.roundaround.armorstands.client.ArmorStandsClientMod"
+    ],
+    "main": [
+      "me.roundaround.armorstands.ArmorStandsMod"
+    ]
+  },
+  "mixins": [
+    "armorstands.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.13.3",
+    "fabric": "*",
+    "minecraft": "1.19.x",
+    "java": ">=17"
+  }
+}

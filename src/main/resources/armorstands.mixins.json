@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.roundaround.armorstands.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ArmorStandEntityAccessor",
+    "ArmorStandEntityMixin"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
