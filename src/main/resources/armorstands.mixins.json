@@ -5,7 +5,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ArmorStandEntityAccessor",
-    "ArmorStandEntityMixin"
+    "ArmorStandEntityMixin",
+    "MouseMixin"
   ],
   "client": [],
   "server": [],

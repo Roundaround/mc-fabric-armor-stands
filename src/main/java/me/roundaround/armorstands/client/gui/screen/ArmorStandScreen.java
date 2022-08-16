@@ -4,7 +4,6 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -26,7 +25,17 @@ public class ArmorStandScreen extends Screen {
   protected void init() {
     addDrawableChild(new ButtonWidget(
         (width - 100) / 2,
-        (height - 20) / 2 + 20,
+        (height - 20) / 2,
+        100,
+        20,
+        Text.literal("Identify"),
+        (button) -> {
+          ClientNetworking.sendIdentifyStandPacket(armorStand);
+        }));
+
+    addDrawableChild(new ButtonWidget(
+        (width - 100) / 2,
+        (height - 20) / 2 + 24,
         100,
         20,
         Text.literal("Rotate 45 deg"),
@@ -36,7 +45,7 @@ public class ArmorStandScreen extends Screen {
 
     addDrawableChild(new ButtonWidget(
         (width - 100) / 2,
-        (height - 20) / 2 + 44,
+        (height - 20) / 2 + 48,
         100,
         20,
         Text.literal("Toggle base plate"),
@@ -45,16 +54,7 @@ public class ArmorStandScreen extends Screen {
         }));
   }
 
-  @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    drawCenteredText(
-        matrixStack,
-        textRenderer,
-        Text.literal("Test"),
-        width / 2,
-        height / 2,
-        0xFFFFFFFF);
-
-    super.render(matrixStack, mouseX, mouseY, delta);
+  public boolean isCursorLocked() {
+    return Screen.hasAltDown();
   }
 }

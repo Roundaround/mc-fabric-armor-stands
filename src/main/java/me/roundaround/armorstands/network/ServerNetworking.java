@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -20,6 +22,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.IDENTIFY_STAND_PACKET,
+        ServerNetworking::handleIdentifyStandPacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -80,6 +85,29 @@ public class ServerNetworking {
       case NAME:
         armorStand.setCustomNameVisible(!armorStand.isCustomNameVisible());
         break;
+      case LOCKED:
+        boolean locked = armorStand.isInvulnerable();
+        armorStand.setInvulnerable(!locked);
+        accessor.invokeSetMarker(!locked);
     }
+  }
+
+  public static void handleIdentifyStandPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
+    }
+
+    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
+
+    armorStand.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 100), player);
   }
 }

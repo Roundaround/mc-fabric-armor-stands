@@ -10,6 +10,10 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 public class ClientHooks {
   public static void openArmorStandScreen(ArmorStandEntity armorStand) {
     MinecraftClient client = MinecraftClient.getInstance();
+    if (client.currentScreen instanceof ArmorStandScreen) {
+      return;
+    }
+
     client.setScreen(new ArmorStandScreen(armorStand));
   }
 }

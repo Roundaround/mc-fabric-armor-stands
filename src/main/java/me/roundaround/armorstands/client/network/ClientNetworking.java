@@ -23,4 +23,11 @@ public class ClientNetworking {
 
     ClientPlayNetworking.send(NetworkPackets.TOGGLE_FLAG_PACKET, buf);
   }
+
+  public static void sendIdentifyStandPacket(ArmorStandEntity armorStand) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeUuid(armorStand.getUuid());
+
+    ClientPlayNetworking.send(NetworkPackets.IDENTIFY_STAND_PACKET, buf);
+  }
 }

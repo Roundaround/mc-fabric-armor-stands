@@ -9,7 +9,8 @@ public enum ArmorStandFlag {
   SMALL("small"),
   GRAVITY("gravity"),
   VISIBLE("visible"),
-  NAME("name");
+  NAME("name"),
+  LOCKED("locked");
 
   private final String value;
 
