@@ -7,7 +7,7 @@ import me.roundaround.armorstands.network.ServerNetworking;
 import net.fabricmc.api.ModInitializer;
 
 public final class ArmorStandsMod implements ModInitializer {
-  public static final String MOD_ID = "custompaintings";
+  public static final String MOD_ID = "armorstands";
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
   @Override
