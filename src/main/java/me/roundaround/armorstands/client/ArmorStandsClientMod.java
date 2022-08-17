@@ -1,10 +1,8 @@
 package me.roundaround.armorstands.client;
 
-import java.util.Optional;
-
 import org.lwjgl.glfw.GLFW;
 
-import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandCoreScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -43,7 +41,7 @@ public class ArmorStandsClientMod implements ClientModInitializer {
           return;
         }
 
-        client.setScreen(new ArmorStandScreen((ArmorStandEntity) entity));
+        client.setScreen(new ArmorStandCoreScreen((ArmorStandEntity) entity));
       }
     });
   }
