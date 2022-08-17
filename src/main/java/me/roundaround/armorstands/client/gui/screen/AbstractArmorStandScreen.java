@@ -13,6 +13,10 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public abstract class AbstractArmorStandScreen extends Screen {
+  protected static final int BUTTON_WIDTH_MEDIUM = 100;
+  protected static final int BUTTON_HEIGHT = 20;
+  protected static final int PADDING = 4;
+
   protected ArmorStandEntity armorStand;
   protected boolean cursorLocked = false;
 

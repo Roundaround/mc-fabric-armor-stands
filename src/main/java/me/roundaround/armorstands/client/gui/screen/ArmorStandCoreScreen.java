@@ -14,30 +14,73 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
   @Override
   protected void init() {
     addDrawableChild(new ButtonWidget(
-        (width - 100) / 2,
-        (height - 20) / 2,
-        100,
-        20,
-        Text.literal("Identify"),
+        PADDING,
+        PADDING,
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Highlight"),
         (button) -> {
           ClientNetworking.sendIdentifyStandPacket(armorStand);
         }));
 
+    int xPos = width - PADDING - BUTTON_WIDTH_MEDIUM;
+    int yPos = height;
+
     addDrawableChild(new ButtonWidget(
-        (width - 100) / 2,
-        (height - 20) / 2 + 24,
-        100,
-        20,
-        Text.literal("Rotate 45 deg"),
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Toggle show name"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(armorStand, 45);
+          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.NAME);
         }));
 
     addDrawableChild(new ButtonWidget(
-        (width - 100) / 2,
-        (height - 20) / 2 + 48,
-        100,
-        20,
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Toggle visible"),
+        (button) -> {
+          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.VISIBLE);
+        }));
+
+    addDrawableChild(new ButtonWidget(
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Toggle gravity"),
+        (button) -> {
+          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.GRAVITY);
+        }));
+
+    addDrawableChild(new ButtonWidget(
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Toggle small"),
+        (button) -> {
+          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.SMALL);
+        }));
+
+    addDrawableChild(new ButtonWidget(
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
+        Text.literal("Toggle arms"),
+        (button) -> {
+          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.ARMS);
+        }));
+
+    addDrawableChild(new ButtonWidget(
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        BUTTON_HEIGHT,
         Text.literal("Toggle base plate"),
         (button) -> {
           ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.BASE);
