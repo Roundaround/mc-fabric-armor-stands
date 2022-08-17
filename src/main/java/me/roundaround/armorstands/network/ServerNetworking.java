@@ -42,8 +42,7 @@ public class ServerNetworking {
       return;
     }
 
-    float currentYaw = entity.getYaw();
-    entity.setYaw((currentYaw + amount) % 360f);
+    entity.setYaw(Math.round(entity.getYaw() + amount) % 360);
   }
 
   public static void handleToggleFlagPacket(
