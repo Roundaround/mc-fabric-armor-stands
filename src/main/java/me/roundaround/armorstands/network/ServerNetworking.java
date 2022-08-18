@@ -2,7 +2,6 @@ package me.roundaround.armorstands.network;
 
 import java.util.UUID;
 
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -23,8 +22,14 @@ public class ServerNetworking {
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
     ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.SET_FLAG_PACKET,
+        ServerNetworking::handleSetFlagPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.IDENTIFY_STAND_PACKET,
         ServerNetworking::handleIdentifyStandPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.CANCEL_IDENTIFY_PACKET,
+        ServerNetworking::handleCancelIdentifyPacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -51,10 +56,8 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    // TODO: Handle error case for non-existant flag values.
-
     UUID armorStandUuid = buf.readUuid();
-    ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString()).get();
+    ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
 
     Entity entity = player.getWorld().getEntity(armorStandUuid);
 
@@ -62,33 +65,27 @@ public class ServerNetworking {
       return;
     }
 
-    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
-    ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) entity;
+    boolean value = flag.getValue((ArmorStandEntity) entity);
+    flag.setValue((ArmorStandEntity) entity, !value);
+  }
 
-    switch (flag) {
-      case BASE:
-        accessor.invokeSetHideBasePlate(!armorStand.shouldHideBasePlate());
-        break;
-      case ARMS:
-        accessor.invokeSetShowArms(!armorStand.shouldShowArms());
-        break;
-      case SMALL:
-        accessor.invokeSetSmall(!armorStand.isSmall());
-        break;
-      case GRAVITY:
-        armorStand.setNoGravity(!armorStand.hasNoGravity());
-        break;
-      case VISIBLE:
-        armorStand.setInvisible(!armorStand.isInvisible());
-        break;
-      case NAME:
-        armorStand.setCustomNameVisible(!armorStand.isCustomNameVisible());
-        break;
-      case LOCKED:
-        boolean locked = armorStand.isInvulnerable();
-        armorStand.setInvulnerable(!locked);
-        accessor.invokeSetMarker(!locked);
+  public static void handleSetFlagPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+    ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
+    boolean value = buf.readBoolean();
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
     }
+
+    flag.setValue((ArmorStandEntity) entity, value);
   }
 
   public static void handleIdentifyStandPacket(
@@ -108,5 +105,24 @@ public class ServerNetworking {
     ArmorStandEntity armorStand = (ArmorStandEntity) entity;
 
     armorStand.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 100), player);
+  }
+
+  public static void handleCancelIdentifyPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
+    }
+
+    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
+
+    armorStand.removeStatusEffect(StatusEffects.GLOWING);
   }
 }

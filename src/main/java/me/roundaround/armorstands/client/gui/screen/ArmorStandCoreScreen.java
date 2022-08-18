@@ -1,5 +1,9 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -8,8 +12,15 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
+  private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
+
   public ArmorStandCoreScreen(ArmorStandEntity armorStand) {
-    super(armorStand, Text.literal(""));
+    this(armorStand, false);
+  }
+
+  public ArmorStandCoreScreen(ArmorStandEntity armorStand, boolean highlightOnOpen) {
+    super(armorStand, highlightOnOpen, Text.literal(""));
+    refreshFlags();
   }
 
   @Override
@@ -26,66 +37,77 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
 
     int xPos = width - PADDING - BUTTON_WIDTH_MEDIUM;
     int yPos = height;
+    ArrayList<ButtonWidget> toggleButtons = new ArrayList<>();
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle show name"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.NAME);
+          toggleFlag(ArmorStandFlag.NAME);
         }));
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle visible"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.VISIBLE);
+          toggleFlag(ArmorStandFlag.VISIBLE);
         }));
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle gravity"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.GRAVITY);
+          toggleFlag(ArmorStandFlag.GRAVITY);
         }));
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle small"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.SMALL);
+          toggleFlag(ArmorStandFlag.SMALL);
         }));
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle arms"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.ARMS);
+          toggleFlag(ArmorStandFlag.ARMS);
         }));
 
-    addDrawableChild(new ButtonWidget(
+    toggleButtons.add(new ButtonWidget(
         xPos,
         (yPos -= PADDING + BUTTON_HEIGHT),
         BUTTON_WIDTH_MEDIUM,
         BUTTON_HEIGHT,
         Text.literal("Toggle base plate"),
         (button) -> {
-          ClientNetworking.sendToggleFlagPacket(armorStand, ArmorStandFlag.BASE);
+          toggleFlag(ArmorStandFlag.BASE);
         }));
+
+    // Reverse add order to ensure tab order is top to bottom
+    for (int i = toggleButtons.size() - 1; i >= 0; i--) {
+      addDrawableChild(toggleButtons.get(i));
+    }
+  }
+
+  @Override
+  public void tick() {
+    refreshFlags();
   }
 
   @Override
@@ -97,44 +119,54 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.isCustomNameVisible() ? "Name shown" : "Name hidden"),
+        Text.literal(currentValues.get(ArmorStandFlag.NAME) ? "Name shown" : "Name hidden"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.isInvisible() ? "Invisible" : "Visible"),
+        Text.literal(currentValues.get(ArmorStandFlag.VISIBLE) ? "Invisible" : "Visible"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.hasNoGravity() ? "Gravity disabled" : "Gravity enabled"),
+        Text.literal(currentValues.get(ArmorStandFlag.GRAVITY) ? "Gravity disabled" : "Gravity enabled"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.isSmall() ? "Small size" : "Normal size"),
+        Text.literal(currentValues.get(ArmorStandFlag.SMALL) ? "Small size" : "Normal size"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.shouldShowArms() ? "Arms shown" : "Arms hidden"),
+        Text.literal(currentValues.get(ArmorStandFlag.ARMS) ? "Arms shown" : "Arms hidden"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
 
     textRenderer.drawWithShadow(
         matrixStack,
-        Text.literal(armorStand.shouldHideBasePlate() ? "Base plate hidden" : "Base plate shown"),
+        Text.literal(currentValues.get(ArmorStandFlag.BASE) ? "Base plate hidden" : "Base plate shown"),
         xPos,
         (yPos -= textRenderer.fontHeight + PADDING / 2),
         0xFFFFFFFF);
+  }
+
+  private void refreshFlags() {
+    Arrays.stream(ArmorStandFlag.values()).forEach((flag) -> {
+      currentValues.put(flag, flag.getValue(armorStand));
+    });
+  }
+
+  private void toggleFlag(ArmorStandFlag flag) {
+    ClientNetworking.sendSetFlagPacket(armorStand, flag, !currentValues.get(flag));
   }
 }

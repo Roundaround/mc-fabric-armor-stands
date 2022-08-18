@@ -10,8 +10,6 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 
 public class ArmorStandsClientMod implements ClientModInitializer {
   public static KeyBinding editArmorStanKeyBinding;
@@ -26,22 +24,12 @@ public class ArmorStandsClientMod implements ClientModInitializer {
 
     ClientTickEvents.END_CLIENT_TICK.register((client) -> {
       while (editArmorStanKeyBinding.wasPressed()) {
-        Entity camera = client.getCameraEntity();
-        if (client.world == null || camera == null) {
-          return;
-        }
-
-        HitResult hitResult = camera.raycast(10, 0, false);
-        if (hitResult.getType() != HitResult.Type.ENTITY) {
-          return;
-        }
-
-        Entity entity = ((EntityHitResult) hitResult).getEntity();
+        Entity entity = client.targetedEntity;
         if (!(entity instanceof ArmorStandEntity)) {
           return;
         }
 
-        client.setScreen(new ArmorStandCoreScreen((ArmorStandEntity) entity));
+        client.setScreen(new ArmorStandCoreScreen((ArmorStandEntity) entity, true));
       }
     });
   }

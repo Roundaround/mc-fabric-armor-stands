@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,15 +21,25 @@ public abstract class AbstractArmorStandScreen extends Screen {
   protected ArmorStandEntity armorStand;
   protected boolean cursorLocked = false;
 
-  protected AbstractArmorStandScreen(ArmorStandEntity armorStand, Text title) {
+  protected AbstractArmorStandScreen(ArmorStandEntity armorStand, boolean highlightOnOpen, Text title) {
     super(title);
     this.armorStand = armorStand;
     passEvents = true;
+
+    if (highlightOnOpen) {
+      ClientNetworking.sendIdentifyStandPacket(armorStand);
+    }
   }
 
   @Override
   public boolean shouldPause() {
     return false;
+  }
+
+  @Override
+  public void removed() {
+    ClientNetworking.sendCancelIdentifyPacket(armorStand);
+    super.removed();
   }
 
   @Override
@@ -75,6 +86,11 @@ public abstract class AbstractArmorStandScreen extends Screen {
     if (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT) {
       lockCursor();
       return true;
+    }
+
+    // Allow jump to pass through
+    if (client.options.jumpKey.matchesKey(keyCode, scanCode)) {
+      return false;
     }
 
     return super.keyPressed(keyCode, scanCode, modifiers);

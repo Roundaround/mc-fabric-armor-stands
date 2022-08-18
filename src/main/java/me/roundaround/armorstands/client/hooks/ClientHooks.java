@@ -15,6 +15,6 @@ public class ClientHooks {
       return;
     }
 
-    client.setScreen(new ArmorStandCoreScreen(armorStand));
+    client.setScreen(new ArmorStandCoreScreen(armorStand, true));
   }
 }
