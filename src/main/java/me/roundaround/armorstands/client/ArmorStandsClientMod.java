@@ -12,18 +12,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public class ArmorStandsClientMod implements ClientModInitializer {
-  public static KeyBinding editArmorStanKeyBinding;
+  public static KeyBinding editArmorStandKeyBinding;
 
   @Override
   public void onInitializeClient() {
-    editArmorStanKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+    editArmorStandKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "armorstands.key.edit_armor_stand",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_O,
         "armorstands.key.category"));
 
     ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-      while (editArmorStanKeyBinding.wasPressed()) {
+      while (editArmorStandKeyBinding.wasPressed()) {
         Entity entity = client.targetedEntity;
         if (!(entity instanceof ArmorStandEntity)) {
           return;
