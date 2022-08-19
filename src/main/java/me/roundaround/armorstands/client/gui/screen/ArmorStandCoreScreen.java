@@ -3,16 +3,18 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
+import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
+  private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
   public ArmorStandCoreScreen(ArmorStandEntity armorStand) {
     this(armorStand, false);
@@ -25,6 +27,8 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void init() {
+    listeners.values().forEach(ArrayList::clear);
+
     addDrawableChild(new ButtonWidget(
         PADDING,
         PADDING,
@@ -35,74 +39,47 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
           ClientNetworking.sendIdentifyStandPacket(armorStand);
         }));
 
-    int xPos = width - PADDING - BUTTON_WIDTH_MEDIUM;
-    int yPos = height;
-    ArrayList<ButtonWidget> toggleButtons = new ArrayList<>();
+    addFlagToggleWidget(
+        ArmorStandFlag.BASE,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 5 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        true,
+        Text.literal("Base plate"));
 
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle show name"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.NAME);
-        }));
+    addFlagToggleWidget(
+        ArmorStandFlag.ARMS,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 4 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        false,
+        Text.literal("Arms"));
 
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle visible"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.VISIBLE);
-        }));
+    addFlagToggleWidget(
+        ArmorStandFlag.SMALL,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 3 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        false,
+        Text.literal("Small"));
 
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle gravity"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.GRAVITY);
-        }));
+    addFlagToggleWidget(
+        ArmorStandFlag.GRAVITY,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 2 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        true,
+        Text.literal("Gravity"));
 
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle small"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.SMALL);
-        }));
+    addFlagToggleWidget(
+        ArmorStandFlag.VISIBLE,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 1 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        false,
+        Text.literal("Invisible"));
 
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle arms"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.ARMS);
-        }));
-
-    toggleButtons.add(new ButtonWidget(
-        xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
-        BUTTON_WIDTH_MEDIUM,
-        BUTTON_HEIGHT,
-        Text.literal("Toggle base plate"),
-        (button) -> {
-          toggleFlag(ArmorStandFlag.BASE);
-        }));
-
-    // Reverse add order to ensure tab order is top to bottom
-    for (int i = toggleButtons.size() - 1; i >= 0; i--) {
-      addDrawableChild(toggleButtons.get(i));
-    }
+    addFlagToggleWidget(
+        ArmorStandFlag.NAME,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 0 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        false,
+        Text.literal("Show name"));
   }
 
   @Override
@@ -110,63 +87,33 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
     refreshFlags();
   }
 
-  @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    super.render(matrixStack, mouseX, mouseY, delta);
-
-    int xPos = PADDING;
-    int yPos = height - PADDING - textRenderer.fontHeight;
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.NAME) ? "Name shown" : "Name hidden"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.VISIBLE) ? "Invisible" : "Visible"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.GRAVITY) ? "Gravity disabled" : "Gravity enabled"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.SMALL) ? "Small size" : "Normal size"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.ARMS) ? "Arms shown" : "Arms hidden"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-
-    textRenderer.drawWithShadow(
-        matrixStack,
-        Text.literal(currentValues.get(ArmorStandFlag.BASE) ? "Base plate hidden" : "Base plate shown"),
-        xPos,
-        (yPos -= textRenderer.fontHeight + PADDING / 2),
-        0xFFFFFFFF);
-  }
-
   private void refreshFlags() {
     Arrays.stream(ArmorStandFlag.values()).forEach((flag) -> {
-      currentValues.put(flag, flag.getValue(armorStand));
+      if (!listeners.containsKey(flag)) {
+        listeners.put(flag, new ArrayList<>());
+      }
+
+      boolean curr = flag.getValue(armorStand);
+      boolean prev = currentValues.getOrDefault(flag, !curr);
+
+      if (curr != prev) {
+        currentValues.put(flag, curr);
+        listeners.get(flag).forEach((listener) -> listener.accept(curr));
+      }
     });
   }
 
-  private void toggleFlag(ArmorStandFlag flag) {
-    ClientNetworking.sendSetFlagPacket(armorStand, flag, !currentValues.get(flag));
+  private void addFlagToggleWidget(ArmorStandFlag flag, int xPos, int yPos, boolean inverted, Text label) {
+    ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
+        armorStand,
+        flag,
+        inverted,
+        currentValues.get(flag),
+        xPos,
+        (yPos -= PADDING + BUTTON_HEIGHT),
+        BUTTON_WIDTH_MEDIUM,
+        label);
+    addDrawableChild(widget);
+    listeners.get(flag).add(widget);
   }
 }
