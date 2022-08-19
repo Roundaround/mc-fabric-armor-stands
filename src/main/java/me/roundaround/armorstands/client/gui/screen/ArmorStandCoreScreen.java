@@ -16,18 +16,16 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandCoreScreen(ArmorStandEntity armorStand) {
-    this(armorStand, false);
-  }
-
-  public ArmorStandCoreScreen(ArmorStandEntity armorStand, boolean highlightOnOpen) {
-    super(armorStand, highlightOnOpen, Text.literal(""));
+  public ArmorStandCoreScreen(ArmorStandEntity armorStand, int index) {
+    super(armorStand, index, Text.literal(""));
     refreshFlags();
   }
 
   @Override
   protected void init() {
     listeners.values().forEach(ArrayList::clear);
+
+    refreshFlags();
 
     addDrawableChild(new ButtonWidget(
         PADDING,
@@ -38,6 +36,8 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
         (button) -> {
           ClientNetworking.sendIdentifyStandPacket(armorStand);
         }));
+
+    super.init();
 
     addFlagToggleWidget(
         ArmorStandFlag.BASE,

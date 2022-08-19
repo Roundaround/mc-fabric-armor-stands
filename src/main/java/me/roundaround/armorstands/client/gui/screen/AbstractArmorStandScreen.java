@@ -1,9 +1,11 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import net.minecraft.client.gui.Element;
@@ -12,23 +14,37 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public abstract class AbstractArmorStandScreen extends Screen {
+  protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
+      Identifier.DEFAULT_NAMESPACE,
+      "textures/gui/resource_packs.png");
   protected static final int BUTTON_WIDTH_MEDIUM = 100;
   protected static final int BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
 
-  protected ArmorStandEntity armorStand;
+  private static final ArrayList<AbstractArmorStandScreen> SCREENS = new ArrayList<>();
+
+  protected final ArmorStandEntity armorStand;
+  protected final int index;
   protected boolean cursorLocked = false;
 
-  protected AbstractArmorStandScreen(ArmorStandEntity armorStand, boolean highlightOnOpen, Text title) {
+  protected AbstractArmorStandScreen(ArmorStandEntity armorStand, int index, Text title) {
     super(title);
     this.armorStand = armorStand;
-    passEvents = true;
+    this.index = index;
 
-    if (highlightOnOpen) {
-      ClientNetworking.sendIdentifyStandPacket(armorStand);
-    }
+    passEvents = true;
+  }
+
+  public static Screen initAndGetStartingScreen(ArmorStandEntity armorStand) {
+    SCREENS.clear();
+
+    SCREENS.add(new ArmorStandCoreScreen(armorStand, SCREENS.size()));
+    SCREENS.add(new ArmorStandInventoryScreen(armorStand, SCREENS.size()));
+
+    return SCREENS.get(0);
   }
 
   @Override
@@ -43,10 +59,51 @@ public abstract class AbstractArmorStandScreen extends Screen {
   }
 
   @Override
+  protected void init() {
+    addDrawableChild(new PageChangeButtonWidget(
+        this,
+        width / 2 - 40 - PageChangeButtonWidget.WIDTH,
+        height - 4 - PageChangeButtonWidget.HEIGHT,
+        false));
+    addDrawableChild(new PageChangeButtonWidget(
+        this,
+        width / 2 + 40,
+        height - 4 - PageChangeButtonWidget.HEIGHT,
+        true));
+  }
+
+  @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
+
+    renderBackground(matrixStack, adjustedMouseX, adjustedMouseY, delta);
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+    renderContent(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+  }
+
+  protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  }
+
+  protected void renderContent(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+    Text text = Text.literal("Page " + (index + 1) + " of " + SCREENS.size());
+    int textWidth = textRenderer.getWidth(text);
+
+    fill(
+        matrixStack,
+        (width - textWidth) / 2 - 2,
+        height - 4 - 2 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
+        (width + textWidth) / 2 + 3,
+        height - 4 - (PageChangeButtonWidget.HEIGHT - 10) / 2,
+        client.options.getTextBackgroundColor(0.8f));
+
+    drawCenteredText(
+        matrixStack,
+        textRenderer,
+        text,
+        width / 2,
+        height - 4 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
+        0xFFFFFFFF);
   }
 
   @Override
@@ -108,6 +165,14 @@ public abstract class AbstractArmorStandScreen extends Screen {
 
   public boolean isCursorLocked() {
     return cursorLocked;
+  }
+
+  public void previousPage() {
+    client.setScreen(SCREENS.get((index + SCREENS.size() - 1) % SCREENS.size()));
+  }
+
+  public void nextPage() {
+    client.setScreen(SCREENS.get((index + 1) % SCREENS.size()));
   }
 
   protected void lockCursor() {
