@@ -39,8 +39,8 @@ public class PageChangeButtonWidget extends ButtonWidget {
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.setShaderTexture(0, RESOURCE_PACKS_TEXTURE);
 
-    int u = forward ? 11 : 35;
-    int v = isHovered() ? 38 : 6;
+    int u = forward ? 10 : 34;
+    int v = isHovered() ? 37 : 5;
 
     drawTexture(matrixStack, x, y, u, v, width, height);
   }

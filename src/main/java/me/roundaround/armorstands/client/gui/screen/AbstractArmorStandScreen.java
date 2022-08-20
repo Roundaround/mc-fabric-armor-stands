@@ -41,7 +41,7 @@ public abstract class AbstractArmorStandScreen extends Screen {
   public static Screen initAndGetStartingScreen(ArmorStandEntity armorStand) {
     SCREENS.clear();
 
-    SCREENS.add(new ArmorStandCoreScreen(armorStand, SCREENS.size()));
+    SCREENS.add(new ArmorStandFlagsScreen(armorStand, SCREENS.size()));
     SCREENS.add(new ArmorStandInventoryScreen(armorStand, SCREENS.size()));
 
     return SCREENS.get(0);

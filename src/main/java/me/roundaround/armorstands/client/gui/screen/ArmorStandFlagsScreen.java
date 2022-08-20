@@ -12,11 +12,11 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
-public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
+public class ArmorStandFlagsScreen extends AbstractArmorStandScreen {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandCoreScreen(ArmorStandEntity armorStand, int index) {
+  public ArmorStandFlagsScreen(ArmorStandEntity armorStand, int index) {
     super(armorStand, index, Text.literal(""));
     refreshFlags();
   }
@@ -42,44 +42,51 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
     addFlagToggleWidget(
         ArmorStandFlag.BASE,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 5 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 7 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         true,
         Text.literal("Base plate"));
 
     addFlagToggleWidget(
         ArmorStandFlag.ARMS,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 4 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 6 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         false,
         Text.literal("Arms"));
 
     addFlagToggleWidget(
         ArmorStandFlag.SMALL,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 3 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 5 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         false,
         Text.literal("Small"));
 
     addFlagToggleWidget(
         ArmorStandFlag.GRAVITY,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 2 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 4 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         true,
         Text.literal("Gravity"));
 
     addFlagToggleWidget(
         ArmorStandFlag.VISIBLE,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 1 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 3 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         false,
         Text.literal("Invisible"));
 
     addFlagToggleWidget(
         ArmorStandFlag.NAME,
         width - PADDING - BUTTON_WIDTH_MEDIUM,
-        height - 0 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        height - 2 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
         false,
         Text.literal("Show name"));
+
+    addFlagToggleWidget(
+        ArmorStandFlag.INVULNERABLE,
+        width - PADDING - BUTTON_WIDTH_MEDIUM,
+        height - 1 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
+        false,
+        Text.literal("Invulnerable"));
   }
 
   @Override
@@ -110,7 +117,7 @@ public class ArmorStandCoreScreen extends AbstractArmorStandScreen {
         inverted,
         currentValues.get(flag),
         xPos,
-        (yPos -= PADDING + BUTTON_HEIGHT),
+        yPos,
         BUTTON_WIDTH_MEDIUM,
         label);
     addDrawableChild(widget);
