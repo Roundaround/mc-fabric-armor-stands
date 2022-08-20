@@ -6,6 +6,7 @@
   "mixins": [
     "ArmorStandEntityAccessor",
     "ArmorStandEntityMixin",
+    "InGameHudMixin",
     "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
