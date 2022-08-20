@@ -15,12 +15,4 @@ public class NetworkPackets {
   public static final Identifier SET_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "set_flag_packet");
-
-  public static final Identifier CANCEL_IDENTIFY_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "cancel_identify_packet");
-
-  public static final Identifier IDENTIFY_STAND_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "identify_stand_packet");
 }

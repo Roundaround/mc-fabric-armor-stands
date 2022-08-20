@@ -5,13 +5,14 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -50,12 +51,6 @@ public abstract class AbstractArmorStandScreen extends Screen {
   @Override
   public boolean shouldPause() {
     return false;
-  }
-
-  @Override
-  public void removed() {
-    ClientNetworking.sendCancelIdentifyPacket(armorStand);
-    super.removed();
   }
 
   @Override
@@ -173,6 +168,10 @@ public abstract class AbstractArmorStandScreen extends Screen {
 
   public void nextPage() {
     client.setScreen(SCREENS.get((index + 1) % SCREENS.size()));
+  }
+
+  public boolean shouldHighlight(Entity entity) {
+    return ArmorStandsClientMod.editArmorStandKeyBinding.isPressed() && entity == armorStand;
   }
 
   protected void lockCursor() {

@@ -1,7 +1,6 @@
 package me.roundaround.armorstands.client.hooks;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
@@ -16,6 +15,5 @@ public class ClientHooks {
     }
 
     client.setScreen(AbstractArmorStandScreen.initAndGetStartingScreen(armorStand));
-    ClientNetworking.sendIdentifyStandPacket(armorStand);
   }
 }

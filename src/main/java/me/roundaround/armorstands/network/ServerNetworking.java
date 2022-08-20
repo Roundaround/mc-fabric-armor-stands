@@ -24,12 +24,6 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.SET_FLAG_PACKET,
         ServerNetworking::handleSetFlagPacket);
-    ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.IDENTIFY_STAND_PACKET,
-        ServerNetworking::handleIdentifyStandPacket);
-    ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.CANCEL_IDENTIFY_PACKET,
-        ServerNetworking::handleCancelIdentifyPacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -48,6 +42,7 @@ public class ServerNetworking {
     }
 
     entity.setYaw(Math.round(entity.getYaw() + amount) % 360);
+    entity.addScoreboardTag("test");
   }
 
   public static void handleToggleFlagPacket(

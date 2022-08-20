@@ -32,18 +32,4 @@ public class ClientNetworking {
 
     ClientPlayNetworking.send(NetworkPackets.SET_FLAG_PACKET, buf);
   }
-
-  public static void sendIdentifyStandPacket(ArmorStandEntity armorStand) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
-
-    ClientPlayNetworking.send(NetworkPackets.IDENTIFY_STAND_PACKET, buf);
-  }
-
-  public static void sendCancelIdentifyPacket(ArmorStandEntity armorStand) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
-
-    ClientPlayNetworking.send(NetworkPackets.CANCEL_IDENTIFY_PACKET, buf);
-  }
 }

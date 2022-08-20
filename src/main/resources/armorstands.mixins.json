@@ -6,6 +6,7 @@
   "mixins": [
     "ArmorStandEntityAccessor",
     "ArmorStandEntityMixin",
+    "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
     "NameTagItemMixin"
