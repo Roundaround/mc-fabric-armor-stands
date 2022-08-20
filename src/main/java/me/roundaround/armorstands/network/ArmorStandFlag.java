@@ -13,7 +13,7 @@ public enum ArmorStandFlag {
   GRAVITY("gravity"),
   VISIBLE("visible"),
   NAME("name"),
-  LOCKED("locked"),
+  INVULNERABLE("invulnerable"),
   UNKNOWN("unknown");
 
   private final String id;
@@ -41,7 +41,7 @@ public enum ArmorStandFlag {
         return armorStand.isInvisible();
       case NAME:
         return armorStand.isCustomNameVisible();
-      case LOCKED:
+      case INVULNERABLE:
         return armorStand.isInvulnerable();
       default:
         return false;
@@ -70,9 +70,8 @@ public enum ArmorStandFlag {
       case NAME:
         armorStand.setCustomNameVisible(value);
         break;
-      case LOCKED:
+      case INVULNERABLE:
         armorStand.setInvulnerable(value);
-        accessor.invokeSetMarker(value);
       default:
         // Do nothing for unknown
         ArmorStandsMod.LOGGER.warn("Tried to set value to flag {}. Ignoring.", name());
