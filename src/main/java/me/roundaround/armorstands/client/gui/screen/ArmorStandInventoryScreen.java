@@ -13,10 +13,6 @@ import net.minecraft.util.Identifier;
 public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
-  private static final int CUSTOM_TEXTURE_HEIGHT = 80;
-  private static final Identifier INVENTORY_TEXTURE = new Identifier(
-      Identifier.DEFAULT_NAMESPACE,
-      "textures/gui/container/inventory.png");
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory.png");
@@ -50,16 +46,6 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
         0,
         0,
         BACKGROUND_WIDTH,
-        CUSTOM_TEXTURE_HEIGHT);
-
-    RenderSystem.setShaderTexture(0, INVENTORY_TEXTURE);
-    drawTexture(
-        matrixStack,
-        x,
-        y + CUSTOM_TEXTURE_HEIGHT,
-        0,
-        CUSTOM_TEXTURE_HEIGHT,
-        BACKGROUND_WIDTH,
-        BACKGROUND_HEIGHT - CUSTOM_TEXTURE_HEIGHT);
+        BACKGROUND_HEIGHT);
   }
 }
