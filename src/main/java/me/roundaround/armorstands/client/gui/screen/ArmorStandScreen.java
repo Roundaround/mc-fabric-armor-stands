@@ -32,19 +32,25 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   protected static final int BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
 
+  protected final ArmorStandEntity armorStand;
   protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
-  protected ArmorStandEntity armorStand;
+
   protected AbstractArmorStandPage page;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
 
-  public ArmorStandScreen(ArmorStandScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
-    super(screenHandler, playerInventory, title);
-    
+  public ArmorStandScreen(
+      ArmorStandScreenHandler screenHandler,
+      PlayerInventory playerInventory,
+      ArmorStandEntity armorStand) {
+    super(screenHandler, playerInventory, Text.literal(""));
+
+    this.armorStand = armorStand;
+
     pages.add(new ArmorStandFlagsPage(this));
     pages.add(new ArmorStandInventoryPage(this));
 
-    page = pages.get(0);
+    setPage(0, false);
   }
 
   @Override
@@ -54,6 +60,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   protected void init() {
+    super.init();
+
     addDrawableChild(new PageChangeButtonWidget(
         this,
         width / 2 - 40 - PageChangeButtonWidget.WIDTH,
@@ -84,7 +92,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   @Override
   protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
     page.drawBackground(matrixStack, mouseX, mouseY, delta);
-    
+
     Text text = Text.literal("Page " + (pageNum + 1) + " of " + pages.size());
     int textWidth = textRenderer.getWidth(text);
 
@@ -103,6 +111,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
         width / 2,
         height - 4 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
         0xFFFFFFFF);
+  }
+
+  @Override
+  protected void drawForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
   }
 
   @Override
@@ -168,8 +180,13 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   }
 
   public void setPage(int pageNum) {
+    setPage(pageNum, true);
+  }
+
+  public void setPage(int pageNum, boolean rerunInit) {
     this.pageNum = (pageNum + pages.size()) % pages.size();
     page = pages.get(this.pageNum);
+    handler.populateSlots(page.usesSlots());
     clearAndInit();
   }
 

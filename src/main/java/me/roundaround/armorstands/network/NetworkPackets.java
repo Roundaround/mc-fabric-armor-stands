@@ -4,6 +4,14 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import net.minecraft.util.Identifier;
 
 public class NetworkPackets {
+  public static final Identifier OPEN_SCREEN_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "open_screen_packet");
+
+  public static final Identifier POPULATE_SLOTS_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "populate_slots_packet");
+
   public static final Identifier ADJUST_YAW_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "adjust_yaw_packet");

@@ -2,6 +2,7 @@ package me.roundaround.armorstands.entity;
 
 import java.util.List;
 
+import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -12,12 +13,18 @@ import net.minecraft.util.collection.DefaultedList;
 public class ArmorStandInventory implements Inventory {
   public final ArmorStandEntity armorStand;
 
-  private final DefaultedList<ItemStack> heldItems = DefaultedList.ofSize(2, ItemStack.EMPTY);
-  private final DefaultedList<ItemStack> armorItems = DefaultedList.ofSize(4, ItemStack.EMPTY);
-  private final List<DefaultedList<ItemStack>> fullInventory = List.of(heldItems, armorItems);
+  private final DefaultedList<ItemStack> heldItems;
+  private final DefaultedList<ItemStack> armorItems;
+  private final List<DefaultedList<ItemStack>> fullInventory;
 
   public ArmorStandInventory(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
+
+
+
+    heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
+    armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
+    fullInventory = List.of(heldItems, armorItems);
   }
 
   @Override
@@ -28,6 +35,7 @@ public class ArmorStandInventory implements Inventory {
   @Override
   public void clear() {
     fullInventory.forEach(DefaultedList::clear);
+    markDirty();
   }
 
   @Override
@@ -61,6 +69,7 @@ public class ArmorStandInventory implements Inventory {
         slot -= items.size();
       } else {
         items.set(slot, stack);
+        markDirty();
         return;
       }
     }
@@ -93,7 +102,11 @@ public class ArmorStandInventory implements Inventory {
       } else if (items.get(slot).isEmpty()) {
         return ItemStack.EMPTY;
       } else {
-        return Inventories.splitStack(items, slot, amount);
+        ItemStack stack = Inventories.splitStack(items, slot, amount);
+        if (!stack.isEmpty()) {
+          markDirty();
+        }
+        return stack;
       }
     }
 

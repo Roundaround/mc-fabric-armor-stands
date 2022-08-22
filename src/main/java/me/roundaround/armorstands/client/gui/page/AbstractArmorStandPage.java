@@ -11,6 +11,10 @@ public abstract class AbstractArmorStandPage extends DrawableHelper {
     this.screen = screen;
   }
 
+  public boolean usesSlots() {
+    return false;
+  }
+
   public void init() {
   }
 

@@ -5,6 +5,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(ArmorStandEntity.class)
 public interface ArmorStandEntityAccessor {
@@ -20,6 +22,9 @@ public interface ArmorStandEntityAccessor {
   @Invoker("setMarker")
   public void invokeSetMarker(boolean marker);
 
-  @Accessor("disabledSlots")
-  public void setDisabledSlots(int disabledSlots);
+  @Accessor("heldItems")
+  public DefaultedList<ItemStack> getHeldItems();
+
+  @Accessor("armorItems")
+  public DefaultedList<ItemStack> getArmorItems();
 }

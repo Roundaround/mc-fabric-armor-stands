@@ -24,6 +24,11 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
   }
 
   @Override
+  public boolean usesSlots() {
+    return true;
+  }
+
+  @Override
   public void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);

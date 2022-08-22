@@ -2,12 +2,11 @@ package me.roundaround.armorstands.network;
 
 import java.util.UUID;
 
+import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -83,41 +82,18 @@ public class ServerNetworking {
     flag.setValue((ArmorStandEntity) entity, value);
   }
 
-  public static void handleIdentifyStandPacket(
-      MinecraftServer server,
-      ServerPlayerEntity player,
-      ServerPlayNetworkHandler handler,
-      PacketByteBuf buf,
-      PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
+  public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(syncId);
+    buf.writeInt(armorStand.getId());
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
-      return;
-    }
-
-    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
-
-    armorStand.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 100), player);
+    ServerPlayNetworking.send(player, NetworkPackets.OPEN_SCREEN_PACKET, buf);
   }
 
-  public static void handleCancelIdentifyPacket(
-      MinecraftServer server,
-      ServerPlayerEntity player,
-      ServerPlayNetworkHandler handler,
-      PacketByteBuf buf,
-      PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
+  public static void sendPopulateSlotsPacket(ServerPlayerEntity player, boolean fillSlots) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(fillSlots);
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
-      return;
-    }
-
-    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
-
-    armorStand.removeStatusEffect(StatusEffects.GLOWING);
+    ServerPlayNetworking.send(player, NetworkPackets.POPULATE_SLOTS_PACKET, buf);
   }
 }

@@ -10,7 +10,9 @@
     "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
-    "NameTagItemMixin"
+    "NameTagItemMixin",
+    "ScreenHandlerAccessor",
+    "ServerPlayerEntityAccessor"
   ],
   "client": [],
   "server": [],
