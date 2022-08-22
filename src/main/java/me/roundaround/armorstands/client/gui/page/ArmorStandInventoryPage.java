@@ -1,16 +1,15 @@
-package me.roundaround.armorstands.client.gui.screen;
+package me.roundaround.armorstands.client.gui.page;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
+public class ArmorStandInventoryPage extends AbstractArmorStandPage {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
@@ -20,23 +19,20 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory_dark.png");
 
-  protected int x;
-  protected int y;
-
-  public ArmorStandInventoryScreen(ArmorStandEntity armorStand, int index) {
-    super(armorStand, index, Text.literal(""));
+  public ArmorStandInventoryPage(ArmorStandScreen screen) {
+    super(screen);
   }
 
   @Override
-  protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  public void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-    int x = (width - BACKGROUND_WIDTH) / 2;
-    int y = (height - BACKGROUND_HEIGHT) / 2;
+    int x = (screen.width - BACKGROUND_WIDTH) / 2;
+    int y = (screen.height - BACKGROUND_HEIGHT) / 2;
 
     RenderSystem.setShaderTexture(0,
-        ArmorStandsClientMod.isDarkModeEnabled()
+        ArmorStandsClientMod.darkModeDetected
             ? CUSTOM_TEXTURE_DARK
             : CUSTOM_TEXTURE);
     drawTexture(

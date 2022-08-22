@@ -6,18 +6,25 @@ import java.util.Optional;
 import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.mixin.MouseAccessor;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public abstract class AbstractArmorStandScreen extends Screen {
+public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/resource_packs.png");
@@ -25,27 +32,19 @@ public abstract class AbstractArmorStandScreen extends Screen {
   protected static final int BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
 
-  private static final ArrayList<AbstractArmorStandScreen> SCREENS = new ArrayList<>();
-
-  protected final ArmorStandEntity armorStand;
-  protected final int index;
+  protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
+  protected ArmorStandEntity armorStand;
+  protected AbstractArmorStandPage page;
+  protected int pageNum = 0;
   protected boolean cursorLocked = false;
 
-  protected AbstractArmorStandScreen(ArmorStandEntity armorStand, int index, Text title) {
-    super(title);
-    this.armorStand = armorStand;
-    this.index = index;
+  public ArmorStandScreen(ArmorStandScreenHandler screenHandler, PlayerInventory playerInventory, Text title) {
+    super(screenHandler, playerInventory, title);
+    
+    pages.add(new ArmorStandFlagsPage(this));
+    pages.add(new ArmorStandInventoryPage(this));
 
-    passEvents = true;
-  }
-
-  public static Screen initAndGetStartingScreen(ArmorStandEntity armorStand) {
-    SCREENS.clear();
-
-    SCREENS.add(new ArmorStandFlagsScreen(armorStand, SCREENS.size()));
-    SCREENS.add(new ArmorStandInventoryScreen(armorStand, SCREENS.size()));
-
-    return SCREENS.get(0);
+    page = pages.get(0);
   }
 
   @Override
@@ -65,6 +64,13 @@ public abstract class AbstractArmorStandScreen extends Screen {
         width / 2 + 40,
         height - 4 - PageChangeButtonWidget.HEIGHT,
         true));
+
+    page.init();
+  }
+
+  @Override
+  public <T extends Element & Drawable & Selectable> T addDrawableChild(T drawableElement) {
+    return super.addDrawableChild(drawableElement);
   }
 
   @Override
@@ -72,16 +78,14 @@ public abstract class AbstractArmorStandScreen extends Screen {
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
-    renderBackground(matrixStack, adjustedMouseX, adjustedMouseY, delta);
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
-    renderContent(matrixStack, adjustedMouseX, adjustedMouseY, delta);
   }
 
-  protected void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-  }
-
-  protected void renderContent(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    Text text = Text.literal("Page " + (index + 1) + " of " + SCREENS.size());
+  @Override
+  protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
+    page.drawBackground(matrixStack, mouseX, mouseY, delta);
+    
+    Text text = Text.literal("Page " + (pageNum + 1) + " of " + pages.size());
     int textWidth = textRenderer.getWidth(text);
 
     fill(
@@ -99,6 +103,11 @@ public abstract class AbstractArmorStandScreen extends Screen {
         width / 2,
         height - 4 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
         0xFFFFFFFF);
+  }
+
+  @Override
+  protected void handledScreenTick() {
+    page.tick();
   }
 
   @Override
@@ -158,20 +167,30 @@ public abstract class AbstractArmorStandScreen extends Screen {
     return super.keyReleased(keyCode, scanCode, modifiers);
   }
 
+  public void setPage(int pageNum) {
+    this.pageNum = (pageNum + pages.size()) % pages.size();
+    page = pages.get(this.pageNum);
+    clearAndInit();
+  }
+
   public boolean isCursorLocked() {
     return cursorLocked;
   }
 
   public void previousPage() {
-    client.setScreen(SCREENS.get((index + SCREENS.size() - 1) % SCREENS.size()));
+    setPage(pageNum - 1);
   }
 
   public void nextPage() {
-    client.setScreen(SCREENS.get((index + 1) % SCREENS.size()));
+    setPage(pageNum + 1);
   }
 
   public boolean shouldHighlight(Entity entity) {
-    return ArmorStandsClientMod.editArmorStandKeyBinding.isPressed() && entity == armorStand;
+    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed() && entity == armorStand;
+  }
+
+  public ArmorStandEntity getArmorStand() {
+    return armorStand;
   }
 
   protected void lockCursor() {

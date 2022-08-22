@@ -2,7 +2,7 @@ package me.roundaround.armorstands.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,7 +21,7 @@ public class PageChangeButtonWidget extends ButtonWidget {
 
   private final boolean forward;
 
-  public PageChangeButtonWidget(AbstractArmorStandScreen parent, int x, int y, boolean forward) {
+  public PageChangeButtonWidget(ArmorStandScreen parent, int x, int y, boolean forward) {
     super(x, y, WIDTH, HEIGHT, forward ? NEXT_TEXT : PREVIOUS_TEXT, (button) -> {
       if (forward) {
         parent.nextPage();
