@@ -20,8 +20,6 @@ public class ArmorStandInventory implements Inventory {
   public ArmorStandInventory(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
 
-
-
     heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
     armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
     fullInventory = List.of(heldItems, armorItems);
@@ -35,7 +33,6 @@ public class ArmorStandInventory implements Inventory {
   @Override
   public void clear() {
     fullInventory.forEach(DefaultedList::clear);
-    markDirty();
   }
 
   @Override
@@ -69,7 +66,6 @@ public class ArmorStandInventory implements Inventory {
         slot -= items.size();
       } else {
         items.set(slot, stack);
-        markDirty();
         return;
       }
     }
@@ -102,11 +98,7 @@ public class ArmorStandInventory implements Inventory {
       } else if (items.get(slot).isEmpty()) {
         return ItemStack.EMPTY;
       } else {
-        ItemStack stack = Inventories.splitStack(items, slot, amount);
-        if (!stack.isEmpty()) {
-          markDirty();
-        }
-        return stack;
+        return Inventories.splitStack(items, slot, amount);
       }
     }
 

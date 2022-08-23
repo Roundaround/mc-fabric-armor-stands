@@ -3,6 +3,7 @@ package me.roundaround.armorstands.network;
 import java.util.UUID;
 
 import io.netty.buffer.Unpooled;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -23,6 +24,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.SET_FLAG_PACKET,
         ServerNetworking::handleSetFlagPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.POPULATE_SLOTS_PACKET,
+        ServerNetworking::handlePopulateStacksPacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -82,18 +86,26 @@ public class ServerNetworking {
     flag.setValue((ArmorStandEntity) entity, value);
   }
 
+  public static void handlePopulateStacksPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    boolean fillSlots = buf.readBoolean();
+
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+      return;
+    }
+
+    ((ArmorStandScreenHandler) player.currentScreenHandler).populateSlots(fillSlots);
+  }
+
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeInt(syncId);
     buf.writeInt(armorStand.getId());
 
     ServerPlayNetworking.send(player, NetworkPackets.OPEN_SCREEN_PACKET, buf);
-  }
-
-  public static void sendPopulateSlotsPacket(ServerPlayerEntity player, boolean fillSlots) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeBoolean(fillSlots);
-
-    ServerPlayNetworking.send(player, NetworkPackets.POPULATE_SLOTS_PACKET, buf);
   }
 }

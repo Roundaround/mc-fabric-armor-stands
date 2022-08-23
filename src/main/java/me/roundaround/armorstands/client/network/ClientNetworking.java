@@ -20,9 +20,6 @@ public class ClientNetworking {
     ClientPlayNetworking.registerGlobalReceiver(
         NetworkPackets.OPEN_SCREEN_PACKET,
         ClientNetworking::handleOpenScreenPacket);
-    ClientPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.POPULATE_SLOTS_PACKET,
-        ClientNetworking::handlePopulateSlotsPacket);
   }
 
   public static void handleOpenScreenPacket(
@@ -50,24 +47,6 @@ public class ClientNetworking {
     });
   }
 
-  public static void handlePopulateSlotsPacket(
-      MinecraftClient client,
-      ClientPlayNetworkHandler handler,
-      PacketByteBuf buf,
-      PacketSender responseSender) {
-    boolean fillSlots = buf.readBoolean();
-
-    client.execute(() -> {
-      ClientPlayerEntity player = client.player;
-
-      if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
-        return;
-      }
-      
-      ((ArmorStandScreenHandler) player.currentScreenHandler).populateSlots(fillSlots);
-    });
-  }
-
   public static void sendAdjustYawPacket(ArmorStandEntity armorStand, int amount) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeUuid(armorStand.getUuid());
@@ -91,5 +70,12 @@ public class ClientNetworking {
     buf.writeBoolean(value);
 
     ClientPlayNetworking.send(NetworkPackets.SET_FLAG_PACKET, buf);
+  }
+
+  public static void sendPopulateSlotsPacket(boolean fillSlots) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(fillSlots);
+
+    ClientPlayNetworking.send(NetworkPackets.POPULATE_SLOTS_PACKET, buf);
   }
 }

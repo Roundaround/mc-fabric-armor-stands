@@ -84,6 +84,7 @@ public class ArmorStandScreenHandler extends ScreenHandler {
         @Override
         public void setStack(ItemStack stack) {
           armorStand.equipStack(equipmentSlot, stack);
+          markDirty();
         }
 
         @Override

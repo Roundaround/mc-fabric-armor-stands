@@ -10,6 +10,7 @@ import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Drawable;
@@ -187,6 +188,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     this.pageNum = (pageNum + pages.size()) % pages.size();
     page = pages.get(this.pageNum);
     handler.populateSlots(page.usesSlots());
+    ClientNetworking.sendPopulateSlotsPacket(page.usesSlots());
     clearAndInit();
   }
 
