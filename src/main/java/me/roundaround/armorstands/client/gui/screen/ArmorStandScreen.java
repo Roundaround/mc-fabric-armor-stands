@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
@@ -11,6 +12,7 @@ import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Drawable;
@@ -39,6 +41,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   protected final ArmorStandEntity armorStand;
   protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
 
+  protected PageChangeButtonWidget previousButton;
+  protected PageChangeButtonWidget nextButton;
+  protected Element lastFocused;
+  protected boolean previousFocused;
+  protected boolean nextFocused;
   protected AbstractArmorStandPage page;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
@@ -64,21 +71,39 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   }
 
   @Override
+  protected void clearAndInit() {
+    lastFocused = getFocused();
+    previousFocused = lastFocused == previousButton;
+    nextFocused = lastFocused == nextButton;
+
+    super.clearAndInit();
+  }
+
+  @Override
   protected void init() {
     super.init();
 
-    addDrawableChild(new PageChangeButtonWidget(
+    previousButton = new PageChangeButtonWidget(
         this,
         width / 2 - 40 - PageChangeButtonWidget.WIDTH,
         height - 4 - PageChangeButtonWidget.HEIGHT,
-        false));
-    addDrawableChild(new PageChangeButtonWidget(
+        false);
+    addDrawableChild(previousButton);
+
+    nextButton = new PageChangeButtonWidget(
         this,
         width / 2 + 40,
         height - 4 - PageChangeButtonWidget.HEIGHT,
-        true));
+        true);
+    addDrawableChild(nextButton);
 
     page.init();
+
+    if (previousFocused) {
+      setInitialFocus(previousButton);
+    } else if (nextFocused) {
+      setInitialFocus(nextButton);
+    }
   }
 
   @Override
@@ -124,6 +149,14 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   protected void handledScreenTick() {
+    // Block any inputs bound to shift so that this screen gets exclusive use
+    Arrays.stream(client.options.allKeys)
+        .filter((key) -> {
+          return key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) || key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0);
+        })
+        .map((key) -> (KeyBindingAccessor) key)
+        .forEach(KeyBindingAccessor::invokeReset);
+
     page.tick();
   }
 
@@ -161,7 +194,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    // Allow jump to pass through
+    // Allow jump to pass through without pressing buttons
     if (client.options.jumpKey.matchesKey(keyCode, scanCode)) {
       return false;
     }
@@ -216,6 +249,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     page = pages.get(this.pageNum);
     handler.populateSlots(page.usesSlots());
     ClientNetworking.sendPopulateSlotsPacket(page.usesSlots());
+
     clearAndInit();
   }
 
