@@ -53,62 +53,34 @@ public class ArmorStandScreenHandler extends ScreenHandler {
 
     // 0-8 is hotbar
     // 9-35 is main player inventory
-    // 36-39 is equipment
-    // 40-41 is hands
+    // 36-37 is hands
+    // 38-41 is equipment
+    //   38 is head
+    //   39 is chest
+    //   40 is legs
+    //   41 is feet
 
     ItemStack stack = slot.getStack();
     ItemStack originalStack = stack.copy();
 
     if (index < PlayerInventory.MAIN_SIZE) {
-      EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
-
-      if (equipmentSlot.getType().equals(EquipmentSlot.Type.ARMOR)) {
-        
-      }
-      
-      return ItemStack.EMPTY;
-    }
-
-    return ItemStack.EMPTY;
-
-    ItemStack itemStack = ItemStack.EMPTY;
-    Slot slot = (Slot) slots.get(index);
-    if (slot != null && slot.hasStack()) {
-      int i;
-      ItemStack itemStack2 = slot.getStack();
-      itemStack = itemStack2.copy();
-      EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(itemStack);
-      if (index == 0) {
-        if (!this.insertItem(itemStack2, 9, 45, true)) {
-          return ItemStack.EMPTY;
-        }
-        slot.onQuickTransfer(itemStack2, itemStack);
-      } else if (index >= 1 && index < 5 ? !this.insertItem(itemStack2, 9, 45, false)
-          : (index >= 5 && index < 9 ? !this.insertItem(itemStack2, 9, 45, false)
-              : (equipmentSlot.getType() == EquipmentSlot.Type.ARMOR
-                  && !((Slot) this.slots.get(8 - equipmentSlot.getEntitySlotId())).hasStack()
-                      ? !this.insertItem(itemStack2, i = 8 - equipmentSlot.getEntitySlotId(), i + 1, false)
-                      : (equipmentSlot == EquipmentSlot.OFFHAND && !((Slot) this.slots.get(45)).hasStack()
-                          ? !this.insertItem(itemStack2, 45, 46, false)
-                          : (index >= 9 && index < 36 ? !this.insertItem(itemStack2, 36, 45, false)
-                              : (index >= 36 && index < 45 ? !this.insertItem(itemStack2, 9, 36, false)
-                                  : !this.insertItem(itemStack2, 9, 45, false))))))) {
+      if (!tryTransferArmor(slot, stack)
+          && !tryTransferToMainHand(stack)
+          && !tryTransferToOffHand(stack)) {
         return ItemStack.EMPTY;
       }
-      if (itemStack2.isEmpty()) {
-        slot.setStack(ItemStack.EMPTY);
-      } else {
-        slot.markDirty();
-      }
-      if (itemStack2.getCount() == itemStack.getCount()) {
+    } else {
+      if (!insertItem(stack, 0, PlayerInventory.MAIN_SIZE, false)) {
         return ItemStack.EMPTY;
       }
-      slot.onTakeItem(player, itemStack2);
-      if (index == 0) {
-        player.dropItem(itemStack2, false);
-      }
     }
-    return itemStack;
+
+    if (stack.isEmpty()) {
+      slot.setStack(ItemStack.EMPTY);
+    }
+
+    slot.markDirty();
+    return originalStack;
   }
 
   @Override
@@ -172,5 +144,31 @@ public class ArmorStandScreenHandler extends ScreenHandler {
         }
       });
     }
+  }
+
+  private boolean tryTransferArmor(Slot source, ItemStack stack) {
+    EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
+
+    if (equipmentSlot.getType() != EquipmentSlot.Type.ARMOR) {
+      return false;
+    }
+
+    int targetIndex = slots.size() - 1 - equipmentSlot.getEntitySlotId();
+    Slot slot = slots.get(targetIndex);
+    ItemStack equipped = slot.getStack();
+    slot.setStack(stack);
+    source.setStack(equipped);
+
+    return true;
+  }
+
+  private boolean tryTransferToMainHand(ItemStack stack) {
+    int targetIndex = PlayerInventory.MAIN_SIZE;
+    return insertItem(stack, targetIndex, targetIndex + 1, false);
+  }
+
+  private boolean tryTransferToOffHand(ItemStack stack) {
+    int targetIndex = PlayerInventory.MAIN_SIZE + 1;
+    return insertItem(stack, targetIndex, targetIndex + 1, false);
   }
 }
