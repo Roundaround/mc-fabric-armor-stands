@@ -16,12 +16,15 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -45,6 +48,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
       PlayerInventory playerInventory,
       ArmorStandEntity armorStand) {
     super(screenHandler, playerInventory, Text.literal(""));
+    passEvents = true;
 
     this.armorStand = armorStand;
 
@@ -157,17 +161,39 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT) {
-      lockCursor();
-      return true;
-    }
-
     // Allow jump to pass through
     if (client.options.jumpKey.matchesKey(keyCode, scanCode)) {
       return false;
     }
 
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    if (keyCode == GLFW.GLFW_KEY_ESCAPE && shouldCloseOnEsc()) {
+      close();
+      return true;
+    }
+
+    switch (keyCode) {
+      case GLFW.GLFW_KEY_LEFT_ALT:
+      case GLFW.GLFW_KEY_RIGHT_ALT:
+        lockCursor();
+        return true;
+      case GLFW.GLFW_KEY_LEFT:
+        previousPage();
+        client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+        return true;
+      case GLFW.GLFW_KEY_RIGHT:
+        client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+        nextPage();
+        return true;
+      case GLFW.GLFW_KEY_TAB:
+        boolean forward = !Screen.hasShiftDown();
+        if (!changeFocus(forward)) {
+          changeFocus(forward);
+        }
+        return false;
+    }
+
+    return getFocused() != null
+        && getFocused().keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override
@@ -177,7 +203,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
       return true;
     }
 
-    return super.keyReleased(keyCode, scanCode, modifiers);
+    return getFocused() != null
+        && getFocused().keyReleased(keyCode, scanCode, modifiers);
   }
 
   public void setPage(int pageNum) {
