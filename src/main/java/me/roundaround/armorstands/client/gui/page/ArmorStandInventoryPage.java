@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -48,5 +49,13 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
         0,
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT);
+
+    InventoryScreen.drawEntity(
+        x + 87,
+        y + 75,
+        30,
+        0f,
+        0f,
+        screen.getArmorStand());
   }
 }
