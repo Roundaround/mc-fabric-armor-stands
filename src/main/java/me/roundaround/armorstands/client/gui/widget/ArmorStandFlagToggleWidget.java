@@ -22,12 +22,15 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   private static final int TEXTURE_WIDTH = 200;
   private static final int TEXTURE_HEIGHT = 20;
 
+  private final MinecraftClient client;
   private final ArmorStandEntity armorStand;
   private final ArmorStandFlag flag;
   private final boolean inverted;
   private boolean currentValue = false;
+  private int textWidth;
 
   public ArmorStandFlagToggleWidget(
+      MinecraftClient client,
       ArmorStandEntity armorStand,
       ArmorStandFlag flag,
       boolean inverted,
@@ -37,10 +40,12 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
       int width,
       Text label) {
     super(x, y, width, WIDGET_HEIGHT, label);
+    this.client = client;
     this.armorStand = armorStand;
     this.flag = flag;
     this.inverted = inverted;
     currentValue = initialValue;
+    textWidth = client.textRenderer.getWidth(label);
   }
 
   @Override
@@ -58,7 +63,26 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   }
 
   @Override
+  public boolean isMouseOver(double mouseX, double mouseY) {
+    int right = x + width;
+    int left = right - WIDGET_WIDTH - 4 - textWidth;
+
+    return active && visible
+        && mouseX >= left && mouseX < right
+        && mouseY >= y && mouseY < y + height;
+  }
+
+  @Override
+  protected boolean clicked(double mouseX, double mouseY) {
+    return isMouseOver(mouseX, mouseY);
+  }
+
+  @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+    int right = x + width;
+    int left = right - WIDGET_WIDTH - 4 - textWidth;
+    hovered = mouseX >= left && mouseX < right && mouseY >= y && mouseY < y + height;
+
     renderBackground(matrixStack, mouseX, mouseY, delta);
     renderBar(matrixStack, mouseX, mouseY, delta);
     renderLabel(matrixStack, mouseX, mouseY, delta);
@@ -156,15 +180,27 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   }
 
   public void renderLabel(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    MinecraftClient minecraftClient = MinecraftClient.getInstance();
-    TextRenderer textRenderer = minecraftClient.textRenderer;
+    TextRenderer textRenderer = client.textRenderer;
 
-    int textWidth = textRenderer.getWidth(getMessage());
+    textWidth = textRenderer.getWidth(getMessage());
+
+    int right = x + width - WIDGET_WIDTH - 4;
+    int left = right - textWidth;
+    int top = y + Math.round((height - 10) / 2f);
+    int bottom = y + Math.round((height + 10) / 2f);
+
+    fill(
+        matrixStack,
+        left - 2,
+        top - 2,
+        right + 2,
+        bottom + 2,
+        0x64000000);
 
     textRenderer.draw(
         matrixStack,
         getMessage(),
-        x + width - WIDGET_WIDTH - 4 - textWidth,
+        left,
         y + (height - 8) / 2,
         active ? 0xFFFFFFFF : 0xFFA0A0A0);
   }

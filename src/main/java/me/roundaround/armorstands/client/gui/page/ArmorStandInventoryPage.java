@@ -28,8 +28,8 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory_dark.png");
 
-  public ArmorStandInventoryPage(ArmorStandScreen screen) {
-    super(screen);
+  public ArmorStandInventoryPage(MinecraftClient client, ArmorStandScreen screen) {
+    super(client, screen);
   }
 
   @Override
@@ -63,7 +63,6 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
 
   public void drawEntity(int x, int y, int size, float mouseX, float mouseY) {
     ArmorStandEntity entity = screen.getArmorStand();
-    MinecraftClient client = MinecraftClient.getInstance();
     EntityRenderDispatcher entityRenderDispatcher = client.getEntityRenderDispatcher();
 
     MatrixStack matrixStack = RenderSystem.getModelViewStack();
@@ -115,7 +114,6 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
       return;
     }
 
-    MinecraftClient client = MinecraftClient.getInstance();
     SimpleOption<GraphicsMode> option = client.options.getGraphicsMode();
     GraphicsMode originalGraphicsMode = option.getValue();
     option.setValue(GraphicsMode.FANCY);

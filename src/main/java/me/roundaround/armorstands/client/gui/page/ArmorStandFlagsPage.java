@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 public class ArmorStandFlagsPage extends AbstractArmorStandPage {
@@ -18,8 +19,8 @@ public class ArmorStandFlagsPage extends AbstractArmorStandPage {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandFlagsPage(ArmorStandScreen screen) {
-    super(screen);
+  public ArmorStandFlagsPage(MinecraftClient client, ArmorStandScreen screen) {
+    super(client, screen);
   }
 
   @Override
@@ -101,6 +102,7 @@ public class ArmorStandFlagsPage extends AbstractArmorStandPage {
 
   private void addFlagToggleWidget(ArmorStandFlag flag, int xPos, int yPos, boolean inverted, Text label) {
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
+        client,
         screen.getArmorStand(),
         flag,
         inverted,

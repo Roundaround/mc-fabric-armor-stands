@@ -56,13 +56,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
       ArmorStandEntity armorStand) {
     super(screenHandler, playerInventory, Text.literal(""));
     passEvents = true;
-
     this.armorStand = armorStand;
-
-    pages.add(new ArmorStandFlagsPage(this));
-    pages.add(new ArmorStandInventoryPage(this));
-
-    setPage(0, false);
   }
 
   @Override
@@ -73,14 +67,21 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   @Override
   protected void clearAndInit() {
     lastFocused = getFocused();
-    previousFocused = lastFocused == previousButton;
-    nextFocused = lastFocused == nextButton;
+    previousFocused = lastFocused != null && lastFocused == previousButton;
+    nextFocused = lastFocused != null && lastFocused == nextButton;
 
     super.clearAndInit();
   }
 
   @Override
   protected void init() {
+    if (page == null) {
+      pages.add(new ArmorStandFlagsPage(client, this));
+      pages.add(new ArmorStandInventoryPage(client, this));
+
+      setPage(0, false);
+    }
+
     super.init();
 
     previousButton = new PageChangeButtonWidget(
@@ -128,11 +129,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
     fill(
         matrixStack,
-        (width - textWidth) / 2 - 2,
+        Math.round((width - textWidth) / 2f - 2),
         height - 4 - 2 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
-        (width + textWidth) / 2 + 3,
+        Math.round((width + textWidth) / 2f + 2),
         height - 4 - (PageChangeButtonWidget.HEIGHT - 10) / 2,
-        client.options.getTextBackgroundColor(0.8f));
+        0x64000000);
 
     drawCenteredText(
         matrixStack,
@@ -250,7 +251,9 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     handler.populateSlots(page.usesSlots());
     ClientNetworking.sendPopulateSlotsPacket(page.usesSlots());
 
-    clearAndInit();
+    if (rerunInit) {
+      clearAndInit();
+    }
   }
 
   public boolean isCursorLocked() {
