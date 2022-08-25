@@ -10,6 +10,7 @@ import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -76,12 +77,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   protected void init() {
-    if (page == null) {
-      pages.add(new ArmorStandFlagsPage(client, this));
-      pages.add(new ArmorStandInventoryPage(client, this));
-
-      setPage(0, false);
-    }
+    setUpPages();
 
     super.init();
 
@@ -306,6 +302,18 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     ((MouseAccessor) client.mouse).setX(x);
     ((MouseAccessor) client.mouse).setY(y);
     InputUtil.setCursorParameters(client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+  }
+
+  protected void setUpPages() {
+    if (!pages.isEmpty()) {
+      return;
+    }
+
+    pages.add(new ArmorStandFlagsPage(client, this));
+    pages.add(new ArmorStandMovePage(client, this));
+    pages.add(new ArmorStandInventoryPage(client, this));
+
+    setPage(0, false);
   }
 
   protected void drawCenteredText(MatrixStack matrixStack, Text text, int centerX, int y, int color) {
