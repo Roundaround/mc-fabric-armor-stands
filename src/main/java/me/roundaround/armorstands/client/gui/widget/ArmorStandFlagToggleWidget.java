@@ -84,11 +84,28 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
     hovered = mouseX >= left && mouseX < right && mouseY >= y && mouseY < y + height;
 
     renderBackground(matrixStack, mouseX, mouseY, delta);
-    renderBar(matrixStack, mouseX, mouseY, delta);
+    renderWidget(matrixStack, mouseX, mouseY, delta);
     renderLabel(matrixStack, mouseX, mouseY, delta);
   }
 
   public void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+    textWidth = client.textRenderer.getWidth(getMessage());
+
+    int left = x + width - WIDGET_WIDTH - textWidth - 4;
+    int right = x + width;
+    int top = y + Math.round((height - 10) / 2f);
+    int bottom = y + Math.round((height + 10) / 2f);
+
+    fill(
+        matrixStack,
+        left - 2,
+        top - 2,
+        right + 2,
+        bottom + 2,
+        0x40000000);
+  }
+
+  public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
@@ -133,6 +150,8 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
         v2,
         WIDGET_WIDTH / 2,
         WIDGET_HEIGHT / 2);
+
+    renderBar(matrixStack, mouseX, mouseY, delta);
   }
 
   public void renderBar(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
@@ -181,21 +200,10 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   public void renderLabel(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     TextRenderer textRenderer = client.textRenderer;
-
     textWidth = textRenderer.getWidth(getMessage());
 
     int right = x + width - WIDGET_WIDTH - 4;
     int left = right - textWidth;
-    int top = y + Math.round((height - 10) / 2f);
-    int bottom = y + Math.round((height + 10) / 2f);
-
-    fill(
-        matrixStack,
-        left - 2,
-        top - 2,
-        right + 2,
-        bottom + 2,
-        0x64000000);
 
     textRenderer.draw(
         matrixStack,

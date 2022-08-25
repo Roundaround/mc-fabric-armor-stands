@@ -29,6 +29,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
@@ -104,6 +105,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
       setInitialFocus(previousButton);
     } else if (nextFocused) {
       setInitialFocus(nextButton);
+    } else {
+      setFocused(null);
     }
   }
 
@@ -127,17 +130,21 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     Text text = Text.literal("Page " + (pageNum + 1) + " of " + pages.size());
     int textWidth = textRenderer.getWidth(text);
 
+    // Calculate pageCenter first in case it "off by 0.5"
+    int pageCenter = width / 2;
+    int left = pageCenter - MathHelper.floor(textWidth / 2f) - 1;
+    int right = pageCenter + MathHelper.ceil(textWidth / 2f) - 1;
+
     fill(
         matrixStack,
-        Math.round((width - textWidth) / 2f - 2),
+        left - 2,
         height - 4 - 2 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
-        Math.round((width + textWidth) / 2f + 2),
+        right + 2,
         height - 4 - (PageChangeButtonWidget.HEIGHT - 10) / 2,
-        0x64000000);
+        0x40000000);
 
     drawCenteredText(
         matrixStack,
-        textRenderer,
         text,
         width / 2,
         height - 4 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
@@ -174,7 +181,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     if (cursorLocked) {
       return false;
     }
-    return super.mouseClicked(mouseX, mouseY, button);
+    Element focused = getFocused();
+    boolean result = super.mouseClicked(mouseX, mouseY, button);
+    setFocused(focused);
+    return result;
   }
 
   @Override
@@ -296,5 +306,9 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
     ((MouseAccessor) client.mouse).setX(x);
     ((MouseAccessor) client.mouse).setY(y);
     InputUtil.setCursorParameters(client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+  }
+
+  protected void drawCenteredText(MatrixStack matrixStack, Text text, int centerX, int y, int color) {
+    client.textRenderer.draw(matrixStack, text, centerX - textRenderer.getWidth(text) / 2f, y, color);
   }
 }
