@@ -21,10 +21,12 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
@@ -32,7 +34,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
-public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
+public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasEntityOverlay {
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/resource_packs.png");
@@ -149,6 +151,19 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> {
 
   @Override
   protected void drawForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
+  }
+
+  @Override
+  public void renderEntityOverlay(
+      LivingEntity entity,
+      MatrixStack matrixStack,
+      VertexConsumerProvider vertexConsumerProvider,
+      int light) {
+    if (entity != armorStand) {
+      return;
+    }
+
+    page.renderEntityOverlay(matrixStack, vertexConsumerProvider, light);
   }
 
   @Override
