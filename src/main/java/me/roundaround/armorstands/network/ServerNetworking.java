@@ -12,12 +12,17 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 
 public class ServerNetworking {
   public static void registerReceivers() {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.ADJUST_YAW_PACKET,
         ServerNetworking::handleAdjustYawPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.ADJUST_POS_PACKET,
+        ServerNetworking::handleAdjustPosPacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
@@ -44,8 +49,37 @@ public class ServerNetworking {
       return;
     }
 
-    entity.setYaw(Math.round(entity.getYaw() + amount) % 360);
-    entity.addScoreboardTag("test");
+    int yaw = Math.round(entity.getYaw() + amount) % 360;
+
+    entity.setYaw(yaw);
+    entity.resetPosition();
+  }
+
+  public static void handleAdjustPosPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+    Direction direction = Direction.byId(buf.readInt());
+    int pixels = buf.readInt();
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
+    }
+
+    Vec3d position = entity.getPos()
+        .add(new Vec3d(direction.getUnitVector()).multiply(pixels * 0.0625));
+    double x = Math.round(position.x * 16) / 16.0;
+    double y = Math.round(position.y * 16) / 16.0;
+    double z = Math.round(position.z * 16) / 16.0;
+
+    entity.updateTrackedPosition(x, y, z);
+    entity.setPosition(new Vec3d(x, y, z));
+    entity.resetPosition();
   }
 
   public static void handleToggleFlagPacket(

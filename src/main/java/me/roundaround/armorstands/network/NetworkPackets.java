@@ -16,6 +16,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "adjust_yaw_packet");
 
+  public static final Identifier ADJUST_POS_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "adjust_pos_packet");
+
   public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "toggle_flag_packet");

@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.math.Direction;
 
 public class ClientNetworking {
   public static void registerReceivers() {
@@ -53,6 +54,15 @@ public class ClientNetworking {
     buf.writeInt(amount);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);
+  }
+
+  public static void sendAdjustPosPacket(ArmorStandEntity armorStand, Direction direction, int pixels) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeUuid(armorStand.getUuid());
+    buf.writeInt(direction.getId());
+    buf.writeInt(pixels);
+
+    ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
   }
 
   public static void sendToggleFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag) {
