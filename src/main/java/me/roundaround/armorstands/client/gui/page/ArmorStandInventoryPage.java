@@ -59,7 +59,7 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT);
 
-    drawEntity(x + 86, y + 75, 30, 0f, 0f);
+    drawEntity(x + 88, y + 75, 30, 0f, 0f);
   }
 
   public void drawEntity(int x, int y, int size, float mouseX, float mouseY) {
