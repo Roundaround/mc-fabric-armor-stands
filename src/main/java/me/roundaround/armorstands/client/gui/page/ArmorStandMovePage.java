@@ -15,17 +15,17 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int BETWEEN_PAD = 2;
 
   public ArmorStandMovePage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen);
+    super(client, screen, Text.translatable("armorstands.page.move"));
   }
 
   @Override
   public void init() {
-    addRowOfButtons(Text.literal("Up (+Y)"), Direction.UP, 5);
-    addRowOfButtons(Text.literal("Down (-Y)"), Direction.DOWN, 4);
-    addRowOfButtons(Text.literal("South (+Z)"), Direction.SOUTH, 3);
-    addRowOfButtons(Text.literal("North (-Z)"), Direction.NORTH, 2);
-    addRowOfButtons(Text.literal("East (+X)"), Direction.EAST, 1);
-    addRowOfButtons(Text.literal("West (-X)"), Direction.WEST, 0);
+    addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
+    addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
+    addRowOfButtons(Text.translatable("armorstands.move.south"), Direction.SOUTH, 3);
+    addRowOfButtons(Text.translatable("armorstands.move.north"), Direction.NORTH, 2);
+    addRowOfButtons(Text.translatable("armorstands.move.east"), Direction.EAST, 1);
+    addRowOfButtons(Text.translatable("armorstands.move.west"), Direction.WEST, 0);
   }
 
   private void addRowOfButtons(Text label, Direction direction, int index) {

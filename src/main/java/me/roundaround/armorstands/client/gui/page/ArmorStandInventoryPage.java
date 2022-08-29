@@ -14,6 +14,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
@@ -29,7 +30,7 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
       "textures/gui/container/inventory_dark.png");
 
   public ArmorStandInventoryPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen);
+    super(client, screen, Text.translatable("armorstands.page.inventory"));
   }
 
   @Override

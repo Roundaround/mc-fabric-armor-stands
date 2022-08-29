@@ -5,14 +5,21 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 public abstract class AbstractArmorStandPage extends DrawableHelper {
   protected final MinecraftClient client;
   protected final ArmorStandScreen screen;
+  protected final Text title;
 
-  protected AbstractArmorStandPage(MinecraftClient client, ArmorStandScreen screen) {
+  protected AbstractArmorStandPage(MinecraftClient client, ArmorStandScreen screen, Text title) {
     this.client = client;
     this.screen = screen;
+    this.title = title;
+  }
+
+  public Text getTitle() {
+    return title;
   }
 
   public boolean usesSlots() {

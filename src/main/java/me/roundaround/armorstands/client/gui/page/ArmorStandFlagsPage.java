@@ -20,7 +20,7 @@ public class ArmorStandFlagsPage extends AbstractArmorStandPage {
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
   public ArmorStandFlagsPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen);
+    super(client, screen, Text.translatable("armorstands.page.flags"));
   }
 
   @Override

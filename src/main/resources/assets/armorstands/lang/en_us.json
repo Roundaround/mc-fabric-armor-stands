@@ -1,2 +1,12 @@
 {
+  "armorstands.pages": "Page %d of %d",
+  "armorstands.page.flags": "Flags",
+  "armorstands.page.move": "Move",
+  "armorstands.page.inventory": "Inventory",
+  "armorstands.move.up": "Up (+Y)",
+  "armorstands.move.down": "Down (-Y)",
+  "armorstands.move.south": "South (+Z)",
+  "armorstands.move.north": "North (-Z)",
+  "armorstands.move.east": "East (+X)",
+  "armorstands.move.west": "West (-X)"
 }

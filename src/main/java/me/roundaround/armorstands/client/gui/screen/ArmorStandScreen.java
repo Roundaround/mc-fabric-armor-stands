@@ -98,7 +98,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     addDrawableChild(nextButton);
 
     addDrawable(LabelWidget.builder(
-        Text.literal("Page " + (pageNum + 1) + " of " + pages.size()),
+        Text.translatable("armorstands.pages", pageNum + 1, pages.size()),
         width / 2,
         height - 4 - PageChangeButtonWidget.HEIGHT / 2)
         .alignedCenter()
@@ -106,6 +106,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         .build());
 
     page.init();
+
+    addDrawable(LabelWidget.builder(page.getTitle(), width / 2, 17)
+        .alignedCenter()
+        .alignedTop()
+        .build());
 
     if (previousFocused) {
       setInitialFocus(previousButton);
