@@ -11,6 +11,7 @@ import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
+import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -32,7 +33,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasEntityOverlay {
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
@@ -97,6 +97,14 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         true);
     addDrawableChild(nextButton);
 
+    addDrawable(LabelWidget.builder(
+        Text.literal("Page " + (pageNum + 1) + " of " + pages.size()),
+        width / 2,
+        height - 4 - PageChangeButtonWidget.HEIGHT / 2)
+        .alignedCenter()
+        .alignedMiddle()
+        .build());
+
     page.init();
 
     if (previousFocused) {
@@ -114,6 +122,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   }
 
   @Override
+  public <T extends Drawable> T addDrawable(T drawable) {
+    return super.addDrawable(drawable);
+  }
+
+  @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
@@ -124,29 +137,6 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   @Override
   protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
     page.drawBackground(matrixStack, mouseX, mouseY, delta);
-
-    Text text = Text.literal("Page " + (pageNum + 1) + " of " + pages.size());
-    int textWidth = textRenderer.getWidth(text);
-
-    // Calculate pageCenter first in case it "off by 0.5"
-    int pageCenter = width / 2;
-    int left = pageCenter - MathHelper.floor(textWidth / 2f) - 1;
-    int right = pageCenter + MathHelper.ceil(textWidth / 2f) - 1;
-
-    fill(
-        matrixStack,
-        left - 2,
-        height - 4 - 2 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
-        right + 2,
-        height - 4 - (PageChangeButtonWidget.HEIGHT - 10) / 2,
-        0x40000000);
-
-    drawCenteredText(
-        matrixStack,
-        text,
-        width / 2,
-        height - 4 - (PageChangeButtonWidget.HEIGHT + 10) / 2,
-        0xFFFFFFFF);
   }
 
   @Override
