@@ -30,53 +30,46 @@ public class ArmorStandFlagsPage extends AbstractArmorStandPage {
     refreshFlags();
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.base"),
         ArmorStandFlag.BASE,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 7 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        true,
-        Text.literal("Base plate"));
+        6,
+        true);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.arms"),
         ArmorStandFlag.ARMS,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 6 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        false,
-        Text.literal("Arms"));
+        5,
+        false);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.small"),
         ArmorStandFlag.SMALL,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 5 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        false,
-        Text.literal("Small"));
+        4,
+        false);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.gravity"),
         ArmorStandFlag.GRAVITY,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 4 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        true,
-        Text.literal("Gravity"));
+        3,
+        true);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.visible"),
         ArmorStandFlag.VISIBLE,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 3 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        false,
-        Text.literal("Invisible"));
+        2,
+        false);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.name"),
         ArmorStandFlag.NAME,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 2 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        false,
-        Text.literal("Show name"));
+        1,
+        false);
 
     addFlagToggleWidget(
+        Text.translatable("armorstands.flags.invulnerable"),
         ArmorStandFlag.INVULNERABLE,
-        screen.width - PADDING - BUTTON_WIDTH,
-        screen.height - 1 * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT),
-        false,
-        Text.literal("Invulnerable"));
+        0,
+        false);
   }
 
   @Override
@@ -100,7 +93,14 @@ public class ArmorStandFlagsPage extends AbstractArmorStandPage {
     });
   }
 
-  private void addFlagToggleWidget(ArmorStandFlag flag, int xPos, int yPos, boolean inverted, Text label) {
+  private void addFlagToggleWidget(
+      Text label,
+      ArmorStandFlag flag,
+      int index,
+      boolean inverted) {
+    int xPos = screen.width - PADDING - BUTTON_WIDTH;
+    int yPos = screen.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
+
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
         client,
         screen.getArmorStand(),
