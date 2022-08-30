@@ -8,6 +8,7 @@ import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.AxisDirection;
 
 public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int MINI_BUTTON_WIDTH = 16;
@@ -25,12 +26,12 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   public void init() {
     screen.addDrawable(LabelWidget.builder(
         Text.literal("Snap to:"),
-        screen.width - SCREEN_EDGE_PAD - 2 - 3 * (BUTTON_WIDTH + BETWEEN_PAD),
+        screen.width - SCREEN_EDGE_PAD - 2 - 2 * (BUTTON_WIDTH + BETWEEN_PAD),
         SCREEN_EDGE_PAD + BUTTON_HEIGHT / 2)
         .alignedRight()
         .alignedMiddle());
     screen.addDrawableChild(new MiniButtonWidget(
-        screen.width - SCREEN_EDGE_PAD - 3 * BUTTON_WIDTH - 2 * BETWEEN_PAD,
+        screen.width - SCREEN_EDGE_PAD - 2 * BUTTON_WIDTH - BETWEEN_PAD,
         SCREEN_EDGE_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
@@ -39,22 +40,13 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
           ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.EDGE);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
-        screen.width - SCREEN_EDGE_PAD - 2 * BUTTON_WIDTH - 1 * BETWEEN_PAD,
+        screen.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
         SCREEN_EDGE_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.literal("Center"),
         (button) -> {
           ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.CENTER);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
-        screen.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
-        SCREEN_EDGE_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.literal("Pixel"),
-        (button) -> {
-          ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.PIXEL);
         }));
 
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
@@ -68,6 +60,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private void addRowOfButtons(Text label, Direction direction, int index) {
     int refX = screen.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
     int refY = screen.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
+    String modifier = direction.getDirection().equals(AxisDirection.POSITIVE) ? "+" : "-";
 
     screen.addDrawable(LabelWidget.builder(
         label,
@@ -80,7 +73,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal("1"),
+        Text.literal(modifier + "1"),
         (button) -> {
           ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 1);
         }));
@@ -89,7 +82,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal("3"),
+        Text.literal(modifier + "3"),
         (button) -> {
           ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 3);
         }));
@@ -98,7 +91,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal("8"),
+        Text.literal(modifier + "8"),
         (button) -> {
           ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 8);
         }));
