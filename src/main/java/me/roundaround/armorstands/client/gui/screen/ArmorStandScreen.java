@@ -11,6 +11,7 @@ import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
+import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -102,8 +103,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         width / 2,
         height - 4 - PageChangeButtonWidget.HEIGHT / 2)
         .alignedCenter()
-        .alignedMiddle()
-        .build());
+        .alignedMiddle());
 
     page.init();
 
@@ -129,6 +129,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   @Override
   public <T extends Drawable> T addDrawable(T drawable) {
     return super.addDrawable(drawable);
+  }
+
+  public <T extends Drawable, S extends DrawableBuilder<T>> T addDrawable(S builder) {
+    return addDrawable(builder.build());
   }
 
   @Override

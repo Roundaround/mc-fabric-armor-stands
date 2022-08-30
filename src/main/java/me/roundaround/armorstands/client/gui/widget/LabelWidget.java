@@ -106,7 +106,7 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     return new Builder(text, posX, posY);
   }
 
-  public static class Builder {
+  public static class Builder implements DrawableBuilder<LabelWidget> {
     private final Text text;
     private final int posX;
     private final int posY;
@@ -161,6 +161,7 @@ public class LabelWidget extends DrawableHelper implements Drawable {
       return this;
     }
 
+    @Override
     public LabelWidget build() {
       return new LabelWidget(text, posX, posY, alignmentH, alignmentV, showBackground, showTextShadow);
     }
