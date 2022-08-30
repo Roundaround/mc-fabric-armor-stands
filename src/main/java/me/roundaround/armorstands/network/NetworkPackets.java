@@ -20,6 +20,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "adjust_pos_packet");
 
+  public static final Identifier SNAP_POS_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "snap_pos_packet");
+
   public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "toggle_flag_packet");

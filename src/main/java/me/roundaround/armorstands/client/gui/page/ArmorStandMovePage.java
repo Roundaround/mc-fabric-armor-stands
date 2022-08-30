@@ -4,6 +4,7 @@ import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
@@ -35,7 +36,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Edge"),
         (button) -> {
-
+          ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.EDGE);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         screen.width - SCREEN_EDGE_PAD - 2 * BUTTON_WIDTH - 1 * BETWEEN_PAD,
@@ -44,7 +45,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Center"),
         (button) -> {
-
+          ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.CENTER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         screen.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
@@ -53,7 +54,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Pixel"),
         (button) -> {
-
+          ClientNetworking.sendSnapPosPacket(screen.getArmorStand(), SnapPosition.PIXEL);
         }));
 
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);

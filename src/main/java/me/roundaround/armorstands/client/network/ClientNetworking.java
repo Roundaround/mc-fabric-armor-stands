@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.NetworkPackets;
+import me.roundaround.armorstands.network.SnapPosition;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -63,6 +64,14 @@ public class ClientNetworking {
     buf.writeInt(pixels);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
+  }
+
+  public static void sendSnapPosPacket(ArmorStandEntity armorStand, SnapPosition snap) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeUuid(armorStand.getUuid());
+    buf.writeString(snap.toString());
+
+    ClientPlayNetworking.send(NetworkPackets.SNAP_POS_PACKET, buf);
   }
 
   public static void sendToggleFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag) {

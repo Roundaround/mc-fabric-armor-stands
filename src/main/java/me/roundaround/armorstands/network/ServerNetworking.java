@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.ArmorStandPositioning;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -23,6 +24,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.ADJUST_POS_PACKET,
         ServerNetworking::handleAdjustPosPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.SNAP_POS_PACKET,
+        ServerNetworking::handleSnapPosPacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
@@ -77,9 +81,25 @@ public class ServerNetworking {
     double y = Math.round(position.y * 16) / 16.0;
     double z = Math.round(position.z * 16) / 16.0;
 
-    entity.updateTrackedPosition(x, y, z);
-    entity.setPosition(new Vec3d(x, y, z));
-    entity.resetPosition();
+    ArmorStandPositioning.setPosition(entity, x, y, z);
+  }
+
+  public static void handleSnapPosPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+    SnapPosition snap = SnapPosition.fromString(buf.readString());
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
+    }
+
+    snap.apply(entity);
   }
 
   public static void handleToggleFlagPacket(
