@@ -231,8 +231,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         lockCursor();
         return true;
       case GLFW.GLFW_KEY_LEFT:
-        previousPage();
         client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+        previousPage();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
         client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
