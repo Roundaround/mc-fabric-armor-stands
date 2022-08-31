@@ -19,7 +19,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int BETWEEN_PAD = 2;
 
   public ArmorStandMovePage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.move"));
+    super(client, screen, Text.translatable("armorstands.page.move"), 1);
   }
 
   @Override

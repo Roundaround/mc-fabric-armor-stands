@@ -14,7 +14,7 @@ public class ArmorStandPosePage extends AbstractArmorStandPage {
   private static final int BETWEEN_PAD = 2;
 
   public ArmorStandPosePage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.pose"));
+    super(client, screen, Text.translatable("armorstands.page.pose"), 3);
   }
 
   @Override

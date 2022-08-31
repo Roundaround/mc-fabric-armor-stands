@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
@@ -24,6 +25,9 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ButtonWidget.TooltipSupplier;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
@@ -40,18 +44,22 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/resource_packs.png");
+  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "textures/gui/widgets.png");
   protected static final int BUTTON_WIDTH_MEDIUM = 100;
   protected static final int BUTTON_HEIGHT = 20;
+  protected static final int ICON_BUTTON_WIDTH = 20;
+  protected static final int ICON_BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
+  protected static final int ICON_BUTTON_SPACING = 2;
 
   protected final ArmorStandEntity armorStand;
   protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
 
   protected PageChangeButtonWidget previousButton;
   protected PageChangeButtonWidget nextButton;
-  protected Element lastFocused;
-  protected boolean previousFocused;
-  protected boolean nextFocused;
+  protected int lastFocusedIndex;
   protected AbstractArmorStandPage page;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
@@ -72,10 +80,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   @Override
   protected void clearAndInit() {
-    lastFocused = getFocused();
-    previousFocused = lastFocused != null && lastFocused == previousButton;
-    nextFocused = lastFocused != null && lastFocused == nextButton;
-
+    lastFocusedIndex = children().indexOf(getFocused());
     super.clearAndInit();
   }
 
@@ -84,6 +89,29 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     setUpPages();
 
     super.init();
+
+    for (int i = 0; i < pages.size(); i++) {
+      final AbstractArmorStandPage page = pages.get(i);
+      final int pageNum = i;
+
+      // TODO: Add tooltips
+      
+      addDrawableChild(new TexturedButtonWidget(
+          PADDING,
+          height - PADDING - (pages.size() - i) * ICON_BUTTON_HEIGHT - (pages.size() - i - 1) * ICON_BUTTON_SPACING,
+          ICON_BUTTON_WIDTH,
+          ICON_BUTTON_HEIGHT,
+          page.getTextureU() * ICON_BUTTON_WIDTH,
+          0,
+          ICON_BUTTON_HEIGHT,
+          WIDGETS_TEXTURE,
+          256,
+          256,
+          (button) -> {
+            setPage(pageNum);
+          },
+          page.getTitle()));
+    }
 
     previousButton = new PageChangeButtonWidget(
         this,
@@ -113,10 +141,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         .alignedTop()
         .build());
 
-    if (previousFocused) {
-      setInitialFocus(previousButton);
-    } else if (nextFocused) {
-      setInitialFocus(nextButton);
+    if (lastFocusedIndex >= 0 && lastFocusedIndex < pages.size() + 2) {
+      setInitialFocus(children().get(lastFocusedIndex));
     } else {
       setFocused(null);
     }

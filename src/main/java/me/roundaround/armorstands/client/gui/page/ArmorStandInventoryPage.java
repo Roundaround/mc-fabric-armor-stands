@@ -30,7 +30,7 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
       "textures/gui/container/inventory_dark.png");
 
   public ArmorStandInventoryPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.inventory"));
+    super(client, screen, Text.translatable("armorstands.page.inventory"), 5);
   }
 
   @Override

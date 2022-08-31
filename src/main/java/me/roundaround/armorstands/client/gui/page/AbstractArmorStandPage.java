@@ -11,15 +11,21 @@ public abstract class AbstractArmorStandPage extends DrawableHelper {
   protected final MinecraftClient client;
   protected final ArmorStandScreen screen;
   protected final Text title;
+  protected final int textureU;
 
-  protected AbstractArmorStandPage(MinecraftClient client, ArmorStandScreen screen, Text title) {
+  protected AbstractArmorStandPage(MinecraftClient client, ArmorStandScreen screen, Text title, int textureU) {
     this.client = client;
     this.screen = screen;
     this.title = title;
+    this.textureU = textureU;
   }
 
   public Text getTitle() {
     return title;
+  }
+
+  public int getTextureU() {
+    return textureU;
   }
 
   public boolean usesSlots() {
