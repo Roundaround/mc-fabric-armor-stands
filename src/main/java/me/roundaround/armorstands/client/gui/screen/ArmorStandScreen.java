@@ -26,8 +26,6 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ButtonWidget.TooltipSupplier;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
@@ -95,7 +93,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       final int pageNum = i;
 
       // TODO: Add tooltips
-      
+
       addDrawableChild(new TexturedButtonWidget(
           PADDING,
           height - PADDING - (pages.size() - i) * ICON_BUTTON_HEIGHT - (pages.size() - i - 1) * ICON_BUTTON_SPACING,
