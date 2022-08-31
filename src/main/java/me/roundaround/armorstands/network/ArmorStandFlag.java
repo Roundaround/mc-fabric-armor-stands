@@ -72,6 +72,7 @@ public enum ArmorStandFlag {
         break;
       case INVULNERABLE:
         armorStand.setInvulnerable(value);
+        break;
       default:
         // Do nothing for unknown
         ArmorStandsMod.LOGGER.warn("Tried to set value to flag {}. Ignoring.", name());
