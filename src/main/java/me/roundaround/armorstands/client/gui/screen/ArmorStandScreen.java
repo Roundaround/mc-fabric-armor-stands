@@ -49,8 +49,6 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   protected final ArmorStandEntity armorStand;
   protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
 
-  protected PageChangeButtonWidget previousButton;
-  protected PageChangeButtonWidget nextButton;
   protected int lastFocusedIndex;
   protected AbstractArmorStandPage page;
   protected int pageNum = 0;
@@ -98,19 +96,17 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           this));
     }
 
-    previousButton = new PageChangeButtonWidget(
+    addDrawableChild(new PageChangeButtonWidget(
         this,
         width / 2 - 40 - PageChangeButtonWidget.WIDTH,
         height - 4 - PageChangeButtonWidget.HEIGHT,
-        false);
-    addDrawableChild(previousButton);
+        false));
 
-    nextButton = new PageChangeButtonWidget(
+    addDrawableChild(new PageChangeButtonWidget(
         this,
         width / 2 + 40,
         height - 4 - PageChangeButtonWidget.HEIGHT,
-        true);
-    addDrawableChild(nextButton);
+        true));
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.pages", pageNum + 1, pages.size()),
