@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
 public class ServerNetworking {
@@ -36,6 +37,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.POPULATE_SLOTS_PACKET,
         ServerNetworking::handlePopulateStacksPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.SET_POSE_PACKET,
+        ServerNetworking::handleSetPosePacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -153,6 +157,41 @@ public class ServerNetworking {
     }
 
     ((ArmorStandScreenHandler) player.currentScreenHandler).populateSlots(fillSlots);
+  }
+
+  public static void handleSetPosePacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    UUID armorStandUuid = buf.readUuid();
+    boolean isPreset = buf.readBoolean();
+
+    Entity entity = player.getWorld().getEntity(armorStandUuid);
+
+    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+      return;
+    }
+
+    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
+
+    if (isPreset) {
+      PosePreset preset = PosePreset.fromString(buf.readString());
+      preset.apply(armorStand);
+      return;
+    }
+
+    armorStand.setHeadRotation(readEulerAngle(buf));
+    armorStand.setBodyRotation(readEulerAngle(buf));
+    armorStand.setRightArmRotation(readEulerAngle(buf));
+    armorStand.setLeftArmRotation(readEulerAngle(buf));
+    armorStand.setRightLegRotation(readEulerAngle(buf));
+    armorStand.setLeftLegRotation(readEulerAngle(buf));
+  }
+
+  private static EulerAngle readEulerAngle(PacketByteBuf buf) {
+    return new EulerAngle(buf.readFloat(), buf.readFloat(), buf.readFloat());
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {

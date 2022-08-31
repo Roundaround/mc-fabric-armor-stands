@@ -12,6 +12,14 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "populate_slots_packet");
 
+  public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "toggle_flag_packet");
+
+  public static final Identifier SET_FLAG_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "set_flag_packet");
+
   public static final Identifier ADJUST_YAW_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "adjust_yaw_packet");
@@ -24,11 +32,7 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "snap_pos_packet");
 
-  public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
+  public static final Identifier SET_POSE_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
-      "toggle_flag_packet");
-
-  public static final Identifier SET_FLAG_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "set_flag_packet");
+      "set_pose_packet");
 }

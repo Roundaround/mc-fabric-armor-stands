@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.NetworkPackets;
+import me.roundaround.armorstands.network.PosePreset;
 import me.roundaround.armorstands.network.SnapPosition;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -16,6 +17,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.EulerAngle;
 
 public class ClientNetworking {
   public static void registerReceivers() {
@@ -96,5 +98,41 @@ public class ClientNetworking {
     buf.writeBoolean(fillSlots);
 
     ClientPlayNetworking.send(NetworkPackets.POPULATE_SLOTS_PACKET, buf);
+  }
+
+  public static void sendSetPosePacket(ArmorStandEntity armorStand, PosePreset pose) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeUuid(armorStand.getUuid());
+    buf.writeBoolean(true);
+    buf.writeString(pose.toString());
+
+    ClientPlayNetworking.send(NetworkPackets.SET_POSE_PACKET, buf);
+  }
+
+  public static void sendSetPosePacket(
+      ArmorStandEntity armorStand,
+      EulerAngle head,
+      EulerAngle body,
+      EulerAngle rightArm,
+      EulerAngle leftArm,
+      EulerAngle rightLeg,
+      EulerAngle leftLeg) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeUuid(armorStand.getUuid());
+    buf.writeBoolean(false);
+    writeEulerAngle(buf, head);
+    writeEulerAngle(buf, body);
+    writeEulerAngle(buf, rightArm);
+    writeEulerAngle(buf, leftArm);
+    writeEulerAngle(buf, rightLeg);
+    writeEulerAngle(buf, leftLeg);
+
+    ClientPlayNetworking.send(NetworkPackets.SET_POSE_PACKET, buf);
+  }
+
+  private static void writeEulerAngle(PacketByteBuf buf, EulerAngle eulerAngle) {
+    buf.writeFloat(eulerAngle.getPitch());
+    buf.writeFloat(eulerAngle.getYaw());
+    buf.writeFloat(eulerAngle.getRoll());
   }
 }
