@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
-import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
@@ -16,6 +15,7 @@ import me.roundaround.armorstands.client.gui.page.ArmorStandPosePage;
 import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
@@ -25,7 +25,6 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
@@ -42,13 +41,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/resource_packs.png");
-  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "textures/gui/widgets.png");
   protected static final int BUTTON_WIDTH_MEDIUM = 100;
   protected static final int BUTTON_HEIGHT = 20;
-  protected static final int ICON_BUTTON_WIDTH = 20;
-  protected static final int ICON_BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
   protected static final int ICON_BUTTON_SPACING = 2;
 
@@ -92,23 +86,16 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       final AbstractArmorStandPage page = pages.get(i);
       final int pageNum = i;
 
-      // TODO: Add tooltips
-
-      addDrawableChild(new TexturedButtonWidget(
+      addDrawableChild(new PageSelectButtonWidget(
           PADDING,
-          height - PADDING - (pages.size() - i) * ICON_BUTTON_HEIGHT - (pages.size() - i - 1) * ICON_BUTTON_SPACING,
-          ICON_BUTTON_WIDTH,
-          ICON_BUTTON_HEIGHT,
-          page.getTextureU() * ICON_BUTTON_WIDTH,
-          0,
-          ICON_BUTTON_HEIGHT,
-          WIDGETS_TEXTURE,
-          256,
-          256,
+          height - PADDING - (pages.size() - i) * PageSelectButtonWidget.HEIGHT
+              - (pages.size() - i - 1) * ICON_BUTTON_SPACING,
+          page.getTextureU(),
           (button) -> {
             setPage(pageNum);
           },
-          page.getTitle()));
+          page.getTitle(),
+          this));
     }
 
     previousButton = new PageChangeButtonWidget(
