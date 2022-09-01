@@ -233,6 +233,12 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           changeFocus(forward);
         }
         return false;
+      case GLFW.GLFW_KEY_Z:
+        if (!Screen.hasControlDown()) {
+          break;
+        }
+        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        return true;
     }
 
     return getFocused() != null

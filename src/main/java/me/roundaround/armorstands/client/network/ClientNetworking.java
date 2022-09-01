@@ -59,18 +59,16 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);
   }
 
-  public static void sendAdjustPosPacket(ArmorStandEntity armorStand, Direction direction, int pixels) {
+  public static void sendAdjustPosPacket(Direction direction, int pixels) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeInt(direction.getId());
     buf.writeInt(pixels);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
   }
 
-  public static void sendAlignPosPacket(ArmorStandEntity armorStand, AlignPosition snap) {
+  public static void sendAlignPosPacket(AlignPosition snap) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeString(snap.toString());
 
     ClientPlayNetworking.send(NetworkPackets.ALIGN_POS_PACKET, buf);
@@ -134,5 +132,12 @@ public class ClientNetworking {
     buf.writeFloat(eulerAngle.getPitch());
     buf.writeFloat(eulerAngle.getYaw());
     buf.writeFloat(eulerAngle.getRoll());
+  }
+
+  public static void sendUndoPacket(boolean redo) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(redo);
+
+    ClientPlayNetworking.send(NetworkPackets.UNDO_PACKET, buf);
   }
 }

@@ -37,7 +37,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Edge"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(screen.getArmorStand(), AlignPosition.EDGE);
+          ClientNetworking.sendAlignPosPacket(AlignPosition.EDGE);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -46,7 +46,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Center"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(screen.getArmorStand(), AlignPosition.CENTER);
+          ClientNetworking.sendAlignPosPacket(AlignPosition.CENTER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
@@ -55,7 +55,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.literal("Standing"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(screen.getArmorStand(), AlignPosition.STANDING);
+          ClientNetworking.sendAlignPosPacket(AlignPosition.STANDING);
         }));
   }
 
@@ -87,7 +87,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "1"),
         (button) -> {
-          ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 1);
+          ClientNetworking.sendAdjustPosPacket(direction, 1);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
@@ -96,7 +96,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "3"),
         (button) -> {
-          ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 3);
+          ClientNetworking.sendAdjustPosPacket(direction, 3);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         refX,
@@ -105,7 +105,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "8"),
         (button) -> {
-          ClientNetworking.sendAdjustPosPacket(screen.getArmorStand(), direction, 8);
+          ClientNetworking.sendAdjustPosPacket(direction, 8);
         }));
   }
 }

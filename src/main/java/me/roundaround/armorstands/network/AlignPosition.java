@@ -3,9 +3,7 @@ package me.roundaround.armorstands.network;
 import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.util.ArmorStandPositioning;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
+import me.roundaround.armorstands.util.ArmorStandEditor;
 
 public enum AlignPosition {
   EDGE("edge"),
@@ -28,24 +26,19 @@ public enum AlignPosition {
     return id;
   }
 
-  public void apply(Entity entity) {
-    Vec3d position = entity.getPos();
-
+  public void apply(ArmorStandEditor editor) {
     switch (this) {
       case EDGE:
-        ArmorStandPositioning.setPosition(
-            entity,
-            Math.floor(position.x),
-            Math.floor(position.z));
+        editor.alignHorizontalToEdge();
         break;
       case CENTER:
-        ArmorStandPositioning.setPosition(
-            entity,
-            Math.round(position.x + 0.5) - 0.5,
-            Math.round(position.z + 0.5) - 0.5);
+        editor.alignHorizontalToCenter();
         break;
       case STANDING:
-        ArmorStandPositioning.lowerDownToBlock(entity);
+        editor.snapToGround(false);
+        break;
+      case SITTING:
+        editor.snapToGround(true);
         break;
       default:
     }

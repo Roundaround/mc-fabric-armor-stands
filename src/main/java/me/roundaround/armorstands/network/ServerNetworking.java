@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.util.ArmorStandPositioning;
+import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -15,7 +15,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
-import net.minecraft.util.math.Vec3d;
 
 public class ServerNetworking {
   public static void registerReceivers() {
@@ -40,6 +39,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.SET_POSE_PACKET,
         ServerNetworking::handleSetPosePacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.UNDO_PACKET,
+        ServerNetworking::handleUndoPacket);
   }
 
   public static void handleAdjustYawPacket(
@@ -69,23 +71,15 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
     Direction direction = Direction.byId(buf.readInt());
     int pixels = buf.readInt();
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    Vec3d position = entity.getPos()
-        .add(new Vec3d(direction.getUnitVector()).multiply(pixels * 0.0625));
-    double x = Math.round(position.x * 16) / 16.0;
-    double y = Math.round(position.y * 16) / 16.0;
-    double z = Math.round(position.z * 16) / 16.0;
-
-    ArmorStandPositioning.setPosition(entity, x, y, z);
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    editor.movePos(direction, pixels);
   }
 
   public static void handleAlignPosPacket(
@@ -94,16 +88,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
-    AlignPosition snap = AlignPosition.fromString(buf.readString());
+    AlignPosition align = AlignPosition.fromString(buf.readString());
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    snap.apply(entity);
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    align.apply(editor);
   }
 
   public static void handleToggleFlagPacket(
@@ -192,6 +184,26 @@ public class ServerNetworking {
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
     return new EulerAngle(buf.readFloat(), buf.readFloat(), buf.readFloat());
+  }
+
+  public static void handleUndoPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    boolean redo = buf.readBoolean();
+
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+      return;
+    }
+
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    if (redo) {
+      editor.redo();
+    } else {
+      editor.undo();
+    }
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {

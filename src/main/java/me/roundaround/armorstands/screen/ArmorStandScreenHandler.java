@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
+import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,15 +27,18 @@ public class ArmorStandScreenHandler extends ScreenHandler {
       EquipmentSlot.LEGS,
       EquipmentSlot.FEET };
 
-  public ArmorStandEntity armorStand;
+  public final ArmorStandEntity armorStand;
+  public final ArmorStandEditor editor;
 
-  private PlayerInventory playerInventory;
-  private ArmorStandInventory inventory;
+  private final PlayerInventory playerInventory;
+  private final ArmorStandInventory inventory;
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
 
     this.armorStand = armorStand;
+    editor = new ArmorStandEditor(armorStand);
+
     this.playerInventory = playerInventory;
     inventory = new ArmorStandInventory(armorStand);
   }
@@ -55,10 +59,10 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     // 9-35 is main player inventory
     // 36-37 is hands
     // 38-41 is equipment
-    //   38 is head
-    //   39 is chest
-    //   40 is legs
-    //   41 is feet
+    // 38 is head
+    // 39 is chest
+    // 40 is legs
+    // 41 is feet
 
     ItemStack stack = slot.getStack();
     ItemStack originalStack = stack.copy();
