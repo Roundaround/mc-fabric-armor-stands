@@ -2,7 +2,9 @@ package me.roundaround.armorstands.util;
 
 import java.util.Stack;
 
+import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
+import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Direction;
@@ -15,6 +17,12 @@ public class ArmorStandEditor {
 
   public ArmorStandEditor(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
+  }
+
+  private void applyAction(ArmorStandAction action) {
+    action.apply(armorStand);
+    actions.push(action);
+    undos.clear();
   }
 
   public boolean undo() {
@@ -46,9 +54,7 @@ public class ArmorStandEditor {
   }
 
   public void movePos(Vec3d amount, boolean roundToPixel) {
-    MoveAction action = MoveAction.relative(amount, roundToPixel);
-    action.apply(armorStand);
-    actions.push(action);
+    applyAction(MoveAction.relative(amount, roundToPixel));
   }
 
   public void alignHorizontalToEdge() {
@@ -75,9 +81,15 @@ public class ArmorStandEditor {
   }
 
   public void setPos(Vec3d position) {
-    MoveAction action = MoveAction.absolute(position);
-    action.apply(armorStand);
-    actions.push(action);
+    applyAction(MoveAction.absolute(position));
+  }
+
+  public void toggleFlag(ArmorStandFlag flag) {
+    applyAction(FlagAction.toggle(flag));
+  }
+
+  public void setFlag(ArmorStandFlag flag, boolean value) {
+    applyAction(FlagAction.set(flag, value));
   }
 
   private static class SizeLimitedStack<T> extends Stack<T> {

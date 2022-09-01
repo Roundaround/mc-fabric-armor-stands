@@ -74,17 +74,15 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.ALIGN_POS_PACKET, buf);
   }
 
-  public static void sendToggleFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag) {
+  public static void sendToggleFlagPacket(ArmorStandFlag flag) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeString(flag.toString());
 
     ClientPlayNetworking.send(NetworkPackets.TOGGLE_FLAG_PACKET, buf);
   }
 
-  public static void sendSetFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag, boolean value) {
+  public static void sendSetFlagPacket(ArmorStandFlag flag, boolean value) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeString(flag.toString());
     buf.writeBoolean(value);
 

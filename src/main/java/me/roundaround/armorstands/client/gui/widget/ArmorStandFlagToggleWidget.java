@@ -12,7 +12,6 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandFlagToggleWidget extends PressableWidget implements Consumer<Boolean> {
@@ -23,7 +22,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   private static final int TEXTURE_HEIGHT = 20;
 
   private final MinecraftClient client;
-  private final ArmorStandEntity armorStand;
   private final ArmorStandFlag flag;
   private final boolean inverted;
   private boolean currentValue = false;
@@ -31,7 +29,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   public ArmorStandFlagToggleWidget(
       MinecraftClient client,
-      ArmorStandEntity armorStand,
       ArmorStandFlag flag,
       boolean inverted,
       boolean initialValue,
@@ -41,7 +38,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
       Text label) {
     super(x, y, width, WIDGET_HEIGHT, label);
     this.client = client;
-    this.armorStand = armorStand;
     this.flag = flag;
     this.inverted = inverted;
     currentValue = initialValue;
@@ -50,7 +46,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void onPress() {
-    ClientNetworking.sendSetFlagPacket(armorStand, flag, !currentValue);
+    ClientNetworking.sendSetFlagPacket(flag, !currentValue);
   }
 
   @Override

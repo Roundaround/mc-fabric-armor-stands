@@ -104,17 +104,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    boolean value = flag.getValue((ArmorStandEntity) entity);
-    flag.setValue((ArmorStandEntity) entity, !value);
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    editor.toggleFlag(flag);
   }
 
   public static void handleSetFlagPacket(
@@ -123,17 +120,15 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
     boolean value = buf.readBoolean();
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    flag.setValue((ArmorStandEntity) entity, value);
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    editor.setFlag(flag, value);
   }
 
   public static void handlePopulateStacksPacket(

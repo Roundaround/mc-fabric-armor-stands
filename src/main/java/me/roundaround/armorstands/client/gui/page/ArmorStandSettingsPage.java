@@ -103,7 +103,6 @@ public class ArmorStandSettingsPage extends AbstractArmorStandPage {
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
         client,
-        screen.getArmorStand(),
         flag,
         inverted,
         currentValues.get(flag),
