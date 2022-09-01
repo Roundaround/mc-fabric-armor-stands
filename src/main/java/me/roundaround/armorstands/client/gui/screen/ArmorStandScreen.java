@@ -8,12 +8,11 @@ import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
-import me.roundaround.armorstands.client.gui.page.ArmorStandFlagsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPosePage;
-import me.roundaround.armorstands.client.gui.page.ArmorStandPresetsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandRotatePage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandSettingsPage;
 import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
@@ -83,6 +82,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
     super.init();
 
+    page.preInit();
+
     for (int i = 0; i < pages.size(); i++) {
       AbstractArmorStandPage page = pages.get(i);
       int totalWidth = pages.size() * PageSelectButtonWidget.WIDTH
@@ -101,10 +102,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       pageSelectButtons.add(button);
     }
 
-    page.init();
+    page.postInit();
 
     addDrawable(LabelWidget.builder(page.getTitle(), width / 2, 17)
-        .alignedCenter()
+        .justifiedCenter()
         .alignedTop()
         .build());
   }
@@ -316,11 +317,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       return;
     }
 
-    pages.add(new ArmorStandFlagsPage(client, this));
+    pages.add(new ArmorStandSettingsPage(client, this));
     pages.add(new ArmorStandMovePage(client, this));
     pages.add(new ArmorStandRotatePage(client, this));
     pages.add(new ArmorStandPosePage(client, this));
-    pages.add(new ArmorStandPresetsPage(client, this));
     pages.add(new ArmorStandInventoryPage(client, this));
 
     setPage(0, false);

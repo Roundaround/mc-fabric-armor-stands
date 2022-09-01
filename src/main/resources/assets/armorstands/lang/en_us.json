@@ -1,10 +1,9 @@
 {
   "armorstands.pages": "Page %d of %d",
-  "armorstands.page.flags": "Flags",
+  "armorstands.page.settings": "Settings",
   "armorstands.page.move": "Move",
   "armorstands.page.rotate": "Rotate",
   "armorstands.page.pose": "Pose",
-  "armorstands.page.presets": "Presets",
   "armorstands.page.inventory": "Inventory",
   "armorstands.flags.base": "Base plate",
   "armorstands.flags.arms": "Arms",

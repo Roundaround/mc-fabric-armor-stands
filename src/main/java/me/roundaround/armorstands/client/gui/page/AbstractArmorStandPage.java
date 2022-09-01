@@ -32,7 +32,10 @@ public abstract class AbstractArmorStandPage extends DrawableHelper {
     return false;
   }
 
-  public void init() {
+  public void preInit() {
+  }
+
+  public void postInit() {
   }
 
   public void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {

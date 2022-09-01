@@ -20,6 +20,8 @@ public class LabelWidget extends DrawableHelper implements Drawable {
   private final TextRenderer textRenderer;
   private final int textWidth;
 
+  // TODO: Add option to include background padding in positioning
+
   private LabelWidget(
       Text text,
       int posX,
@@ -121,17 +123,17 @@ public class LabelWidget extends DrawableHelper implements Drawable {
       this.posY = posY;
     }
 
-    public Builder alignedLeft() {
+    public Builder justifiedLeft() {
       alignmentH = Alignment.START;
       return this;
     }
 
-    public Builder alignedCenter() {
+    public Builder justifiedCenter() {
       alignmentH = Alignment.CENTER;
       return this;
     }
 
-    public Builder alignedRight() {
+    public Builder justifiedRight() {
       alignmentH = Alignment.END;
       return this;
     }

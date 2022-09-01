@@ -28,9 +28,9 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "adjust_pos_packet");
 
-  public static final Identifier SNAP_POS_PACKET = new Identifier(
+  public static final Identifier ALIGN_POS_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
-      "snap_pos_packet");
+      "align_pos_packet");
 
   public static final Identifier SET_POSE_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,

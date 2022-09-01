@@ -26,8 +26,8 @@ public class ServerNetworking {
         NetworkPackets.ADJUST_POS_PACKET,
         ServerNetworking::handleAdjustPosPacket);
     ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.SNAP_POS_PACKET,
-        ServerNetworking::handleSnapPosPacket);
+        NetworkPackets.ALIGN_POS_PACKET,
+        ServerNetworking::handleAlignPosPacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
@@ -88,14 +88,14 @@ public class ServerNetworking {
     ArmorStandPositioning.setPosition(entity, x, y, z);
   }
 
-  public static void handleSnapPosPacket(
+  public static void handleAlignPosPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
     UUID armorStandUuid = buf.readUuid();
-    SnapPosition snap = SnapPosition.fromString(buf.readString());
+    AlignPosition snap = AlignPosition.fromString(buf.readString());
 
     Entity entity = player.getWorld().getEntity(armorStandUuid);
 
