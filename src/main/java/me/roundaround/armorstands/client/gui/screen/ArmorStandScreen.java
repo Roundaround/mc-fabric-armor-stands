@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
-import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPosePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandRotatePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandSettingsPage;
@@ -47,10 +47,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   protected static final int ICON_BUTTON_SPACING = 2;
 
   protected final ArmorStandEntity armorStand;
-  protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
+  protected final ArrayList<ArmorStandPage> pages = new ArrayList<>();
   protected final ArrayList<PageSelectButtonWidget> pageSelectButtons = new ArrayList<>();
 
-  protected AbstractArmorStandPage page;
+  protected ArmorStandPage page;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
 
@@ -85,7 +85,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     page.preInit();
 
     for (int i = 0; i < pages.size(); i++) {
-      AbstractArmorStandPage page = pages.get(i);
+      ArmorStandPage page = pages.get(i);
       int totalWidth = pages.size() * PageSelectButtonWidget.WIDTH
           + (pages.size() - 1) * ICON_BUTTON_SPACING;
       int x = (width - totalWidth) / 2
@@ -262,7 +262,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     setPage(pageNum, true);
   }
 
-  public AbstractArmorStandPage getCurrentPage() {
+  public ArmorStandPage getCurrentPage() {
     return page;
   }
 

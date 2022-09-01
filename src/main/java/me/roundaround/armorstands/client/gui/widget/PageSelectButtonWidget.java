@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.page.AbstractArmorStandPage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -22,13 +22,13 @@ public class PageSelectButtonWidget extends ButtonWidget {
 
   private final int uIndex;
   private final ArmorStandScreen screen;
-  private final AbstractArmorStandPage page;
+  private final ArmorStandPage page;
 
   public PageSelectButtonWidget(
       int x,
       int y,
       ArmorStandScreen screen,
-      AbstractArmorStandPage page,
+      ArmorStandPage page,
       int pageNum) {
     super(
         x,
