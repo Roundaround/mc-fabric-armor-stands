@@ -16,7 +16,6 @@ import me.roundaround.armorstands.client.gui.page.ArmorStandPresetsPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandRotatePage;
 import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.gui.widget.PageChangeButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -50,8 +49,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   protected final ArmorStandEntity armorStand;
   protected final ArrayList<AbstractArmorStandPage> pages = new ArrayList<>();
+  protected final ArrayList<PageSelectButtonWidget> pageSelectButtons = new ArrayList<>();
 
-  protected int lastFocusedIndex;
   protected AbstractArmorStandPage page;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
@@ -72,50 +71,35 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   @Override
   protected void clearAndInit() {
-    lastFocusedIndex = children().indexOf(getFocused());
+    pageSelectButtons.clear();
     super.clearAndInit();
   }
 
   @Override
   protected void init() {
+    setFocused(null);
+
     setUpPages();
 
     super.init();
 
     for (int i = 0; i < pages.size(); i++) {
-      final AbstractArmorStandPage page = pages.get(i);
-      final int pageNum = i;
+      AbstractArmorStandPage page = pages.get(i);
+      int totalWidth = pages.size() * PageSelectButtonWidget.WIDTH
+          + (pages.size() - 1) * ICON_BUTTON_SPACING;
+      int x = (width - totalWidth) / 2
+          + i * PageSelectButtonWidget.HEIGHT
+          + (i - 1) * ICON_BUTTON_SPACING;
+      int y = height - PADDING - PageSelectButtonWidget.HEIGHT;
 
-      addDrawableChild(new PageSelectButtonWidget(
-          PADDING,
-          height - PADDING - (pages.size() - i) * PageSelectButtonWidget.HEIGHT
-              - (pages.size() - i - 1) * ICON_BUTTON_SPACING,
-          page.getTextureU(),
-          (button) -> {
-            setPage(pageNum);
-          },
-          page.getTitle(),
-          this));
+      PageSelectButtonWidget button = new PageSelectButtonWidget(x, y, this, page, i);
+      if (button.isActivePage()) {
+        addDrawable(button);
+      } else {
+        addDrawableChild(button);
+      }
+      pageSelectButtons.add(button);
     }
-
-    addDrawableChild(new PageChangeButtonWidget(
-        this,
-        width / 2 - 40 - PageChangeButtonWidget.WIDTH,
-        height - 4 - PageChangeButtonWidget.HEIGHT,
-        false));
-
-    addDrawableChild(new PageChangeButtonWidget(
-        this,
-        width / 2 + 40,
-        height - 4 - PageChangeButtonWidget.HEIGHT,
-        true));
-
-    addDrawable(LabelWidget.builder(
-        Text.translatable("armorstands.pages", pageNum + 1, pages.size()),
-        width / 2,
-        height - 4 - PageChangeButtonWidget.HEIGHT / 2)
-        .alignedCenter()
-        .alignedMiddle());
 
     page.init();
 
@@ -123,12 +107,6 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         .alignedCenter()
         .alignedTop()
         .build());
-
-    if (lastFocusedIndex >= 0 && lastFocusedIndex < pages.size() + 2) {
-      setInitialFocus(children().get(lastFocusedIndex));
-    } else {
-      setFocused(null);
-    }
   }
 
   @Override
@@ -271,8 +249,20 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         && getFocused().keyReleased(keyCode, scanCode, modifiers);
   }
 
+  public void previousPage() {
+    setPage(pageNum - 1);
+  }
+
+  public void nextPage() {
+    setPage(pageNum + 1);
+  }
+
   public void setPage(int pageNum) {
     setPage(pageNum, true);
+  }
+
+  public AbstractArmorStandPage getCurrentPage() {
+    return page;
   }
 
   public void setPage(int pageNum, boolean rerunInit) {
@@ -283,19 +273,12 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
     if (rerunInit) {
       clearAndInit();
+      setFocused(null);
     }
   }
 
   public boolean isCursorLocked() {
     return cursorLocked;
-  }
-
-  public void previousPage() {
-    setPage(pageNum - 1);
-  }
-
-  public void nextPage() {
-    setPage(pageNum + 1);
   }
 
   public boolean shouldHighlight(Entity entity) {
