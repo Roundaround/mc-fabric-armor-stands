@@ -186,9 +186,9 @@ public class ServerNetworking {
     ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
     if (redo) {
       editor.redo();
-    } else {
-      editor.undo();
+      return;
     }
+    editor.undo();
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
