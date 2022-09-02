@@ -3,7 +3,7 @@ package me.roundaround.armorstands.network;
 import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import net.minecraft.entity.decoration.ArmorStandEntity;
+import me.roundaround.armorstands.util.Pose;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
@@ -201,13 +201,8 @@ public enum PosePreset {
     return id;
   }
 
-  public void apply(ArmorStandEntity entity) {
-    entity.setHeadRotation(head);
-    entity.setBodyRotation(body);
-    entity.setRightArmRotation(rightArm);
-    entity.setLeftArmRotation(leftArm);
-    entity.setRightLegRotation(rightLeg);
-    entity.setLeftLegRotation(leftLeg);
+  public Pose toPose() {
+    return new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg);
   }
 
   public static PosePreset fromString(String value) {

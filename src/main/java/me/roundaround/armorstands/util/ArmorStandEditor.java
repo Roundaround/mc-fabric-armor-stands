@@ -6,8 +6,10 @@ import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
+import me.roundaround.armorstands.util.actions.PoseAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
 public class ArmorStandEditor {
@@ -90,6 +92,20 @@ public class ArmorStandEditor {
 
   public void setFlag(ArmorStandFlag flag, boolean value) {
     applyAction(FlagAction.set(flag, value));
+  }
+
+  public void setPose(Pose pose) {
+    applyAction(PoseAction.fromPose(pose));
+  }
+
+  public void setPose(
+      EulerAngle head,
+      EulerAngle body,
+      EulerAngle rightArm,
+      EulerAngle leftArm,
+      EulerAngle rightLeg,
+      EulerAngle leftLeg) {
+    setPose(new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg));
   }
 
   private static class SizeLimitedStack<T> extends Stack<T> {

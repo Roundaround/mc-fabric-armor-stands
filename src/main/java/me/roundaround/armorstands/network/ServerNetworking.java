@@ -152,29 +152,27 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
     boolean isPreset = buf.readBoolean();
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEntity armorStand = (ArmorStandEntity) entity;
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
 
     if (isPreset) {
       PosePreset preset = PosePreset.fromString(buf.readString());
-      preset.apply(armorStand);
+      editor.setPose(preset.toPose());
       return;
     }
 
-    armorStand.setHeadRotation(readEulerAngle(buf));
-    armorStand.setBodyRotation(readEulerAngle(buf));
-    armorStand.setRightArmRotation(readEulerAngle(buf));
-    armorStand.setLeftArmRotation(readEulerAngle(buf));
-    armorStand.setRightLegRotation(readEulerAngle(buf));
-    armorStand.setLeftLegRotation(readEulerAngle(buf));
+    editor.setPose(
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf));
   }
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {

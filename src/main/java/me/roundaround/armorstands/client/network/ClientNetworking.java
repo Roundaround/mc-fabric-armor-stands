@@ -96,9 +96,8 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.POPULATE_SLOTS_PACKET, buf);
   }
 
-  public static void sendSetPosePacket(ArmorStandEntity armorStand, PosePreset pose) {
+  public static void sendSetPosePacket(PosePreset pose) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeBoolean(true);
     buf.writeString(pose.toString());
 
@@ -106,7 +105,6 @@ public class ClientNetworking {
   }
 
   public static void sendSetPosePacket(
-      ArmorStandEntity armorStand,
       EulerAngle head,
       EulerAngle body,
       EulerAngle rightArm,
@@ -114,7 +112,6 @@ public class ClientNetworking {
       EulerAngle rightLeg,
       EulerAngle leftLeg) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeBoolean(false);
     writeEulerAngle(buf, head);
     writeEulerAngle(buf, body);
