@@ -7,6 +7,7 @@ import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
+import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
@@ -84,6 +85,14 @@ public class ArmorStandEditor {
 
   public void setPos(Vec3d position) {
     applyAction(MoveAction.absolute(position));
+  }
+
+  public void rotate(float rotation) {
+    applyAction(RotateAction.relative(rotation));
+  }
+
+  public void setRotation(float rotation) {
+    applyAction(RotateAction.absolute(rotation));
   }
 
   public void toggleFlag(ArmorStandFlag flag) {

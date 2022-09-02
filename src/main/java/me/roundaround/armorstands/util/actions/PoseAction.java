@@ -1,11 +1,13 @@
 package me.roundaround.armorstands.util.actions;
 
+import java.util.Optional;
+
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public class PoseAction implements ArmorStandAction {
   private final Pose pose;
-  private Pose originalPose;
+  private Optional<Pose> originalPose = Optional.empty();
 
   private PoseAction(Pose pose) {
     this.pose = pose;
@@ -17,15 +19,15 @@ public class PoseAction implements ArmorStandAction {
 
   @Override
   public void apply(ArmorStandEntity armorStand) {
-    originalPose = new Pose(armorStand);
+    originalPose = Optional.of(new Pose(armorStand));
     pose.apply(armorStand);
   }
 
   @Override
   public void undo(ArmorStandEntity armorStand) {
-    if (originalPose == null) {
+    if (originalPose.isEmpty()) {
       return;
     }
-    originalPose.apply(armorStand);
+    originalPose.get().apply(armorStand);
   }
 }

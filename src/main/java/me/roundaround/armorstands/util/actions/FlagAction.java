@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.util.actions;
 
+import java.util.Optional;
+
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
@@ -7,7 +9,7 @@ public class FlagAction implements ArmorStandAction {
   private final ArmorStandFlag flag;
   private final boolean toggle;
   private final boolean value;
-  private boolean previous;
+  private Optional<Boolean> previousValue = Optional.empty();
 
   private FlagAction(ArmorStandFlag flag, boolean toggle, boolean value) {
     this.flag = flag;
@@ -30,7 +32,7 @@ public class FlagAction implements ArmorStandAction {
       return;
     }
 
-    previous = flag.getValue(armorStand);
+    previousValue = Optional.of(flag.getValue(armorStand));
     flag.setValue(armorStand, value);
   }
 
@@ -41,6 +43,9 @@ public class FlagAction implements ArmorStandAction {
       return;
     }
 
-    flag.setValue(armorStand, previous);
+    if (previousValue.isEmpty()) {
+      return;
+    }
+    flag.setValue(armorStand, previousValue.get());
   }
 }

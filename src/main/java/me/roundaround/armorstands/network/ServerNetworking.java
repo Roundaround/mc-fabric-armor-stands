@@ -1,13 +1,10 @@
 package me.roundaround.armorstands.network;
 
-import java.util.UUID;
-
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -50,19 +47,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    UUID armorStandUuid = buf.readUuid();
     int amount = buf.readInt();
 
-    Entity entity = player.getWorld().getEntity(armorStandUuid);
-
-    if (entity == null || !(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    int yaw = Math.round(entity.getYaw() + amount) % 360;
-
-    entity.setYaw(yaw);
-    entity.resetPosition();
+    ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
+    editor.rotate(amount);
   }
 
   public static void handleAdjustPosPacket(

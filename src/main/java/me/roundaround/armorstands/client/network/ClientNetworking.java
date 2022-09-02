@@ -51,9 +51,8 @@ public class ClientNetworking {
     });
   }
 
-  public static void sendAdjustYawPacket(ArmorStandEntity armorStand, int amount) {
+  public static void sendAdjustYawPacket(int amount) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeUuid(armorStand.getUuid());
     buf.writeInt(amount);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);

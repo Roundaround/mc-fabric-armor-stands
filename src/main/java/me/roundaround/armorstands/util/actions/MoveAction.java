@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.util.actions;
 
+import java.util.Optional;
+
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -7,7 +9,7 @@ public class MoveAction implements ArmorStandAction {
   private final Vec3d argument;
   private final boolean absolute;
   private final boolean roundToPixel;
-  private Vec3d originalPosition = null;
+  private Optional<Vec3d> originalPosition = Optional.empty();
 
   private MoveAction(Vec3d argument, boolean absolute, boolean roundToPixel) {
     this.argument = argument;
@@ -41,12 +43,12 @@ public class MoveAction implements ArmorStandAction {
 
   @Override
   public void apply(ArmorStandEntity armorStand) {
-    originalPosition = armorStand.getPos();
+    originalPosition = Optional.of(armorStand.getPos());
 
     Vec3d position = argument;
 
     if (!absolute) {
-      position = position.add(originalPosition);
+      position = position.add(originalPosition.get());
     }
 
     if (roundToPixel) {
@@ -61,11 +63,11 @@ public class MoveAction implements ArmorStandAction {
 
   @Override
   public void undo(ArmorStandEntity armorStand) {
-    if (originalPosition == null) {
+    if (originalPosition.isEmpty()) {
       return;
     }
 
-    setPosition(armorStand, originalPosition);
+    setPosition(armorStand, originalPosition.get());
   }
 
   public static void setPosition(ArmorStandEntity armorStand, Vec3d position) {
