@@ -4,14 +4,17 @@ import java.util.Stack;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
+import me.roundaround.armorstands.util.actions.ComboAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
 import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class ArmorStandEditor {
   private final ArmorStandEntity armorStand;
@@ -72,11 +75,35 @@ public class ArmorStandEditor {
 
   public void snapToGround(boolean sitting) {
     Vec3d position = armorStand.getPos();
-    position = new Vec3d(position.x, armorStand.getBlockY(), position.z);
 
-    // TODO: Adjust for sitting
+    World world = armorStand.getWorld();
+    BlockPos blockPos = armorStand.getBlockPos().up(2);
+    boolean failed = false;
 
-    setPos(position);
+    while (!world.isTopSolid(blockPos.down(), armorStand)) {
+      blockPos = blockPos.down();
+
+      if (world.isOutOfHeightLimit(blockPos)) {
+        failed = true;
+        break;
+      }
+    }
+
+    if (failed) {
+      applyAction(ArmorStandAction.noop());
+      return;
+    }
+
+    position = new Vec3d(position.x, blockPos.getY(), position.z);
+
+    if (sitting) {
+      position = position.subtract(0, 11 * 0.0625, 0);
+    }
+
+    applyAction(ComboAction.of(
+      FlagAction.set(ArmorStandFlag.GRAVITY, true),
+      MoveAction.absolute(position)
+    ));
   }
 
   public void setPos(double x, double y, double z) {

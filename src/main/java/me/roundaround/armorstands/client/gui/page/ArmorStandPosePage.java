@@ -23,7 +23,7 @@ public class ArmorStandPosePage extends AbstractArmorStandPage {
     int refY = screen.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT;
 
     screen.addDrawableChild(new MiniButtonWidget(
-        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
+        refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
@@ -32,7 +32,7 @@ public class ArmorStandPosePage extends AbstractArmorStandPage {
           ClientNetworking.sendSetPosePacket(PosePreset.ATTENTION);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
-        refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
+        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
@@ -41,13 +41,22 @@ public class ArmorStandPosePage extends AbstractArmorStandPage {
           ClientNetworking.sendSetPosePacket(PosePreset.WALKING);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
-        refX,
+        refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
         Text.literal("C"),
         (button) -> {
           ClientNetworking.sendSetPosePacket(PosePreset.RUNNING);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        refX,
+        refY,
+        MINI_BUTTON_WIDTH,
+        MINI_BUTTON_HEIGHT,
+        Text.literal("D"),
+        (button) -> {
+          ClientNetworking.sendSetPosePacket(PosePreset.SITTING);
         }));
   }
 }
