@@ -9,16 +9,20 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 public class LabelWidget extends DrawableHelper implements Drawable {
-  private final Text text;
+  public static final int HEIGHT_WITH_PADDING = 13;
+
   private final int posX;
   private final int posY;
   private final Alignment alignmentH;
   private final Alignment alignmentV;
   private final boolean showBackground;
   private final boolean showTextShadow;
+  private final boolean shiftForPadding;
   private final MinecraftClient client;
   private final TextRenderer textRenderer;
-  private final int textWidth;
+  
+  private Text text;
+  private int textWidth;
 
   // TODO: Add option to include background padding in positioning
 
@@ -29,18 +33,20 @@ public class LabelWidget extends DrawableHelper implements Drawable {
       Alignment alignmentH,
       Alignment alignmentV,
       boolean showBackground,
-      boolean showTextShadow) {
-    this.text = text;
+      boolean showTextShadow,
+      boolean shiftForPadding) {
     this.posX = posX;
     this.posY = posY;
     this.alignmentH = alignmentH;
     this.alignmentV = alignmentV;
     this.showBackground = showBackground;
     this.showTextShadow = showTextShadow;
+    this.shiftForPadding = shiftForPadding;
 
     client = MinecraftClient.getInstance();
     textRenderer = client.textRenderer;
-    textWidth = textRenderer.getWidth(text);
+
+    setText(text);
   }
 
   @Override
@@ -77,6 +83,13 @@ public class LabelWidget extends DrawableHelper implements Drawable {
         bottom = posY + 10 / 2f;
     }
 
+    if (shiftForPadding) {
+      left += alignmentH.getShiftOffset() * 2;
+      right += alignmentH.getShiftOffset() * 2;
+      top += alignmentV.getShiftOffset();
+      bottom += alignmentV.getShiftOffset();
+    }
+
     if (showBackground) {
       fill(
           matrixStack,
@@ -104,6 +117,14 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     }
   }
 
+  public void setText(Text text) {
+    if (this.text != null && text.getString().equals(this.text.getString())) {
+      return;
+    }
+    this.text = text;
+    textWidth = textRenderer.getWidth(text);
+  }
+
   public static Builder builder(Text text, int posX, int posY) {
     return new Builder(text, posX, posY);
   }
@@ -116,6 +137,7 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     private Alignment alignmentV = Alignment.CENTER;
     private boolean showBackground = true;
     private boolean showTextShadow = false;
+    private boolean shiftForPadding = false;
 
     public Builder(Text text, int posX, int posY) {
       this.text = text;
@@ -163,15 +185,30 @@ public class LabelWidget extends DrawableHelper implements Drawable {
       return this;
     }
 
+    public Builder shiftForPadding() {
+      shiftForPadding = true;
+      return this;
+    }
+
     @Override
     public LabelWidget build() {
-      return new LabelWidget(text, posX, posY, alignmentH, alignmentV, showBackground, showTextShadow);
+      return new LabelWidget(text, posX, posY, alignmentH, alignmentV, showBackground, showTextShadow, shiftForPadding);
     }
   }
 
   public static enum Alignment {
-    START,
-    CENTER,
-    END;
+    START(1),
+    CENTER(0),
+    END(-1);
+
+    private final int shiftOffset;
+
+    private Alignment(int shiftOffset) {
+      this.shiftOffset = shiftOffset;
+    }
+
+    public int getShiftOffset() {
+      return shiftOffset;
+    }
   }
 }

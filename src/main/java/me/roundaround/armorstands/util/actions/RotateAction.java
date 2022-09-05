@@ -2,6 +2,7 @@ package me.roundaround.armorstands.util.actions;
 
 import java.util.Optional;
 
+import me.roundaround.armorstands.ArmorStandsMod;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public class RotateAction implements ArmorStandAction {
@@ -62,6 +63,7 @@ public class RotateAction implements ArmorStandAction {
     if (round) {
       target = Math.round(target);
     }
+    ArmorStandsMod.LOGGER.info(target);
     armorStand.setYaw(target);
     armorStand.resetPosition();
   }
