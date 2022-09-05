@@ -101,9 +101,8 @@ public class ArmorStandEditor {
     }
 
     applyAction(ComboAction.of(
-      FlagAction.set(ArmorStandFlag.GRAVITY, true),
-      MoveAction.absolute(position)
-    ));
+        FlagAction.set(ArmorStandFlag.GRAVITY, true),
+        MoveAction.absolute(position)));
   }
 
   public void setPos(double x, double y, double z) {

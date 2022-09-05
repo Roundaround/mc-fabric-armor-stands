@@ -53,18 +53,17 @@ public class RotateAction implements ArmorStandAction {
     }
     setRotation(armorStand, originalRotation.get());
   }
-  
+
   public static void setRotation(ArmorStandEntity armorStand, float rotation) {
     setRotation(armorStand, rotation, false);
   }
-  
+
   public static void setRotation(ArmorStandEntity armorStand, float rotation, boolean round) {
     float target = rotation % 360f;
     if (round) {
       target = Math.round(target);
     }
-    ArmorStandsMod.LOGGER.info(target);
+
     armorStand.setYaw(target);
-    armorStand.resetPosition();
   }
 }

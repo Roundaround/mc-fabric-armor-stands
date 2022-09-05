@@ -8,6 +8,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "open_screen_packet");
 
+  public static final Identifier CLIENT_UPDATE_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "client_update_packet");
+
   public static final Identifier POPULATE_SLOTS_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "populate_slots_packet");

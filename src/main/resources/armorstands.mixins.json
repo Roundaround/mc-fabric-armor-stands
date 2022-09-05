@@ -6,17 +6,19 @@
   "mixins": [
     "ArmorStandEntityAccessor",
     "ArmorStandEntityMixin",
-    "InGameHudMixin",
-    "KeyBindingAccessor",
-    "LivingEntityRendererMixin",
-    "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
     "NameTagItemMixin",
     "ScreenHandlerAccessor",
     "ServerPlayerEntityAccessor"
   ],
-  "client": [],
+  "client": [
+    "InGameHudMixin",
+    "KeyBindingAccessor",
+    "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "MinecraftClientMixin"
+  ],
   "server": [],
   "injectors": {
     "defaultRequire": 1

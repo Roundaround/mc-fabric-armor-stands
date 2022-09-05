@@ -24,6 +24,9 @@ public class ClientNetworking {
     ClientPlayNetworking.registerGlobalReceiver(
         NetworkPackets.OPEN_SCREEN_PACKET,
         ClientNetworking::handleOpenScreenPacket);
+    ClientPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.CLIENT_UPDATE_PACKET,
+        ClientNetworking::handleClientUpdatePacket);
   }
 
   public static void handleOpenScreenPacket(
@@ -48,6 +51,31 @@ public class ClientNetworking {
 
       player.currentScreenHandler = screenHandler;
       client.setScreen(new ArmorStandScreen(screenHandler, playerInventory, armorStand));
+    });
+  }
+
+  public static void handleClientUpdatePacket(
+      MinecraftClient client,
+      ClientPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    double x = buf.readDouble();
+    double y = buf.readDouble();
+    double z = buf.readDouble();
+    float yaw = buf.readFloat();
+    float pitch = buf.readFloat();
+
+    client.execute(() -> {
+      ClientPlayerEntity player = client.player;
+      if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+        return;
+      }
+
+      ArmorStandEntity armorStand = ((ArmorStandScreenHandler) player.currentScreenHandler).armorStand;
+
+      armorStand.setPos(x, y, z);
+      armorStand.setYaw(yaw % 360f);
+      armorStand.setPitch(pitch % 360f);
     });
   }
 

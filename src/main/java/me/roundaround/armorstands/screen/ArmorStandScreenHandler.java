@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
+import me.roundaround.armorstands.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class ArmorStandScreenHandler extends ScreenHandler {
@@ -90,6 +92,15 @@ public class ArmorStandScreenHandler extends ScreenHandler {
   @Override
   public boolean canUse(PlayerEntity player) {
     return inventory.canPlayerUse(player);
+  }
+
+  @Override
+  public void sendContentUpdates() {
+    if (playerInventory.player instanceof ServerPlayerEntity) {
+      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) playerInventory.player);
+    }
+
+    super.sendContentUpdates();
   }
 
   public void populateSlots(boolean fillSlots) {

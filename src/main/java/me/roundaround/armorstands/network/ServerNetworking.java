@@ -198,4 +198,21 @@ public class ServerNetworking {
 
     ServerPlayNetworking.send(player, NetworkPackets.OPEN_SCREEN_PACKET, buf);
   }
+
+  public static void sendClientUpdatePacket(ServerPlayerEntity player) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+      return;
+    }
+
+    ArmorStandEntity armorStand = ((ArmorStandScreenHandler) player.currentScreenHandler).armorStand;
+
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeDouble(armorStand.getX());
+    buf.writeDouble(armorStand.getY());
+    buf.writeDouble(armorStand.getZ());
+    buf.writeFloat(armorStand.getYaw());
+    buf.writeFloat(armorStand.getPitch());
+
+    ServerPlayNetworking.send(player, NetworkPackets.CLIENT_UPDATE_PACKET, buf);
+  }
 }

@@ -77,6 +77,5 @@ public class MoveAction implements ArmorStandAction {
   public static void setPosition(ArmorStandEntity armorStand, double x, double y, double z) {
     armorStand.updateTrackedPosition(x, y, z);
     armorStand.setPosition(new Vec3d(x, y, z));
-    armorStand.resetPosition();
   }
 }
