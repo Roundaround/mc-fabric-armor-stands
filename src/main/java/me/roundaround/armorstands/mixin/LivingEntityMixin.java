@@ -48,6 +48,8 @@ public abstract class LivingEntityMixin {
       return;
     }
 
-    info.cancel();
+    if (((ArmorStandScreenHandler) screenHandler).armorStand == self) {
+      info.cancel();
+    }
   }
 }
