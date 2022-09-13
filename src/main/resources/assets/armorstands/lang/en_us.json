@@ -22,11 +22,12 @@
   "armorstands.rotate.counter": "Counter-clockwise",
   "armorstands.current.stand": "Armor stand",
   "armorstands.current.player": "Player",
-  "armorstands.current.position": "Position",
   "armorstands.current.facing": "Facing: %s (%s)",
   "armorstands.current.facing.posX": "positive X",
   "armorstands.current.facing.negX": "negative X",
   "armorstands.current.facing.posZ": "positive Z",
   "armorstands.current.facing.negZ": "negative Z",
-  "armorstands.current.rotation": "Rotation: %d"
+  "armorstands.current.rotation": "Rotation: %d",
+  "armorstands.current.position": "Position: %s / %s / %s",
+  "armorstands.current.block": "Block: %s %s %s"
 }
