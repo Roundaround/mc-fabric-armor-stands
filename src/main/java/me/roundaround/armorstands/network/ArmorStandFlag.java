@@ -4,7 +4,10 @@ import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.util.actions.MoveAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public enum ArmorStandFlag {
   BASE("base"),
@@ -62,6 +65,14 @@ public enum ArmorStandFlag {
         accessor.invokeSetSmall(value);
         break;
       case GRAVITY:
+        if (!value) {
+          Vec3d pos = armorStand.getPos();
+          double blockY = (double) armorStand.getBlockY();
+          boolean atBlockPos = Math.abs(pos.y - blockY) < MathHelper.EPSILON;
+          if (atBlockPos) {
+            MoveAction.setPosition(armorStand, pos.x, pos.y + 0.001, pos.z);
+          }
+        }
         armorStand.setNoGravity(value);
         break;
       case VISIBLE:

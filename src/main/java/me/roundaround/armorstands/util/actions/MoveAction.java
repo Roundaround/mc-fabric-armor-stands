@@ -81,7 +81,7 @@ public class MoveAction implements ArmorStandAction {
     boolean hasGravity = !armorStand.hasNoGravity();
     double currY = armorStand.getY();
     if (hasGravity && Math.abs(y - currY) > MathHelper.EPSILON) {
-      y += 0.01;
+      y += 0.001;
     }
 
     armorStand.updateTrackedPosition(x, y, z);
