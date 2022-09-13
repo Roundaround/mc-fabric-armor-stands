@@ -4,12 +4,14 @@ import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.ArmorStandEditor;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-public enum AlignPosition {
+public enum SnapPosition {
   EDGE("edge"),
   CENTER("center"),
   STANDING("standing"),
   SITTING("sitting"),
+  PLAYER("player"),
   BLOCK("block"),
   ITEM_UPRIGHT("item_upright"),
   ITEM_FLAT("item_flat"),
@@ -17,7 +19,7 @@ public enum AlignPosition {
 
   private final String id;
 
-  private AlignPosition(String id) {
+  private SnapPosition(String id) {
     this.id = id;
   }
 
@@ -26,7 +28,7 @@ public enum AlignPosition {
     return id;
   }
 
-  public void apply(ArmorStandEditor editor) {
+  public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
     switch (this) {
       case EDGE:
         editor.alignHorizontalToEdge();
@@ -40,12 +42,15 @@ public enum AlignPosition {
       case SITTING:
         editor.snapToGround(true);
         break;
+      case PLAYER:
+        editor.setPos(player.getPos());
+        break;
       default:
     }
   }
 
-  public static AlignPosition fromString(String value) {
-    return Arrays.stream(AlignPosition.values())
+  public static SnapPosition fromString(String value) {
+    return Arrays.stream(SnapPosition.values())
         .filter((align) -> align.id.equals(value))
         .findFirst()
         .orElseGet(() -> {

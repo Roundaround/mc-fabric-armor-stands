@@ -4,7 +4,7 @@ import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
-import me.roundaround.armorstands.network.AlignPosition;
+import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -15,7 +15,7 @@ import net.minecraft.util.math.Direction.AxisDirection;
 public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int MINI_BUTTON_WIDTH = 16;
   private static final int MINI_BUTTON_HEIGHT = 16;
-  private static final int BUTTON_WIDTH = 40;
+  private static final int BUTTON_WIDTH = 50;
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
@@ -48,15 +48,15 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding());
 
     playerPosLabel = LabelWidget.builder(
-      getCurrectPosText(client.player),
-      SCREEN_EDGE_PAD,
-      SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
-      .alignedTop()
-      .justifiedLeft()
-      .shiftForPadding()
-      .build();
+        getCurrectPosText(client.player),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build();
     screen.addDrawable(playerPosLabel);
-  
+
     playerBlockPosLabel = LabelWidget.builder(
         getCurrectBlockPosText(client.player),
         SCREEN_EDGE_PAD,
@@ -68,9 +68,10 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     screen.addDrawable(playerBlockPosLabel);
 
     screen.addDrawable(LabelWidget.builder(
-        Text.literal("Align horizontally"),
-        SCREEN_EDGE_PAD + 2,
+        Text.translatable("armorstands.snap.label"),
+        SCREEN_EDGE_PAD,
         screen.height - SCREEN_EDGE_PAD - 2 * (BUTTON_HEIGHT + BETWEEN_PAD))
+        .shiftForPadding()
         .justifiedLeft()
         .alignedBottom());
     screen.addDrawableChild(new MiniButtonWidget(
@@ -78,27 +79,45 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         screen.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.literal("Edge"),
+        Text.translatable("armorstands.snap.edge"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(AlignPosition.EDGE);
+          ClientNetworking.sendSnapPosPacket(SnapPosition.EDGE);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
         screen.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.literal("Center"),
+        Text.translatable("armorstands.snap.center"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(AlignPosition.CENTER);
+          ClientNetworking.sendSnapPosPacket(SnapPosition.CENTER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
         screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.literal("Standing"),
+        Text.translatable("armorstands.snap.standing"),
         (button) -> {
-          ClientNetworking.sendAlignPosPacket(AlignPosition.STANDING);
+          ClientNetworking.sendSnapPosPacket(SnapPosition.STANDING);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.snap.sitting"),
+        (button) -> {
+          ClientNetworking.sendSnapPosPacket(SnapPosition.SITTING);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.snap.player"),
+        (button) -> {
+          ClientNetworking.sendSnapPosPacket(SnapPosition.PLAYER);
         }));
   }
 
