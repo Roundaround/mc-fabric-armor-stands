@@ -3,6 +3,7 @@ package me.roundaround.armorstands.util.actions;
 import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class MoveAction implements ArmorStandAction {
@@ -75,6 +76,14 @@ public class MoveAction implements ArmorStandAction {
   }
 
   public static void setPosition(ArmorStandEntity armorStand, double x, double y, double z) {
+    // Adjust y pos up just the tiniest bit if gravity is enabled to prevent the
+    // stand from falling through the floor when rounding errors occur.
+    boolean hasGravity = !armorStand.hasNoGravity();
+    double currY = armorStand.getY();
+    if (hasGravity && Math.abs(y - currY) > MathHelper.EPSILON) {
+      y += 0.01;
+    }
+
     armorStand.updateTrackedPosition(x, y, z);
     armorStand.setPosition(new Vec3d(x, y, z));
   }
