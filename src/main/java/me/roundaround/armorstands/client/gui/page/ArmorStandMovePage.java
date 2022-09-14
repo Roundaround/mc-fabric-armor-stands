@@ -6,6 +6,8 @@ import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
@@ -157,6 +159,14 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     addRowOfButtons(Text.translatable("armorstands.move.north"), Direction.NORTH, 2);
     addRowOfButtons(Text.translatable("armorstands.move.east"), Direction.EAST, 1);
     addRowOfButtons(Text.translatable("armorstands.move.west"), Direction.WEST, 0);
+  }
+
+  @Override
+  public void renderEntityOverlay(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
+    super.renderEntityOverlay(matrixStack, vertexConsumerProvider, light);
+    // EntityRenderDispatcher.renderHitbox
+    // EntityRenderDispatcher.renderFire
+    // EntityRenderer.renderLabelIfPresent
   }
 
   private Text getCurrectPosText(Entity entity) {
