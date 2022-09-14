@@ -12,7 +12,7 @@ import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPosePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandRotatePage;
-import me.roundaround.armorstands.client.gui.page.ArmorStandSettingsPage;
+import me.roundaround.armorstands.client.gui.page.ArmorStandUtilitiesPage;
 import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
@@ -323,7 +323,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       return;
     }
 
-    pages.add(new ArmorStandSettingsPage(client, this));
+    pages.add(new ArmorStandUtilitiesPage(client, this));
     pages.add(new ArmorStandMovePage(client, this));
     pages.add(new ArmorStandRotatePage(client, this));
     pages.add(new ArmorStandPosePage(client, this));

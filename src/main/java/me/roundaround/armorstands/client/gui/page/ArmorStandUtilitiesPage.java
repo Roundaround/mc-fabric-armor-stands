@@ -11,7 +11,7 @@ import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
-public class ArmorStandSettingsPage extends AbstractArmorStandPage {
+public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
   private static final int BUTTON_WIDTH = 100;
   protected static final int BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
@@ -19,8 +19,8 @@ public class ArmorStandSettingsPage extends AbstractArmorStandPage {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandSettingsPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.settings"), 0);
+  public ArmorStandUtilitiesPage(MinecraftClient client, ArmorStandScreen screen) {
+    super(client, screen, Text.translatable("armorstands.page.utilities"), 0);
   }
 
   @Override
