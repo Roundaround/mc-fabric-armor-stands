@@ -106,7 +106,7 @@ public class ArmorStandEditor {
   }
 
   public void setPos(double x, double y, double z) {
-    movePos(new Vec3d(x, y, z));
+    setPos(new Vec3d(x, y, z));
   }
 
   public void setPos(Vec3d position) {
