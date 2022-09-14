@@ -19,7 +19,7 @@
   "armorstands.move.east": "East (+X)",
   "armorstands.move.west": "West (-X)",
   "armorstands.snap.label": "Snap to",
-  "armorstands.snap.edge": "Edge",
+  "armorstands.snap.corner": "Corner",
   "armorstands.snap.center": "Center",
   "armorstands.snap.standing": "Standing",
   "armorstands.snap.sitting": "Sitting",

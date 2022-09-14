@@ -7,7 +7,7 @@ import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public enum SnapPosition {
-  EDGE("edge"),
+  CORNER("corner"),
   CENTER("center"),
   STANDING("standing"),
   SITTING("sitting"),
@@ -30,8 +30,8 @@ public enum SnapPosition {
 
   public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
     switch (this) {
-      case EDGE:
-        editor.alignHorizontalToEdge();
+      case CORNER:
+        editor.alignHorizontalToCorner();
         break;
       case CENTER:
         editor.alignHorizontalToCenter();

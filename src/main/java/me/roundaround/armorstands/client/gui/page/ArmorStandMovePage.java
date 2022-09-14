@@ -79,9 +79,9 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         screen.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.edge"),
+        Text.translatable("armorstands.snap.corner"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.EDGE);
+          ClientNetworking.sendSnapPosPacket(SnapPosition.CORNER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,

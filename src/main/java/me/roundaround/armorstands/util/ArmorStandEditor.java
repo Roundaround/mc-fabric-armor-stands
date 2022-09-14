@@ -63,7 +63,7 @@ public class ArmorStandEditor {
     applyAction(MoveAction.relative(amount, roundToPixel));
   }
 
-  public void alignHorizontalToEdge() {
+  public void alignHorizontalToCorner() {
     Vec3d position = armorStand.getPos();
     setPos(Math.floor(position.x), position.y, Math.floor(position.z));
   }
