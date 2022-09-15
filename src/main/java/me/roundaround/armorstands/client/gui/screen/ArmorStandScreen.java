@@ -29,14 +29,13 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasEntityOverlay {
+public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasArmorStandOverlay {
   protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/resource_packs.png");
@@ -136,16 +135,17 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
   }
 
   @Override
-  public void renderEntityOverlay(
-      LivingEntity entity,
+  public void renderArmorStandOverlay(
+      ArmorStandEntity armorStand,
+      float tickDelta,
       MatrixStack matrixStack,
       VertexConsumerProvider vertexConsumerProvider,
       int light) {
-    if (entity != armorStand) {
+    if (armorStand != this.armorStand) {
       return;
     }
 
-    page.renderEntityOverlay(matrixStack, vertexConsumerProvider, light);
+    page.renderArmorStandOverlay(armorStand, tickDelta, matrixStack, vertexConsumerProvider, light);
   }
 
   @Override

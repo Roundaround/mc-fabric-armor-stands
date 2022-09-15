@@ -1,10 +1,10 @@
 package me.roundaround.armorstands.client.gui.page;
 
-import net.minecraft.client.render.VertexConsumerProvider;
+import me.roundaround.armorstands.client.gui.screen.HasArmorStandOverlay;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
-public interface ArmorStandPage {
+public interface ArmorStandPage extends HasArmorStandOverlay {
   Text getTitle();
 
   int getTextureU();
@@ -20,9 +20,6 @@ public interface ArmorStandPage {
   }
 
   default void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-  }
-
-  default void renderEntityOverlay(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
   }
 
   default void tick() {

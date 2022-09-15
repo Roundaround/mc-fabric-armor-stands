@@ -6,12 +6,19 @@ import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.TexturedRenderLayers;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.model.ModelLoader;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Direction.AxisDirection;
 
 public class ArmorStandMovePage extends AbstractArmorStandPage {
@@ -162,11 +169,70 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   }
 
   @Override
-  public void renderEntityOverlay(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light) {
-    super.renderEntityOverlay(matrixStack, vertexConsumerProvider, light);
+  public void renderArmorStandOverlay(
+    ArmorStandEntity armorStand,
+    float tickDelta,
+    MatrixStack matrixStack,
+    VertexConsumerProvider vertexConsumerProvider,
+    int light) {
     // EntityRenderDispatcher.renderHitbox
     // EntityRenderDispatcher.renderFire
     // EntityRenderer.renderLabelIfPresent
+
+    Sprite sprite = ModelLoader.FIRE_0.getSprite();
+    Sprite sprite2 = ModelLoader.FIRE_1.getSprite();
+    matrixStack.push();
+    float f = armorStand.getWidth() * 1.4f;
+    matrixStack.scale(f, f, f);
+    float g = 0.5f;
+    float h = 0.0f;
+    float i = armorStand.getHeight() / f;
+    float j = 0.0f;
+    matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-client.getCameraEntity().getYaw()));
+    matrixStack.translate(0.0, 0.0, -0.3f + (float) ((int) i) * 0.02f);
+    float k = 0.0f;
+    int l = 0;
+    VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(TexturedRenderLayers.getEntityCutout());
+    MatrixStack.Entry entry = matrixStack.peek();
+    while (i > 0.0f) {
+      Sprite sprite3 = l % 2 == 0 ? sprite : sprite2;
+      float m = sprite3.getMinU();
+      float n = sprite3.getMinV();
+      float o = sprite3.getMaxU();
+      float p = sprite3.getMaxV();
+      if (l / 2 % 2 == 0) {
+        float q = o;
+        o = m;
+        m = q;
+      }
+      drawFireVertex(entry, vertexConsumer, g - 0.0f, 0.0f - j, k, o, p);
+      drawFireVertex(entry, vertexConsumer, -g - 0.0f, 0.0f - j, k, m, p);
+      drawFireVertex(entry, vertexConsumer, -g - 0.0f, 1.4f - j, k, m, n);
+      drawFireVertex(entry, vertexConsumer, g - 0.0f, 1.4f - j, k, o, n);
+      i -= 0.45f;
+      j -= 0.45f;
+      g *= 0.9f;
+      k += 0.03f;
+      ++l;
+    }
+    matrixStack.pop();
+  }
+
+  private static void drawFireVertex(
+      MatrixStack.Entry entry,
+      VertexConsumer vertices,
+      float x,
+      float y,
+      float z,
+      float u,
+      float v) {
+    vertices.vertex(entry.getPositionMatrix(), x, y, z)
+        .color(255, 255, 255, 255)
+        .texture(u, v)
+        .overlay(0, 10)
+        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
+        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
+        .next();
   }
 
   private Text getCurrectPosText(Entity entity) {

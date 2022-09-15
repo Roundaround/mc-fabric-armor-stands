@@ -13,10 +13,10 @@
     "ServerPlayerEntityAccessor"
   ],
   "client": [
+    "EntityRenderDispatcherMixin",
     "InGameHudMixin",
     "KeyBindingAccessor",
     "LivingEntityMixin",
-    "LivingEntityRendererMixin",
     "MinecraftClientMixin"
   ],
   "server": [],
