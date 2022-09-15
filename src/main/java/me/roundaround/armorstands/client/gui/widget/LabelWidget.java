@@ -20,9 +20,13 @@ public class LabelWidget extends DrawableHelper implements Drawable {
   private final boolean shiftForPadding;
   private final MinecraftClient client;
   private final TextRenderer textRenderer;
-  
+
   private Text text;
   private int textWidth;
+  private float left;
+  private float right;
+  private float top;
+  private float bottom;
 
   // TODO: Add option to include background padding in positioning
 
@@ -51,45 +55,6 @@ public class LabelWidget extends DrawableHelper implements Drawable {
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    float left, right;
-    switch (alignmentH) {
-      case CENTER:
-        left = posX - textWidth / 2f;
-        right = posX + textWidth / 2f;
-        break;
-      case END:
-        left = posX - textWidth;
-        right = posX;
-        break;
-      case START:
-      default:
-        left = posX;
-        right = posX + textWidth;
-    }
-
-    float top, bottom;
-    switch (alignmentV) {
-      case START:
-        top = posY;
-        bottom = posY + 10;
-        break;
-      case END:
-        top = posY - 10;
-        bottom = posY;
-        break;
-      case CENTER:
-      default:
-        top = posY - 10 / 2f;
-        bottom = posY + 10 / 2f;
-    }
-
-    if (shiftForPadding) {
-      left += alignmentH.getShiftOffset() * 2;
-      right += alignmentH.getShiftOffset() * 2;
-      top += alignmentV.getShiftOffset();
-      bottom += alignmentV.getShiftOffset();
-    }
-
     if (showBackground) {
       fill(
           matrixStack,
@@ -117,12 +82,63 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     }
   }
 
+  public boolean isMouseOver(double mouseX, double mouseY) {
+    int pixelLeft = MathHelper.floor(left) - (showBackground ? 2 : 0);
+    int pixelRight = MathHelper.ceil(right) + (showBackground ? 2 : 0);
+    int pixelTop = MathHelper.floor(top) - (showBackground ? 1 : 0);
+    int pixelpixelBottom = MathHelper.ceil(bottom) + (showBackground ? 1 : 0);
+    return mouseX >= pixelLeft
+        && mouseY >= pixelTop
+        && mouseX < pixelRight
+        && mouseY < pixelpixelBottom;
+  }
+
   public void setText(Text text) {
     if (this.text != null && text.getString().equals(this.text.getString())) {
       return;
     }
     this.text = text;
     textWidth = textRenderer.getWidth(text);
+    calculateBounds();
+  }
+
+  private void calculateBounds() {
+    switch (alignmentH) {
+      case CENTER:
+        left = posX - textWidth / 2f;
+        right = posX + textWidth / 2f;
+        break;
+      case END:
+        left = posX - textWidth;
+        right = posX;
+        break;
+      case START:
+      default:
+        left = posX;
+        right = posX + textWidth;
+    }
+
+    switch (alignmentV) {
+      case START:
+        top = posY;
+        bottom = posY + 10;
+        break;
+      case END:
+        top = posY - 10;
+        bottom = posY;
+        break;
+      case CENTER:
+      default:
+        top = posY - 10 / 2f;
+        bottom = posY + 10 / 2f;
+    }
+
+    if (shiftForPadding) {
+      left += alignmentH.getShiftOffset() * 2;
+      right += alignmentH.getShiftOffset() * 2;
+      top += alignmentV.getShiftOffset();
+      bottom += alignmentV.getShiftOffset();
+    }
   }
 
   public static Builder builder(Text text, int posX, int posY) {

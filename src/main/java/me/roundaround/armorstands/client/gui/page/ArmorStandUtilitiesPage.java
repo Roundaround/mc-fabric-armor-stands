@@ -13,8 +13,9 @@ import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
   private static final int BUTTON_WIDTH = 100;
-  protected static final int BUTTON_HEIGHT = 20;
-  protected static final int PADDING = 4;
+  protected static final int BUTTON_HEIGHT = 12;
+  private static final int SCREEN_EDGE_PAD = 4;
+  private static final int BETWEEN_PAD = 2;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
@@ -98,11 +99,10 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
       ArmorStandFlag flag,
       int index,
       boolean inverted) {
-    int xPos = screen.width - PADDING - BUTTON_WIDTH;
-    int yPos = screen.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
+    int xPos = screen.width - SCREEN_EDGE_PAD - BUTTON_WIDTH;
+    int yPos = screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - index * (BETWEEN_PAD + BUTTON_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
-        client,
         flag,
         inverted,
         currentValues.get(flag),

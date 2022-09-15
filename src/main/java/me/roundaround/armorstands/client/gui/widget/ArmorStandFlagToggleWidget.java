@@ -6,8 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -15,20 +13,20 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class ArmorStandFlagToggleWidget extends PressableWidget implements Consumer<Boolean> {
-  public static final int WIDGET_WIDTH = 14;
-  public static final int WIDGET_HEIGHT = 10;
-  private static final int BAR_WIDTH = 8;
+  public static final int WIDGET_WIDTH = 16;
+  public static final int WIDGET_HEIGHT = 12;
+  private static final int BAR_WIDTH = 10;
   private static final int TEXTURE_WIDTH = 200;
   private static final int TEXTURE_HEIGHT = 20;
 
-  private final MinecraftClient client;
   private final ArmorStandFlag flag;
   private final boolean inverted;
+  private final LabelWidget labelWidget;
+  private final int widgetX;
+  private final int widgetY;
   private boolean currentValue = false;
-  private int textWidth;
 
   public ArmorStandFlagToggleWidget(
-      MinecraftClient client,
       ArmorStandFlag flag,
       boolean inverted,
       boolean initialValue,
@@ -37,11 +35,22 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
       int width,
       Text label) {
     super(x, y, width, WIDGET_HEIGHT, label);
-    this.client = client;
     this.flag = flag;
     this.inverted = inverted;
+
+    this.labelWidget = LabelWidget.builder(
+        label,
+        x + width - WIDGET_WIDTH - 2,
+        y + height / 2)
+        .justifiedRight()
+        .alignedMiddle()
+        .shiftForPadding()
+        .build();
+
     currentValue = initialValue;
-    textWidth = client.textRenderer.getWidth(label);
+
+    widgetX = x + width - WIDGET_WIDTH;
+    widgetY = y + (height - WIDGET_HEIGHT) / 2;
   }
 
   @Override
@@ -60,12 +69,8 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public boolean isMouseOver(double mouseX, double mouseY) {
-    int right = x + width;
-    int left = right - WIDGET_WIDTH - 4 - textWidth;
-
     return active && visible
-        && mouseX >= left && mouseX < right
-        && mouseY >= y && mouseY < y + height;
+        && (labelWidget.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY));
   }
 
   @Override
@@ -75,42 +80,19 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    int right = x + width;
-    int left = right - WIDGET_WIDTH - 4 - textWidth;
-    hovered = mouseX >= left && mouseX < right && mouseY >= y && mouseY < y + height;
+    hovered = labelWidget.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY);
 
-    renderBackground(matrixStack, mouseX, mouseY, delta);
     renderWidget(matrixStack, mouseX, mouseY, delta);
-    renderLabel(matrixStack, mouseX, mouseY, delta);
+    labelWidget.render(matrixStack, mouseX, mouseY, delta);
   }
 
-  public void renderBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    textWidth = client.textRenderer.getWidth(getMessage());
-
-    int left = x + width - WIDGET_WIDTH - textWidth - 4;
-    int right = x + width;
-    int top = y + Math.round((height - 10) / 2f);
-    int bottom = y + Math.round((height + 10) / 2f);
-
-    fill(
-        matrixStack,
-        left - 2,
-        top - 2,
-        right + 2,
-        bottom + 2,
-        0x40000000);
-  }
-
-  public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  private void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
     RenderSystem.enableDepthTest();
-
-    int widgetX = x + width - WIDGET_WIDTH;
-    int widgetY = y + (height - WIDGET_HEIGHT) / 2;
 
     int u1 = 0;
     int u2 = TEXTURE_WIDTH - WIDGET_WIDTH / 2;
@@ -150,13 +132,11 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
     renderBar(matrixStack, mouseX, mouseY, delta);
   }
 
-  public void renderBar(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  private void renderBar(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-    int widgetX = x + width - WIDGET_WIDTH;
     int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
-    int widgetY = y + (height - WIDGET_HEIGHT) / 2;
 
     int u1 = 0;
     int u2 = TEXTURE_WIDTH - BAR_WIDTH / 2;
@@ -194,18 +174,8 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
         WIDGET_HEIGHT / 2);
   }
 
-  public void renderLabel(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    TextRenderer textRenderer = client.textRenderer;
-    textWidth = textRenderer.getWidth(getMessage());
-
-    int right = x + width - WIDGET_WIDTH - 4;
-    int left = right - textWidth;
-
-    textRenderer.draw(
-        matrixStack,
-        getMessage(),
-        left,
-        y + (height - 8) / 2,
-        active ? 0xFFFFFFFF : 0xFFA0A0A0);
+  private boolean isWidgetMouseOver(double mouseX, double mouseY) {
+    return mouseX >= widgetX && mouseX < widgetX + WIDGET_WIDTH
+        && mouseY >= widgetY && mouseY < widgetY + WIDGET_HEIGHT;
   }
 }
