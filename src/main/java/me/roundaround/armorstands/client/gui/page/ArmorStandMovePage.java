@@ -24,7 +24,7 @@ import net.minecraft.util.math.Direction.AxisDirection;
 public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int MINI_BUTTON_WIDTH = 16;
   private static final int MINI_BUTTON_HEIGHT = 16;
-  private static final int BUTTON_WIDTH = 50;
+  private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
