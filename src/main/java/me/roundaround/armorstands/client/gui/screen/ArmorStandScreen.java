@@ -214,11 +214,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         lockCursor();
         return true;
       case GLFW.GLFW_KEY_LEFT:
-        client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+        playClickSound();
         previousPage();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
-        client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+        playClickSound();
         nextPage();
         return true;
       case GLFW.GLFW_KEY_TAB:
@@ -231,6 +231,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         if (!Screen.hasControlDown()) {
           break;
         }
+        playClickSound();
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
     }
@@ -288,6 +289,10 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   public ArmorStandEntity getArmorStand() {
     return armorStand;
+  }
+
+  protected void playClickSound() {
+    client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
   }
 
   protected void lockCursor() {
