@@ -7,7 +7,10 @@ import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.UtilityAction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
@@ -22,6 +25,19 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
 
   public ArmorStandUtilitiesPage(MinecraftClient client, ArmorStandScreen screen) {
     super(client, screen, Text.translatable("armorstands.page.utilities"), 0);
+  }
+
+  @Override
+  public void preInit() {
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD,
+        screen.height - SCREEN_EDGE_PAD - 16,
+        60,
+        16,
+        Text.translatable("armorstands.utility.character"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.CHARACTER);
+        }));
   }
 
   @Override

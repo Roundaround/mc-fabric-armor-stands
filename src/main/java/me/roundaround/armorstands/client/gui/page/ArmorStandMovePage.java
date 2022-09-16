@@ -11,7 +11,7 @@ import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
-import me.roundaround.armorstands.network.SnapPosition;
+import me.roundaround.armorstands.network.UtilityAction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -103,7 +103,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.corner"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.CORNER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -112,7 +112,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.center"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.CENTER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
@@ -121,7 +121,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.standing"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.STANDING);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -130,7 +130,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.sitting"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.SITTING);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING);
         }));
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
@@ -139,7 +139,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.player"),
         (button) -> {
-          ClientNetworking.sendSnapPosPacket(SnapPosition.PLAYER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER);
         }));
   }
 

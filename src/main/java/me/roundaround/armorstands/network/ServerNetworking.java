@@ -22,8 +22,8 @@ public class ServerNetworking {
         NetworkPackets.ADJUST_POS_PACKET,
         ServerNetworking::handleAdjustPosPacket);
     ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.SNAP_POS_PACKET,
-        ServerNetworking::handleSnapPosPacket);
+        NetworkPackets.UTILITY_ACTION_PACKET,
+        ServerNetworking::handleUtilityActionPacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.TOGGLE_FLAG_PACKET,
         ServerNetworking::handleToggleFlagPacket);
@@ -74,20 +74,20 @@ public class ServerNetworking {
     editor.movePos(direction, pixels);
   }
 
-  public static void handleSnapPosPacket(
+  public static void handleUtilityActionPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    SnapPosition snap = SnapPosition.fromString(buf.readString());
+    UtilityAction action = UtilityAction.fromString(buf.readString());
 
     if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
     ArmorStandEditor editor = ((ArmorStandScreenHandler) player.currentScreenHandler).editor;
-    snap.apply(editor, player);
+    action.apply(editor, player);
   }
 
   public static void handleToggleFlagPacket(

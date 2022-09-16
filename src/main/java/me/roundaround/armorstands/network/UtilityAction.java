@@ -1,0 +1,87 @@
+package me.roundaround.armorstands.network;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+
+import me.roundaround.armorstands.ArmorStandsMod;
+import me.roundaround.armorstands.util.ArmorStandEditor;
+import me.roundaround.armorstands.util.actions.ArmorStandAction;
+import me.roundaround.armorstands.util.actions.ComboAction;
+import me.roundaround.armorstands.util.actions.FlagAction;
+import me.roundaround.armorstands.util.actions.MoveAction;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
+
+public enum UtilityAction {
+  CHARACTER("character"),
+  SNAP_CORNER("snap_corner"),
+  SNAP_CENTER("snap_center"),
+  SNAP_STANDING("snap_standing"),
+  SNAP_SITTING("snap_sitting"),
+  SNAP_PLAYER("snap_player"),
+  UNKNOWN("unknown");
+
+  private final String id;
+
+  private UtilityAction(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public String toString() {
+    return id;
+  }
+
+  public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
+    switch (this) {
+      case CHARACTER: {
+        ArrayList<ArmorStandAction> actions = new ArrayList<>();
+        actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
+        actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
+        actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+
+        Optional<Vec3d> maybeGround = editor.getStandingPos(false);
+        if (maybeGround.isPresent()) {
+          actions.add(MoveAction.absolute(maybeGround.get()));
+        }
+
+        editor.applyAction(ComboAction.of(actions));
+        break;
+      }
+      case SNAP_CORNER:
+        editor.setPos(editor.getCornerPos());
+        break;
+      case SNAP_CENTER:
+        editor.setPos(editor.getCenterPos());
+        break;
+      case SNAP_STANDING:
+      case SNAP_SITTING: {
+        ArrayList<ArmorStandAction> actions = new ArrayList<>();
+        actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+
+        Optional<Vec3d> maybeGround = editor.getGroundPos(this.equals(SNAP_SITTING));
+        if (maybeGround.isPresent()) {
+          actions.add(MoveAction.absolute(maybeGround.get()));
+        }
+
+        editor.applyAction(ComboAction.of(actions));
+        break;
+      }
+      case SNAP_PLAYER:
+        editor.setPos(player.getPos());
+        break;
+      default:
+    }
+  }
+
+  public static UtilityAction fromString(String value) {
+    return Arrays.stream(UtilityAction.values())
+        .filter((action) -> action.id.equals(value))
+        .findFirst()
+        .orElseGet(() -> {
+          ArmorStandsMod.LOGGER.warn("Unknown id '{}'. Defaulting to UNKNOWN.", value);
+          return UNKNOWN;
+        });
+  }
+}

@@ -1,10 +1,10 @@
 package me.roundaround.armorstands.util;
 
+import java.util.Optional;
 import java.util.Stack;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
-import me.roundaround.armorstands.util.actions.ComboAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
@@ -25,7 +25,11 @@ public class ArmorStandEditor {
     this.armorStand = armorStand;
   }
 
-  private void applyAction(ArmorStandAction action) {
+  public ArmorStandEntity getArmorStand() {
+    return armorStand;
+  }
+
+  public void applyAction(ArmorStandAction action) {
     action.apply(armorStand);
     actions.push(action);
     undos.clear();
@@ -63,17 +67,29 @@ public class ArmorStandEditor {
     applyAction(MoveAction.relative(amount, roundToPixel));
   }
 
-  public void alignHorizontalToCorner() {
+  public Vec3d getCornerPos() {
     Vec3d position = armorStand.getPos();
-    setPos(Math.floor(position.x), position.y, Math.floor(position.z));
+    return new Vec3d(Math.floor(position.x), position.y, Math.floor(position.z));
   }
 
-  public void alignHorizontalToCenter() {
+  public Vec3d getCenterPos() {
     Vec3d position = armorStand.getPos();
-    setPos(Math.round(position.x + 0.5) - 0.5, position.y, Math.round(position.z + 0.5) - 0.5);
+    return new Vec3d(Math.round(position.x + 0.5) - 0.5, position.y, Math.round(position.z + 0.5) - 0.5);
   }
 
-  public void snapToGround(boolean sitting) {
+  public Optional<Vec3d> getStandingPos() {
+    return getGroundPos(false);
+  }
+
+  public Optional<Vec3d> getStandingPos(boolean hasBasePlate) {
+    return getGroundPos(false, hasBasePlate);
+  }
+
+  public Optional<Vec3d> getGroundPos(boolean sitting) {
+    return getGroundPos(sitting, !armorStand.shouldHideBasePlate());
+  }
+
+  public Optional<Vec3d> getGroundPos(boolean sitting, boolean hasBasePlate) {
     Vec3d position = armorStand.getPos();
 
     World world = armorStand.getWorld();
@@ -90,23 +106,20 @@ public class ArmorStandEditor {
     }
 
     if (failed) {
-      applyAction(ArmorStandAction.noop());
-      return;
+      return Optional.empty();
     }
 
-    position = new Vec3d(position.x, blockPos.getY(), position.z);
+    Vec3d newPosition = new Vec3d(position.x, blockPos.getY(), position.z);
 
     if (sitting) {
-      position = position.subtract(0, 11 * 0.0625, 0);
+      newPosition = newPosition.subtract(0, 11 * 0.0625, 0);
     }
 
-    if (armorStand.shouldHideBasePlate()) {
-      position = position.subtract(0, 0.0625, 0);
+    if (!hasBasePlate) {
+      newPosition = newPosition.subtract(0, 0.0625, 0);
     }
 
-    applyAction(ComboAction.of(
-        FlagAction.set(ArmorStandFlag.GRAVITY, true),
-        MoveAction.absolute(position)));
+    return Optional.of(newPosition);
   }
 
   public void setPos(double x, double y, double z) {
