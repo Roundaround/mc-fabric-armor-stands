@@ -3,6 +3,8 @@ package me.roundaround.armorstands.client.gui.page;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
@@ -11,12 +13,12 @@ import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.model.ModelLoader;
-import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.render.VertexFormat;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -24,6 +26,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 
 public class ArmorStandMovePage extends AbstractArmorStandPage {
@@ -212,50 +215,41 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
     matrixStack.multiply(Direction.UP.getRotationQuaternion());
     matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180 - direction.asRotation()));
-    matrixStack.translate(-0.5f, 0.01f, -1.5f);
+    matrixStack.translate(-0.5f, 0.01f, 0.125f - 1.5f);
 
-    VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(TexturedRenderLayers.getEntityCutout());
-    MatrixStack.Entry entry = matrixStack.peek();
+    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShaderTexture(0, INDICATORS_TEXTURE);
+    RenderSystem.enableBlend();
 
-    float x0 = 0;
-    float x1 = 1;
+    Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
+    Tessellator tessellator = Tessellator.getInstance();
+    BufferBuilder buffer = tessellator.getBuffer();
+    buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+
+    float x0 = (16 - 13) / 32f;
+    float x1 = (16 + 13) / 32f;
     float z0 = 0;
     float z1 = 1;
 
-    Sprite sprite = ModelLoader.FIRE_0.getSprite();
-    float u0 = sprite.getMinU();
-    float v0 = sprite.getMinV();
-    float u1 = sprite.getMaxU();
-    float v1 = sprite.getMaxV();
+    float u0 = 0;
+    float v0 = 0;
+    float u1 = 13f / 256f;
+    float v1 = 16f / 256f;
 
-    vertexConsumer.vertex(entry.getPositionMatrix(), x0, 0, z1)
-        .color(255, 255, 255, 255)
+    buffer.vertex(matrix4f, x0, 0, z1)
         .texture(u0, v1)
-        .overlay(0, 10)
-        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
-        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
         .next();
-    vertexConsumer.vertex(entry.getPositionMatrix(), x1, 0, z1)
-        .color(255, 255, 255, 255)
+    buffer.vertex(matrix4f, x1, 0, z1)
         .texture(u1, v1)
-        .overlay(0, 10)
-        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
-        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
         .next();
-    vertexConsumer.vertex(entry.getPositionMatrix(), x1, 0, z0)
-        .color(255, 255, 255, 255)
+    buffer.vertex(matrix4f, x1, 0, z0)
         .texture(u1, v0)
-        .overlay(0, 10)
-        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
-        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
         .next();
-    vertexConsumer.vertex(entry.getPositionMatrix(), x0, 0, z0)
-        .color(255, 255, 255, 255)
+    buffer.vertex(matrix4f, x0, 0, z0)
         .texture(u0, v0)
-        .overlay(0, 10)
-        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
-        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
         .next();
+    tessellator.draw();
 
     matrixStack.pop();
   }
