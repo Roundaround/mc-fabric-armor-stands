@@ -8,6 +8,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
 public enum PosePreset {
+  DEFAULT(
+      "default",
+      new EulerAngle(0f, 0f, 0f),
+      new EulerAngle(0f, 0f, 0f),
+      new EulerAngle(-15f, 0f, 10f),
+      new EulerAngle(-10f, 0f, -10f),
+      new EulerAngle(1f, 0f, 1f),
+      new EulerAngle(-1f, 0f, -1f)),
   ATTENTION(
       "attention",
       new EulerAngle(0f, 0.001f, 0f),
