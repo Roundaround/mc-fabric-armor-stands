@@ -1,8 +1,13 @@
 package me.roundaround.armorstands.client.gui.page;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
+import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.SnapPosition;
 import net.minecraft.client.MinecraftClient;
@@ -16,10 +21,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Direction.AxisDirection;
 
 public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int MINI_BUTTON_WIDTH = 16;
@@ -28,6 +33,11 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
+  private static final Identifier INDICATORS_TEXTURE = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "textures/indicators.png");
+
+  private final ArrayList<MoveButtonWidget> moveButtons = new ArrayList<>();
 
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
@@ -160,6 +170,8 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .build();
     screen.addDrawable(standBlockPosLabel);
 
+    moveButtons.clear();
+
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
     addRowOfButtons(Text.translatable("armorstands.move.south"), Direction.SOUTH, 3);
@@ -170,69 +182,82 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
   @Override
   public void renderArmorStandOverlay(
-    ArmorStandEntity armorStand,
-    float tickDelta,
-    MatrixStack matrixStack,
-    VertexConsumerProvider vertexConsumerProvider,
-    int light) {
-    // EntityRenderDispatcher.renderHitbox
-    // EntityRenderDispatcher.renderFire
-    // EntityRenderer.renderLabelIfPresent
+      ArmorStandEntity armorStand,
+      float tickDelta,
+      MatrixStack matrixStack,
+      VertexConsumerProvider vertexConsumerProvider,
+      int light) {
+    int mouseX = (int) Math.round(client.mouse.getX()
+        * client.getWindow().getScaledWidth()
+        / client.getWindow().getWidth());
+    int mouseY = (int) Math.round(client.mouse.getY()
+        * client.getWindow().getScaledHeight()
+        / client.getWindow().getHeight());
 
-    Sprite sprite = ModelLoader.FIRE_0.getSprite();
-    Sprite sprite2 = ModelLoader.FIRE_1.getSprite();
+    Optional<MoveButtonWidget> hoveredButton = moveButtons.stream()
+        .filter((button) -> button.isMouseOver(mouseX, mouseY))
+        .findFirst();
+
+    if (hoveredButton.isEmpty()) {
+      return;
+    }
+
+    Direction direction = hoveredButton.get().direction;
+
+    if (direction.getAxis().isVertical()) {
+      return;
+    }
+
     matrixStack.push();
-    float f = armorStand.getWidth() * 1.4f;
-    matrixStack.scale(f, f, f);
-    float g = 0.5f;
-    float h = 0.0f;
-    float i = armorStand.getHeight() / f;
-    float j = 0.0f;
-    matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-client.getCameraEntity().getYaw()));
-    matrixStack.translate(0.0, 0.0, -0.3f + (float) ((int) i) * 0.02f);
-    float k = 0.0f;
-    int l = 0;
+
+    matrixStack.multiply(Direction.UP.getRotationQuaternion());
+    matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180 - direction.asRotation()));
+    matrixStack.translate(-0.5f, 0.01f, -1.5f);
+
     VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(TexturedRenderLayers.getEntityCutout());
     MatrixStack.Entry entry = matrixStack.peek();
-    while (i > 0.0f) {
-      Sprite sprite3 = l % 2 == 0 ? sprite : sprite2;
-      float m = sprite3.getMinU();
-      float n = sprite3.getMinV();
-      float o = sprite3.getMaxU();
-      float p = sprite3.getMaxV();
-      if (l / 2 % 2 == 0) {
-        float q = o;
-        o = m;
-        m = q;
-      }
-      drawFireVertex(entry, vertexConsumer, g - 0.0f, 0.0f - j, k, o, p);
-      drawFireVertex(entry, vertexConsumer, -g - 0.0f, 0.0f - j, k, m, p);
-      drawFireVertex(entry, vertexConsumer, -g - 0.0f, 1.4f - j, k, m, n);
-      drawFireVertex(entry, vertexConsumer, g - 0.0f, 1.4f - j, k, o, n);
-      i -= 0.45f;
-      j -= 0.45f;
-      g *= 0.9f;
-      k += 0.03f;
-      ++l;
-    }
-    matrixStack.pop();
-  }
 
-  private static void drawFireVertex(
-      MatrixStack.Entry entry,
-      VertexConsumer vertices,
-      float x,
-      float y,
-      float z,
-      float u,
-      float v) {
-    vertices.vertex(entry.getPositionMatrix(), x, y, z)
+    float x0 = 0;
+    float x1 = 1;
+    float z0 = 0;
+    float z1 = 1;
+
+    Sprite sprite = ModelLoader.FIRE_0.getSprite();
+    float u0 = sprite.getMinU();
+    float v0 = sprite.getMinV();
+    float u1 = sprite.getMaxU();
+    float v1 = sprite.getMaxV();
+
+    vertexConsumer.vertex(entry.getPositionMatrix(), x0, 0, z1)
         .color(255, 255, 255, 255)
-        .texture(u, v)
+        .texture(u0, v1)
         .overlay(0, 10)
         .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
         .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
         .next();
+    vertexConsumer.vertex(entry.getPositionMatrix(), x1, 0, z1)
+        .color(255, 255, 255, 255)
+        .texture(u1, v1)
+        .overlay(0, 10)
+        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
+        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
+        .next();
+    vertexConsumer.vertex(entry.getPositionMatrix(), x1, 0, z0)
+        .color(255, 255, 255, 255)
+        .texture(u1, v0)
+        .overlay(0, 10)
+        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
+        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
+        .next();
+    vertexConsumer.vertex(entry.getPositionMatrix(), x0, 0, z0)
+        .color(255, 255, 255, 255)
+        .texture(u0, v0)
+        .overlay(0, 10)
+        .light(LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE)
+        .normal(entry.getNormalMatrix(), 0.0f, 1.0f, 0.0f)
+        .next();
+
+    matrixStack.pop();
   }
 
   private Text getCurrectPosText(Entity entity) {
@@ -250,7 +275,6 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private void addRowOfButtons(Text label, Direction direction, int index) {
     int refX = screen.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
     int refY = screen.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
-    String modifier = direction.getDirection().equals(AxisDirection.POSITIVE) ? "+" : "-";
 
     screen.addDrawable(LabelWidget.builder(
         label,
@@ -258,32 +282,39 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         refY + MINI_BUTTON_HEIGHT / 2)
         .justifiedRight()
         .alignedMiddle());
-    screen.addDrawableChild(new MiniButtonWidget(
+
+    MoveButtonWidget one = new MoveButtonWidget(
         refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "1"),
-        (button) -> {
-          ClientNetworking.sendAdjustPosPacket(direction, 1);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
+        direction,
+        1);
+
+    MoveButtonWidget three = new MoveButtonWidget(
         refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "3"),
-        (button) -> {
-          ClientNetworking.sendAdjustPosPacket(direction, 3);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
+        direction,
+        3);
+
+    MoveButtonWidget eight = new MoveButtonWidget(
         refX,
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "8"),
-        (button) -> {
-          ClientNetworking.sendAdjustPosPacket(direction, 8);
-        }));
+        direction,
+        8);
+
+    screen.addDrawableChild(one);
+    screen.addDrawableChild(three);
+    screen.addDrawableChild(eight);
+
+    if (direction.getAxis().isHorizontal()) {
+      moveButtons.add(one);
+      moveButtons.add(three);
+      moveButtons.add(eight);
+    }
   }
 }

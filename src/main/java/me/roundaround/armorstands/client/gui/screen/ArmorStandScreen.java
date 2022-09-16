@@ -33,12 +33,8 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasArmorStandOverlay {
-  protected static final Identifier RESOURCE_PACKS_TEXTURE = new Identifier(
-      Identifier.DEFAULT_NAMESPACE,
-      "textures/gui/resource_packs.png");
   protected static final int BUTTON_WIDTH_MEDIUM = 100;
   protected static final int BUTTON_HEIGHT = 20;
   protected static final int PADDING = 4;
