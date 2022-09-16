@@ -100,6 +100,10 @@ public class ArmorStandEditor {
       position = position.subtract(0, 11 * 0.0625, 0);
     }
 
+    if (armorStand.shouldHideBasePlate()) {
+      position = position.subtract(0, 0.0625, 0);
+    }
+
     applyAction(ComboAction.of(
         FlagAction.set(ArmorStandFlag.GRAVITY, true),
         MoveAction.absolute(position)));
