@@ -39,20 +39,9 @@ public enum UtilityAction {
     ArmorStandEntity armorStand = editor.getArmorStand();
 
     switch (this) {
-      case CHARACTER: {
-        ArrayList<ArmorStandAction> actions = new ArrayList<>();
-        actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
-        actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
-        actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-
-        Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
-        if (maybeGround.isPresent()) {
-          actions.add(MoveAction.absolute(maybeGround.get()));
-        }
-
-        editor.applyAction(ComboAction.of(actions));
+      case CHARACTER:
+        applyCharacter(editor, armorStand, player);
         break;
-      }
       case SNAP_CORNER:
         editor.setPos(ArmorStandHelper.getCornerPos(armorStand));
         break;
@@ -60,18 +49,9 @@ public enum UtilityAction {
         editor.setPos(ArmorStandHelper.getCenterPos(armorStand));
         break;
       case SNAP_STANDING:
-      case SNAP_SITTING: {
-        ArrayList<ArmorStandAction> actions = new ArrayList<>();
-        actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-
-        Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.equals(SNAP_SITTING));
-        if (maybeGround.isPresent()) {
-          actions.add(MoveAction.absolute(maybeGround.get()));
-        }
-
-        editor.applyAction(ComboAction.of(actions));
+      case SNAP_SITTING:
+        applySnapGround(editor, armorStand, player);
         break;
-      }
       case SNAP_PLAYER:
         editor.setPos(player.getPos());
         break;
@@ -79,6 +59,32 @@ public enum UtilityAction {
       default:
         editor.applyAction(ArmorStandAction.noop());
     }
+  }
+
+  private void applyCharacter(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
+    ArrayList<ArmorStandAction> actions = new ArrayList<>();
+    actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
+    actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
+    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+
+    Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
+    if (maybeGround.isPresent()) {
+      actions.add(MoveAction.absolute(maybeGround.get()));
+    }
+
+    editor.applyAction(ComboAction.of(actions));
+  }
+
+  private void applySnapGround(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
+    ArrayList<ArmorStandAction> actions = new ArrayList<>();
+    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+
+    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.equals(SNAP_SITTING));
+    if (maybeGround.isPresent()) {
+      actions.add(MoveAction.absolute(maybeGround.get()));
+    }
+
+    editor.applyAction(ComboAction.of(actions));
   }
 
   public static UtilityAction fromString(String value) {
