@@ -6,10 +6,12 @@ import java.util.Optional;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.ArmorStandEditor;
+import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.ComboAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
@@ -34,6 +36,8 @@ public enum UtilityAction {
   }
 
   public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
+    ArmorStandEntity armorStand = editor.getArmorStand();
+
     switch (this) {
       case CHARACTER: {
         ArrayList<ArmorStandAction> actions = new ArrayList<>();
@@ -41,7 +45,7 @@ public enum UtilityAction {
         actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
         actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
 
-        Optional<Vec3d> maybeGround = editor.getStandingPos(false);
+        Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
         if (maybeGround.isPresent()) {
           actions.add(MoveAction.absolute(maybeGround.get()));
         }
@@ -50,17 +54,17 @@ public enum UtilityAction {
         break;
       }
       case SNAP_CORNER:
-        editor.setPos(editor.getCornerPos());
+        editor.setPos(ArmorStandHelper.getCornerPos(armorStand));
         break;
       case SNAP_CENTER:
-        editor.setPos(editor.getCenterPos());
+        editor.setPos(ArmorStandHelper.getCenterPos(armorStand));
         break;
       case SNAP_STANDING:
       case SNAP_SITTING: {
         ArrayList<ArmorStandAction> actions = new ArrayList<>();
         actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
 
-        Optional<Vec3d> maybeGround = editor.getGroundPos(this.equals(SNAP_SITTING));
+        Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.equals(SNAP_SITTING));
         if (maybeGround.isPresent()) {
           actions.add(MoveAction.absolute(maybeGround.get()));
         }
@@ -71,7 +75,9 @@ public enum UtilityAction {
       case SNAP_PLAYER:
         editor.setPos(player.getPos());
         break;
+      case UNKNOWN:
       default:
+        editor.applyAction(ArmorStandAction.noop());
     }
   }
 

@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.util;
 
-import java.util.Optional;
 import java.util.Stack;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
@@ -10,11 +9,9 @@ import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
 import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 
 public class ArmorStandEditor {
   private final ArmorStandEntity armorStand;
@@ -65,61 +62,6 @@ public class ArmorStandEditor {
 
   public void movePos(Vec3d amount, boolean roundToPixel) {
     applyAction(MoveAction.relative(amount, roundToPixel));
-  }
-
-  public Vec3d getCornerPos() {
-    Vec3d position = armorStand.getPos();
-    return new Vec3d(Math.floor(position.x), position.y, Math.floor(position.z));
-  }
-
-  public Vec3d getCenterPos() {
-    Vec3d position = armorStand.getPos();
-    return new Vec3d(Math.round(position.x + 0.5) - 0.5, position.y, Math.round(position.z + 0.5) - 0.5);
-  }
-
-  public Optional<Vec3d> getStandingPos() {
-    return getGroundPos(false);
-  }
-
-  public Optional<Vec3d> getStandingPos(boolean hasBasePlate) {
-    return getGroundPos(false, hasBasePlate);
-  }
-
-  public Optional<Vec3d> getGroundPos(boolean sitting) {
-    return getGroundPos(sitting, !armorStand.shouldHideBasePlate());
-  }
-
-  public Optional<Vec3d> getGroundPos(boolean sitting, boolean hasBasePlate) {
-    Vec3d position = armorStand.getPos();
-
-    World world = armorStand.getWorld();
-    BlockPos blockPos = armorStand.getBlockPos().up(2);
-    boolean failed = false;
-
-    while (!world.isTopSolid(blockPos.down(), armorStand)) {
-      blockPos = blockPos.down();
-
-      if (world.isOutOfHeightLimit(blockPos)) {
-        failed = true;
-        break;
-      }
-    }
-
-    if (failed) {
-      return Optional.empty();
-    }
-
-    Vec3d newPosition = new Vec3d(position.x, blockPos.getY(), position.z);
-
-    if (sitting) {
-      newPosition = newPosition.subtract(0, 11 * 0.0625, 0);
-    }
-
-    if (!hasBasePlate) {
-      newPosition = newPosition.subtract(0, 0.0625, 0);
-    }
-
-    return Optional.of(newPosition);
   }
 
   public void setPos(double x, double y, double z) {
