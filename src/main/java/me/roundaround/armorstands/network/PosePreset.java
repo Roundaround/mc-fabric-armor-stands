@@ -218,8 +218,8 @@ public enum PosePreset {
         .filter((pose) -> pose.id.equals(value))
         .findFirst()
         .orElseGet(() -> {
-          ArmorStandsMod.LOGGER.warn("Unknown id '{}'. Defaulting to ATTENTION.", value);
-          return ATTENTION;
+          ArmorStandsMod.LOGGER.warn("Unknown id '{}'. Defaulting to DEFAULT.", value);
+          return DEFAULT;
         });
   }
 }
