@@ -6,6 +6,7 @@ import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.network.UtilityAction;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -15,6 +16,8 @@ import net.minecraft.util.math.MathHelper;
 public class ArmorStandRotatePage extends AbstractArmorStandPage {
   private static final int MINI_BUTTON_WIDTH = 24;
   private static final int MINI_BUTTON_HEIGHT = 16;
+  private static final int BUTTON_WIDTH = 46;
+  private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
 
@@ -64,6 +67,41 @@ public class ArmorStandRotatePage extends AbstractArmorStandPage {
         .shiftForPadding()
         .build();
     screen.addDrawable(playerRotationLabel);
+
+    screen.addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.face.label"),
+        SCREEN_EDGE_PAD,
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - BETWEEN_PAD)
+        .shiftForPadding()
+        .justifiedLeft()
+        .alignedBottom());
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD,
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.face.toward"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.face.away"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
+        screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.face.with"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH);
+        }));
   }
 
   @Override

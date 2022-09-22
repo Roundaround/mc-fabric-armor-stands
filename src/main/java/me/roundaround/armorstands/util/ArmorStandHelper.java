@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -61,5 +62,12 @@ public class ArmorStandHelper {
     }
 
     return Optional.of(newPosition);
+  }
+
+  public static float getLookYaw(ArmorStandEntity armorStand, Vec3d point) {
+    Vec3d pos = armorStand.getPos();
+    double dX = point.x - pos.x;
+    double dZ = point.z - pos.z;
+    return MathHelper.wrapDegrees((float) Math.toDegrees(MathHelper.atan2(dZ, dX)) - 90.0f);
   }
 }

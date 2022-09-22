@@ -25,6 +25,9 @@ public enum UtilityAction {
   SNAP_STANDING("snap_standing"),
   SNAP_SITTING("snap_sitting"),
   SNAP_PLAYER("snap_player"),
+  FACE_TOWARD("face_toward"),
+  FACE_AWAY("face_away"),
+  FACE_WITH("face_with"),
   UNKNOWN("unknown");
 
   private final String id;
@@ -63,6 +66,15 @@ public enum UtilityAction {
         break;
       case SNAP_PLAYER:
         editor.setPos(player.getPos());
+        break;
+      case FACE_TOWARD:
+        editor.setRotation(ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));
+        break;
+      case FACE_AWAY:
+        editor.setRotation(180 + ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));
+        break;
+      case FACE_WITH:
+        editor.setRotation(player.getYaw());
         break;
       case UNKNOWN:
       default:
