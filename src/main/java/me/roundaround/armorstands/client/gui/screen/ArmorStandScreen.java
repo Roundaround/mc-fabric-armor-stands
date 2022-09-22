@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
@@ -16,6 +18,7 @@ import me.roundaround.armorstands.client.gui.page.ArmorStandUtilitiesPage;
 import me.roundaround.armorstands.client.gui.widget.DrawableBuilder;
 import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -118,6 +121,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
+    RenderSystem.enableBlend();
+    ((InGameHudAccessor) client.inGameHud).invokeRenderVignetteOverlay(client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
   }
 
@@ -153,6 +158,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         })
         .map((key) -> (KeyBindingAccessor) key)
         .forEach(KeyBindingAccessor::invokeReset);
+
+    ((InGameHudAccessor) client.inGameHud).invokeUpdateVignetteDarkness(client.getCameraEntity());
 
     page.tick();
   }

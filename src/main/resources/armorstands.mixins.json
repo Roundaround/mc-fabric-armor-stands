@@ -15,6 +15,7 @@
   ],
   "client": [
     "EntityRenderDispatcherMixin",
+    "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
     "LivingEntityMixin",
