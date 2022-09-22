@@ -7,6 +7,7 @@ import java.util.Optional;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.ArmorStandHelper;
+import me.roundaround.armorstands.util.Clipboard;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.ComboAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
@@ -16,6 +17,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Vec3d;
 
 public enum UtilityAction {
+  COPY("copy"),
+  PASTE("paste"),
   CHARACTER("character"),
   SNAP_CORNER("snap_corner"),
   SNAP_CENTER("snap_center"),
@@ -39,6 +42,12 @@ public enum UtilityAction {
     ArmorStandEntity armorStand = editor.getArmorStand();
 
     switch (this) {
+      case COPY:
+        Clipboard.copy(player, armorStand);
+        break;
+      case PASTE:
+        Clipboard.paste(player, editor);
+        break;
       case CHARACTER:
         applyCharacter(editor, armorStand, player);
         break;

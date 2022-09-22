@@ -10,7 +10,8 @@
     "MouseMixin",
     "NameTagItemMixin",
     "ScreenHandlerAccessor",
-    "ServerPlayerEntityAccessor"
+    "ServerPlayerEntityAccessor",
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "EntityRenderDispatcherMixin",

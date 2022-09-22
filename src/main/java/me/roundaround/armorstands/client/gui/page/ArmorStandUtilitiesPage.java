@@ -31,6 +31,24 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
   public void preInit() {
     screen.addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
+        screen.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
+        60,
+        16,
+        Text.translatable("armorstands.utility.copy"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + 60 + BETWEEN_PAD,
+        screen.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
+        60,
+        16,
+        Text.translatable("armorstands.utility.paste"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        }));
+    screen.addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD,
         screen.height - SCREEN_EDGE_PAD - 16,
         60,
         16,
