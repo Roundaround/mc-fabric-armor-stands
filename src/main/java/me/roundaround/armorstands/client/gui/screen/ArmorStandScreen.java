@@ -21,6 +21,7 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
+import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
@@ -236,6 +237,20 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
         }
         playClickSound();
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        return true;
+      case GLFW.GLFW_KEY_C:
+        if (!Screen.hasControlDown()) {
+          break;
+        }
+        playClickSound();
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        return true;
+      case GLFW.GLFW_KEY_V:
+        if (!Screen.hasControlDown()) {
+          break;
+        }
+        playClickSound();
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
 
