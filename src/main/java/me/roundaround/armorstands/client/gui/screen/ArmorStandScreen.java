@@ -28,6 +28,7 @@ import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
@@ -37,18 +38,23 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasArmorStandOverlay {
   protected static final int BUTTON_WIDTH_MEDIUM = 100;
   protected static final int BUTTON_HEIGHT = 20;
-  protected static final int PADDING = 4;
-  protected static final int ICON_BUTTON_SPACING = 2;
+  protected static final int PADDING = 1;
+  protected static final int ICON_BUTTON_SPACING = 0;
+  private static final Identifier WIDGETS_TEXTURE = new Identifier(
+      Identifier.DEFAULT_NAMESPACE,
+      "textures/gui/widgets.png");
 
   protected final ArmorStandEntity armorStand;
   protected final ArrayList<ArmorStandPage> pages = new ArrayList<>();
   protected final ArrayList<PageSelectButtonWidget> pageSelectButtons = new ArrayList<>();
 
   protected ArmorStandPage page;
+  protected PageSelectButtonWidget activeButton;
   protected int pageNum = 0;
   protected boolean cursorLocked = false;
 
@@ -93,6 +99,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
       PageSelectButtonWidget button = new PageSelectButtonWidget(x, y, this, page, i);
       if (button.isActivePage()) {
+        activeButton = button;
         addDrawable(button);
       } else {
         addDrawableChild(button);
@@ -125,6 +132,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     RenderSystem.enableBlend();
     ((InGameHudAccessor) client.inGameHud).invokeRenderVignetteOverlay(client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+
+    renderActivePageButtonHighlight(matrixStack);
   }
 
   @Override
@@ -307,6 +316,26 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   public ArmorStandEntity getArmorStand() {
     return armorStand;
+  }
+
+  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
+    if (activeButton == null) {
+      return;
+    }
+
+    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+    RenderSystem.enableBlend();
+    RenderSystem.defaultBlendFunc();
+
+    matrixStack.push();
+    matrixStack.translate(0, 0, 100);
+    drawTexture(matrixStack, activeButton.x - 2, activeButton.y - 2, 0, 22, 13, 13);
+    drawTexture(matrixStack, activeButton.x + PageSelectButtonWidget.WIDTH / 2 + 1, activeButton.y - 2, 12, 22, 12, 13);
+    drawTexture(matrixStack, activeButton.x - 2, activeButton.y + PageSelectButtonWidget.HEIGHT / 2 + 1, 0, 34, 13, 12);
+    drawTexture(matrixStack, activeButton.x + PageSelectButtonWidget.WIDTH / 2 + 1, activeButton.y + PageSelectButtonWidget.HEIGHT / 2 + 1, 12, 34, 12, 12);
+    matrixStack.pop();
   }
 
   protected void playClickSound() {

@@ -49,7 +49,8 @@ public class PageSelectButtonWidget extends ButtonWidget {
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableDepthTest();
 
-    int vIndex = isActivePage() ? 0 : (isHovered() ? 2 : 1);
+    // int vIndex = isActivePage() ? 0 : (isHovered() ? 2 : 1);
+    int vIndex = isHovered() ? 2 : 1;
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
