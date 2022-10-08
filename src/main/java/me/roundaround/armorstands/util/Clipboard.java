@@ -20,9 +20,7 @@ public class Clipboard {
       return false;
     }
 
-    Entry entry = entries.get(player.getUuid());
-    remove(player);
-    editor.applyAction(ClipboardPasteAction.create(entry));
+    editor.applyAction(ClipboardPasteAction.create(entries.get(player.getUuid())));
     return true;
   }
 
