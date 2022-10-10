@@ -13,6 +13,7 @@ public class FlagSnapshot implements ArmorStandApplyable {
   private FlagSnapshot(ArmorStandEntity armorStand, Predicate<ArmorStandFlag> predicate) {
     Arrays.stream(ArmorStandFlag.values())
         .filter(predicate)
+        .filter((flag) -> flag != ArmorStandFlag.UNKNOWN)
         .forEach((flag) -> {
           values.put(flag, flag.getValue(armorStand));
         });
