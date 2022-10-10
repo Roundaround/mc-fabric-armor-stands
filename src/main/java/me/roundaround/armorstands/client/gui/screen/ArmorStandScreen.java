@@ -9,7 +9,6 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
-import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
@@ -51,6 +50,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
       "textures/gui/widgets.png");
 
   protected final ArmorStandEntity armorStand;
+  protected final MessageRenderer messageRenderer;
   protected final ArrayList<ArmorStandPage> pages = new ArrayList<>();
   protected final ArrayList<PageSelectButtonWidget> pageSelectButtons = new ArrayList<>();
 
@@ -66,6 +66,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     super(screenHandler, playerInventory, Text.literal(""));
     passEvents = true;
     this.armorStand = armorStand;
+    messageRenderer = new MessageRenderer(this);
   }
 
   @Override
@@ -135,6 +136,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
 
     renderActivePageButtonHighlight(matrixStack);
+
+    messageRenderer.render(matrixStack);
   }
 
   @Override
@@ -173,6 +176,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     ((InGameHudAccessor) client.inGameHud).invokeUpdateVignetteDarkness(client.getCameraEntity());
 
     page.tick();
+    messageRenderer.tick();
   }
 
   @Override
@@ -246,7 +250,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
-        MessageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
+        messageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
@@ -254,7 +258,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
-        MessageRenderer.addMessage(MessageRenderer.TEXT_COPY);
+        messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
@@ -262,7 +266,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
-        MessageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
+        messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
