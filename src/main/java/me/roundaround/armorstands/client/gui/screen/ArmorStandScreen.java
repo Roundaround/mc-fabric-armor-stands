@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
@@ -245,6 +246,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
+        MessageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
@@ -252,6 +254,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
+        MessageRenderer.addMessage(MessageRenderer.TEXT_COPY);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
@@ -259,6 +262,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
           break;
         }
         playClickSound();
+        MessageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }

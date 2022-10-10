@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.armorstands.ArmorStandsMod;
+import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -27,6 +28,7 @@ public class ArmorStandsClientMod implements ClientModInitializer {
   @Override
   public void onInitializeClient() {
     ClientNetworking.registerReceivers();
+    MessageRenderer.init();
 
     highlightArmorStandKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "armorstands.key.highlight_armor_stand",
