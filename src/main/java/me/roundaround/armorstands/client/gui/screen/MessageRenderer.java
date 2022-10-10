@@ -75,7 +75,7 @@ public class MessageRenderer {
       TextRenderer textRenderer = client.textRenderer;
       int x = (screen.width - textRenderer.getWidth(text)) / 2 - 12;
       int y = (screen.height - textRenderer.fontHeight) / 2 + 12;
-  
+
       RenderSystem.setShaderColor(1f, 1f, 1f, getOpacity());
       RenderSystem.enableBlend();
       screen.renderTooltip(matrixStack, text, x, y);
@@ -87,11 +87,11 @@ public class MessageRenderer {
 
     private float getOpacity() {
       long renderTime = Util.getMeasuringTimeMs();
-  
+
       // 50ms per tick
       float partialTick = MathHelper.clamp((renderTime - lastTick) / 50f, 0, 1);
       float partialTimeRemaining = timeRemaining - partialTick;
-  
+
       if (timeRemaining > ANIM_IN_FINISH_TIME) {
         // Animating in
         float animTime = Math.max(0f, partialTimeRemaining) - ANIM_IN_FINISH_TIME;
