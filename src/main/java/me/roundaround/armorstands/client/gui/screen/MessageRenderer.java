@@ -4,13 +4,13 @@ import java.util.Optional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
 public class MessageRenderer {
@@ -51,13 +51,10 @@ public class MessageRenderer {
   }
 
   private static class Message extends DrawableHelper {
-    public static final int SHOW_DURATION = 80;
-    public static final int ANIM_DURATION = 3;
-    public static final int ANIM_IN_FINISH_TIME = SHOW_DURATION - ANIM_DURATION;
+    private static final int SHOW_DURATION = 40;
 
     private final Text text;
     private int timeRemaining;
-    private long lastTick;
 
     public Message(Text text) {
       this.text = text;
@@ -67,45 +64,30 @@ public class MessageRenderer {
 
     public void tick() {
       timeRemaining--;
-      lastTick = Util.getMeasuringTimeMs();
     }
 
     public void render(Screen screen, MatrixStack matrixStack) {
       MinecraftClient client = MinecraftClient.getInstance();
       TextRenderer textRenderer = client.textRenderer;
-      int x = (screen.width - textRenderer.getWidth(text)) / 2 - 12;
-      int y = (screen.height - textRenderer.fontHeight) / 2 + 12;
+      int width = textRenderer.getWidth(text);
+      int x = (screen.width - width) / 2;
+      int y = screen.height - PageSelectButtonWidget.HEIGHT - 1 - 6 - textRenderer.fontHeight;
+      float opacity = MathHelper.clamp(timeRemaining / 10f, 0f, 1f);
 
-      RenderSystem.setShaderColor(1f, 1f, 1f, getOpacity());
+      int backgroundAlpha = client.options.getTextBackgroundColor(0) >> 24 & 0xFF;
+
+      int backgroundColor = (int) (opacity * backgroundAlpha) << 24 & 0xFF000000;
+      int textColor = 0xFFFFFF + ((int) (opacity * 255) << 24);
+
       RenderSystem.enableBlend();
-      screen.renderTooltip(matrixStack, text, x, y);
+      RenderSystem.defaultBlendFunc();
+      fill(matrixStack, x - 2, y - 2, x + width + 2, y + textRenderer.fontHeight + 2, backgroundColor);
+      textRenderer.drawWithShadow(matrixStack, text, x, y, textColor);
+      RenderSystem.disableBlend();
     }
 
     public boolean isExpired() {
       return timeRemaining <= 0;
-    }
-
-    private float getOpacity() {
-      long renderTime = Util.getMeasuringTimeMs();
-
-      // 50ms per tick
-      float partialTick = MathHelper.clamp((renderTime - lastTick) / 50f, 0, 1);
-      float partialTimeRemaining = timeRemaining - partialTick;
-
-      if (timeRemaining > ANIM_IN_FINISH_TIME) {
-        // Animating in
-        float animTime = Math.max(0f, partialTimeRemaining) - ANIM_IN_FINISH_TIME;
-        float basePercent = MathHelper.clamp(animTime / ANIM_DURATION, 0, 1);
-        return 1f - basePercent * basePercent;
-      } else if (partialTimeRemaining < ANIM_DURATION) {
-        // Animating out
-        float animTime = Math.max(0f, partialTimeRemaining);
-        float basePercent = MathHelper.clamp(animTime / ANIM_DURATION, 0, 1);
-        return basePercent * basePercent;
-      } else {
-        // Fully showing
-        return 1f;
-      }
     }
   }
 }
