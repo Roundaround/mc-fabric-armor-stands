@@ -2,6 +2,7 @@ package me.roundaround.armorstands.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
@@ -29,6 +30,10 @@ public class FlagSnapshot implements ArmorStandApplyable {
 
   public static FlagSnapshot some(ArmorStandEntity armorStand, Predicate<ArmorStandFlag> predicate) {
     return new FlagSnapshot(armorStand, predicate);
+  }
+
+  public static FlagSnapshot of(ArmorStandEntity armorStand, ArmorStandFlag... flags) {
+    return new FlagSnapshot(armorStand, (flag) -> List.of(flags).contains(flag));
   }
 
   @Override
