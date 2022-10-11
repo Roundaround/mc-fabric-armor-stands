@@ -42,5 +42,9 @@
   "armorstands.current.facing.negZ": "negative Z",
   "armorstands.current.rotation": "Rotation: %d",
   "armorstands.current.position": "Position: %s / %s / %s",
-  "armorstands.current.block": "Block: %s %s %s"
+  "armorstands.current.block": "Block: %s %s %s",
+  "armorstands.message.copy": "Stand copied",
+  "armorstands.message.paste": "Stand pasted",
+  "armorstands.message.undo": "Undo",
+  "armorstands.message.redo": "Redo"
 }

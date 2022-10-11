@@ -14,10 +14,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 public class MessageRenderer {
-  public static final Text TEXT_COPY = Text.literal("Stand copied");
-  public static final Text TEXT_PASTE = Text.literal("Stand pasted");
-  public static final Text TEXT_UNDO = Text.literal("Action undone");
-  public static final Text TEXT_REDO = Text.literal("Action redone");
+  public static final Text TEXT_COPY = Text.translatable("armorstands.message.copy");
+  public static final Text TEXT_PASTE = Text.translatable("armorstands.message.paste");
+  public static final Text TEXT_UNDO = Text.translatable("armorstands.message.undo");
+  public static final Text TEXT_REDO = Text.translatable("armorstands.message.redo");
 
   private final Screen screen;
 
