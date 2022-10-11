@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 public enum UtilityAction {
   COPY("copy"),
   PASTE("paste"),
-  CHARACTER("character"),
+  POSEABLE("poseable"),
   SNAP_CORNER("snap_corner"),
   SNAP_CENTER("snap_center"),
   SNAP_STANDING("snap_standing"),
@@ -51,8 +51,8 @@ public enum UtilityAction {
       case PASTE:
         Clipboard.paste(player, editor);
         break;
-      case CHARACTER:
-        applyCharacter(editor, armorStand, player);
+      case POSEABLE:
+        applyPoseable(editor, armorStand, player);
         break;
       case SNAP_CORNER:
         editor.setPos(ArmorStandHelper.getCornerPos(armorStand));
@@ -82,7 +82,7 @@ public enum UtilityAction {
     }
   }
 
-  private void applyCharacter(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
+  private void applyPoseable(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
     ArrayList<ArmorStandAction> actions = new ArrayList<>();
     actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
     actions.add(FlagAction.set(ArmorStandFlag.BASE, true));

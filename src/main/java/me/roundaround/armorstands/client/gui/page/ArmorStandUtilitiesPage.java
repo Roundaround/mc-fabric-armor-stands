@@ -52,9 +52,9 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
         screen.height - SCREEN_EDGE_PAD - 16,
         60,
         16,
-        Text.translatable("armorstands.utility.character"),
+        Text.translatable("armorstands.utility.poseable"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.CHARACTER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.POSEABLE);
         }));
   }
 
