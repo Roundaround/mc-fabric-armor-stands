@@ -1,20 +1,16 @@
 package me.roundaround.armorstands.network;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Clipboard;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
-import me.roundaround.armorstands.util.actions.ComboAction;
-import me.roundaround.armorstands.util.actions.FlagAction;
-import me.roundaround.armorstands.util.actions.MoveAction;
+import me.roundaround.armorstands.util.actions.PrepareAction;
+import me.roundaround.armorstands.util.actions.SnapToGroundAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
 
 public enum UtilityAction {
   COPY("copy"),
@@ -52,7 +48,7 @@ public enum UtilityAction {
         Clipboard.paste(player, editor);
         break;
       case PREPARE:
-        applyPrepare(editor, armorStand, player);
+        editor.applyAction(PrepareAction.create(armorStand));
         break;
       case SNAP_CORNER:
         editor.setPos(ArmorStandHelper.getCornerPos(armorStand));
@@ -62,7 +58,7 @@ public enum UtilityAction {
         break;
       case SNAP_STANDING:
       case SNAP_SITTING:
-        applySnapGround(editor, armorStand, player);
+        editor.applyAction(SnapToGroundAction.create(armorStand, this.equals(SNAP_SITTING)));
         break;
       case SNAP_PLAYER:
         editor.setPos(player.getPos());
@@ -80,32 +76,6 @@ public enum UtilityAction {
       default:
         editor.applyAction(ArmorStandAction.noop());
     }
-  }
-
-  private void applyPrepare(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
-    ArrayList<ArmorStandAction> actions = new ArrayList<>();
-    actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
-    actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
-    if (maybeGround.isPresent()) {
-      actions.add(MoveAction.absolute(maybeGround.get()));
-    }
-
-    editor.applyAction(ComboAction.of(actions));
-  }
-
-  private void applySnapGround(ArmorStandEditor editor, ArmorStandEntity armorStand, ServerPlayerEntity player) {
-    ArrayList<ArmorStandAction> actions = new ArrayList<>();
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.equals(SNAP_SITTING));
-    if (maybeGround.isPresent()) {
-      actions.add(MoveAction.absolute(maybeGround.get()));
-    }
-
-    editor.applyAction(ComboAction.of(actions));
   }
 
   public static UtilityAction fromString(String value) {

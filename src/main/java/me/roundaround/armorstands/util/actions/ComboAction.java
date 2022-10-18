@@ -7,9 +7,9 @@ import java.util.List;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public class ComboAction implements ArmorStandAction {
-  private final ArrayList<ArmorStandAction> actions = new ArrayList<>();
+  protected final ArrayList<ArmorStandAction> actions = new ArrayList<>();
 
-  private ComboAction(Collection<ArmorStandAction> actions) {
+  protected ComboAction(Collection<ArmorStandAction> actions) {
     this.actions.addAll(actions);
   }
 
