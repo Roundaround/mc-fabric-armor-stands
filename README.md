@@ -1,15 +1,17 @@
-# Roundaround's Custom Paintings
+# Roundaround's Armor Stands
 
 <img src="https://img.shields.io/badge/Loader-Fabric-%23313e51?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/MC-1.19-%23313e51?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Side-Client+Server-%23313e51?style=for-the-badge"/>
 
-Add your own custom paintings to Minecraft! Custom sizes, unlimited amount, and
-an easy GUI for placing and managing your paintings!
+Place, pose, and dress armor stands with an easy-to-use UI.
+
+Those familiar with VanillaTweak's armor stand book will find much of the same
+functionality, but in a much easier format!
 
 ## Download
 
-https://modrinth.com/mod/roundaround-custom-paintings
+https://modrinth.com/mod/roundaround-armor-stands
 
 ## License
 
