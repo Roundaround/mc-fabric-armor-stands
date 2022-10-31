@@ -6,8 +6,6 @@
   "mixins": [
     "ArmorStandEntityAccessor",
     "ArmorStandEntityMixin",
-    "MouseAccessor",
-    "MouseMixin",
     "NameTagItemMixin",
     "ScreenHandlerAccessor",
     "ServerPlayerEntityAccessor",
@@ -19,7 +17,9 @@
     "InGameHudMixin",
     "KeyBindingAccessor",
     "LivingEntityMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "MouseAccessor",
+    "MouseMixin"
   ],
   "server": [],
   "injectors": {
