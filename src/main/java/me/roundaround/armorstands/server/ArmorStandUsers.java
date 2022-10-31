@@ -3,7 +3,10 @@ package me.roundaround.armorstands.server;
 import java.io.File;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ArmorStandUsers {
@@ -19,6 +22,14 @@ public class ArmorStandUsers {
   public static boolean canEditArmorStands(PlayerEntity player) {
     if (!(player instanceof ServerPlayerEntity)) {
       return false;
+    }
+
+    MinecraftServer server = ((ServerPlayerEntity) player).getServer();
+    if (server.isDedicated()) {
+      ServerPropertiesHandler propertiesHandler = ((MinecraftDedicatedServer) server).getProperties();
+      if (!((ServerPropertiesWithArmorStands) propertiesHandler).getEnforceArmorStandPermissions()) {
+        return true;
+      }
     }
 
     if (player.hasPermissionLevel(PERMISSION_LEVEL)) {

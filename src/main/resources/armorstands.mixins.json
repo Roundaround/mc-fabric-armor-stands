@@ -9,7 +9,8 @@
     "NameTagItemMixin",
     "ScreenHandlerAccessor",
     "ServerPlayerEntityAccessor",
-    "ServerPlayerEntityMixin"
+    "ServerPlayerEntityMixin",
+    "ServerPropertiesHandlerMixin"
   ],
   "client": [
     "EntityRenderDispatcherMixin",
