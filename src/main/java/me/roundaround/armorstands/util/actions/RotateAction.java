@@ -3,6 +3,7 @@ package me.roundaround.armorstands.util.actions;
 import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 
 public class RotateAction implements ArmorStandAction {
   private final float argument;
@@ -30,6 +31,11 @@ public class RotateAction implements ArmorStandAction {
 
   public static RotateAction relative(float rotation, boolean round) {
     return new RotateAction(rotation, false, round);
+  }
+
+  @Override
+  public Text getName(ArmorStandEntity armorStand) {
+    return Text.translatable("armorstands.action.rotate");
   }
 
   @Override

@@ -7,11 +7,12 @@ import java.util.Optional;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class SnapToGroundAction extends ComboAction {
   private SnapToGroundAction(Collection<ArmorStandAction> actions) {
-    super(actions);
+    super(Text.translatable("armorstands.action.snap"), actions);
   }
 
   public static SnapToGroundAction create(ArmorStandEntity armorStand, boolean sitting) {

@@ -2,6 +2,7 @@ package me.roundaround.armorstands.util.actions;
 
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 
 public class PoseAction extends SimpleArmorStandAction<Pose> {
   private PoseAction(Pose pose) {
@@ -10,6 +11,11 @@ public class PoseAction extends SimpleArmorStandAction<Pose> {
 
   public static PoseAction fromPose(Pose pose) {
     return new PoseAction(pose);
+  }
+
+  @Override
+  public Text getName(ArmorStandEntity armorStand) {
+    return Text.translatable("armorstands.action.pose");
   }
 
   @Override

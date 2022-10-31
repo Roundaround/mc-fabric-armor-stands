@@ -3,6 +3,7 @@ package me.roundaround.armorstands.util.actions;
 import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -40,6 +41,11 @@ public class MoveAction implements ArmorStandAction {
 
   public static MoveAction relative(double x, double y, double z) {
     return relative(x, y, z, false);
+  }
+
+  @Override
+  public Text getName(ArmorStandEntity armorStand) {
+    return Text.translatable("armorstands.action.move");
   }
 
   @Override

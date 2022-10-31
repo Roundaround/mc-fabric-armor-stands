@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 
 public class FlagAction implements ArmorStandAction {
   private final ArmorStandFlag flag;
@@ -23,6 +24,11 @@ public class FlagAction implements ArmorStandAction {
 
   public static FlagAction toggle(ArmorStandFlag flag) {
     return new FlagAction(flag, true, false);
+  }
+
+  @Override
+  public Text getName(ArmorStandEntity armorStand) {
+    return Text.translatable("armorstands.action.flag", flag);
   }
 
   @Override

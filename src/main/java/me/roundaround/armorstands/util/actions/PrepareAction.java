@@ -7,11 +7,12 @@ import java.util.Optional;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
 
 public class PrepareAction extends ComboAction {
   private PrepareAction(Collection<ArmorStandAction> actions) {
-    super(actions);
+    super(Text.translatable("armorstands.action.prepare"), actions);
   }
 
   public static PrepareAction create(ArmorStandEntity armorStand) {
