@@ -44,6 +44,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
+  private LabelWidget playerFacingLabel;
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
 
@@ -55,6 +56,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   public void tick() {
     playerPosLabel.setText(getCurrectPosText(client.player));
     playerBlockPosLabel.setText(getCurrectBlockPosText(client.player));
+    playerFacingLabel.setText(getCurrentFacingText(client.player));
     standPosLabel.setText(getCurrectPosText(screen.getArmorStand()));
     standBlockPosLabel.setText(getCurrectBlockPosText(screen.getArmorStand()));
   }
@@ -88,6 +90,16 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding()
         .build();
     screen.addDrawable(playerBlockPosLabel);
+
+    playerFacingLabel = LabelWidget.builder(
+        getCurrentFacingText(client.player),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 3 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build();
+    screen.addDrawable(playerFacingLabel);
 
     screen.addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.snap.label"),
@@ -264,6 +276,20 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
   private Text getCurrectBlockPosText(Entity entity) {
     BlockPos pos = entity.getBlockPos();
     return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
+  }
+
+  private Text getCurrentFacingText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    Direction currentFacing = Direction.fromRotation(currentRotation);
+    String towardsI18n = switch (currentFacing) {
+      case NORTH -> "negZ";
+      case SOUTH -> "posZ";
+      case WEST -> "negX";
+      case EAST -> "posX";
+      default -> "posX";
+    };
+    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
+    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
   }
 
   private void addRowOfButtons(Text label, Direction direction, int index) {
