@@ -54,11 +54,11 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
   @Override
   public void tick() {
-    playerPosLabel.setText(getCurrectPosText(client.player));
-    playerBlockPosLabel.setText(getCurrectBlockPosText(client.player));
+    playerPosLabel.setText(getCurrentPosText(client.player));
+    playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
     playerFacingLabel.setText(getCurrentFacingText(client.player));
-    standPosLabel.setText(getCurrectPosText(screen.getArmorStand()));
-    standBlockPosLabel.setText(getCurrectBlockPosText(screen.getArmorStand()));
+    standPosLabel.setText(getCurrentPosText(screen.getArmorStand()));
+    standBlockPosLabel.setText(getCurrentBlockPosText(screen.getArmorStand()));
   }
 
   @Override
@@ -72,7 +72,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding());
 
     playerPosLabel = LabelWidget.builder(
-        getCurrectPosText(client.player),
+        getCurrentPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -82,7 +82,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     screen.addDrawable(playerPosLabel);
 
     playerBlockPosLabel = LabelWidget.builder(
-        getCurrectBlockPosText(client.player),
+        getCurrentBlockPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -166,7 +166,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding());
 
     standPosLabel = LabelWidget.builder(
-        getCurrectPosText(screen.getArmorStand()),
+        getCurrentPosText(screen.getArmorStand()),
         screen.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -176,7 +176,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     screen.addDrawable(standPosLabel);
 
     standBlockPosLabel = LabelWidget.builder(
-        getCurrectBlockPosText(screen.getArmorStand()),
+        getCurrentBlockPosText(screen.getArmorStand()),
         screen.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -266,14 +266,14 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     matrixStack.pop();
   }
 
-  private Text getCurrectPosText(Entity entity) {
+  private Text getCurrentPosText(Entity entity) {
     String xStr = String.format("%.3f", entity.getX());
     String yStr = String.format("%.3f", entity.getY());
     String zStr = String.format("%.3f", entity.getZ());
     return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
   }
 
-  private Text getCurrectBlockPosText(Entity entity) {
+  private Text getCurrentBlockPosText(Entity entity) {
     BlockPos pos = entity.getBlockPos();
     return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
   }
