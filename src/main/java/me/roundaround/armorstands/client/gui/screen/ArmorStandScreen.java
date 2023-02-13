@@ -9,6 +9,8 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.HasArmorStandOverlay;
+import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.page.ArmorStandInventoryPage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandMovePage;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
