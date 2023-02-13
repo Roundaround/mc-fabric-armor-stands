@@ -22,6 +22,9 @@ public interface ArmorStandPage extends HasArmorStandOverlay {
   default void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
   }
 
+  default void drawForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
+  }
+
   default void tick() {
   }
 }

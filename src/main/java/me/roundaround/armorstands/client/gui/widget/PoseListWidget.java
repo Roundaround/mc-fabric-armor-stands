@@ -20,12 +20,13 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
 
   public PoseListWidget(
       MinecraftClient minecraftClient,
+      int x,
+      int y,
       int width,
-      int height,
-      int top,
-      int bottom) {
-    super(minecraftClient, width, height, top, bottom, ITEM_HEIGHT);
+      int height) {
+    super(minecraftClient, width, height, y, y + height, ITEM_HEIGHT);
 
+    setLeftPos(x);
     setRenderBackground(false);
     setRenderHeader(false, 0);
     setRenderHorizontalShadows(false);

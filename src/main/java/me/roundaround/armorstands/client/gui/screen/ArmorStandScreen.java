@@ -152,6 +152,7 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
 
   @Override
   protected void drawForeground(MatrixStack matrixStack, int mouseX, int mouseY) {
+    page.drawForeground(matrixStack, mouseX, mouseY);
   }
 
   @Override
@@ -347,7 +348,8 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     drawTexture(matrixStack, activeButton.x - 2, activeButton.y - 2, 0, 22, 13, 13);
     drawTexture(matrixStack, activeButton.x + PageSelectButtonWidget.WIDTH / 2 + 1, activeButton.y - 2, 12, 22, 12, 13);
     drawTexture(matrixStack, activeButton.x - 2, activeButton.y + PageSelectButtonWidget.HEIGHT / 2 + 1, 0, 34, 13, 12);
-    drawTexture(matrixStack, activeButton.x + PageSelectButtonWidget.WIDTH / 2 + 1, activeButton.y + PageSelectButtonWidget.HEIGHT / 2 + 1, 12, 34, 12, 12);
+    drawTexture(matrixStack, activeButton.x + PageSelectButtonWidget.WIDTH / 2 + 1,
+        activeButton.y + PageSelectButtonWidget.HEIGHT / 2 + 1, 12, 34, 12, 12);
     matrixStack.pop();
   }
 
