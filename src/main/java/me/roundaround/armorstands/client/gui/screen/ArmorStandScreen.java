@@ -122,6 +122,11 @@ public class ArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> imp
     return super.addDrawable(drawable);
   }
 
+  @Override
+  public <T extends Element & Selectable> T addSelectableChild(T child) {
+    return super.addSelectableChild(child);
+  }
+
   public <T extends Drawable, S extends DrawableBuilder<T>> T addDrawable(S builder) {
     return addDrawable(builder.build());
   }

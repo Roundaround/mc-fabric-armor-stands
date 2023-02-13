@@ -209,6 +209,10 @@ public enum PosePreset {
     return id;
   }
 
+  public Text getLabel() {
+    return label;
+  }
+
   public Pose toPose() {
     return new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg);
   }
