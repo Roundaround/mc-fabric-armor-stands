@@ -10,14 +10,17 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 public class ArmorStandState {
   private final MinecraftClient client;
   private final ArmorStandEntity armorStand;
+  private final int syncId;
 
   private boolean cursorLocked = false;
 
   public ArmorStandState(
       MinecraftClient client,
-      ArmorStandEntity armorStand) {
+      ArmorStandEntity armorStand,
+      int syncId) {
     this.client = client;
     this.armorStand = armorStand;
+    this.syncId = syncId;
   }
 
   public MinecraftClient getClient() {
@@ -53,5 +56,9 @@ public class ArmorStandState {
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
     InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+  }
+
+  public int getSyncId() {
+    return syncId;
   }
 }

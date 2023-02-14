@@ -10,16 +10,15 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.HasArmorStandState;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
-import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.UtilityAction;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
@@ -29,6 +28,8 @@ import net.minecraft.text.Text;
 public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
     extends HandledScreen<T>
     implements HasArmorStandState {
+  protected static final int PADDING = 1;
+  protected static final int ICON_BUTTON_SPACING = 0;
 
   protected final ArmorStandState state;
   protected final MessageRenderer messageRenderer;
@@ -131,7 +132,7 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
     switch (keyCode) {
       case GLFW.GLFW_KEY_LEFT_ALT:
       case GLFW.GLFW_KEY_RIGHT_ALT:
-        lockCursor();
+        this.state.lockCursor();
         return true;
       case GLFW.GLFW_KEY_Z:
         if (!supportsUndoRedo() || !Screen.hasControlDown()) {
@@ -139,7 +140,7 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
         }
         playClickSound();
         messageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
-        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        ClientNetworking.sendUndoPacket(this.state.getArmorStand(), Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
         if (!supportsUndoRedo() || !Screen.hasControlDown()) {
@@ -147,7 +148,7 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!supportsUndoRedo() || !Screen.hasControlDown()) {
@@ -155,7 +156,7 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PASTE);
         return true;
     }
 
@@ -165,33 +166,78 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
   @Override
   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
     if (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT) {
-      unlockCursor();
+      this.state.unlockCursor();
       return true;
     }
 
     return super.keyPressed(keyCode, scanCode, modifiers);
   }
 
-  protected void lockCursor() {
-    // TODO: Determine if and how to do mouse release event
-    // mouseReleased(client.mouse.getX(), client.mouse.getY(),
-    // GLFW.GLFW_MOUSE_BUTTON_LAST);
+  protected void initNavigationButtons() {
+    int index = 0;
+    int totalWidth = 5 * NavigationButton.WIDTH + 4 * ICON_BUTTON_SPACING;
 
-    cursorLocked = true;
-    int x = client.getWindow().getWidth() / 2;
-    int y = client.getWindow().getHeight() / 2;
-    ((MouseAccessor) client.mouse).setX(x);
-    ((MouseAccessor) client.mouse).setY(y);
-    InputUtil.setCursorParameters(client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
-  }
+    int x = (width - totalWidth) / 2 - 2 * ICON_BUTTON_SPACING;
+    int y = height - PADDING - NavigationButton.HEIGHT;
 
-  protected void unlockCursor() {
-    cursorLocked = false;
-    int x = client.getWindow().getWidth() / 2;
-    int y = client.getWindow().getHeight() / 2;
-    ((MouseAccessor) client.mouse).setX(x);
-    ((MouseAccessor) client.mouse).setY(y);
-    InputUtil.setCursorParameters(client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+    addDrawableChild(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandUtilitiesScreen.TITLE,
+        ArmorStandUtilitiesScreen::new,
+        index));
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    addDrawableChild(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandMoveScreen.TITLE,
+        ArmorStandMoveScreen::new,
+        index));
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    addDrawableChild(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandRotateScreen.TITLE,
+        ArmorStandRotateScreen::new,
+        index));
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    addDrawableChild(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandPoseScreen.TITLE,
+        ArmorStandPoseScreen::new,
+        index));
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    addDrawable(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandInventoryScreen.TITLE,
+        (button, state) -> {
+
+        },
+        index));
   }
 
   protected void playClickSound() {

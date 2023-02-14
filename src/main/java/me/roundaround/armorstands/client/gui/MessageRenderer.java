@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -71,7 +71,7 @@ public class MessageRenderer {
       TextRenderer textRenderer = client.textRenderer;
       int width = textRenderer.getWidth(text);
       int x = (screen.width - width) / 2;
-      int y = screen.height - PageSelectButtonWidget.HEIGHT - 1 - 6 - textRenderer.fontHeight;
+      int y = screen.height - NavigationButton.HEIGHT - 1 - 6 - textRenderer.fontHeight;
       float opacity = MathHelper.clamp(timeRemaining / 10f, 0f, 1f);
 
       int backgroundAlpha = client.options.getTextBackgroundColor(0) >> 24 & 0xFF;

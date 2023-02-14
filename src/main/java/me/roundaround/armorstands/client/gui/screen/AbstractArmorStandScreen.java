@@ -1,7 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
@@ -11,16 +10,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.HasArmorStandState;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
-import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 
@@ -133,7 +133,7 @@ public abstract class AbstractArmorStandScreen
         }
         playClickSound();
         messageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
-        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        ClientNetworking.sendUndoPacket(this.state.getArmorStand(), Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
         if (!supportsUndoRedo() || !Screen.hasControlDown()) {
@@ -141,7 +141,7 @@ public abstract class AbstractArmorStandScreen
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!supportsUndoRedo() || !Screen.hasControlDown()) {
@@ -149,7 +149,7 @@ public abstract class AbstractArmorStandScreen
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PASTE);
         return true;
     }
 
@@ -167,25 +167,121 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void initNavigationButtons() {
-    // TODO: Remove reference to pages when the button component is converted
-    List<ArmorStandPage> pages = List.of(null, null, null, null, null);
+    int index = 0;
+    int totalWidth = 5 * NavigationButton.WIDTH + 4 * ICON_BUTTON_SPACING;
 
-    for (int i = 0; i < pages.size(); i++) {
-      ArmorStandPage page = pages.get(i);
-      int totalWidth = pages.size() * PageSelectButtonWidget.WIDTH
-          + (pages.size() - 1) * ICON_BUTTON_SPACING;
-      int x = (width - totalWidth) / 2
-          + i * PageSelectButtonWidget.HEIGHT
-          + (i - 1) * ICON_BUTTON_SPACING;
-      int y = height - PADDING - PageSelectButtonWidget.HEIGHT;
+    int x = (width - totalWidth) / 2 - 2 * ICON_BUTTON_SPACING;
+    int y = height - PADDING - NavigationButton.HEIGHT;
 
-      PageSelectButtonWidget button = new PageSelectButtonWidget(x, y, this, page, i);
-      if (button.isActivePage()) {
-        addDrawable(button);
-      } else {
-        addDrawableChild(button);
-      }
+    if (this instanceof ArmorStandUtilitiesScreen) {
+      addDrawable(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandUtilitiesScreen.TITLE,
+          index));
+    } else {
+      addDrawableChild(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandUtilitiesScreen.TITLE,
+          ArmorStandUtilitiesScreen::new,
+          index));
     }
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    if (this instanceof ArmorStandMoveScreen) {
+      addDrawable(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandMoveScreen.TITLE,
+          index));
+    } else {
+      addDrawableChild(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandMoveScreen.TITLE,
+          ArmorStandMoveScreen::new,
+          index));
+    }
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    if (this instanceof ArmorStandRotateScreen) {
+      addDrawable(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandRotateScreen.TITLE,
+          index));
+    } else {
+      addDrawableChild(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandRotateScreen.TITLE,
+          ArmorStandRotateScreen::new,
+          index));
+    }
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    if (this instanceof ArmorStandPoseScreen) {
+      addDrawable(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandPoseScreen.TITLE,
+          index));
+    } else {
+      addDrawableChild(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandPoseScreen.TITLE,
+          ArmorStandPoseScreen::new,
+          index));
+    }
+
+    index++;
+    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+
+    addDrawableChild(new NavigationButton<>(
+        this.client,
+        this,
+        x,
+        y,
+        ArmorStandInventoryScreen.TITLE,
+        (button, state) -> {
+          int syncId = state.getSyncId();
+          PlayerInventory playerInventory = this.client.player.getInventory();
+          ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
+              syncId,
+              playerInventory,
+              state.getArmorStand());
+
+          this.client.player.currentScreenHandler = screenHandler;
+          this.client.setScreen(new ArmorStandInventoryScreen(
+              screenHandler,
+              playerInventory,
+              state));
+        },
+        index));
   }
 
   protected void playClickSound() {

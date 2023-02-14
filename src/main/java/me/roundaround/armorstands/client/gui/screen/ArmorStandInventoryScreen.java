@@ -23,6 +23,8 @@ import net.minecraft.util.math.Vec3f;
 
 public class ArmorStandInventoryScreen
     extends AbstractHandledArmorStandScreen<ArmorStandScreenHandler> {
+  public static final Text TITLE = Text.translatable("armorstands.page.inventory");
+
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
@@ -36,7 +38,7 @@ public class ArmorStandInventoryScreen
       ArmorStandScreenHandler handler,
       PlayerInventory playerInventory,
       ArmorStandState state) {
-    super(handler, playerInventory, Text.translatable("armorstands.page.inventory"), state);
+    super(handler, playerInventory, TITLE, state);
   }
 
   @Override

@@ -1,6 +1,8 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.Unpooled;
+import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -36,6 +38,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.UNDO_PACKET,
         ServerNetworking::handleUndoPacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.CREATE_SCREEN_HANDLER_PACKET,
+        ServerNetworking::handleCreateScreenHandlerPacket);
   }
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
@@ -201,9 +206,39 @@ public class ServerNetworking {
     });
   }
 
+  private static void handleCreateScreenHandlerPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    int id = buf.readInt();
+    int syncId = buf.readInt();
+
+    server.execute(() -> {
+      Entity entity = player.world.getEntityById(id);
+      if (!(entity instanceof ArmorStandEntity)) {
+        return;
+      }
+
+      if (player.currentScreenHandler != player.playerScreenHandler) {
+        player.closeHandledScreen();
+      }
+      player.currentScreenHandler = new ArmorStandScreenHandler(
+          syncId,
+          player.getInventory(),
+          (ArmorStandEntity) entity);
+      ((ServerPlayerEntityAccessor) player).invokeOnScreenHandlerOpened(player.currentScreenHandler);
+    });
+  }
+
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeInt(armorStand.getId());
+
+    ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) player;
+    accessor.invokeIncrementScreenHandlerSyncId();
+    buf.writeInt(accessor.getScreenHandlerSyncId());
 
     ServerPlayNetworking.send(player, NetworkPackets.OPEN_SCREEN_PACKET, buf);
   }

@@ -15,6 +15,8 @@ import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesScreen
     extends AbstractArmorStandScreen {
+  public static final Text TITLE = Text.translatable("armorstands.page.utilities");
+
   private static final int BUTTON_WIDTH = 100;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
@@ -23,7 +25,7 @@ public class ArmorStandUtilitiesScreen
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
   public ArmorStandUtilitiesScreen(ArmorStandState state) {
-    super(Text.translatable("armorstands.page.utilities"), state);
+    super(TITLE, state);
   }
 
   @Override
@@ -45,7 +47,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.COPY);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 60 + BETWEEN_PAD,
@@ -54,7 +56,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PASTE);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
@@ -63,7 +65,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.prepare"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
+          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PREPARE);
         }));
 
     initNavigationButtons();
@@ -143,6 +145,7 @@ public class ArmorStandUtilitiesScreen
     int yPos = this.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
+        this.state,
         flag,
         inverted,
         this.currentValues.get(flag),

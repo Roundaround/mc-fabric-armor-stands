@@ -34,6 +34,7 @@ public class ClientNetworking {
       PacketByteBuf buf,
       PacketSender responseSender) {
     int armorStandId = buf.readInt();
+    int syncId = buf.readInt();
 
     client.execute(() -> {
       ClientPlayerEntity player = client.player;
@@ -44,7 +45,7 @@ public class ClientNetworking {
       }
 
       ArmorStandEntity armorStand = (ArmorStandEntity) entity;
-      client.setScreen(new ArmorStandUtilitiesScreen(new ArmorStandState(client, armorStand)));
+      client.setScreen(new ArmorStandUtilitiesScreen(new ArmorStandState(client, armorStand, syncId)));
     });
   }
 
@@ -73,45 +74,51 @@ public class ClientNetworking {
     });
   }
 
-  public static void sendAdjustYawPacket(int amount) {
+  public static void sendAdjustYawPacket(ArmorStandEntity armorStand, int amount) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeInt(amount);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);
   }
 
-  public static void sendAdjustPosPacket(Direction direction, int pixels) {
+  public static void sendAdjustPosPacket(ArmorStandEntity armorStand, Direction direction, int pixels) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeInt(direction.getId());
     buf.writeInt(pixels);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
   }
 
-  public static void sendUtilityActionPacket(UtilityAction action) {
+  public static void sendUtilityActionPacket(ArmorStandEntity armorStand, UtilityAction action) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeString(action.toString());
 
     ClientPlayNetworking.send(NetworkPackets.UTILITY_ACTION_PACKET, buf);
   }
 
-  public static void sendToggleFlagPacket(ArmorStandFlag flag) {
+  public static void sendToggleFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeString(flag.toString());
 
     ClientPlayNetworking.send(NetworkPackets.TOGGLE_FLAG_PACKET, buf);
   }
 
-  public static void sendSetFlagPacket(ArmorStandFlag flag, boolean value) {
+  public static void sendSetFlagPacket(ArmorStandEntity armorStand, ArmorStandFlag flag, boolean value) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeString(flag.toString());
     buf.writeBoolean(value);
 
     ClientPlayNetworking.send(NetworkPackets.SET_FLAG_PACKET, buf);
   }
 
-  public static void sendSetPosePacket(PosePreset pose) {
+  public static void sendSetPosePacket(ArmorStandEntity armorStand, PosePreset pose) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeBoolean(true);
     buf.writeString(pose.toString());
 
@@ -119,6 +126,7 @@ public class ClientNetworking {
   }
 
   public static void sendSetPosePacket(
+      ArmorStandEntity armorStand,
       EulerAngle head,
       EulerAngle body,
       EulerAngle rightArm,
@@ -126,6 +134,7 @@ public class ClientNetworking {
       EulerAngle rightLeg,
       EulerAngle leftLeg) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeBoolean(false);
     writeEulerAngle(buf, head);
     writeEulerAngle(buf, body);
@@ -143,10 +152,19 @@ public class ClientNetworking {
     buf.writeFloat(eulerAngle.getRoll());
   }
 
-  public static void sendUndoPacket(boolean redo) {
+  public static void sendUndoPacket(ArmorStandEntity armorStand, boolean redo) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
     buf.writeBoolean(redo);
 
     ClientPlayNetworking.send(NetworkPackets.UNDO_PACKET, buf);
+  }
+
+  public static void sendCreateScreenHandlerPacket(ArmorStandEntity armorStand, int syncId) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(armorStand.getId());
+    buf.writeInt(syncId);
+
+    ClientPlayNetworking.send(NetworkPackets.CREATE_SCREEN_HANDLER_PACKET, buf);
   }
 }

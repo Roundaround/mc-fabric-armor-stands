@@ -1,11 +1,15 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
+import me.roundaround.armorstands.client.gui.ArmorStandState;
+import me.roundaround.armorstands.client.gui.HasArmorStandState;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -13,7 +17,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class PageSelectButtonWidget extends ButtonWidget {
+public class NavigationButton<T extends Screen & HasArmorStandState> extends ButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
@@ -22,22 +26,64 @@ public class PageSelectButtonWidget extends ButtonWidget {
 
   private final int uIndex;
 
-  public PageSelectButtonWidget(
+  public NavigationButton(
+      MinecraftClient client,
+      T parent,
       int x,
       int y,
-      Screen screen,
-      ArmorStandPage page,
-      int pageNum) {
+      Text tooltip,
+      int uIndex) {
+    this(
+        client,
+        parent,
+        x,
+        y,
+        tooltip,
+        (button, state) -> {
+        },
+        uIndex);
+  }
+
+  public NavigationButton(
+      MinecraftClient client,
+      T parent,
+      int x,
+      int y,
+      Text tooltip,
+      Function<ArmorStandState, T> supplier,
+      int uIndex) {
+    this(
+        client,
+        parent,
+        x,
+        y,
+        tooltip,
+        (button, state) -> {
+          client.setScreen(supplier.apply(state));
+        },
+        uIndex);
+  }
+
+  @SuppressWarnings("unchecked")
+  public NavigationButton(
+      MinecraftClient client,
+      T parent,
+      int x,
+      int y,
+      Text tooltip,
+      BiConsumer<NavigationButton<T>, ArmorStandState> onPress,
+      int uIndex) {
     super(
         x,
         y,
         WIDTH,
         HEIGHT,
-        page.getTitle(),
+        tooltip,
         (button) -> {
+          onPress.accept((NavigationButton<T>) button, parent.getState());
         },
-        new TooltipSupplier(page.getTitle(), screen));
-    uIndex = page.getTextureU();
+        new TooltipSupplier(tooltip, parent));
+    this.uIndex = uIndex;
   }
 
   @Override
@@ -46,7 +92,6 @@ public class PageSelectButtonWidget extends ButtonWidget {
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableDepthTest();
 
-    // int vIndex = isActivePage() ? 0 : (isHovered() ? 2 : 1);
     int vIndex = isHovered() ? 2 : 1;
 
     int u = uIndex * WIDTH;
@@ -56,18 +101,6 @@ public class PageSelectButtonWidget extends ButtonWidget {
     if (hovered) {
       renderTooltip(matrixStack, mouseX, mouseY);
     }
-  }
-
-  @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (isActivePage()) {
-      return false;
-    }
-    return super.keyPressed(keyCode, scanCode, modifiers);
-  }
-
-  public boolean isActivePage() {
-    return false;
   }
 
   private static class TooltipSupplier implements ButtonWidget.TooltipSupplier {
@@ -88,5 +121,10 @@ public class PageSelectButtonWidget extends ButtonWidget {
     public void supply(Consumer<Text> consumer) {
       consumer.accept(pageTitle);
     }
+  }
+
+  @FunctionalInterface
+  private static interface ScreenSupplier {
+    public Screen get(ArmorStandState state);
   }
 }
