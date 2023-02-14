@@ -1,6 +1,9 @@
 package me.roundaround.armorstands.util;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Stack;
+import java.util.UUID;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
@@ -9,6 +12,7 @@ import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
 import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
@@ -18,7 +22,26 @@ public class ArmorStandEditor {
   private final SizeLimitedStack<ArmorStandAction> actions = new SizeLimitedStack<>(30);
   private final SizeLimitedStack<ArmorStandAction> undos = new SizeLimitedStack<>(30);
 
-  public ArmorStandEditor(ArmorStandEntity armorStand) {
+  private static final HashMap<UUID, PlayerEditors> EDITORS = new HashMap<>();
+
+  public static ArmorStandEditor getEditor(PlayerEntity player, ArmorStandEntity armorStand) {
+    UUID playerUuid = player.getUuid();
+
+    if (!EDITORS.containsKey(playerUuid)) {
+      EDITORS.put(playerUuid, new PlayerEditors());
+    }
+
+    return EDITORS.get(playerUuid).get(armorStand);
+  }
+
+  public static void clearEditors(PlayerEntity player) {
+    if (!EDITORS.containsKey(player.getUuid())) {
+      return;
+    }
+    EDITORS.remove(player.getUuid());
+  }
+
+  private ArmorStandEditor(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
   }
 
@@ -115,6 +138,30 @@ public class ArmorStandEditor {
         remove(0);
       }
       return super.push(obj);
+    }
+  }
+
+  private static class PlayerEditors {
+    private final HashMap<UUID, ArmorStandEditor> editors = new HashMap<>();
+    private final ArrayDeque<UUID> insertionOrder = new ArrayDeque<>();
+
+    public ArmorStandEditor get(ArmorStandEntity armorStand) {
+      UUID uuid = armorStand.getUuid();
+      if (!editors.containsKey(uuid)) {
+        add(armorStand);
+      }
+      return editors.get(uuid);
+    }
+
+    private void add(ArmorStandEntity armorStand) {
+      ArmorStandEditor editor = new ArmorStandEditor(armorStand);
+      UUID uuid = armorStand.getUuid();
+
+      editors.put(uuid, editor);
+      insertionOrder.add(uuid);
+      if (insertionOrder.size() > 10) {
+        editors.remove(insertionOrder.remove());
+      }
     }
   }
 }

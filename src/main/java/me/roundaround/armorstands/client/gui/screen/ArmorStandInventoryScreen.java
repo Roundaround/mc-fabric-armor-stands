@@ -1,10 +1,11 @@
-package me.roundaround.armorstands.client.gui.page;
+package me.roundaround.armorstands.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import me.roundaround.armorstands.client.gui.ArmorStandState;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.option.SimpleOption;
@@ -14,12 +15,14 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
-public class ArmorStandInventoryPage extends AbstractArmorStandPage {
+public class ArmorStandInventoryScreen
+    extends AbstractHandledArmorStandScreen<ArmorStandScreenHandler> {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
@@ -29,22 +32,25 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory_dark.png");
 
-  public ArmorStandInventoryPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.inventory"), 5);
+  public ArmorStandInventoryScreen(
+      ArmorStandScreenHandler handler,
+      PlayerInventory playerInventory,
+      ArmorStandState state) {
+    super(handler, playerInventory, Text.translatable("armorstands.page.inventory"), state);
   }
 
   @Override
-  public boolean usesSlots() {
-    return true;
+  protected boolean supportsUndoRedo() {
+    return false;
   }
 
   @Override
-  public void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-    int x = (screen.width - BACKGROUND_WIDTH) / 2;
-    int y = (screen.height - BACKGROUND_HEIGHT) / 2;
+    int x = (this.width - BACKGROUND_WIDTH) / 2;
+    int y = (this.height - BACKGROUND_HEIGHT) / 2;
 
     RenderSystem.setShaderTexture(0,
         ArmorStandsClientMod.darkModeDetected
@@ -62,9 +68,9 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
     drawEntity(x + 88, y + 75, 30, 0f, 0f);
   }
 
-  public void drawEntity(int x, int y, int size, float mouseX, float mouseY) {
-    ArmorStandEntity entity = screen.getArmorStand();
+  protected void drawEntity(int x, int y, int size, float mouseX, float mouseY) {
     EntityRenderDispatcher entityRenderDispatcher = client.getEntityRenderDispatcher();
+    ArmorStandEntity armorStand = this.state.getArmorStand();
 
     MatrixStack matrixStack = RenderSystem.getModelViewStack();
     matrixStack.push();
@@ -80,12 +86,12 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
     quaternion.hamiltonProduct(quaternion2);
     matrixStack2.multiply(quaternion);
 
-    float bodyYaw = entity.bodyYaw;
-    float yaw = entity.getYaw();
-    boolean name = entity.isCustomNameVisible();
-    entity.bodyYaw = 180f;
-    entity.setYaw(180f);
-    entity.setCustomNameVisible(false);
+    float bodyYaw = armorStand.bodyYaw;
+    float yaw = armorStand.getYaw();
+    boolean name = armorStand.isCustomNameVisible();
+    armorStand.bodyYaw = 180f;
+    armorStand.setYaw(180f);
+    armorStand.setCustomNameVisible(false);
 
     DiffuseLighting.method_34742();
     quaternion2.conjugate();
@@ -95,14 +101,14 @@ public class ArmorStandInventoryPage extends AbstractArmorStandPage {
         .getBufferBuilders()
         .getEntityVertexConsumers();
     runInFancyGraphicsMode(() -> {
-      entityRenderDispatcher.render(entity, 0, 0, 0, 0f, 1f, matrixStack2, immediate, 0xF000F0);
+      entityRenderDispatcher.render(armorStand, 0, 0, 0, 0f, 1f, matrixStack2, immediate, 0xF000F0);
     });
     immediate.draw();
     entityRenderDispatcher.setRenderShadows(true);
 
-    entity.bodyYaw = bodyYaw;
-    entity.setYaw(yaw);
-    entity.setCustomNameVisible(name);
+    armorStand.bodyYaw = bodyYaw;
+    armorStand.setYaw(yaw);
+    armorStand.setCustomNameVisible(name);
 
     matrixStack.pop();
     RenderSystem.applyModelViewMatrix();

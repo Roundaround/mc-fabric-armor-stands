@@ -3,9 +3,7 @@ package me.roundaround.armorstands.screen;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
-import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.network.ServerNetworking;
-import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,29 +27,91 @@ public class ArmorStandScreenHandler extends ScreenHandler {
       EquipmentSlot.LEGS,
       EquipmentSlot.FEET };
 
-  public final ArmorStandEntity armorStand;
-  public final ArmorStandEditor editor;
-
-  private final PlayerInventory playerInventory;
+  private final PlayerEntity player;
+  private final ArmorStandEntity armorStand;
   private final ArmorStandInventory inventory;
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
 
+    this.player = playerInventory.player;
     this.armorStand = armorStand;
-    editor = new ArmorStandEditor(armorStand);
+    this.inventory = new ArmorStandInventory(armorStand);
 
-    this.playerInventory = playerInventory;
-    inventory = new ArmorStandInventory(armorStand);
+    for (int col = 0; col < 9; ++col) {
+      addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+    }
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 9; col++) {
+        addSlot(new Slot(playerInventory, col + (row + 1) * 9, 8 + col * 18, 84 + row * 18));
+      }
+    }
+
+    for (int i = 0; i < 2; i++) {
+      addSlot(new Slot(this.inventory, i, 116 + i * 18, 62) {
+        @Override
+        public Pair<Identifier, Identifier> getBackgroundSprite() {
+          return Pair.of(
+              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
+              PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT);
+        }
+      });
+    }
+
+    for (int i = 0; i < 4; i++) {
+      final EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
+      addSlot(new Slot(this.inventory, 2 + 3 - i, 44, 8 + i * 18) {
+        @Override
+        public void setStack(ItemStack stack) {
+          ArmorStandScreenHandler.this.armorStand.equipStack(equipmentSlot, stack);
+          markDirty();
+        }
+
+        @Override
+        public int getMaxItemCount() {
+          return 1;
+        }
+
+        @Override
+        public boolean canInsert(ItemStack stack) {
+          return equipmentSlot == ArmorStandEntity.getPreferredEquipmentSlot(stack);
+        }
+
+        @Override
+        public Pair<Identifier, Identifier> getBackgroundSprite() {
+          return Pair.of(
+              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
+              EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]);
+        }
+      });
+    }
+  }
+
+  public ArmorStandEntity getArmorStand() {
+    return this.armorStand;
+  }
+
+  @Override
+  public void sendContentUpdates() {
+    if (this.player instanceof ServerPlayerEntity) {
+      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) this.player, this.armorStand);
+    }
+
+    super.sendContentUpdates();
+  }
+
+  @Override
+  public boolean canUse(PlayerEntity player) {
+    return this.inventory.canPlayerUse(player);
   }
 
   @Override
   public ItemStack transferSlot(PlayerEntity player, int index) {
-    if (index < 0 || index >= slots.size()) {
+    if (index < 0 || index >= this.slots.size()) {
       return ItemStack.EMPTY;
     }
 
-    Slot slot = slots.get(index);
+    Slot slot = this.slots.get(index);
 
     if (slot == null || !slot.hasStack()) {
       return ItemStack.EMPTY;
@@ -89,78 +149,6 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     return originalStack;
   }
 
-  @Override
-  public boolean canUse(PlayerEntity player) {
-    return inventory.canPlayerUse(player);
-  }
-
-  @Override
-  public void sendContentUpdates() {
-    if (playerInventory.player instanceof ServerPlayerEntity) {
-      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) playerInventory.player);
-    }
-
-    super.sendContentUpdates();
-  }
-
-  public void populateSlots(boolean fillSlots) {
-    slots.clear();
-    ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
-    ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
-
-    if (!fillSlots) {
-      return;
-    }
-
-    for (int col = 0; col < 9; ++col) {
-      addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
-    }
-    for (int row = 0; row < 3; row++) {
-      for (int col = 0; col < 9; col++) {
-        addSlot(new Slot(playerInventory, col + (row + 1) * 9, 8 + col * 18, 84 + row * 18));
-      }
-    }
-
-    for (int i = 0; i < 2; i++) {
-      addSlot(new Slot(inventory, i, 116 + i * 18, 62) {
-        @Override
-        public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(
-              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT);
-        }
-      });
-    }
-
-    for (int i = 0; i < 4; i++) {
-      final EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
-      addSlot(new Slot(inventory, 2 + 3 - i, 44, 8 + i * 18) {
-        @Override
-        public void setStack(ItemStack stack) {
-          armorStand.equipStack(equipmentSlot, stack);
-          markDirty();
-        }
-
-        @Override
-        public int getMaxItemCount() {
-          return 1;
-        }
-
-        @Override
-        public boolean canInsert(ItemStack stack) {
-          return equipmentSlot == ArmorStandEntity.getPreferredEquipmentSlot(stack);
-        }
-
-        @Override
-        public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(
-              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]);
-        }
-      });
-    }
-  }
-
   private boolean tryTransferArmor(Slot source, ItemStack stack) {
     EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
 
@@ -168,8 +156,8 @@ public class ArmorStandScreenHandler extends ScreenHandler {
       return false;
     }
 
-    int targetIndex = slots.size() - 1 - equipmentSlot.getEntitySlotId();
-    Slot slot = slots.get(targetIndex);
+    int targetIndex = this.slots.size() - 1 - equipmentSlot.getEntitySlotId();
+    Slot slot = this.slots.get(targetIndex);
     ItemStack equipped = slot.getStack();
     slot.setStack(stack);
     source.setStack(equipped);

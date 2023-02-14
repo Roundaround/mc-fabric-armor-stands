@@ -6,7 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.page.ArmorStandPage;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,13 +21,11 @@ public class PageSelectButtonWidget extends ButtonWidget {
       "textures/gui/widgets.png");
 
   private final int uIndex;
-  private final ArmorStandScreen screen;
-  private final ArmorStandPage page;
 
   public PageSelectButtonWidget(
       int x,
       int y,
-      ArmorStandScreen screen,
+      Screen screen,
       ArmorStandPage page,
       int pageNum) {
     super(
@@ -36,11 +34,10 @@ public class PageSelectButtonWidget extends ButtonWidget {
         WIDTH,
         HEIGHT,
         page.getTitle(),
-        (button) -> screen.setPage(pageNum),
+        (button) -> {
+        },
         new TooltipSupplier(page.getTitle(), screen));
     uIndex = page.getTextureU();
-    this.screen = screen;
-    this.page = page;
   }
 
   @Override
@@ -70,14 +67,14 @@ public class PageSelectButtonWidget extends ButtonWidget {
   }
 
   public boolean isActivePage() {
-    return screen.getCurrentPage() == page;
+    return false;
   }
 
   private static class TooltipSupplier implements ButtonWidget.TooltipSupplier {
     private final Text pageTitle;
-    private final ArmorStandScreen screen;
+    private final Screen screen;
 
-    public TooltipSupplier(Text pageTitle, ArmorStandScreen screen) {
+    public TooltipSupplier(Text pageTitle, Screen screen) {
       this.pageTitle = pageTitle;
       this.screen = screen;
     }
