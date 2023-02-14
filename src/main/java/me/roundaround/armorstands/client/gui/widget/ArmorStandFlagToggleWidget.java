@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -20,7 +19,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   private static final int TEXTURE_WIDTH = 200;
   private static final int TEXTURE_HEIGHT = 20;
 
-  private final ArmorStandState state;
   private final ArmorStandFlag flag;
   private final boolean inverted;
   private final LabelWidget labelWidget;
@@ -29,7 +27,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   private boolean currentValue = false;
 
   public ArmorStandFlagToggleWidget(
-      ArmorStandState state,
       ArmorStandFlag flag,
       boolean inverted,
       boolean initialValue,
@@ -38,7 +35,6 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
       int width,
       Text label) {
     super(x, y, width, WIDGET_HEIGHT, label);
-    this.state = state;
     this.flag = flag;
     this.inverted = inverted;
 
@@ -59,7 +55,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void onPress() {
-    ClientNetworking.sendSetFlagPacket(this.state.getArmorStand(), flag, !currentValue);
+    ClientNetworking.sendSetFlagPacket(flag, !currentValue);
   }
 
   @Override

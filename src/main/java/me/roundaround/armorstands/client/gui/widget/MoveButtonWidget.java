@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
@@ -10,7 +9,6 @@ public class MoveButtonWidget extends MiniButtonWidget {
   public final Direction direction;
 
   public MoveButtonWidget(
-      ArmorStandState state,
       int x,
       int y,
       int width,
@@ -24,7 +22,7 @@ public class MoveButtonWidget extends MiniButtonWidget {
         height,
         Text.literal(getModifier(direction) + amount),
         (button) -> {
-          ClientNetworking.sendAdjustPosPacket(state.getArmorStand(), direction, amount);
+          ClientNetworking.sendAdjustPosPacket(direction, amount);
         });
 
     this.direction = direction;

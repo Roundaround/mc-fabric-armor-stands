@@ -7,6 +7,7 @@ import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
@@ -28,13 +29,11 @@ public class ArmorStandRotateScreen
   private LabelWidget standFacingLabel;
   private LabelWidget standRotationLabel;
 
-  public ArmorStandRotateScreen(ArmorStandState state) {
-    super(TITLE, state);
-  }
-
-  @Override
-  protected boolean supportsUndoRedo() {
-    return true;
+  public ArmorStandRotateScreen(
+      ArmorStandScreenHandler handler,
+      ArmorStandState state) {
+    super(handler, false, TITLE, state);
+    this.supportsUndoRedo = true;
   }
 
   @Override
@@ -83,7 +82,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.toward"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.FACE_TOWARD);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -92,7 +91,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.away"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.FACE_AWAY);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
@@ -101,7 +100,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.with"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.FACE_WITH);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH);
         }));
 
     initNavigationButtons();
@@ -140,7 +139,9 @@ public class ArmorStandRotateScreen
   }
 
   @Override
-  public void tick() {
+  public void handledScreenTick() {
+    super.handledScreenTick();
+
     playerFacingLabel.setText(getCurrentFacingText(client.player));
     playerRotationLabel.setText(getCurrentRotationText(client.player));
     standFacingLabel.setText(getCurrentFacingText(this.state.getArmorStand()));
@@ -188,7 +189,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "1"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(this.state.getArmorStand(), direction.offset() * 1);
+          ClientNetworking.sendAdjustYawPacket(direction.offset() * 1);
         }));
     addDrawableChild(new MiniButtonWidget(
         refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
@@ -197,7 +198,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "5"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(this.state.getArmorStand(), direction.offset() * 5);
+          ClientNetworking.sendAdjustYawPacket(direction.offset() * 5);
         }));
     addDrawableChild(new MiniButtonWidget(
         refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
@@ -206,7 +207,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "15"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(this.state.getArmorStand(), direction.offset() * 15);
+          ClientNetworking.sendAdjustYawPacket(direction.offset() * 15);
         }));
     addDrawableChild(new MiniButtonWidget(
         refX,
@@ -215,7 +216,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "45"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(this.state.getArmorStand(), direction.offset() * 45);
+          ClientNetworking.sendAdjustYawPacket(direction.offset() * 45);
         }));
   }
 

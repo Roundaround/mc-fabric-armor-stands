@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.PosePreset;
 import net.minecraft.client.MinecraftClient;
@@ -18,17 +17,13 @@ import net.minecraft.client.util.math.MatrixStack;
 public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
   private static final int ITEM_HEIGHT = 25;
 
-  private final ArmorStandState state;
-
   public PoseListWidget(
       MinecraftClient minecraftClient,
-      ArmorStandState state,
       int x,
       int y,
       int width,
       int height) {
     super(minecraftClient, width, height, y, y + height, ITEM_HEIGHT);
-    this.state = state;
 
     setLeftPos(x);
     setRenderBackground(false);
@@ -66,9 +61,7 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
           20,
           pose.getLabel(),
           (button) -> {
-            ClientNetworking.sendSetPosePacket(
-                PoseListWidget.this.state.getArmorStand(),
-                pose);
+            ClientNetworking.sendSetPosePacket(pose);
           });
     }
 

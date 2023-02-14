@@ -15,14 +15,13 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3f;
 
 public class ArmorStandInventoryScreen
-    extends AbstractHandledArmorStandScreen<ArmorStandScreenHandler> {
+    extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.inventory");
 
   private static final int BACKGROUND_WIDTH = 176;
@@ -36,9 +35,9 @@ public class ArmorStandInventoryScreen
 
   public ArmorStandInventoryScreen(
       ArmorStandScreenHandler handler,
-      PlayerInventory playerInventory,
       ArmorStandState state) {
-    super(handler, playerInventory, TITLE, state);
+    super(handler, true, TITLE, state);
+    this.renderInventories = true;
   }
 
   @Override

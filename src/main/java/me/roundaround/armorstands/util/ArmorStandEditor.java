@@ -1,50 +1,24 @@
 package me.roundaround.armorstands.util;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.Stack;
-import java.util.UUID;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import me.roundaround.armorstands.network.ServerNetworking;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
 import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
 public class ArmorStandEditor {
-  private final ServerPlayerEntity player;
   private final ArmorStandEntity armorStand;
   private final SizeLimitedStack<ArmorStandAction> actions = new SizeLimitedStack<>(30);
   private final SizeLimitedStack<ArmorStandAction> undos = new SizeLimitedStack<>(30);
 
-  private static final HashMap<UUID, PlayerEditors> EDITORS = new HashMap<>();
-
-  public static ArmorStandEditor getEditor(ServerPlayerEntity player, ArmorStandEntity armorStand) {
-    UUID playerUuid = player.getUuid();
-
-    if (!EDITORS.containsKey(playerUuid)) {
-      EDITORS.put(playerUuid, new PlayerEditors(player));
-    }
-
-    return EDITORS.get(playerUuid).get(armorStand);
-  }
-
-  public static void clearEditors(ServerPlayerEntity player) {
-    if (!EDITORS.containsKey(player.getUuid())) {
-      return;
-    }
-    EDITORS.remove(player.getUuid());
-  }
-
-  private ArmorStandEditor(ServerPlayerEntity player, ArmorStandEntity armorStand) {
-    this.player = player;
+  public ArmorStandEditor(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
   }
 
@@ -56,7 +30,6 @@ public class ArmorStandEditor {
     action.apply(this.armorStand);
     this.actions.push(action);
     this.undos.clear();
-    ServerNetworking.sendClientUpdatePacket(this.player, this.armorStand);
   }
 
   public boolean undo() {
@@ -66,7 +39,6 @@ public class ArmorStandEditor {
     ArmorStandAction action = this.actions.pop();
     action.undo(this.armorStand);
     this.undos.push(action);
-    ServerNetworking.sendClientUpdatePacket(this.player, this.armorStand);
     return true;
   }
 
@@ -77,7 +49,6 @@ public class ArmorStandEditor {
     ArmorStandAction action = this.undos.pop();
     action.apply(this.armorStand);
     this.actions.push(action);
-    ServerNetworking.sendClientUpdatePacket(this.player, this.armorStand);
     return true;
   }
 
@@ -144,35 +115,6 @@ public class ArmorStandEditor {
         remove(0);
       }
       return super.push(obj);
-    }
-  }
-
-  private static class PlayerEditors {
-    private final ServerPlayerEntity player;
-    private final HashMap<UUID, ArmorStandEditor> editors = new HashMap<>();
-    private final ArrayDeque<UUID> insertionOrder = new ArrayDeque<>();
-
-    public PlayerEditors(ServerPlayerEntity player) {
-      this.player = player;
-    }
-
-    public ArmorStandEditor get(ArmorStandEntity armorStand) {
-      UUID uuid = armorStand.getUuid();
-      if (!editors.containsKey(uuid)) {
-        add(armorStand);
-      }
-      return editors.get(uuid);
-    }
-
-    private void add(ArmorStandEntity armorStand) {
-      ArmorStandEditor editor = new ArmorStandEditor(player, armorStand);
-      UUID uuid = armorStand.getUuid();
-
-      editors.put(uuid, editor);
-      insertionOrder.add(uuid);
-      if (insertionOrder.size() > 10) {
-        editors.remove(insertionOrder.remove());
-      }
     }
   }
 }

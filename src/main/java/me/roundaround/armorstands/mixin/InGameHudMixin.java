@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import me.roundaround.armorstands.client.gui.screen.AbstractHandledArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -19,8 +18,7 @@ public abstract class InGameHudMixin {
 
   @Inject(method = "render", at = @At(value = "HEAD"), cancellable = true)
   private void render(MatrixStack matrixStack, float delta, CallbackInfo info) {
-    if (client.currentScreen instanceof AbstractArmorStandScreen
-        || client.currentScreen instanceof AbstractHandledArmorStandScreen) {
+    if (client.currentScreen instanceof AbstractArmorStandScreen) {
       info.cancel();
     }
   }

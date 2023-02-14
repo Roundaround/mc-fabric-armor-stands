@@ -18,16 +18,16 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public abstract class AbstractArmorStandScreen
-    extends Screen
+    extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStandState {
   protected static final int PADDING = 1;
   protected static final int ICON_BUTTON_SPACING = 0;
@@ -39,18 +39,28 @@ public abstract class AbstractArmorStandScreen
   protected final MessageRenderer messageRenderer;
 
   protected NavigationButton<?> activeButton;
+  protected boolean cursorLocked = false;
+  protected boolean supportsUndoRedo = false;
+  protected boolean renderInventories = false;
 
-  private Text currentTooltip;
+  protected AbstractArmorStandScreen(
+      ArmorStandScreenHandler handler,
+      boolean utilizesInventory,
+      Text title,
+      ArmorStandState state) {
+    super(handler, handler.getPlayerInventory(), title);
 
-  protected AbstractArmorStandScreen(Text title, ArmorStandState state) {
-    super(title);
-    this.passEvents = true;
     this.state = state;
     this.messageRenderer = new MessageRenderer(this);
-  }
 
-  protected boolean supportsUndoRedo() {
-    return false;
+    this.passEvents = true;
+
+    handler.clearSlots();
+    if (utilizesInventory) {
+      handler.populateSlots();
+    }
+
+    ClientNetworking.sendPopulateSlotsPacket(utilizesInventory);
   }
 
   @Override
@@ -64,7 +74,7 @@ public abstract class AbstractArmorStandScreen
   }
 
   @Override
-  public void tick() {
+  protected void handledScreenTick() {
     // Block any inputs bound to shift so that this screen gets exclusive use
     Arrays.stream(this.client.options.allKeys)
         .filter((key) -> {
@@ -80,8 +90,8 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    int adjustedMouseX = this.state.isCursorLocked() ? -1 : mouseX;
-    int adjustedMouseY = this.state.isCursorLocked() ? -1 : mouseY;
+    int adjustedMouseX = cursorLocked ? -1 : mouseX;
+    int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
@@ -89,22 +99,20 @@ public abstract class AbstractArmorStandScreen
 
     renderActivePageButtonHighlight(matrixStack);
 
-    if (this.currentTooltip != null) {
-      super.renderTooltip(matrixStack, this.currentTooltip, adjustedMouseX, adjustedMouseY);
-      this.currentTooltip = null;
-    }
-
     this.messageRenderer.render(matrixStack);
   }
 
   @Override
-  public void renderTooltip(MatrixStack matrixStack, Text text, int mouseX, int mouseY) {
-    this.currentTooltip = text;
+  protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
+  }
+
+  @Override
+  protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
   }
 
   @Override
   public void mouseMoved(double mouseX, double mouseY) {
-    if (this.state.isCursorLocked()) {
+    if (cursorLocked) {
       return;
     }
     super.mouseMoved(mouseX, mouseY);
@@ -112,15 +120,18 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public boolean mouseClicked(double mouseX, double mouseY, int button) {
-    if (this.state.isCursorLocked()) {
+    if (cursorLocked) {
       return false;
     }
-    return super.mouseClicked(mouseX, mouseY, button);
+    Element focused = getFocused();
+    boolean result = super.mouseClicked(mouseX, mouseY, button);
+    setFocused(focused);
+    return result;
   }
 
   @Override
   public boolean mouseReleased(double mouseX, double mouseY, int button) {
-    if (this.state.isCursorLocked()) {
+    if (cursorLocked) {
       return false;
     }
     return super.mouseReleased(mouseX, mouseY, button);
@@ -128,7 +139,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public Optional<Element> hoveredElement(double mouseX, double mouseY) {
-    if (this.state.isCursorLocked()) {
+    if (cursorLocked) {
       return Optional.empty();
     }
     return super.hoveredElement(mouseX, mouseY);
@@ -151,33 +162,40 @@ public abstract class AbstractArmorStandScreen
       case GLFW.GLFW_KEY_RIGHT_ALT:
         this.state.lockCursor();
         return true;
+      case GLFW.GLFW_KEY_TAB:
+        boolean forward = !Screen.hasShiftDown();
+        if (!changeFocus(forward)) {
+          changeFocus(forward);
+        }
+        return false;
       case GLFW.GLFW_KEY_Z:
-        if (!supportsUndoRedo() || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
         messageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
-        ClientNetworking.sendUndoPacket(this.state.getArmorStand(), Screen.hasShiftDown());
+        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
-        if (!supportsUndoRedo() || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
-        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.COPY);
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
-        if (!supportsUndoRedo() || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
         messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
-        ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PASTE);
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
 
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return getFocused() != null
+        && getFocused().keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override
@@ -187,7 +205,8 @@ public abstract class AbstractArmorStandScreen
       return true;
     }
 
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return getFocused() != null
+        && getFocused().keyReleased(keyCode, scanCode, modifiers);
   }
 
   protected void initNavigationButtons() {
@@ -289,27 +308,25 @@ public abstract class AbstractArmorStandScreen
     index++;
     x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
 
-    addDrawableChild(new NavigationButton<>(
-        this.client,
-        this,
-        x,
-        y,
-        ArmorStandInventoryScreen.TITLE,
-        (button, state) -> {
-          int syncId = state.getSyncId();
-          PlayerInventory playerInventory = this.client.player.getInventory();
-          ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
-              syncId,
-              playerInventory,
-              state.getArmorStand());
-
-          this.client.player.currentScreenHandler = screenHandler;
-          this.client.setScreen(new ArmorStandInventoryScreen(
-              screenHandler,
-              playerInventory,
-              state));
-        },
-        index));
+    if (this instanceof ArmorStandInventoryScreen) {
+      this.activeButton = new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandInventoryScreen.TITLE,
+          index);
+      addDrawable(this.activeButton);
+    } else {
+      addDrawableChild(new NavigationButton<>(
+          this.client,
+          this,
+          x,
+          y,
+          ArmorStandInventoryScreen.TITLE,
+          ArmorStandInventoryScreen::new,
+          index));
+    }
   }
 
   protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {

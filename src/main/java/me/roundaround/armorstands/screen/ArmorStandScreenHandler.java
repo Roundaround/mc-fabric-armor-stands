@@ -3,7 +3,9 @@ package me.roundaround.armorstands.screen;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
+import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.network.ServerNetworking;
+import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,23 +29,33 @@ public class ArmorStandScreenHandler extends ScreenHandler {
       EquipmentSlot.LEGS,
       EquipmentSlot.FEET };
 
-  private final PlayerEntity player;
+  private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
   private final ArmorStandInventory inventory;
+  private final ArmorStandEditor editor;
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
 
-    this.player = playerInventory.player;
+    this.playerInventory = playerInventory;
     this.armorStand = armorStand;
     this.inventory = new ArmorStandInventory(armorStand);
+    this.editor = new ArmorStandEditor(armorStand);
+  }
 
+  public void clearSlots() {
+    slots.clear();
+    ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
+    ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
+  }
+
+  public void populateSlots() {
     for (int col = 0; col < 9; ++col) {
-      addSlot(new Slot(playerInventory, col, 8 + col * 18, 142));
+      addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
     }
     for (int row = 0; row < 3; row++) {
       for (int col = 0; col < 9; col++) {
-        addSlot(new Slot(playerInventory, col + (row + 1) * 9, 8 + col * 18, 84 + row * 18));
+        addSlot(new Slot(this.playerInventory, col + (row + 1) * 9, 8 + col * 18, 84 + row * 18));
       }
     }
 
@@ -91,10 +103,18 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     return this.armorStand;
   }
 
+  public PlayerInventory getPlayerInventory() {
+    return this.playerInventory;
+  }
+
+  public ArmorStandEditor getEditor() {
+    return this.editor;
+  }
+
   @Override
   public void sendContentUpdates() {
-    if (this.player instanceof ServerPlayerEntity) {
-      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) this.player, this.armorStand);
+    if (this.playerInventory.player instanceof ServerPlayerEntity) {
+      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) this.playerInventory.player, this.armorStand);
     }
 
     super.sendContentUpdates();

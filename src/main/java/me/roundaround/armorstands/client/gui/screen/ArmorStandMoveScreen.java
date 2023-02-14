@@ -13,6 +13,7 @@ import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
@@ -52,13 +53,9 @@ public class ArmorStandMoveScreen
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
 
-  public ArmorStandMoveScreen(ArmorStandState state) {
-    super(TITLE, state);
-  }
-
-  @Override
-  protected boolean supportsUndoRedo() {
-    return true;
+  public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandState state) {
+    super(handler, false, TITLE, state);
+    this.supportsUndoRedo = true;
   }
 
   @Override
@@ -117,7 +114,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.corner"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.SNAP_CORNER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -126,7 +123,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.center"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.SNAP_CENTER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
@@ -135,7 +132,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.standing"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.SNAP_STANDING);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -144,7 +141,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.sitting"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.SNAP_SITTING);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
@@ -153,7 +150,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.player"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.SNAP_PLAYER);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER);
         }));
 
     initNavigationButtons();
@@ -198,8 +195,8 @@ public class ArmorStandMoveScreen
   }
 
   @Override
-  public void tick() {
-    super.tick();
+  public void handledScreenTick() {
+    super.handledScreenTick();
 
     playerPosLabel.setText(getCurrentPosText(client.player));
     playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
@@ -215,6 +212,10 @@ public class ArmorStandMoveScreen
       MatrixStack matrixStack,
       VertexConsumerProvider vertexConsumerProvider,
       int light) {
+    if (armorStand != this.state.getArmorStand()) {
+      return;
+    }
+
     int mouseX = (int) Math.round(client.mouse.getX()
         * client.getWindow().getScaledWidth()
         / client.getWindow().getWidth());
@@ -318,7 +319,6 @@ public class ArmorStandMoveScreen
         .build());
 
     MoveButtonWidget one = new MoveButtonWidget(
-        this.state,
         refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
@@ -327,7 +327,6 @@ public class ArmorStandMoveScreen
         1);
 
     MoveButtonWidget three = new MoveButtonWidget(
-        this.state,
         refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY,
         MINI_BUTTON_WIDTH,
@@ -336,7 +335,6 @@ public class ArmorStandMoveScreen
         3);
 
     MoveButtonWidget eight = new MoveButtonWidget(
-        this.state,
         refX,
         refY,
         MINI_BUTTON_WIDTH,

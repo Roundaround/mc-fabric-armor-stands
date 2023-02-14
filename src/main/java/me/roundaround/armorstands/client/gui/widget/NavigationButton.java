@@ -1,22 +1,19 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.ArmorStandState;
-import me.roundaround.armorstands.client.gui.HasArmorStandState;
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class NavigationButton<T extends Screen & HasArmorStandState> extends ButtonWidget {
+public class NavigationButton<T extends AbstractArmorStandScreen> extends ButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
@@ -41,7 +38,7 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
         x,
         y,
         tooltip,
-        (button, state) -> {
+        (button, handler, state) -> {
         },
         uIndex);
     this.clickable = false;
@@ -53,7 +50,7 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
       int x,
       int y,
       Text tooltip,
-      Function<ArmorStandState, T> supplier,
+      ScreenConstructor<T> constructor,
       int uIndex) {
     this(
         client,
@@ -61,20 +58,22 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
         x,
         y,
         tooltip,
-        (button, state) -> {
-          client.setScreen(supplier.apply(state));
+        (button, handler, state) -> {
+          // Get around an issue where it was breaking on screen change
+          client.currentScreen = null;
+          client.setScreen(constructor.accept(handler, state));
         },
         uIndex);
   }
 
   @SuppressWarnings("unchecked")
-  public NavigationButton(
+  private NavigationButton(
       MinecraftClient client,
       T parent,
       int x,
       int y,
       Text tooltip,
-      BiConsumer<NavigationButton<T>, ArmorStandState> onPress,
+      PressAction<T> onPress,
       int uIndex) {
     super(
         x,
@@ -83,7 +82,7 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
         HEIGHT,
         tooltip,
         (button) -> {
-          onPress.accept((NavigationButton<T>) button, parent.getState());
+          onPress.accept((NavigationButton<T>) button, parent.getScreenHandler(), parent.getState());
         });
     this.parent = parent;
     this.uIndex = uIndex;
@@ -113,7 +112,17 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
   }
 
   @FunctionalInterface
-  private static interface ScreenSupplier {
-    public Screen get(ArmorStandState state);
+  public static interface ScreenConstructor<T extends AbstractArmorStandScreen> {
+    public T accept(
+        ArmorStandScreenHandler handler,
+        ArmorStandState state);
+  }
+
+  @FunctionalInterface
+  public static interface PressAction<T extends AbstractArmorStandScreen> {
+    public void accept(
+        NavigationButton<T> button,
+        ArmorStandScreenHandler handler,
+        ArmorStandState state);
   }
 }

@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import me.roundaround.armorstands.network.ServerNetworking;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,6 +28,7 @@ public abstract class ArmorStandEntityMixin {
     }
 
     ServerPlayerEntity player = (ServerPlayerEntity) playerEntity;
+    ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) playerEntity;
 
     if (!ArmorStandUsers.canEditArmorStands(player)) {
       return;
@@ -36,8 +38,20 @@ public abstract class ArmorStandEntityMixin {
       player.closeHandledScreen();
     }
 
+    accessor.invokeIncrementScreenHandlerSyncId();
+    int syncId = accessor.getScreenHandlerSyncId();
+
     ArmorStandEntity armorStand = (ArmorStandEntity) (Object) this;
-    ServerNetworking.sendOpenScreenPacket(player, armorStand);
+
+    ServerNetworking.sendOpenScreenPacket(player, armorStand, syncId);
+
+    ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
+        syncId,
+        player.getInventory(),
+        armorStand);
+
+    player.currentScreenHandler = screenHandler;
+    accessor.invokeOnScreenHandlerOpened(screenHandler);
 
     info.setReturnValue(ActionResult.PASS);
   }

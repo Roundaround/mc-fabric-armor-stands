@@ -1,12 +1,10 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.Unpooled;
-import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -39,8 +37,8 @@ public class ServerNetworking {
         NetworkPackets.UNDO_PACKET,
         ServerNetworking::handleUndoPacket);
     ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.CREATE_SCREEN_HANDLER_PACKET,
-        ServerNetworking::handleCreateScreenHandlerPacket);
+        NetworkPackets.POPULATE_SLOTS_PACKET,
+        ServerNetworking::handlePopulateSlotsPacket);
   }
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
@@ -53,15 +51,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     int amount = buf.readInt();
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     editor.rotate(amount);
   }
 
@@ -71,16 +68,15 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     Direction direction = Direction.byId(buf.readInt());
     int pixels = buf.readInt();
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     editor.movePos(direction, pixels);
   }
 
@@ -90,15 +86,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     UtilityAction action = UtilityAction.fromString(buf.readString());
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     action.apply(editor, player);
   }
 
@@ -108,15 +103,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     editor.toggleFlag(flag);
   }
 
@@ -126,16 +120,15 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
     boolean value = buf.readBoolean();
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     editor.setFlag(flag, value);
   }
 
@@ -145,15 +138,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     boolean isPreset = buf.readBoolean();
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
 
     if (isPreset) {
       PosePreset preset = PosePreset.fromString(buf.readString());
@@ -176,15 +168,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
     boolean redo = buf.readBoolean();
 
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
-    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
     if (redo) {
       editor.redo();
       return;
@@ -192,39 +183,31 @@ public class ServerNetworking {
     editor.undo();
   }
 
-  private static void handleCreateScreenHandlerPacket(
+  private static void handlePopulateSlotsPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int id = buf.readInt();
-    int syncId = buf.readInt();
-
-    Entity entity = player.world.getEntityById(id);
-    if (!(entity instanceof ArmorStandEntity)) {
-      return;
-    }
+    boolean fillSlots = buf.readBoolean();
 
     server.execute(() -> {
-      if (player.currentScreenHandler != player.playerScreenHandler) {
-        player.closeHandledScreen();
+      if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+        return;
       }
-      player.currentScreenHandler = new ArmorStandScreenHandler(
-          syncId,
-          player.getInventory(),
-          (ArmorStandEntity) entity);
-      ((ServerPlayerEntityAccessor) player).invokeOnScreenHandlerOpened(player.currentScreenHandler);
+
+      ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+      screenHandler.clearSlots();
+      if (fillSlots) {
+        screenHandler.populateSlots();
+      }
     });
   }
 
-  public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+  public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(syncId);
     buf.writeInt(armorStand.getId());
-
-    ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) player;
-    accessor.invokeIncrementScreenHandlerSyncId();
-    buf.writeInt(accessor.getScreenHandlerSyncId());
 
     ServerPlayNetworking.send(player, NetworkPackets.OPEN_SCREEN_PACKET, buf);
   }

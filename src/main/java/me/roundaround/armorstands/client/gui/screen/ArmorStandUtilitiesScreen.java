@@ -11,6 +11,7 @@ import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesScreen
@@ -24,13 +25,11 @@ public class ArmorStandUtilitiesScreen
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandUtilitiesScreen(ArmorStandState state) {
-    super(TITLE, state);
-  }
-
-  @Override
-  protected boolean supportsUndoRedo() {
-    return true;
+  public ArmorStandUtilitiesScreen(
+      ArmorStandScreenHandler handler,
+      ArmorStandState state) {
+    super(handler, false, TITLE, state);
+    this.supportsUndoRedo = true;
   }
 
   @Override
@@ -47,7 +46,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.COPY);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 60 + BETWEEN_PAD,
@@ -56,7 +55,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PASTE);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
@@ -65,7 +64,7 @@ public class ArmorStandUtilitiesScreen
         16,
         Text.translatable("armorstands.utility.prepare"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(this.state.getArmorStand(), UtilityAction.PREPARE);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
         }));
 
     initNavigationButtons();
@@ -114,8 +113,8 @@ public class ArmorStandUtilitiesScreen
   }
 
   @Override
-  public void tick() {
-    super.tick();
+  public void handledScreenTick() {
+    super.handledScreenTick();
 
     refreshFlags();
   }
@@ -145,7 +144,6 @@ public class ArmorStandUtilitiesScreen
     int yPos = this.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
-        this.state,
         flag,
         inverted,
         this.currentValues.get(flag),
