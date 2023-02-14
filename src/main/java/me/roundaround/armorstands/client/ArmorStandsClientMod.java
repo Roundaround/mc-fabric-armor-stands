@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.lwjgl.glfw.GLFW;
-
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import net.fabricmc.api.ClientModInitializer;
@@ -31,8 +29,8 @@ public class ArmorStandsClientMod implements ClientModInitializer {
     highlightArmorStandKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "armorstands.key.highlight_armor_stand",
         InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_O,
-        "armorstands.key.category"));
+        InputUtil.UNKNOWN_KEY.getCode(),
+        KeyBinding.MISC_CATEGORY));
 
     // Detect Vanilla Tweaks dark UI and automatically adjust textures to match
     // if it is loaded

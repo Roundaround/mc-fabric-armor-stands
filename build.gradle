@@ -1,5 +1,5 @@
 plugins {
-  id 'fabric-loom' version '0.12-SNAPSHOT'
+  id 'fabric-loom' version '1.1-SNAPSHOT'
   id 'maven-publish'
 }
 
@@ -27,9 +27,6 @@ dependencies {
   mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
   modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
   modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-  // Test using real account
-  modImplementation "com.ptsmods:devlogin:${project.dev_login_version}"
 
   // ModMenu integration
   modCompileOnly "com.terraformersmc:modmenu:${project.mod_menu_version}"

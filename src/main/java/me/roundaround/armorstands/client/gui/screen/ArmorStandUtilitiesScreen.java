@@ -1,68 +1,72 @@
-package me.roundaround.armorstands.client.gui.page;
+package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
-public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
+public class ArmorStandUtilitiesScreen
+    extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 100;
-  protected static final int BUTTON_HEIGHT = 12;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
 
-  public ArmorStandUtilitiesPage(MinecraftClient client, ArmorStandScreen screen) {
-    super(client, screen, Text.translatable("armorstands.page.utilities"), 0);
+  public ArmorStandUtilitiesScreen(ArmorStandState state) {
+    super(Text.translatable("armorstands.page.utilities"), state);
   }
 
   @Override
-  public void preInit() {
-    screen.addDrawableChild(new MiniButtonWidget(
+  protected boolean supportsUndoRedo() {
+    return true;
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    listeners.values().forEach(ArrayList::clear);
+
+    refreshFlags();
+
+    addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
-        screen.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
         60,
         16,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
-    screen.addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 60 + BETWEEN_PAD,
-        screen.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
         60,
         16,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
-    screen.addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
-        screen.height - SCREEN_EDGE_PAD - 16,
+        this.height - SCREEN_EDGE_PAD - 16,
         60,
         16,
         Text.translatable("armorstands.utility.prepare"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
         }));
-  }
 
-  @Override
-  public void postInit() {
-    listeners.values().forEach(ArrayList::clear);
-
-    refreshFlags();
+    initNavigationButtons();
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),
@@ -109,6 +113,8 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
 
   @Override
   public void tick() {
+    super.tick();
+
     refreshFlags();
   }
 
@@ -118,7 +124,7 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
         listeners.put(flag, new ArrayList<>());
       }
 
-      boolean curr = flag.getValue(screen.getArmorStand());
+      boolean curr = flag.getValue(this.state.getArmorStand());
       boolean prev = currentValues.getOrDefault(flag, !curr);
 
       if (curr != prev) {
@@ -133,18 +139,19 @@ public class ArmorStandUtilitiesPage extends AbstractArmorStandPage {
       ArmorStandFlag flag,
       int index,
       boolean inverted) {
-    int xPos = screen.width - SCREEN_EDGE_PAD - BUTTON_WIDTH;
-    int yPos = screen.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - index * (BETWEEN_PAD + BUTTON_HEIGHT);
+    int xPos = this.width - PADDING - BUTTON_WIDTH;
+    int yPos = this.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
         flag,
         inverted,
-        currentValues.get(flag),
+        this.currentValues.get(flag),
         xPos,
         yPos,
         BUTTON_WIDTH,
         label);
-    screen.addDrawableChild(widget);
+
+    addDrawableChild(widget);
     listeners.get(flag).add(widget);
   }
 }

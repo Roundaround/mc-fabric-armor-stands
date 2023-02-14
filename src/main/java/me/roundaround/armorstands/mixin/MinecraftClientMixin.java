@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
+import me.roundaround.armorstands.client.gui.HasArmorStandState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
@@ -18,10 +18,10 @@ public abstract class MinecraftClientMixin {
 
   @Inject(method = "hasOutline", at = @At(value = "HEAD"), cancellable = true)
   private void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> info) {
-    if (!(currentScreen instanceof ArmorStandScreen)) {
+    if (!(currentScreen instanceof HasArmorStandState)) {
       return;
     }
 
-    info.setReturnValue(((ArmorStandScreen) currentScreen).shouldHighlight(entity));
+    info.setReturnValue(((HasArmorStandState) currentScreen).getState().shouldHighlight(entity));
   }
 }

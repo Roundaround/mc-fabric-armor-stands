@@ -1,4 +1,4 @@
-package me.roundaround.armorstands.client.gui.screen;
+package me.roundaround.armorstands.client.gui;
 
 import java.util.Optional;
 

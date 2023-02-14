@@ -12,10 +12,6 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "client_update_packet");
 
-  public static final Identifier POPULATE_SLOTS_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "populate_slots_packet");
-
   public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "toggle_flag_packet");

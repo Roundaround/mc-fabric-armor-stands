@@ -1,17 +1,17 @@
 package me.roundaround.armorstands.client.gui.page;
 
 import me.roundaround.armorstands.client.gui.screen.ArmorStandScreen;
-import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
-import me.roundaround.armorstands.network.PosePreset;
+import me.roundaround.armorstands.client.gui.widget.PageSelectButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.PoseListWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
 public class ArmorStandPosePage extends AbstractArmorStandPage {
-  private static final int MINI_BUTTON_WIDTH = 16;
-  private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
-  private static final int BETWEEN_PAD = 2;
+
+  private PoseListWidget list;
 
   public ArmorStandPosePage(MinecraftClient client, ArmorStandScreen screen) {
     super(client, screen, Text.translatable("armorstands.page.pose"), 4);
@@ -19,44 +19,25 @@ public class ArmorStandPosePage extends AbstractArmorStandPage {
 
   @Override
   public void postInit() {
-    int refX = screen.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
-    int refY = screen.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT;
+    int width = MathHelper.floor(screen.width / 2f
+        - 2.5f * PageSelectButtonWidget.WIDTH
+        - 2 * SCREEN_EDGE_PAD);
+    int height = screen.height - 2 * SCREEN_EDGE_PAD;
 
-    screen.addDrawableChild(new MiniButtonWidget(
-        refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal("A"),
-        (button) -> {
-          ClientNetworking.sendSetPosePacket(PosePreset.ATTENTION);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
-        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal("B"),
-        (button) -> {
-          ClientNetworking.sendSetPosePacket(PosePreset.WALKING);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
-        refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal("C"),
-        (button) -> {
-          ClientNetworking.sendSetPosePacket(PosePreset.RUNNING);
-        }));
-    screen.addDrawableChild(new MiniButtonWidget(
+    int refX = screen.width - SCREEN_EDGE_PAD - width;
+    int refY = screen.height - SCREEN_EDGE_PAD - height;
+
+    this.list = new PoseListWidget(
+        client,
         refX,
         refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal("D"),
-        (button) -> {
-          ClientNetworking.sendSetPosePacket(PosePreset.SITTING);
-        }));
+        width,
+        height);
+    screen.addSelectableChild(this.list);
+  }
+
+  @Override
+  public void drawBackground(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    this.list.render(matrixStack, mouseX, mouseY, partialTicks);
   }
 }

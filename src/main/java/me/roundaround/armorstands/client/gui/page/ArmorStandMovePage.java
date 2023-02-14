@@ -44,6 +44,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
+  private LabelWidget playerFacingLabel;
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
 
@@ -53,10 +54,11 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
 
   @Override
   public void tick() {
-    playerPosLabel.setText(getCurrectPosText(client.player));
-    playerBlockPosLabel.setText(getCurrectBlockPosText(client.player));
-    standPosLabel.setText(getCurrectPosText(screen.getArmorStand()));
-    standBlockPosLabel.setText(getCurrectBlockPosText(screen.getArmorStand()));
+    playerPosLabel.setText(getCurrentPosText(client.player));
+    playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
+    playerFacingLabel.setText(getCurrentFacingText(client.player));
+    standPosLabel.setText(getCurrentPosText(screen.getArmorStand()));
+    standBlockPosLabel.setText(getCurrentBlockPosText(screen.getArmorStand()));
   }
 
   @Override
@@ -70,7 +72,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding());
 
     playerPosLabel = LabelWidget.builder(
-        getCurrectPosText(client.player),
+        getCurrentPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -80,7 +82,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     screen.addDrawable(playerPosLabel);
 
     playerBlockPosLabel = LabelWidget.builder(
-        getCurrectBlockPosText(client.player),
+        getCurrentBlockPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -88,6 +90,16 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding()
         .build();
     screen.addDrawable(playerBlockPosLabel);
+
+    playerFacingLabel = LabelWidget.builder(
+        getCurrentFacingText(client.player),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 3 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build();
+    screen.addDrawable(playerFacingLabel);
 
     screen.addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.snap.label"),
@@ -154,7 +166,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
         .shiftForPadding());
 
     standPosLabel = LabelWidget.builder(
-        getCurrectPosText(screen.getArmorStand()),
+        getCurrentPosText(screen.getArmorStand()),
         screen.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -164,7 +176,7 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     screen.addDrawable(standPosLabel);
 
     standBlockPosLabel = LabelWidget.builder(
-        getCurrectBlockPosText(screen.getArmorStand()),
+        getCurrentBlockPosText(screen.getArmorStand()),
         screen.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -254,16 +266,30 @@ public class ArmorStandMovePage extends AbstractArmorStandPage {
     matrixStack.pop();
   }
 
-  private Text getCurrectPosText(Entity entity) {
+  private Text getCurrentPosText(Entity entity) {
     String xStr = String.format("%.3f", entity.getX());
     String yStr = String.format("%.3f", entity.getY());
     String zStr = String.format("%.3f", entity.getZ());
     return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
   }
 
-  private Text getCurrectBlockPosText(Entity entity) {
+  private Text getCurrentBlockPosText(Entity entity) {
     BlockPos pos = entity.getBlockPos();
     return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
+  }
+
+  private Text getCurrentFacingText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    Direction currentFacing = Direction.fromRotation(currentRotation);
+    String towardsI18n = switch (currentFacing) {
+      case NORTH -> "negZ";
+      case SOUTH -> "posZ";
+      case WEST -> "negX";
+      case EAST -> "posX";
+      default -> "posX";
+    };
+    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
+    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
   }
 
   private void addRowOfButtons(Text label, Direction direction, int index) {
