@@ -41,11 +41,10 @@ public abstract class AbstractArmorStandScreen
   protected NavigationButton<?> activeButton;
   protected boolean cursorLocked = false;
   protected boolean supportsUndoRedo = false;
-  protected boolean renderInventories = false;
+  protected boolean utilizesInventory = false;
 
   protected AbstractArmorStandScreen(
       ArmorStandScreenHandler handler,
-      boolean utilizesInventory,
       Text title,
       ArmorStandState state) {
     super(handler, handler.getPlayerInventory(), title);
@@ -54,13 +53,6 @@ public abstract class AbstractArmorStandScreen
     this.messageRenderer = new MessageRenderer(this);
 
     this.passEvents = true;
-
-    handler.clearSlots();
-    if (utilizesInventory) {
-      handler.populateSlots();
-    }
-
-    ClientNetworking.sendPopulateSlotsPacket(utilizesInventory);
   }
 
   @Override
@@ -71,6 +63,14 @@ public abstract class AbstractArmorStandScreen
   @Override
   public boolean shouldPause() {
     return false;
+  }
+
+  @Override
+  public void init() {
+    this.handler.initSlots(this.utilizesInventory);
+    ClientNetworking.sendInitSlotsPacket(this.utilizesInventory);
+
+    super.init();
   }
 
   @Override

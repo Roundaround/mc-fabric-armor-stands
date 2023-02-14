@@ -159,10 +159,10 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.UNDO_PACKET, buf);
   }
 
-  public static void sendPopulateSlotsPacket(boolean fillSlots) {
+  public static void sendInitSlotsPacket(boolean fillSlots) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeBoolean(fillSlots);
 
-    ClientPlayNetworking.send(NetworkPackets.POPULATE_SLOTS_PACKET, buf);
+    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, buf);
   }
 }

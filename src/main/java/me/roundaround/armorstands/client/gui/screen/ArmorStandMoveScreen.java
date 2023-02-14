@@ -54,7 +54,7 @@ public class ArmorStandMoveScreen
   private LabelWidget standBlockPosLabel;
 
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandState state) {
-    super(handler, false, TITLE, state);
+    super(handler, TITLE, state);
     this.supportsUndoRedo = true;
   }
 

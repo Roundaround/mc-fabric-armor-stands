@@ -6,6 +6,8 @@ import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,16 +42,23 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     this.playerInventory = playerInventory;
     this.armorStand = armorStand;
     this.inventory = new ArmorStandInventory(armorStand);
-    this.editor = new ArmorStandEditor(armorStand);
+
+    if (this.playerInventory.player instanceof ServerPlayerEntity) {
+      this.editor = new ArmorStandEditor(armorStand);
+    } else {
+      this.editor = null;
+    }
   }
 
-  public void clearSlots() {
+  public void initSlots(boolean fillSlots) {
     slots.clear();
     ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
     ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
-  }
 
-  public void populateSlots() {
+    if (!fillSlots) {
+      return;
+    }
+
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
     }
@@ -107,6 +116,7 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     return this.playerInventory;
   }
 
+  @Environment(EnvType.SERVER)
   public ArmorStandEditor getEditor() {
     return this.editor;
   }
@@ -140,7 +150,6 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     // 0-8 is hotbar
     // 9-35 is main player inventory
     // 36-37 is hands
-    // 38-41 is equipment
     // 38 is head
     // 39 is chest
     // 40 is legs
@@ -163,10 +172,17 @@ public class ArmorStandScreenHandler extends ScreenHandler {
 
     if (stack.isEmpty()) {
       slot.setStack(ItemStack.EMPTY);
+    } else {
+      slot.markDirty();
     }
 
-    slot.markDirty();
     return originalStack;
+  }
+
+  @Override
+  public void close(PlayerEntity player) {
+    super.close(player);
+    this.inventory.onClose(player);
   }
 
   private boolean tryTransferArmor(Slot source, ItemStack stack) {

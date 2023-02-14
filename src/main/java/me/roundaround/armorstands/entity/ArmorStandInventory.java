@@ -20,31 +20,31 @@ public class ArmorStandInventory implements Inventory {
   public ArmorStandInventory(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
 
-    heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
-    armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
-    fullInventory = List.of(heldItems, armorItems);
+    this.heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
+    this.armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
+    this.fullInventory = List.of(heldItems, armorItems);
   }
 
   @Override
   public int size() {
-    return heldItems.size() + armorItems.size();
+    return this.heldItems.size() + this.armorItems.size();
   }
 
   @Override
   public void clear() {
-    fullInventory.forEach(DefaultedList::clear);
+    this.fullInventory.forEach(DefaultedList::clear);
   }
 
   @Override
   public boolean isEmpty() {
-    return fullInventory
+    return this.fullInventory
         .stream()
         .allMatch((items) -> items.stream().allMatch(ItemStack::isEmpty));
   }
 
   @Override
   public ItemStack getStack(int slot) {
-    for (DefaultedList<ItemStack> items : fullInventory) {
+    for (DefaultedList<ItemStack> items : this.fullInventory) {
       if (slot < 0) {
         return ItemStack.EMPTY;
       } else if (slot >= items.size()) {
@@ -59,7 +59,7 @@ public class ArmorStandInventory implements Inventory {
 
   @Override
   public void setStack(int slot, ItemStack stack) {
-    for (DefaultedList<ItemStack> items : fullInventory) {
+    for (DefaultedList<ItemStack> items : this.fullInventory) {
       if (slot < 0) {
         return;
       } else if (slot >= items.size()) {
@@ -90,7 +90,7 @@ public class ArmorStandInventory implements Inventory {
 
   @Override
   public ItemStack removeStack(int slot, int amount) {
-    for (DefaultedList<ItemStack> items : fullInventory) {
+    for (DefaultedList<ItemStack> items : this.fullInventory) {
       if (slot < 0) {
         return ItemStack.EMPTY;
       } else if (slot >= items.size()) {
@@ -112,6 +112,6 @@ public class ArmorStandInventory implements Inventory {
 
   @Override
   public boolean canPlayerUse(PlayerEntity player) {
-    return player.squaredDistanceTo(armorStand) <= 64;
+    return player.squaredDistanceTo(this.armorStand) <= 64;
   }
 }

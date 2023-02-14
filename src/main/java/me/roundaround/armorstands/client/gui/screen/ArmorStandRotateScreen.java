@@ -32,7 +32,7 @@ public class ArmorStandRotateScreen
   public ArmorStandRotateScreen(
       ArmorStandScreenHandler handler,
       ArmorStandState state) {
-    super(handler, false, TITLE, state);
+    super(handler, TITLE, state);
     this.supportsUndoRedo = true;
   }
 

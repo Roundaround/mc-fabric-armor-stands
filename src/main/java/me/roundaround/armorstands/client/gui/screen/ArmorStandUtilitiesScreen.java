@@ -28,7 +28,7 @@ public class ArmorStandUtilitiesScreen
   public ArmorStandUtilitiesScreen(
       ArmorStandScreenHandler handler,
       ArmorStandState state) {
-    super(handler, false, TITLE, state);
+    super(handler, TITLE, state);
     this.supportsUndoRedo = true;
   }
 

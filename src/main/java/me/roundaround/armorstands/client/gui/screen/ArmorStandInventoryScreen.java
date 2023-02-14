@@ -36,8 +36,8 @@ public class ArmorStandInventoryScreen
   public ArmorStandInventoryScreen(
       ArmorStandScreenHandler handler,
       ArmorStandState state) {
-    super(handler, true, TITLE, state);
-    this.renderInventories = true;
+    super(handler, TITLE, state);
+    this.utilizesInventory = true;
   }
 
   @Override

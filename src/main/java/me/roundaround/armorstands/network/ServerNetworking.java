@@ -37,8 +37,8 @@ public class ServerNetworking {
         NetworkPackets.UNDO_PACKET,
         ServerNetworking::handleUndoPacket);
     ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.POPULATE_SLOTS_PACKET,
-        ServerNetworking::handlePopulateSlotsPacket);
+        NetworkPackets.INIT_SLOTS_PACKET,
+        ServerNetworking::handleInitSlotsPacket);
   }
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
@@ -183,7 +183,7 @@ public class ServerNetworking {
     editor.undo();
   }
 
-  private static void handlePopulateSlotsPacket(
+  private static void handleInitSlotsPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -191,17 +191,12 @@ public class ServerNetworking {
       PacketSender responseSender) {
     boolean fillSlots = buf.readBoolean();
 
-    server.execute(() -> {
-      if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
-        return;
-      }
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+      return;
+    }
 
-      ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
-      screenHandler.clearSlots();
-      if (fillSlots) {
-        screenHandler.populateSlots();
-      }
-    });
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    screenHandler.initSlots(fillSlots);
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
