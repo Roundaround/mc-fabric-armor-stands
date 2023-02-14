@@ -18,28 +18,40 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public abstract class AbstractArmorStandScreen
     extends Screen
     implements HasArmorStandState {
   protected static final int PADDING = 1;
   protected static final int ICON_BUTTON_SPACING = 0;
+  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
+      Identifier.DEFAULT_NAMESPACE,
+      "textures/gui/widgets.png");
 
   protected final ArmorStandState state;
   protected final MessageRenderer messageRenderer;
 
+  protected NavigationButton<?> activeButton;
+
+  private Text currentTooltip;
+
   protected AbstractArmorStandScreen(Text title, ArmorStandState state) {
     super(title);
+    this.passEvents = true;
     this.state = state;
-    messageRenderer = new MessageRenderer(this);
+    this.messageRenderer = new MessageRenderer(this);
   }
 
-  protected abstract boolean supportsUndoRedo();
+  protected boolean supportsUndoRedo() {
+    return false;
+  }
 
   @Override
   public ArmorStandState getState() {
@@ -75,7 +87,19 @@ public abstract class AbstractArmorStandScreen
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
 
+    renderActivePageButtonHighlight(matrixStack);
+
+    if (this.currentTooltip != null) {
+      super.renderTooltip(matrixStack, this.currentTooltip, adjustedMouseX, adjustedMouseY);
+      this.currentTooltip = null;
+    }
+
     this.messageRenderer.render(matrixStack);
+  }
+
+  @Override
+  public void renderTooltip(MatrixStack matrixStack, Text text, int mouseX, int mouseY) {
+    this.currentTooltip = text;
   }
 
   @Override
@@ -174,13 +198,14 @@ public abstract class AbstractArmorStandScreen
     int y = height - PADDING - NavigationButton.HEIGHT;
 
     if (this instanceof ArmorStandUtilitiesScreen) {
-      addDrawable(new NavigationButton<>(
+      this.activeButton = new NavigationButton<>(
           this.client,
           this,
           x,
           y,
           ArmorStandUtilitiesScreen.TITLE,
-          index));
+          index);
+      addDrawable(this.activeButton);
     } else {
       addDrawableChild(new NavigationButton<>(
           this.client,
@@ -196,13 +221,14 @@ public abstract class AbstractArmorStandScreen
     x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
 
     if (this instanceof ArmorStandMoveScreen) {
-      addDrawable(new NavigationButton<>(
+      this.activeButton = new NavigationButton<>(
           this.client,
           this,
           x,
           y,
           ArmorStandMoveScreen.TITLE,
-          index));
+          index);
+      addDrawable(this.activeButton);
     } else {
       addDrawableChild(new NavigationButton<>(
           this.client,
@@ -218,13 +244,14 @@ public abstract class AbstractArmorStandScreen
     x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
 
     if (this instanceof ArmorStandRotateScreen) {
-      addDrawable(new NavigationButton<>(
+      this.activeButton = new NavigationButton<>(
           this.client,
           this,
           x,
           y,
           ArmorStandRotateScreen.TITLE,
-          index));
+          index);
+      addDrawable(this.activeButton);
     } else {
       addDrawableChild(new NavigationButton<>(
           this.client,
@@ -240,13 +267,14 @@ public abstract class AbstractArmorStandScreen
     x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
 
     if (this instanceof ArmorStandPoseScreen) {
-      addDrawable(new NavigationButton<>(
+      this.activeButton = new NavigationButton<>(
           this.client,
           this,
           x,
           y,
           ArmorStandPoseScreen.TITLE,
-          index));
+          index);
+      addDrawable(this.activeButton);
     } else {
       addDrawableChild(new NavigationButton<>(
           this.client,
@@ -282,6 +310,51 @@ public abstract class AbstractArmorStandScreen
               state));
         },
         index));
+  }
+
+  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
+    if (this.activeButton == null) {
+      return;
+    }
+
+    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+    RenderSystem.enableBlend();
+    RenderSystem.defaultBlendFunc();
+
+    matrixStack.push();
+    matrixStack.translate(0, 0, 100);
+    drawTexture(
+        matrixStack,
+        this.activeButton.x - 2,
+        activeButton.y - 2,
+        0,
+        22,
+        13,
+        13);
+    drawTexture(matrixStack,
+        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
+        activeButton.y - 2,
+        12,
+        22,
+        12,
+        13);
+    drawTexture(matrixStack,
+        this.activeButton.x - 2,
+        activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        0,
+        34,
+        13,
+        12);
+    drawTexture(matrixStack,
+        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
+        this.activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        12,
+        34,
+        12,
+        12);
+    matrixStack.pop();
   }
 
   protected void playClickSound() {

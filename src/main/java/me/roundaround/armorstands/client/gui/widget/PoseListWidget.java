@@ -17,7 +17,6 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
   private static final int ITEM_HEIGHT = 25;
-  private static final int BUTTON_WIDTH = 100;
 
   private final ArmorStandState state;
 
@@ -47,8 +46,13 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
   }
 
   @Override
+  protected int getScrollbarPositionX() {
+    return this.left + this.width - 6;
+  }
+
+  @Override
   public int getRowWidth() {
-    return 140;
+    return this.width - (Math.max(0, this.getMaxPosition() - (this.bottom - this.top - 4)) > 0 ? 18 : 12);
   }
 
   public class Entry extends ElementListWidget.Entry<Entry> {
@@ -58,13 +62,13 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
       this.button = new ButtonWidget(
           0,
           0,
-          BUTTON_WIDTH,
+          PoseListWidget.this.getRowWidth(),
           20,
           pose.getLabel(),
           (button) -> {
             ClientNetworking.sendSetPosePacket(
                 PoseListWidget.this.state.getArmorStand(),
-                PosePreset.ATTENTION);
+                pose);
           });
     }
 
@@ -90,6 +94,7 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
         int mouseY,
         boolean hovered,
         float partialTicks) {
+      this.button.x = x;
       this.button.y = y;
       this.button.render(matrixStack, mouseX, mouseY, partialTicks);
     }

@@ -56,15 +56,13 @@ public class ServerNetworking {
     int id = buf.readInt();
     int amount = buf.readInt();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      editor.rotate(amount);
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    editor.rotate(amount);
   }
 
   public static void handleAdjustPosPacket(
@@ -77,15 +75,13 @@ public class ServerNetworking {
     Direction direction = Direction.byId(buf.readInt());
     int pixels = buf.readInt();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      editor.movePos(direction, pixels);
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    editor.movePos(direction, pixels);
   }
 
   public static void handleUtilityActionPacket(
@@ -97,15 +93,13 @@ public class ServerNetworking {
     int id = buf.readInt();
     UtilityAction action = UtilityAction.fromString(buf.readString());
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      action.apply(editor, player);
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    action.apply(editor, player);
   }
 
   public static void handleToggleFlagPacket(
@@ -117,15 +111,13 @@ public class ServerNetworking {
     int id = buf.readInt();
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      editor.toggleFlag(flag);
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    editor.toggleFlag(flag);
   }
 
   public static void handleSetFlagPacket(
@@ -138,15 +130,13 @@ public class ServerNetworking {
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
     boolean value = buf.readBoolean();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      editor.setFlag(flag, value);
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    editor.setFlag(flag, value);
   }
 
   public static void handleSetPosePacket(
@@ -158,28 +148,26 @@ public class ServerNetworking {
     int id = buf.readInt();
     boolean isPreset = buf.readBoolean();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
 
-      if (isPreset) {
-        PosePreset preset = PosePreset.fromString(buf.readString());
-        editor.setPose(preset.toPose());
-        return;
-      }
+    if (isPreset) {
+      PosePreset preset = PosePreset.fromString(buf.readString());
+      editor.setPose(preset.toPose());
+      return;
+    }
 
-      editor.setPose(
-          readEulerAngle(buf),
-          readEulerAngle(buf),
-          readEulerAngle(buf),
-          readEulerAngle(buf),
-          readEulerAngle(buf),
-          readEulerAngle(buf));
-    });
+    editor.setPose(
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf),
+        readEulerAngle(buf));
   }
 
   public static void handleUndoPacket(
@@ -191,19 +179,17 @@ public class ServerNetworking {
     int id = buf.readInt();
     boolean redo = buf.readBoolean();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
-      ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
-      if (redo) {
-        editor.redo();
-        return;
-      }
-      editor.undo();
-    });
+    ArmorStandEditor editor = ArmorStandEditor.getEditor(player, (ArmorStandEntity) entity);
+    if (redo) {
+      editor.redo();
+      return;
+    }
+    editor.undo();
   }
 
   private static void handleCreateScreenHandlerPacket(
@@ -215,12 +201,12 @@ public class ServerNetworking {
     int id = buf.readInt();
     int syncId = buf.readInt();
 
-    server.execute(() -> {
-      Entity entity = player.world.getEntityById(id);
-      if (!(entity instanceof ArmorStandEntity)) {
-        return;
-      }
+    Entity entity = player.world.getEntityById(id);
+    if (!(entity instanceof ArmorStandEntity)) {
+      return;
+    }
 
+    server.execute(() -> {
       if (player.currentScreenHandler != player.playerScreenHandler) {
         player.closeHandledScreen();
       }

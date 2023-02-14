@@ -1,7 +1,6 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -24,7 +23,10 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
       ArmorStandsMod.MOD_ID,
       "textures/gui/widgets.png");
 
+  private final T parent;
   private final int uIndex;
+
+  private boolean clickable;
 
   public NavigationButton(
       MinecraftClient client,
@@ -42,6 +44,7 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
         (button, state) -> {
         },
         uIndex);
+    this.clickable = false;
   }
 
   public NavigationButton(
@@ -81,9 +84,10 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
         tooltip,
         (button) -> {
           onPress.accept((NavigationButton<T>) button, parent.getState());
-        },
-        new TooltipSupplier(tooltip, parent));
+        });
+    this.parent = parent;
     this.uIndex = uIndex;
+    this.clickable = true;
   }
 
   @Override
@@ -92,35 +96,20 @@ public class NavigationButton<T extends Screen & HasArmorStandState> extends But
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableDepthTest();
 
-    int vIndex = isHovered() ? 2 : 1;
+    int vIndex = this.clickable && isHovered() ? 2 : 1;
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
     drawTexture(matrixStack, x, y, u, v, WIDTH, HEIGHT);
 
-    if (hovered) {
+    if (isHovered()) {
       renderTooltip(matrixStack, mouseX, mouseY);
     }
   }
 
-  private static class TooltipSupplier implements ButtonWidget.TooltipSupplier {
-    private final Text pageTitle;
-    private final Screen screen;
-
-    public TooltipSupplier(Text pageTitle, Screen screen) {
-      this.pageTitle = pageTitle;
-      this.screen = screen;
-    }
-
-    @Override
-    public void onTooltip(ButtonWidget buttonWidget, MatrixStack matrixStack, int x, int y) {
-      screen.renderTooltip(matrixStack, pageTitle, x, y);
-    }
-
-    @Override
-    public void supply(Consumer<Text> consumer) {
-      consumer.accept(pageTitle);
-    }
+  @Override
+  public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
+    parent.renderTooltip(matrixStack, getMessage(), mouseX, mouseY);
   }
 
   @FunctionalInterface

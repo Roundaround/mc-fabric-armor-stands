@@ -42,8 +42,9 @@ public class ArmorStandInventoryScreen
   }
 
   @Override
-  protected boolean supportsUndoRedo() {
-    return false;
+  public void init() {
+    super.init();
+    initNavigationButtons();
   }
 
   @Override

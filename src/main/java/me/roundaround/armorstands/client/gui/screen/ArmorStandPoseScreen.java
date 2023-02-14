@@ -11,7 +11,7 @@ public class ArmorStandPoseScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.pose");
 
-  private static final int SCREEN_EDGE_PAD = 4;
+  private static final int PADDING = 4;
 
   private PoseListWidget list;
 
@@ -28,21 +28,22 @@ public class ArmorStandPoseScreen
   public void init() {
     initNavigationButtons();
 
-    int width = MathHelper.floor(this.width / 2f
+    int listWidth = MathHelper.floor(this.width / 2f
         - 2.5f * NavigationButton.WIDTH
-        - 2 * SCREEN_EDGE_PAD);
-    int height = this.height - 2 * SCREEN_EDGE_PAD;
+        - 2 * ICON_BUTTON_SPACING
+        - 2 * PADDING);
+    int listHeight = this.height - 2 * PADDING;
 
-    int refX = this.width - SCREEN_EDGE_PAD - width;
-    int refY = this.height - SCREEN_EDGE_PAD - height;
+    int refX = this.width - PADDING - listWidth;
+    int refY = this.height - PADDING - listHeight;
 
     this.list = new PoseListWidget(
         client,
         this.state,
         refX,
         refY,
-        width,
-        height);
+        listWidth,
+        listHeight);
     addSelectableChild(this.list);
   }
 

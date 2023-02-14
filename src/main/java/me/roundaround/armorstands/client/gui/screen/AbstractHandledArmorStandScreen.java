@@ -18,22 +18,28 @@ import me.roundaround.armorstands.network.UtilityAction;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
     extends HandledScreen<T>
     implements HasArmorStandState {
   protected static final int PADDING = 1;
   protected static final int ICON_BUTTON_SPACING = 0;
+  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
+      Identifier.DEFAULT_NAMESPACE,
+      "textures/gui/widgets.png");
 
   protected final ArmorStandState state;
   protected final MessageRenderer messageRenderer;
 
+  protected NavigationButton<?> activeButton;
   protected boolean cursorLocked = false;
 
   protected AbstractHandledArmorStandScreen(
@@ -42,11 +48,14 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
       Text title,
       ArmorStandState state) {
     super(handler, playerInventory, title);
+    this.passEvents = true;
     this.state = state;
-    messageRenderer = new MessageRenderer(this);
+    this.messageRenderer = new MessageRenderer(this);
   }
 
-  protected abstract boolean supportsUndoRedo();
+  protected boolean supportsUndoRedo() {
+    return false;
+  }
 
   @Override
   public ArmorStandState getState() {
@@ -81,6 +90,8 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
     RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+
+    renderActivePageButtonHighlight(matrixStack);
 
     this.messageRenderer.render(matrixStack);
   }
@@ -228,16 +239,59 @@ public abstract class AbstractHandledArmorStandScreen<T extends ScreenHandler>
     index++;
     x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
 
-    addDrawable(new NavigationButton<>(
+    this.activeButton = new NavigationButton<>(
         this.client,
         this,
         x,
         y,
         ArmorStandInventoryScreen.TITLE,
-        (button, state) -> {
+        index);
+    addDrawable(this.activeButton);
+  }
 
-        },
-        index));
+  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
+    if (this.activeButton == null) {
+      return;
+    }
+
+    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+    RenderSystem.enableBlend();
+    RenderSystem.defaultBlendFunc();
+
+    matrixStack.push();
+    matrixStack.translate(0, 0, 100);
+    drawTexture(
+        matrixStack,
+        this.activeButton.x - 2,
+        activeButton.y - 2,
+        0,
+        22,
+        13,
+        13);
+    drawTexture(matrixStack,
+        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
+        activeButton.y - 2,
+        12,
+        22,
+        12,
+        13);
+    drawTexture(matrixStack,
+        this.activeButton.x - 2,
+        activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        0,
+        34,
+        13,
+        12);
+    drawTexture(matrixStack,
+        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
+        this.activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        12,
+        34,
+        12,
+        12);
+    matrixStack.pop();
   }
 
   protected void playClickSound() {
