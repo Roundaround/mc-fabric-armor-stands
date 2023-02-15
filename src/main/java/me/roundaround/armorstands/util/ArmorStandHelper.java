@@ -57,7 +57,7 @@ public class ArmorStandHelper {
       newPosition = newPosition.subtract(0, 11 * 0.0625, 0);
     }
 
-    if (!hasBasePlate) {
+    if (!hasBasePlate && !sitting) {
       newPosition = newPosition.subtract(0, 0.0625, 0);
     }
 
