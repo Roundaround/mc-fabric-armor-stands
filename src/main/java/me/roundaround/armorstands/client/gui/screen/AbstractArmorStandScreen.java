@@ -90,9 +90,8 @@ public abstract class AbstractArmorStandScreen
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
-    // RenderSystem.enableBlend();
-    // ((InGameHudAccessor)
-    // this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
+    RenderSystem.enableBlend();
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
 
     renderActivePageButtonHighlight(matrixStack);
@@ -110,7 +109,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public void mouseMoved(double mouseX, double mouseY) {
-    if (cursorLocked) {
+    if (this.cursorLocked) {
       return;
     }
     super.mouseMoved(mouseX, mouseY);
@@ -118,7 +117,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public boolean mouseClicked(double mouseX, double mouseY, int button) {
-    if (cursorLocked) {
+    if (this.cursorLocked) {
       return false;
     }
     Element focused = getFocused();
@@ -129,7 +128,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public boolean mouseReleased(double mouseX, double mouseY, int button) {
-    if (cursorLocked) {
+    if (this.cursorLocked) {
       return false;
     }
     return super.mouseReleased(mouseX, mouseY, button);
@@ -137,7 +136,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public Optional<Element> hoveredElement(double mouseX, double mouseY) {
-    if (cursorLocked) {
+    if (this.cursorLocked) {
       return Optional.empty();
     }
     return super.hoveredElement(mouseX, mouseY);
@@ -146,7 +145,7 @@ public abstract class AbstractArmorStandScreen
   @Override
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
     // Allow jump to pass through without pressing buttons
-    if (client.options.jumpKey.matchesKey(keyCode, scanCode)) {
+    if (this.client.options.jumpKey.matchesKey(keyCode, scanCode)) {
       return false;
     }
 

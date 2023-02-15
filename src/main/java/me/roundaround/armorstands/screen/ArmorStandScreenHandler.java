@@ -41,6 +41,8 @@ public class ArmorStandScreenHandler
     this.armorStand = armorStand;
     this.inventory = new ArmorStandInventory(armorStand);
 
+    this.inventory.onOpen(this.playerInventory.player);
+
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
     }
