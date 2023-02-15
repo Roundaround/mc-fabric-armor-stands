@@ -3,8 +3,11 @@ package me.roundaround.armorstands.screen;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
-import me.roundaround.armorstands.network.ServerNetworking;
+import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
+import me.roundaround.armorstands.server.network.ServerNetworking;
+import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
+import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +21,7 @@ import net.minecraft.util.Identifier;
 
 public class ArmorStandScreenHandler
     extends ScreenHandler
-    implements HasArmorStand {
+    implements HasArmorStand, HasArmorStandEditor {
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
@@ -33,6 +36,7 @@ public class ArmorStandScreenHandler
   private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
   private final ArmorStandInventory inventory;
+  private final ArmorStandEditor editor;
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
@@ -41,7 +45,23 @@ public class ArmorStandScreenHandler
     this.armorStand = armorStand;
     this.inventory = new ArmorStandInventory(armorStand);
 
+    if (playerInventory.player instanceof ServerPlayerEntity) {
+      this.editor = new ArmorStandEditor(armorStand);
+    } else {
+      this.editor = null;
+    }
+
     this.inventory.onOpen(this.playerInventory.player);
+  }
+
+  public void initSlots(boolean fillSlots) {
+    slots.clear();
+    ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
+    ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
+
+    if (!fillSlots) {
+      return;
+    }
 
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
@@ -95,6 +115,11 @@ public class ArmorStandScreenHandler
   @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
+  }
+
+  @Override
+  public ArmorStandEditor getEditor() {
+    return this.editor;
   }
 
   public PlayerInventory getPlayerInventory() {

@@ -51,6 +51,7 @@ public class ClientNetworking {
           player.getInventory(),
           armorStand);
 
+      player.currentScreenHandler = screenHandler;
       client.setScreen(new ArmorStandInventoryScreen(
           screenHandler,
           armorStand));
@@ -79,6 +80,13 @@ public class ClientNetworking {
       armorStand.setYaw(yaw % 360f);
       armorStand.setPitch(pitch % 360f);
     });
+  }
+
+  public static void sendInitSlotsPacket(boolean fillSlots) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(fillSlots);
+
+    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, buf);
   }
 
   public static void sendAdjustYawPacket(int amount) {

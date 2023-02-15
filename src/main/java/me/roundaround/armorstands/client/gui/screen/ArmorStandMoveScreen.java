@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,6 +11,7 @@ import me.roundaround.armorstands.client.gui.HasArmorStandOverlay;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -33,6 +35,7 @@ public class ArmorStandMoveScreen
     extends AbstractArmorStandScreen
     implements HasArmorStandOverlay {
   public static final Text TITLE = Text.translatable("armorstands.page.move");
+  public static final int U_INDEX = 1;
 
   private static final int MINI_BUTTON_WIDTH = 16;
   private static final int MINI_BUTTON_HEIGHT = 16;
@@ -59,6 +62,8 @@ public class ArmorStandMoveScreen
 
   @Override
   public void init() {
+    super.init();
+
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
@@ -152,7 +157,26 @@ public class ArmorStandMoveScreen
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER);
         }));
 
-    initNavigationButtons();
+    initNavigationButtons(List.of(
+        ScreenFactory.create(
+            ArmorStandUtilitiesScreen.TITLE,
+            ArmorStandUtilitiesScreen.U_INDEX,
+            ArmorStandUtilitiesScreen::new),
+        ScreenFactory.create(
+            ArmorStandMoveScreen.TITLE,
+            ArmorStandMoveScreen.U_INDEX),
+        ScreenFactory.create(
+            ArmorStandRotateScreen.TITLE,
+            ArmorStandRotateScreen.U_INDEX,
+            ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX,
+            ArmorStandPoseScreen::new),
+        ScreenFactory.create(
+            ArmorStandInventoryScreen.TITLE,
+            ArmorStandInventoryScreen.U_INDEX,
+            ArmorStandInventoryScreen::new)));
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),

@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
@@ -10,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -42,7 +44,7 @@ public abstract class AbstractArmorStandScreen
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
 
-  protected NavigationButton<?> activeButton;
+  protected NavigationButton<?, ?> activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
 
@@ -68,6 +70,14 @@ public abstract class AbstractArmorStandScreen
   @Override
   public boolean shouldPause() {
     return false;
+  }
+
+  @Override
+  public void init() {
+    this.handler.initSlots(this.utilizesInventory);
+    ClientNetworking.sendInitSlotsPacket(this.utilizesInventory);
+
+    super.init();
   }
 
   @Override
@@ -215,123 +225,29 @@ public abstract class AbstractArmorStandScreen
     return this.cursorLocked;
   }
 
-  protected void initNavigationButtons() {
-    int index = 0;
-    int totalWidth = 5 * NavigationButton.WIDTH + 4 * ICON_BUTTON_SPACING;
+  protected void initNavigationButtons(Collection<ScreenFactory<?>> screenFactories) {
+    int totalWidth = screenFactories.size() * NavigationButton.WIDTH
+        + (screenFactories.size() - 1) * ICON_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * ICON_BUTTON_SPACING;
     int y = height - PADDING - NavigationButton.HEIGHT;
 
-    if (this instanceof ArmorStandUtilitiesScreen) {
-      this.activeButton = new NavigationButton<>(
+    for (ScreenFactory<?> screenFactory : screenFactories) {
+      NavigationButton<?, ?> button = NavigationButton.create(
           this.client,
           this,
           x,
           y,
-          ArmorStandUtilitiesScreen.TITLE,
-          index);
-      addDrawable(this.activeButton);
-    } else {
-      addDrawableChild(new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandUtilitiesScreen.TITLE,
-          ArmorStandUtilitiesScreen::new,
-          index));
-    }
+          screenFactory);
 
-    index++;
-    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+      if (screenFactory.constructor == null) {
+        this.activeButton = button;
+        addDrawable(button);
+      } else {
+        addDrawableChild(button);
+      }
 
-    if (this instanceof ArmorStandMoveScreen) {
-      this.activeButton = new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandMoveScreen.TITLE,
-          index);
-      addDrawable(this.activeButton);
-    } else {
-      addDrawableChild(new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandMoveScreen.TITLE,
-          ArmorStandMoveScreen::new,
-          index));
-    }
-
-    index++;
-    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
-
-    if (this instanceof ArmorStandRotateScreen) {
-      this.activeButton = new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandRotateScreen.TITLE,
-          index);
-      addDrawable(this.activeButton);
-    } else {
-      addDrawableChild(new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandRotateScreen.TITLE,
-          ArmorStandRotateScreen::new,
-          index));
-    }
-
-    index++;
-    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
-
-    if (this instanceof ArmorStandPoseScreen) {
-      this.activeButton = new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandPoseScreen.TITLE,
-          index);
-      addDrawable(this.activeButton);
-    } else {
-      addDrawableChild(new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandPoseScreen.TITLE,
-          ArmorStandPoseScreen::new,
-          index));
-    }
-
-    index++;
-    x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
-
-    if (this instanceof ArmorStandInventoryScreen) {
-      this.activeButton = new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandInventoryScreen.TITLE,
-          index);
-      addDrawable(this.activeButton);
-    } else {
-      addDrawableChild(new NavigationButton<>(
-          this.client,
-          this,
-          x,
-          y,
-          ArmorStandInventoryScreen.TITLE,
-          ArmorStandInventoryScreen::new,
-          index));
+      x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
     }
   }
 

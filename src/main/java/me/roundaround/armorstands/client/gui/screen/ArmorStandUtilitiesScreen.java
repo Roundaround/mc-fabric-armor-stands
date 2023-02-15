@@ -3,10 +3,12 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
@@ -17,6 +19,7 @@ import net.minecraft.text.Text;
 public class ArmorStandUtilitiesScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.utilities");
+  public static final int U_INDEX = 0;
 
   private static final int BUTTON_WIDTH = 100;
   private static final int SCREEN_EDGE_PAD = 4;
@@ -35,6 +38,7 @@ public class ArmorStandUtilitiesScreen
   @Override
   public void init() {
     super.init();
+
     listeners.values().forEach(ArrayList::clear);
 
     refreshFlags();
@@ -67,7 +71,26 @@ public class ArmorStandUtilitiesScreen
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
         }));
 
-    initNavigationButtons();
+    initNavigationButtons(List.of(
+        ScreenFactory.create(
+            ArmorStandUtilitiesScreen.TITLE,
+            ArmorStandUtilitiesScreen.U_INDEX),
+        ScreenFactory.create(
+            ArmorStandMoveScreen.TITLE,
+            ArmorStandMoveScreen.U_INDEX,
+            ArmorStandMoveScreen::new),
+        ScreenFactory.create(
+            ArmorStandRotateScreen.TITLE,
+            ArmorStandRotateScreen.U_INDEX,
+            ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX,
+            ArmorStandPoseScreen::new),
+        ScreenFactory.create(
+            ArmorStandInventoryScreen.TITLE,
+            ArmorStandInventoryScreen.U_INDEX,
+            ArmorStandInventoryScreen::new)));
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),

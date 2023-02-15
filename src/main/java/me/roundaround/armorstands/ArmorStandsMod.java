@@ -3,9 +3,9 @@ package me.roundaround.armorstands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import me.roundaround.armorstands.network.ServerNetworking;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.command.ArmorStandsCommand;
+import me.roundaround.armorstands.server.network.ServerNetworking;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 

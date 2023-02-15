@@ -13,7 +13,8 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class NavigationButton<T extends AbstractArmorStandScreen> extends ButtonWidget {
+public class NavigationButton<P extends AbstractArmorStandScreen, T extends AbstractArmorStandScreen>
+    extends ButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
@@ -25,47 +26,6 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
 
   private boolean clickable;
 
-  public NavigationButton(
-      MinecraftClient client,
-      T parent,
-      int x,
-      int y,
-      Text tooltip,
-      int uIndex) {
-    this(
-        client,
-        parent,
-        x,
-        y,
-        tooltip,
-        (button, handler, armorStand) -> {
-        },
-        uIndex);
-    this.clickable = false;
-  }
-
-  public NavigationButton(
-      MinecraftClient client,
-      T parent,
-      int x,
-      int y,
-      Text tooltip,
-      ScreenConstructor<T> constructor,
-      int uIndex) {
-    this(
-        client,
-        parent,
-        x,
-        y,
-        tooltip,
-        (button, handler, armorStand) -> {
-          // Get around an issue where it was breaking on screen change
-          client.currentScreen = null;
-          client.setScreen(constructor.accept(handler, armorStand));
-        },
-        uIndex);
-  }
-
   @SuppressWarnings("unchecked")
   private NavigationButton(
       MinecraftClient client,
@@ -73,7 +33,8 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
       int x,
       int y,
       Text tooltip,
-      PressAction<T> onPress,
+      PressAction<P, T> onPress,
+      boolean clickable,
       int uIndex) {
     super(
         x,
@@ -82,11 +43,34 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
         HEIGHT,
         tooltip,
         (button) -> {
-          onPress.accept((NavigationButton<T>) button, parent.getScreenHandler(), parent.getArmorStand());
+          onPress.accept((NavigationButton<P, T>) button, parent.getScreenHandler(), parent.getArmorStand());
         });
     this.parent = parent;
     this.uIndex = uIndex;
     this.clickable = true;
+  }
+
+  public static NavigationButton<?, ?> create(
+      MinecraftClient client,
+      AbstractArmorStandScreen parent,
+      int x,
+      int y,
+      ScreenFactory<?> factory) {
+    return new NavigationButton<>(
+        client,
+        parent,
+        x,
+        y,
+        factory.tooltip,
+        (button, handler, armorStand) -> {
+          if (factory.constructor == null) {
+            return;
+          }
+          client.currentScreen = null;
+          client.setScreen(factory.constructor.accept(handler, armorStand));
+        },
+        factory.constructor == null,
+        factory.uIndex);
   }
 
   @Override
@@ -119,10 +103,35 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
   }
 
   @FunctionalInterface
-  public static interface PressAction<T extends AbstractArmorStandScreen> {
+  public static interface PressAction<P extends AbstractArmorStandScreen, T extends AbstractArmorStandScreen> {
     public void accept(
-        NavigationButton<T> button,
+        NavigationButton<P, T> button,
         ArmorStandScreenHandler handler,
         ArmorStandEntity armorStand);
+  }
+
+  public static class ScreenFactory<T extends AbstractArmorStandScreen> {
+    public final Text tooltip;
+    public final int uIndex;
+    public final ScreenConstructor<T> constructor;
+
+    private ScreenFactory(Text tooltip, int uIndex, ScreenConstructor<T> constructor) {
+      this.tooltip = tooltip;
+      this.uIndex = uIndex;
+      this.constructor = constructor;
+    }
+
+    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
+        Text tooltip,
+        int uIndex,
+        ScreenConstructor<T> constructor) {
+      return new ScreenFactory<>(tooltip, uIndex, constructor);
+    }
+
+    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
+        Text tooltip,
+        int uIndex) {
+      return new ScreenFactory<>(tooltip, uIndex, null);
+    }
   }
 }

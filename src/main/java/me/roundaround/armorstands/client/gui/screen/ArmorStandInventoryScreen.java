@@ -1,9 +1,12 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.List;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
@@ -15,6 +18,7 @@ import net.minecraft.util.Identifier;
 public class ArmorStandInventoryScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.inventory");
+  public static final int U_INDEX = 4;
 
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
@@ -35,7 +39,26 @@ public class ArmorStandInventoryScreen
   @Override
   public void init() {
     super.init();
-    initNavigationButtons();
+    initNavigationButtons(List.of(
+        ScreenFactory.create(
+            ArmorStandUtilitiesScreen.TITLE,
+            ArmorStandUtilitiesScreen.U_INDEX,
+            ArmorStandUtilitiesScreen::new),
+        ScreenFactory.create(
+            ArmorStandMoveScreen.TITLE,
+            ArmorStandMoveScreen.U_INDEX,
+            ArmorStandMoveScreen::new),
+        ScreenFactory.create(
+            ArmorStandRotateScreen.TITLE,
+            ArmorStandRotateScreen.U_INDEX,
+            ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX,
+            ArmorStandPoseScreen::new),
+        ScreenFactory.create(
+            ArmorStandInventoryScreen.TITLE,
+            ArmorStandInventoryScreen.U_INDEX)));
   }
 
   @Override

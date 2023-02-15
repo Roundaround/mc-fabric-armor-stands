@@ -1,6 +1,9 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.List;
+
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.gui.widget.PoseListWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,6 +14,7 @@ import net.minecraft.util.math.MathHelper;
 public class ArmorStandPoseScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.pose");
+  public static final int U_INDEX = 3;
 
   private static final int PADDING = 4;
 
@@ -25,7 +29,28 @@ public class ArmorStandPoseScreen
 
   @Override
   public void init() {
-    initNavigationButtons();
+    super.init();
+
+    initNavigationButtons(List.of(
+        ScreenFactory.create(
+            ArmorStandUtilitiesScreen.TITLE,
+            ArmorStandUtilitiesScreen.U_INDEX,
+            ArmorStandUtilitiesScreen::new),
+        ScreenFactory.create(
+            ArmorStandMoveScreen.TITLE,
+            ArmorStandMoveScreen.U_INDEX,
+            ArmorStandMoveScreen::new),
+        ScreenFactory.create(
+            ArmorStandRotateScreen.TITLE,
+            ArmorStandRotateScreen.U_INDEX,
+            ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX),
+        ScreenFactory.create(
+            ArmorStandInventoryScreen.TITLE,
+            ArmorStandInventoryScreen.U_INDEX,
+            ArmorStandInventoryScreen::new)));
 
     int listWidth = MathHelper.floor(this.width / 2f
         - 2.5f * NavigationButton.WIDTH

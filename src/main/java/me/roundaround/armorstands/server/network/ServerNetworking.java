@@ -1,6 +1,11 @@
-package me.roundaround.armorstands.network;
+package me.roundaround.armorstands.server.network;
 
 import io.netty.buffer.Unpooled;
+import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.NetworkPackets;
+import me.roundaround.armorstands.network.PosePreset;
+import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -15,6 +20,9 @@ import net.minecraft.util.math.EulerAngle;
 
 public class ServerNetworking {
   public static void registerReceivers() {
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.INIT_SLOTS_PACKET,
+        ServerNetworking::handleInitSlotsPacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.ADJUST_YAW_PACKET,
         ServerNetworking::handleAdjustYawPacket);
@@ -40,6 +48,22 @@ public class ServerNetworking {
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
     return new EulerAngle(buf.readFloat(), buf.readFloat(), buf.readFloat());
+  }
+
+  private static void handleInitSlotsPacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    boolean fillSlots = buf.readBoolean();
+
+    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+      return;
+    }
+
+    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    screenHandler.initSlots(fillSlots);
   }
 
   private static void handleAdjustYawPacket(

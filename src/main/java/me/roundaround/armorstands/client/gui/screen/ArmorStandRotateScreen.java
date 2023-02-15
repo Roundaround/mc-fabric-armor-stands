@@ -1,9 +1,11 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.List;
 import java.util.Locale;
 
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -16,6 +18,7 @@ import net.minecraft.util.math.MathHelper;
 public class ArmorStandRotateScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.rotate");
+  public static final int U_INDEX = 2;
 
   private static final int MINI_BUTTON_WIDTH = 24;
   private static final int MINI_BUTTON_HEIGHT = 16;
@@ -38,6 +41,8 @@ public class ArmorStandRotateScreen
 
   @Override
   public void init() {
+    super.init();
+
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
@@ -103,7 +108,26 @@ public class ArmorStandRotateScreen
           ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH);
         }));
 
-    initNavigationButtons();
+    initNavigationButtons(List.of(
+        ScreenFactory.create(
+            ArmorStandUtilitiesScreen.TITLE,
+            ArmorStandUtilitiesScreen.U_INDEX,
+            ArmorStandUtilitiesScreen::new),
+        ScreenFactory.create(
+            ArmorStandMoveScreen.TITLE,
+            ArmorStandMoveScreen.U_INDEX,
+            ArmorStandMoveScreen::new),
+        ScreenFactory.create(
+            ArmorStandRotateScreen.TITLE,
+            ArmorStandRotateScreen.U_INDEX),
+        ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX,
+            ArmorStandPoseScreen::new),
+        ScreenFactory.create(
+            ArmorStandInventoryScreen.TITLE,
+            ArmorStandInventoryScreen.U_INDEX,
+            ArmorStandInventoryScreen::new)));
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
