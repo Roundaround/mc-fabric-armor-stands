@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import me.roundaround.armorstands.client.gui.HasArmorStandState;
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 
@@ -17,8 +17,8 @@ public abstract class MouseMixin {
 
   @Inject(method = "isCursorLocked", at = @At(value = "HEAD"), cancellable = true)
   public void isCursorLocked(CallbackInfoReturnable<Boolean> info) {
-    if (client.currentScreen instanceof HasArmorStandState) {
-      info.setReturnValue(((HasArmorStandState) client.currentScreen).getState().isCursorLocked());
+    if (client.currentScreen instanceof AbstractArmorStandScreen) {
+      info.setReturnValue(((AbstractArmorStandScreen) client.currentScreen).isCursorLocked());
     }
   }
 }

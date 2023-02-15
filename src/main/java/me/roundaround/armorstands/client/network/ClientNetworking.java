@@ -1,13 +1,13 @@
 package me.roundaround.armorstands.client.network;
 
 import io.netty.buffer.Unpooled;
-import me.roundaround.armorstands.client.gui.ArmorStandState;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandUtilitiesScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandInventoryScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.NetworkPackets;
 import me.roundaround.armorstands.network.PosePreset;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.HasArmorStand;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
@@ -51,9 +51,9 @@ public class ClientNetworking {
           player.getInventory(),
           armorStand);
 
-      client.setScreen(new ArmorStandUtilitiesScreen(
+      client.setScreen(new ArmorStandInventoryScreen(
           screenHandler,
-          new ArmorStandState(client, armorStand)));
+          armorStand));
     });
   }
 
@@ -62,7 +62,6 @@ public class ClientNetworking {
       ClientPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    int armorStandId = buf.readInt();
     double x = buf.readDouble();
     double y = buf.readDouble();
     double z = buf.readDouble();
@@ -70,12 +69,12 @@ public class ClientNetworking {
     float pitch = buf.readFloat();
 
     client.execute(() -> {
-      Entity entity = client.player.getWorld().getEntityById(armorStandId);
-      if (!(entity instanceof ArmorStandEntity)) {
+      if (!(client.player.currentScreenHandler instanceof HasArmorStand)) {
         return;
       }
 
-      ArmorStandEntity armorStand = (ArmorStandEntity) entity;
+      HasArmorStand screenHandler = (HasArmorStand) client.player.currentScreenHandler;
+      ArmorStandEntity armorStand = screenHandler.getArmorStand();
       armorStand.setPos(x, y, z);
       armorStand.setYaw(yaw % 360f);
       armorStand.setPitch(pitch % 360f);
@@ -157,12 +156,5 @@ public class ClientNetworking {
     buf.writeBoolean(redo);
 
     ClientPlayNetworking.send(NetworkPackets.UNDO_PACKET, buf);
-  }
-
-  public static void sendInitSlotsPacket(boolean fillSlots) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeBoolean(fillSlots);
-
-    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, buf);
   }
 }

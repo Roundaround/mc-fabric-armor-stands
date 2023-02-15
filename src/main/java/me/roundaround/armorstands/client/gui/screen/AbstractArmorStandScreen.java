@@ -7,70 +7,67 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
-import me.roundaround.armorstands.client.gui.HasArmorStandState;
+import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
+import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.HasArmorStand;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public abstract class AbstractArmorStandScreen
     extends HandledScreen<ArmorStandScreenHandler>
-    implements HasArmorStandState {
+    implements HasArmorStand {
   protected static final int PADDING = 1;
   protected static final int ICON_BUTTON_SPACING = 0;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/widgets.png");
 
-  protected final ArmorStandState state;
+  protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
 
   protected NavigationButton<?> activeButton;
-  protected boolean cursorLocked = false;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
+
+  private boolean cursorLocked = false;
 
   protected AbstractArmorStandScreen(
       ArmorStandScreenHandler handler,
       Text title,
-      ArmorStandState state) {
+      ArmorStandEntity armorStand) {
     super(handler, handler.getPlayerInventory(), title);
 
-    this.state = state;
+    this.armorStand = armorStand;
     this.messageRenderer = new MessageRenderer(this);
 
     this.passEvents = true;
   }
 
   @Override
-  public ArmorStandState getState() {
-    return this.state;
+  public ArmorStandEntity getArmorStand() {
+    return this.armorStand;
   }
 
   @Override
   public boolean shouldPause() {
     return false;
-  }
-
-  @Override
-  public void init() {
-    this.handler.initSlots(this.utilizesInventory);
-    ClientNetworking.sendInitSlotsPacket(this.utilizesInventory);
-
-    super.init();
   }
 
   @Override
@@ -93,8 +90,9 @@ public abstract class AbstractArmorStandScreen
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
-    RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
+    // RenderSystem.enableBlend();
+    // ((InGameHudAccessor)
+    // this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
 
     renderActivePageButtonHighlight(matrixStack);
@@ -160,7 +158,7 @@ public abstract class AbstractArmorStandScreen
     switch (keyCode) {
       case GLFW.GLFW_KEY_LEFT_ALT:
       case GLFW.GLFW_KEY_RIGHT_ALT:
-        this.state.lockCursor();
+        lockCursor();
         return true;
       case GLFW.GLFW_KEY_TAB:
         boolean forward = !Screen.hasShiftDown();
@@ -201,12 +199,21 @@ public abstract class AbstractArmorStandScreen
   @Override
   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
     if (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT) {
-      this.state.unlockCursor();
+      unlockCursor();
       return true;
     }
 
     return getFocused() != null
         && getFocused().keyReleased(keyCode, scanCode, modifiers);
+  }
+
+  public boolean shouldHighlight(Entity entity) {
+    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed()
+        && entity == this.armorStand;
+  }
+
+  public boolean isCursorLocked() {
+    return this.cursorLocked;
   }
 
   protected void initNavigationButtons() {
@@ -376,5 +383,23 @@ public abstract class AbstractArmorStandScreen
 
   protected void playClickSound() {
     this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+  }
+
+  protected void lockCursor() {
+    this.cursorLocked = true;
+    int x = this.client.getWindow().getWidth() / 2;
+    int y = this.client.getWindow().getHeight() / 2;
+    ((MouseAccessor) this.client.mouse).setX(x);
+    ((MouseAccessor) this.client.mouse).setY(y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
+  }
+
+  protected void unlockCursor() {
+    this.cursorLocked = false;
+    int x = this.client.getWindow().getWidth() / 2;
+    int y = this.client.getWindow().getHeight() / 2;
+    ((MouseAccessor) this.client.mouse).setX(x);
+    ((MouseAccessor) this.client.mouse).setY(y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
   }
 }

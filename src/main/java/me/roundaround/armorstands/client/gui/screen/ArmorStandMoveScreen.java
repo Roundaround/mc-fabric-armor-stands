@@ -6,7 +6,6 @@ import java.util.Optional;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.HasArmorStandOverlay;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
@@ -53,8 +52,8 @@ public class ArmorStandMoveScreen
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
 
-  public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandState state) {
-    super(handler, TITLE, state);
+  public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
+    super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 
@@ -165,7 +164,7 @@ public class ArmorStandMoveScreen
         .build());
 
     standPosLabel = LabelWidget.builder(
-        getCurrentPosText(this.state.getArmorStand()),
+        getCurrentPosText(this.armorStand),
         this.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -175,7 +174,7 @@ public class ArmorStandMoveScreen
     addDrawable(standPosLabel);
 
     standBlockPosLabel = LabelWidget.builder(
-        getCurrentBlockPosText(this.state.getArmorStand()),
+        getCurrentBlockPosText(this.armorStand),
         this.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -201,8 +200,8 @@ public class ArmorStandMoveScreen
     playerPosLabel.setText(getCurrentPosText(client.player));
     playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
     playerFacingLabel.setText(getCurrentFacingText(client.player));
-    standPosLabel.setText(getCurrentPosText(this.state.getArmorStand()));
-    standBlockPosLabel.setText(getCurrentBlockPosText(this.state.getArmorStand()));
+    standPosLabel.setText(getCurrentPosText(this.armorStand));
+    standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
   }
 
   @Override
@@ -212,7 +211,7 @@ public class ArmorStandMoveScreen
       MatrixStack matrixStack,
       VertexConsumerProvider vertexConsumerProvider,
       int light) {
-    if (armorStand != this.state.getArmorStand()) {
+    if (armorStand != this.armorStand) {
       return;
     }
 

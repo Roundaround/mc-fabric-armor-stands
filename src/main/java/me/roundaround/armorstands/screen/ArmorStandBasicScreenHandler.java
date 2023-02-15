@@ -2,6 +2,8 @@ package me.roundaround.armorstands.screen;
 
 import me.roundaround.armorstands.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
+import me.roundaround.armorstands.util.HasArmorStand;
+import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -10,7 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class ArmorStandBasicScreenHandler extends ScreenHandler {
+public class ArmorStandBasicScreenHandler
+    extends ScreenHandler
+    implements HasArmorStand, HasArmorStandEditor {
   private final PlayerEntity player;
   private final ArmorStandEntity armorStand;
   private final ArmorStandEditor editor;
@@ -28,11 +32,13 @@ public class ArmorStandBasicScreenHandler extends ScreenHandler {
     }
   }
 
+  @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
   }
 
   @Environment(EnvType.SERVER)
+  @Override
   public ArmorStandEditor getEditor() {
     return this.editor;
   }

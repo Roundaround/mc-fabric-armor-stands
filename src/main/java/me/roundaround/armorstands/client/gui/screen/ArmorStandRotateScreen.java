@@ -2,13 +2,13 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.Locale;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -31,8 +31,8 @@ public class ArmorStandRotateScreen
 
   public ArmorStandRotateScreen(
       ArmorStandScreenHandler handler,
-      ArmorStandState state) {
-    super(handler, TITLE, state);
+      ArmorStandEntity armorStand) {
+    super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 
@@ -115,7 +115,7 @@ public class ArmorStandRotateScreen
         .build());
 
     standFacingLabel = LabelWidget.builder(
-        getCurrentFacingText(this.state.getArmorStand()),
+        getCurrentFacingText(this.armorStand),
         this.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -125,7 +125,7 @@ public class ArmorStandRotateScreen
     addDrawable(standFacingLabel);
 
     standRotationLabel = LabelWidget.builder(
-        getCurrentRotationText(this.state.getArmorStand()),
+        getCurrentRotationText(this.armorStand),
         this.width - SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
@@ -144,8 +144,8 @@ public class ArmorStandRotateScreen
 
     playerFacingLabel.setText(getCurrentFacingText(client.player));
     playerRotationLabel.setText(getCurrentRotationText(client.player));
-    standFacingLabel.setText(getCurrentFacingText(this.state.getArmorStand()));
-    standRotationLabel.setText(getCurrentRotationText(this.state.getArmorStand()));
+    standFacingLabel.setText(getCurrentFacingText(this.armorStand));
+    standRotationLabel.setText(getCurrentRotationText(this.armorStand));
   }
 
   private Text getCurrentFacingText(Entity entity) {

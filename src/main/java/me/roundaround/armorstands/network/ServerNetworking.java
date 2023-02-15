@@ -1,8 +1,8 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.Unpooled;
-import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
+import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -36,16 +36,13 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.UNDO_PACKET,
         ServerNetworking::handleUndoPacket);
-    ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.INIT_SLOTS_PACKET,
-        ServerNetworking::handleInitSlotsPacket);
   }
 
   private static EulerAngle readEulerAngle(PacketByteBuf buf) {
     return new EulerAngle(buf.readFloat(), buf.readFloat(), buf.readFloat());
   }
 
-  public static void handleAdjustYawPacket(
+  private static void handleAdjustYawPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -53,16 +50,16 @@ public class ServerNetworking {
       PacketSender responseSender) {
     int amount = buf.readInt();
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     editor.rotate(amount);
   }
 
-  public static void handleAdjustPosPacket(
+  private static void handleAdjustPosPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -71,16 +68,16 @@ public class ServerNetworking {
     Direction direction = Direction.byId(buf.readInt());
     int pixels = buf.readInt();
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     editor.movePos(direction, pixels);
   }
 
-  public static void handleUtilityActionPacket(
+  private static void handleUtilityActionPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -88,16 +85,16 @@ public class ServerNetworking {
       PacketSender responseSender) {
     UtilityAction action = UtilityAction.fromString(buf.readString());
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     action.apply(editor, player);
   }
 
-  public static void handleToggleFlagPacket(
+  private static void handleToggleFlagPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -105,16 +102,16 @@ public class ServerNetworking {
       PacketSender responseSender) {
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     editor.toggleFlag(flag);
   }
 
-  public static void handleSetFlagPacket(
+  private static void handleSetFlagPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -123,16 +120,16 @@ public class ServerNetworking {
     ArmorStandFlag flag = ArmorStandFlag.fromString(buf.readString());
     boolean value = buf.readBoolean();
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     editor.setFlag(flag, value);
   }
 
-  public static void handleSetPosePacket(
+  private static void handleSetPosePacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -140,11 +137,11 @@ public class ServerNetworking {
       PacketSender responseSender) {
     boolean isPreset = buf.readBoolean();
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
 
     if (isPreset) {
@@ -162,7 +159,7 @@ public class ServerNetworking {
         readEulerAngle(buf));
   }
 
-  public static void handleUndoPacket(
+  private static void handleUndoPacket(
       MinecraftServer server,
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
@@ -170,33 +167,17 @@ public class ServerNetworking {
       PacketSender responseSender) {
     boolean redo = buf.readBoolean();
 
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     if (redo) {
       editor.redo();
       return;
     }
     editor.undo();
-  }
-
-  private static void handleInitSlotsPacket(
-      MinecraftServer server,
-      ServerPlayerEntity player,
-      ServerPlayNetworkHandler handler,
-      PacketByteBuf buf,
-      PacketSender responseSender) {
-    boolean fillSlots = buf.readBoolean();
-
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
-      return;
-    }
-
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
-    screenHandler.initSlots(fillSlots);
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
@@ -209,7 +190,6 @@ public class ServerNetworking {
 
   public static void sendClientUpdatePacket(ServerPlayerEntity player, ArmorStandEntity armorStand) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeInt(armorStand.getId());
     buf.writeDouble(armorStand.getX());
     buf.writeDouble(armorStand.getY());
     buf.writeDouble(armorStand.getZ());

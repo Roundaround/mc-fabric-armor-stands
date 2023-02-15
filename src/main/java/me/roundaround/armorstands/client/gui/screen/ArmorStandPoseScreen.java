@@ -1,10 +1,10 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.gui.widget.PoseListWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -18,8 +18,8 @@ public class ArmorStandPoseScreen
 
   public ArmorStandPoseScreen(
       ArmorStandScreenHandler handler,
-      ArmorStandState state) {
-    super(handler, TITLE, state);
+      ArmorStandEntity armorStand) {
+    super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 

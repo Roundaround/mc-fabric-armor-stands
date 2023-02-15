@@ -3,13 +3,13 @@ package me.roundaround.armorstands.client.gui.widget;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -38,7 +38,7 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
         x,
         y,
         tooltip,
-        (button, handler, state) -> {
+        (button, handler, armorStand) -> {
         },
         uIndex);
     this.clickable = false;
@@ -58,10 +58,10 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
         x,
         y,
         tooltip,
-        (button, handler, state) -> {
+        (button, handler, armorStand) -> {
           // Get around an issue where it was breaking on screen change
           client.currentScreen = null;
-          client.setScreen(constructor.accept(handler, state));
+          client.setScreen(constructor.accept(handler, armorStand));
         },
         uIndex);
   }
@@ -82,7 +82,7 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
         HEIGHT,
         tooltip,
         (button) -> {
-          onPress.accept((NavigationButton<T>) button, parent.getScreenHandler(), parent.getState());
+          onPress.accept((NavigationButton<T>) button, parent.getScreenHandler(), parent.getArmorStand());
         });
     this.parent = parent;
     this.uIndex = uIndex;
@@ -115,7 +115,7 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
   public static interface ScreenConstructor<T extends AbstractArmorStandScreen> {
     public T accept(
         ArmorStandScreenHandler handler,
-        ArmorStandState state);
+        ArmorStandEntity armorStand);
   }
 
   @FunctionalInterface
@@ -123,6 +123,6 @@ public class NavigationButton<T extends AbstractArmorStandScreen> extends Button
     public void accept(
         NavigationButton<T> button,
         ArmorStandScreenHandler handler,
-        ArmorStandState state);
+        ArmorStandEntity armorStand);
   }
 }

@@ -3,11 +3,8 @@ package me.roundaround.armorstands.screen;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.entity.ArmorStandInventory;
-import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.network.ServerNetworking;
-import me.roundaround.armorstands.util.ArmorStandEditor;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import me.roundaround.armorstands.util.HasArmorStand;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +16,9 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-public class ArmorStandScreenHandler extends ScreenHandler {
+public class ArmorStandScreenHandler
+    extends ScreenHandler
+    implements HasArmorStand {
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
@@ -34,7 +33,6 @@ public class ArmorStandScreenHandler extends ScreenHandler {
   private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
   private final ArmorStandInventory inventory;
-  private final ArmorStandEditor editor;
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
@@ -42,22 +40,6 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     this.playerInventory = playerInventory;
     this.armorStand = armorStand;
     this.inventory = new ArmorStandInventory(armorStand);
-
-    if (this.playerInventory.player instanceof ServerPlayerEntity) {
-      this.editor = new ArmorStandEditor(armorStand);
-    } else {
-      this.editor = null;
-    }
-  }
-
-  public void initSlots(boolean fillSlots) {
-    slots.clear();
-    ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
-    ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
-
-    if (!fillSlots) {
-      return;
-    }
 
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
@@ -108,17 +90,13 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     }
   }
 
+  @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
   }
 
   public PlayerInventory getPlayerInventory() {
     return this.playerInventory;
-  }
-
-  @Environment(EnvType.SERVER)
-  public ArmorStandEditor getEditor() {
-    return this.editor;
   }
 
   @Override

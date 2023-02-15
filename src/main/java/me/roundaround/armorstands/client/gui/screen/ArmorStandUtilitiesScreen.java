@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-import me.roundaround.armorstands.client.gui.ArmorStandState;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesScreen
@@ -27,8 +27,8 @@ public class ArmorStandUtilitiesScreen
 
   public ArmorStandUtilitiesScreen(
       ArmorStandScreenHandler handler,
-      ArmorStandState state) {
-    super(handler, TITLE, state);
+      ArmorStandEntity armorStand) {
+    super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 
@@ -125,7 +125,7 @@ public class ArmorStandUtilitiesScreen
         listeners.put(flag, new ArrayList<>());
       }
 
-      boolean curr = flag.getValue(this.state.getArmorStand());
+      boolean curr = flag.getValue(this.armorStand);
       boolean prev = currentValues.getOrDefault(flag, !curr);
 
       if (curr != prev) {
