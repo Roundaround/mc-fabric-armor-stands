@@ -13,7 +13,7 @@ import net.minecraft.util.math.MathHelper;
 public class ArmorStandPoseScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.pose");
-  public static final int U_INDEX = 3;
+  public static final int U_INDEX = 4;
 
   private static final int PADDING = 4;
 

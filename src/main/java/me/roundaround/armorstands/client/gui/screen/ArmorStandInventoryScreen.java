@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 public class ArmorStandInventoryScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.page.inventory");
-  public static final int U_INDEX = 4;
+  public static final int U_INDEX = 5;
 
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;

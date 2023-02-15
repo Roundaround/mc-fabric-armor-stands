@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import me.roundaround.armorstands.client.network.ClientNetworking;
-import me.roundaround.armorstands.network.PosePreset;
+import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;

@@ -1,9 +1,8 @@
-package me.roundaround.armorstands.network;
+package me.roundaround.armorstands.util;
 
 import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.util.Pose;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
