@@ -11,7 +11,6 @@ import me.roundaround.armorstands.client.gui.HasArmorStandOverlay;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;

@@ -3,7 +3,6 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.gui.widget.PoseListWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.util.math.MatrixStack;

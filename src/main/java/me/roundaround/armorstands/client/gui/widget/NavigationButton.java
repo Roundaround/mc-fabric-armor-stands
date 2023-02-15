@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen.ScreenFactory;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -108,30 +109,5 @@ public class NavigationButton<P extends AbstractArmorStandScreen, T extends Abst
         NavigationButton<P, T> button,
         ArmorStandScreenHandler handler,
         ArmorStandEntity armorStand);
-  }
-
-  public static class ScreenFactory<T extends AbstractArmorStandScreen> {
-    public final Text tooltip;
-    public final int uIndex;
-    public final ScreenConstructor<T> constructor;
-
-    private ScreenFactory(Text tooltip, int uIndex, ScreenConstructor<T> constructor) {
-      this.tooltip = tooltip;
-      this.uIndex = uIndex;
-      this.constructor = constructor;
-    }
-
-    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
-        Text tooltip,
-        int uIndex,
-        ScreenConstructor<T> constructor) {
-      return new ScreenFactory<>(tooltip, uIndex, constructor);
-    }
-
-    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
-        Text tooltip,
-        int uIndex) {
-      return new ScreenFactory<>(tooltip, uIndex, null);
-    }
   }
 }

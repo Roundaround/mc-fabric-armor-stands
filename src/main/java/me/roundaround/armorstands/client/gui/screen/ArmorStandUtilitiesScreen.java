@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;

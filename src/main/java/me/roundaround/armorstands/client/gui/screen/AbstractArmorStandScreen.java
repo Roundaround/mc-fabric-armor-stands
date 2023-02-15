@@ -11,7 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
+import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenConstructor;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -316,5 +316,30 @@ public abstract class AbstractArmorStandScreen
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
     InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+  }
+
+  public static class ScreenFactory<T extends AbstractArmorStandScreen> {
+    public final Text tooltip;
+    public final int uIndex;
+    public final ScreenConstructor<T> constructor;
+
+    private ScreenFactory(Text tooltip, int uIndex, ScreenConstructor<T> constructor) {
+      this.tooltip = tooltip;
+      this.uIndex = uIndex;
+      this.constructor = constructor;
+    }
+
+    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
+        Text tooltip,
+        int uIndex,
+        ScreenConstructor<T> constructor) {
+      return new ScreenFactory<>(tooltip, uIndex, constructor);
+    }
+
+    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
+        Text tooltip,
+        int uIndex) {
+      return new ScreenFactory<>(tooltip, uIndex, null);
+    }
   }
 }

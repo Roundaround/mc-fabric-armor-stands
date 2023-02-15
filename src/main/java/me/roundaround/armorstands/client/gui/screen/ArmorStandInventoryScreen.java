@@ -6,7 +6,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenFactory;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
