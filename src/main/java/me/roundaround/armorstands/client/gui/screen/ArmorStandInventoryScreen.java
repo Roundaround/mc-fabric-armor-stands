@@ -28,6 +28,9 @@ public class ArmorStandInventoryScreen
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory_dark.png");
 
+  private float mouseX;
+  private float mouseY;
+
   public ArmorStandInventoryScreen(
       ArmorStandScreenHandler handler,
       ArmorStandEntity armorStand) {
@@ -64,6 +67,8 @@ public class ArmorStandInventoryScreen
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+    this.mouseX = mouseX;
+    this.mouseY = mouseY;
     super.render(matrixStack, mouseX, mouseY, delta);
     drawMouseoverTooltip(matrixStack, mouseX, mouseY);
   }
@@ -89,6 +94,12 @@ public class ArmorStandInventoryScreen
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT);
 
-    InventoryScreen.drawEntity(x + 88, y + 75, 30, 0f, 0f, this.armorStand);
+    InventoryScreen.drawEntity(
+      x + 88, 
+      y + 75, 
+      30, 
+      x + 88 - this.mouseX, 
+      y + 40 - this.mouseY, 
+      this.armorStand);
   }
 }
