@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 
 public class ArmorStandInventoryScreen
     extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.page.inventory");
+  public static final Text TITLE = Text.translatable("armorstands.screen.inventory");
   public static final int U_INDEX = 5;
 
   private static final int BACKGROUND_WIDTH = 176;
@@ -57,6 +57,10 @@ public class ArmorStandInventoryScreen
             ArmorStandRotateScreen.U_INDEX,
             ArmorStandRotateScreen::new),
         ScreenFactory.create(
+            ArmorStandPresetsScreen.TITLE,
+            ArmorStandPresetsScreen.U_INDEX,
+            ArmorStandPresetsScreen::new),
+        ScreenFactory.create(
             ArmorStandPoseScreen.TITLE,
             ArmorStandPoseScreen.U_INDEX,
             ArmorStandPoseScreen::new),
@@ -67,6 +71,7 @@ public class ArmorStandInventoryScreen
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+    renderBackground(matrixStack);
     this.mouseX = mouseX;
     this.mouseY = mouseY;
     super.render(matrixStack, mouseX, mouseY, delta);
@@ -95,11 +100,11 @@ public class ArmorStandInventoryScreen
         BACKGROUND_HEIGHT);
 
     InventoryScreen.drawEntity(
-      x + 88, 
-      y + 75, 
-      30, 
-      x + 88 - this.mouseX, 
-      y + 40 - this.mouseY, 
-      this.armorStand);
+        x + 88,
+        y + 75,
+        30,
+        x + 88 - this.mouseX,
+        y + 40 - this.mouseY,
+        this.armorStand);
   }
 }

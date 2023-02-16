@@ -17,7 +17,7 @@ import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesScreen
     extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.page.utilities");
+  public static final Text TITLE = Text.translatable("armorstands.screen.utilities");
   public static final int U_INDEX = 0;
 
   private static final int BUTTON_WIDTH = 100;
@@ -82,6 +82,10 @@ public class ArmorStandUtilitiesScreen
             ArmorStandRotateScreen.TITLE,
             ArmorStandRotateScreen.U_INDEX,
             ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPresetsScreen.TITLE,
+            ArmorStandPresetsScreen.U_INDEX,
+            ArmorStandPresetsScreen::new),
         ScreenFactory.create(
             ArmorStandPoseScreen.TITLE,
             ArmorStandPoseScreen.U_INDEX,

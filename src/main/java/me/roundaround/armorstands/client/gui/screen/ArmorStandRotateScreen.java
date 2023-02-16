@@ -16,7 +16,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class ArmorStandRotateScreen
     extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.page.rotate");
+  public static final Text TITLE = Text.translatable("armorstands.screen.rotate");
   public static final int U_INDEX = 2;
 
   private static final int MINI_BUTTON_WIDTH = 24;
@@ -119,6 +119,10 @@ public class ArmorStandRotateScreen
         ScreenFactory.create(
             ArmorStandRotateScreen.TITLE,
             ArmorStandRotateScreen.U_INDEX),
+        ScreenFactory.create(
+            ArmorStandPresetsScreen.TITLE,
+            ArmorStandPresetsScreen.U_INDEX,
+            ArmorStandPresetsScreen::new),
         ScreenFactory.create(
             ArmorStandPoseScreen.TITLE,
             ArmorStandPoseScreen.U_INDEX,

@@ -33,7 +33,7 @@ import net.minecraft.util.math.Vec3f;
 public class ArmorStandMoveScreen
     extends AbstractArmorStandScreen
     implements HasArmorStandOverlay {
-  public static final Text TITLE = Text.translatable("armorstands.page.move");
+  public static final Text TITLE = Text.translatable("armorstands.screen.move");
   public static final int U_INDEX = 1;
 
   private static final int MINI_BUTTON_WIDTH = 16;
@@ -168,6 +168,10 @@ public class ArmorStandMoveScreen
             ArmorStandRotateScreen.TITLE,
             ArmorStandRotateScreen.U_INDEX,
             ArmorStandRotateScreen::new),
+        ScreenFactory.create(
+            ArmorStandPresetsScreen.TITLE,
+            ArmorStandPresetsScreen.U_INDEX,
+            ArmorStandPresetsScreen::new),
         ScreenFactory.create(
             ArmorStandPoseScreen.TITLE,
             ArmorStandPoseScreen.U_INDEX,
