@@ -41,6 +41,11 @@ public class ArmorStandInventoryScreen
   }
 
   @Override
+  public boolean shouldPause() {
+    return true;
+  }
+
+  @Override
   public void init() {
     super.init();
     initNavigationButtons(List.of(

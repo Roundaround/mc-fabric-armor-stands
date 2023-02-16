@@ -167,6 +167,9 @@ public abstract class AbstractArmorStandScreen
     switch (keyCode) {
       case GLFW.GLFW_KEY_LEFT_ALT:
       case GLFW.GLFW_KEY_RIGHT_ALT:
+        if (!this.passEvents) {
+          break;
+        }
         lockCursor();
         return true;
       case GLFW.GLFW_KEY_TAB:
@@ -207,7 +210,7 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT) {
+    if (this.passEvents && (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
       unlockCursor();
       return true;
     }

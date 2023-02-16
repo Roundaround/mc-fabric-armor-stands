@@ -23,7 +23,14 @@ public class ArmorStandPresetsScreen
       ArmorStandScreenHandler handler,
       ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
+
     this.supportsUndoRedo = true;
+    this.passEvents = false;
+  }
+
+  @Override
+  public boolean shouldPause() {
+    return true;
   }
 
   @Override
