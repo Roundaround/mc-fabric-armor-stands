@@ -32,7 +32,9 @@ public class ArmorStandInventoryScreen
       ArmorStandScreenHandler handler,
       ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
+
     this.utilizesInventory = true;
+    this.passEvents = false;
   }
 
   @Override
