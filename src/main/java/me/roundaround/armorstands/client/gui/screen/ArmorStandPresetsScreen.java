@@ -16,6 +16,8 @@ public class ArmorStandPresetsScreen
   public static final int U_INDEX = 4;
 
   private static final int PADDING = 4;
+  private static final int HEADER_HEIGHT = 20;
+  private static final int FOOTER_HEIGHT = NavigationButton.HEIGHT + PADDING + NAV_BUTTON_BOTTOM_PADDING;
 
   private PoseListWidget list;
 
@@ -36,6 +38,15 @@ public class ArmorStandPresetsScreen
   @Override
   public void init() {
     super.init();
+
+    this.list = new PoseListWidget(
+        client,
+        MathHelper.floor(this.width / 2f - 2 * PADDING),
+        this.height,
+        0,
+        HEADER_HEIGHT,
+        this.height - FOOTER_HEIGHT);
+    addSelectableChild(this.list);
 
     initNavigationButtons(List.of(
         ScreenFactory.create(
@@ -61,27 +72,12 @@ public class ArmorStandPresetsScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    int listWidth = MathHelper.floor(this.width / 2f
-        - 2.5f * NavigationButton.WIDTH
-        - 2 * ICON_BUTTON_SPACING
-        - 2 * PADDING);
-    int listHeight = this.height - 2 * PADDING;
-
-    int refX = this.width - PADDING - listWidth;
-    int refY = this.height - PADDING - listHeight;
-
-    this.list = new PoseListWidget(
-        client,
-        refX,
-        refY,
-        listWidth,
-        listHeight);
-    addSelectableChild(this.list);
   }
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    renderBackgroundTexture(0);
+
     this.list.render(matrixStack, mouseX, mouseY, partialTicks);
     super.render(matrixStack, mouseX, mouseY, partialTicks);
   }

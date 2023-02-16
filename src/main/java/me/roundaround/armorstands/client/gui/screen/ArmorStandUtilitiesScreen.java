@@ -166,8 +166,8 @@ public class ArmorStandUtilitiesScreen
       ArmorStandFlag flag,
       int index,
       boolean inverted) {
-    int xPos = this.width - PADDING - BUTTON_WIDTH;
-    int yPos = this.height - (index + 1) * (PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
+    int xPos = this.width - NAV_BUTTON_BOTTOM_PADDING - BUTTON_WIDTH;
+    int yPos = this.height - (index + 1) * (NAV_BUTTON_BOTTOM_PADDING + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
         flag,

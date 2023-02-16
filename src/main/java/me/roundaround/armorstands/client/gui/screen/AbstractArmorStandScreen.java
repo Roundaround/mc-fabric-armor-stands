@@ -35,8 +35,8 @@ import net.minecraft.util.Identifier;
 public abstract class AbstractArmorStandScreen
     extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStand {
-  protected static final int PADDING = 1;
-  protected static final int ICON_BUTTON_SPACING = 0;
+  protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
+  protected static final int NAV_BUTTON_SPACING = 0;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
       Identifier.DEFAULT_NAMESPACE,
       "textures/gui/widgets.png");
@@ -230,10 +230,10 @@ public abstract class AbstractArmorStandScreen
 
   protected void initNavigationButtons(Collection<ScreenFactory<?>> screenFactories) {
     int totalWidth = screenFactories.size() * NavigationButton.WIDTH
-        + (screenFactories.size() - 1) * ICON_BUTTON_SPACING;
+        + (screenFactories.size() - 1) * NAV_BUTTON_SPACING;
 
-    int x = (width - totalWidth) / 2 - 2 * ICON_BUTTON_SPACING;
-    int y = height - PADDING - NavigationButton.HEIGHT;
+    int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
+    int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButton.HEIGHT;
 
     for (ScreenFactory<?> screenFactory : screenFactories) {
       NavigationButton<?, ?> button = NavigationButton.create(
@@ -250,7 +250,7 @@ public abstract class AbstractArmorStandScreen
         addDrawableChild(button);
       }
 
-      x += ICON_BUTTON_SPACING + NavigationButton.WIDTH;
+      x += NAV_BUTTON_SPACING + NavigationButton.WIDTH;
     }
   }
 

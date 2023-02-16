@@ -19,16 +19,13 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
 
   public PoseListWidget(
       MinecraftClient minecraftClient,
-      int x,
-      int y,
       int width,
-      int height) {
-    super(minecraftClient, width, height, y, y + height, ITEM_HEIGHT);
-
-    setLeftPos(x);
-    setRenderBackground(false);
-    setRenderHeader(false, 0);
-    setRenderHorizontalShadows(false);
+      int height,
+      int left,
+      int y1,
+      int y2) {
+    super(minecraftClient, width, height, y1, y2, ITEM_HEIGHT);
+    setLeftPos(left);
 
     setPoses(ImmutableList.copyOf(PosePreset.values()));
   }
@@ -36,7 +33,7 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
   public void setPoses(Collection<PosePreset> poses) {
     this.clearEntries();
     for (PosePreset pose : poses) {
-      this.addEntry(new Entry(pose));
+      this.addEntry(new PresetEntry(pose));
     }
   }
 
@@ -50,10 +47,13 @@ public class PoseListWidget extends ElementListWidget<PoseListWidget.Entry> {
     return this.width - (Math.max(0, this.getMaxPosition() - (this.bottom - this.top - 4)) > 0 ? 18 : 12);
   }
 
-  public class Entry extends ElementListWidget.Entry<Entry> {
+  public abstract class Entry extends ElementListWidget.Entry<Entry> {
+  }
+
+  public class PresetEntry extends Entry {
     private final ButtonWidget button;
 
-    public Entry(PosePreset pose) {
+    public PresetEntry(PosePreset pose) {
       this.button = new ButtonWidget(
           0,
           0,
