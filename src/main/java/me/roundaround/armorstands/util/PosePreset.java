@@ -3,10 +3,11 @@ package me.roundaround.armorstands.util;
 import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
+import me.roundaround.armorstands.util.Pose.PoseSupplier;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
-public enum PosePreset {
+public enum PosePreset implements PoseSupplier {
   DEFAULT(
       "default",
       new EulerAngle(0f, 0f, 0f),
@@ -208,12 +209,37 @@ public enum PosePreset {
     return id;
   }
 
+  @Override
+  public Pose toPose() {
+    return new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg);
+  }
+
   public Text getLabel() {
     return label;
   }
 
-  public Pose toPose() {
-    return new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg);
+  public EulerAngle getHead() {
+    return head;
+  }
+
+  public EulerAngle getBody() {
+    return body;
+  }
+
+  public EulerAngle getRightArm() {
+    return rightArm;
+  }
+
+  public EulerAngle getLeftArm() {
+    return leftArm;
+  }
+
+  public EulerAngle getRightLeg() {
+    return rightLeg;
+  }
+
+  public EulerAngle getLeftLeg() {
+    return leftLeg;
   }
 
   public static PosePreset fromString(String value) {

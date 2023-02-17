@@ -73,4 +73,33 @@ public class Pose implements ArmorStandApplyable {
         optionalRightLeg.orElse(armorStand.getRightLegRotation()),
         optionalLeftLeg.orElse(armorStand.getLeftLegRotation()));
   }
+
+  public EulerAngle getHead() {
+    return optionalHead.orElse(PosePreset.DEFAULT.getHead());
+  }
+
+  public EulerAngle getBody() {
+    return optionalBody.orElse(PosePreset.DEFAULT.getBody());
+  }
+
+  public EulerAngle getRightArm() {
+    return optionalRightArm.orElse(PosePreset.DEFAULT.getRightArm());
+  }
+
+  public EulerAngle getLeftArm() {
+    return optionalLeftArm.orElse(PosePreset.DEFAULT.getLeftArm());
+  }
+
+  public EulerAngle getRightLeg() {
+    return optionalRightLeg.orElse(PosePreset.DEFAULT.getRightLeg());
+  }
+
+  public EulerAngle getLeftLeg() {
+    return optionalLeftLeg.orElse(PosePreset.DEFAULT.getLeftLeg());
+  }
+
+  @FunctionalInterface
+  public static interface PoseSupplier {
+    public Pose toPose();
+  }
 }

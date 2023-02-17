@@ -8,6 +8,7 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.PosePreset;
+import me.roundaround.armorstands.util.SavedPose;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
@@ -130,6 +131,19 @@ public class ClientNetworking {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeBoolean(true);
     buf.writeString(pose.toString());
+
+    ClientPlayNetworking.send(NetworkPackets.SET_POSE_PACKET, buf);
+  }
+
+  public static void sendSetPosePacket(SavedPose pose) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(false);
+    writeEulerAngle(buf, pose.getHead());
+    writeEulerAngle(buf, pose.getBody());
+    writeEulerAngle(buf, pose.getRightArm());
+    writeEulerAngle(buf, pose.getLeftArm());
+    writeEulerAngle(buf, pose.getRightLeg());
+    writeEulerAngle(buf, pose.getLeftLeg());
 
     ClientPlayNetworking.send(NetworkPackets.SET_POSE_PACKET, buf);
   }

@@ -41,6 +41,7 @@ public class ArmorStandPresetsScreen
 
     this.list = new PoseListWidget(
         client,
+        this,
         MathHelper.floor(this.width / 2f - 2 * PADDING),
         this.height,
         0,
