@@ -3,7 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
-import me.roundaround.armorstands.client.gui.widget.PoseListWidget;
+import me.roundaround.armorstands.client.gui.widget.PresetPosesListWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -19,7 +19,7 @@ public class ArmorStandPresetsScreen
   private static final int HEADER_HEIGHT = 20;
   private static final int FOOTER_HEIGHT = NavigationButton.HEIGHT + PADDING + NAV_BUTTON_BOTTOM_PADDING;
 
-  private PoseListWidget list;
+  private PresetPosesListWidget list;
 
   public ArmorStandPresetsScreen(
       ArmorStandScreenHandler handler,
@@ -39,9 +39,8 @@ public class ArmorStandPresetsScreen
   public void init() {
     super.init();
 
-    this.list = new PoseListWidget(
+    this.list = new PresetPosesListWidget(
         client,
-        this,
         MathHelper.floor(this.width / 2f - 2 * PADDING),
         this.height,
         0,
