@@ -3,7 +3,7 @@
   "armorstands.screen.move": "Move",
   "armorstands.screen.rotate": "Rotate",
   "armorstands.screen.pose": "Pose",
-  "armorstands.screen.preset": "Presets",
+  "armorstands.screen.presets": "Presets",
   "armorstands.screen.inventory": "Inventory",
   "armorstands.utility.copy": "Copy",
   "armorstands.utility.paste": "Paste",
@@ -67,5 +67,10 @@
   "armorstands.pose.cupid": "Cupid",
   "armorstands.pose.stargazing": "Stargazing",
   "armorstands.pose.block": "* Block",
-  "armorstands.pose.item": "* Item"
+  "armorstands.pose.item": "* Item",
+  "armorstands.presets.equipment": "Items",
+  "armorstands.presets.equipment.actual": "Current",
+  "armorstands.presets.equipment.none": "None",
+  "armorstands.presets.equipment.armored": "Armored",
+  "armorstands.presets.equipment.character": "Character"
 }

@@ -1,27 +1,30 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import java.util.List;
+import java.util.Optional;
 
-import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandPresetsScreen;
 import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ElementListWidget;
+import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 
-public class PresetPosesListWidget extends ElementListWidget<PresetPosesListWidget.Entry> {
-  private static final int ITEM_HEIGHT = 25;
+public class PresetPosesListWidget extends AlwaysSelectedEntryListWidget<PresetPosesListWidget.Entry> {
+  private static final int ITEM_HEIGHT = 19;
+
+  private final ArmorStandPresetsScreen screen;
 
   public PresetPosesListWidget(
       MinecraftClient client,
+      ArmorStandPresetsScreen screen,
       int width,
       int height,
       int left,
       int y1,
       int y2) {
     super(client, width, height, y1, y2, ITEM_HEIGHT);
+    this.screen = screen;
 
     setLeftPos(left);
     setPoses();
@@ -34,6 +37,22 @@ public class PresetPosesListWidget extends ElementListWidget<PresetPosesListWidg
     }
   }
 
+  public Optional<PosePreset> getSelectedAsOptional() {
+    return Optional.ofNullable(getSelectedOrNull())
+        .map((entry) -> entry.pose);
+  }
+
+  @Override
+  public boolean isFocused() {
+    return this.screen.getFocused() == this;
+  }
+
+  @Override
+  public void setSelected(Entry entry) {
+    super.setSelected(entry);
+    this.screen.setSelectedPose(entry.pose);
+  }
+
   @Override
   protected int getScrollbarPositionX() {
     return this.left + this.width - 6;
@@ -44,29 +63,22 @@ public class PresetPosesListWidget extends ElementListWidget<PresetPosesListWidg
     return this.width - (Math.max(0, this.getMaxPosition() - (this.bottom - this.top - 4)) > 0 ? 18 : 12);
   }
 
-  public class Entry extends ElementListWidget.Entry<Entry> {
-    private final ButtonWidget button;
+  @Override
+  protected int getMaxPosition() {
+    return super.getMaxPosition() + 4;
+  }
+
+  public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
+    private final PosePreset pose;
 
     public Entry(PosePreset pose) {
-      this.button = new ButtonWidget(
-          0,
-          0,
-          20,
-          20,
-          pose.getLabel(),
-          (button) -> {
-            ClientNetworking.sendSetPosePacket(pose);
-          });
+      this.pose = pose;
     }
 
     @Override
-    public List<? extends Element> children() {
-      return List.of(this.button);
-    }
-
-    @Override
-    public List<? extends Selectable> selectableChildren() {
-      return List.of(this.button);
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+      PresetPosesListWidget.this.setSelected(this);
+      return false;
     }
 
     @Override
@@ -81,9 +93,18 @@ public class PresetPosesListWidget extends ElementListWidget<PresetPosesListWidg
         int mouseY,
         boolean hovered,
         float partialTicks) {
-      this.button.x = x;
-      this.button.y = y;
-      this.button.render(matrixStack, mouseX, mouseY, partialTicks);
+      Text label = this.pose.getLabel();
+      PresetPosesListWidget.this.client.textRenderer.draw(
+          matrixStack,
+          label,
+          x + 6,
+          y + MathHelper.ceil(entryHeight - PresetPosesListWidget.this.client.textRenderer.fontHeight) / 2,
+          0xFFFFFF);
+    }
+
+    @Override
+    public Text getNarration() {
+      return this.pose.getLabel();
     }
   }
 }

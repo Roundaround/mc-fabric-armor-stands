@@ -64,16 +64,6 @@ public class Pose implements ArmorStandApplyable {
     optionalLeftLeg.ifPresent((leftLeg) -> armorStand.setLeftLegRotation(leftLeg));
   }
 
-  public Pose toPose(ArmorStandEntity armorStand) {
-    return new Pose(
-        optionalHead.orElse(armorStand.getHeadRotation()),
-        optionalBody.orElse(armorStand.getBodyRotation()),
-        optionalRightArm.orElse(armorStand.getRightArmRotation()),
-        optionalLeftArm.orElse(armorStand.getLeftArmRotation()),
-        optionalRightLeg.orElse(armorStand.getRightLegRotation()),
-        optionalLeftLeg.orElse(armorStand.getLeftLegRotation()));
-  }
-
   public EulerAngle getHead() {
     return optionalHead.orElse(PosePreset.DEFAULT.getHead());
   }
