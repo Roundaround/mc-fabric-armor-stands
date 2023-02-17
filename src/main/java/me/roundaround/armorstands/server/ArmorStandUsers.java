@@ -10,7 +10,7 @@ import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ArmorStandUsers {
-  private static final File FILE = new File("armorstands.json");
+  private static final File FILE = new File("armorstandsusers.json");
 
   public static final int PERMISSION_LEVEL = 2;
   public static final Whitelist WHITELIST = new Whitelist(FILE);
@@ -32,7 +32,7 @@ public class ArmorStandUsers {
       }
     }
 
-    if (player.hasPermissionLevel(PERMISSION_LEVEL)) {
+    if (player.hasPermissionLevel(PERMISSION_LEVEL) || server.isSingleplayer()) {
       return true;
     }
 
