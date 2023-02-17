@@ -31,7 +31,8 @@ public class ArmorStandsCommand {
 
   public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
     LiteralArgumentBuilder<ServerCommandSource> baseCommand = CommandManager.literal(ArmorStandsMod.MOD_ID)
-        .requires(source -> source.hasPermissionLevel(2));
+        .requires(source -> source.isExecutedByPlayer()
+            && (source.hasPermissionLevel(2) || source.getServer().isSingleplayer()));
 
     LiteralArgumentBuilder<ServerCommandSource> addSub = CommandManager
         .literal("add")
