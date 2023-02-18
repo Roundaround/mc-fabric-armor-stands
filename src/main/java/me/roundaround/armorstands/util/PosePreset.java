@@ -195,7 +195,7 @@ public enum PosePreset implements PoseSupplier {
       EulerAngle rightLeg,
       EulerAngle leftLeg) {
     this.id = id;
-    this.label = Text.translatable("armorstands.pose." + id);
+    this.label = Text.translatable("armorstands.preset." + id);
     this.head = head;
     this.body = body;
     this.rightArm = rightArm;
