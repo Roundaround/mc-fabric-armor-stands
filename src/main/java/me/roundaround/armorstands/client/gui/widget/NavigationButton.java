@@ -100,13 +100,6 @@ public class NavigationButton<P extends AbstractArmorStandScreen, T extends Abst
   }
 
   @FunctionalInterface
-  public static interface ScreenConstructor<T extends AbstractArmorStandScreen> {
-    public T accept(
-        ArmorStandScreenHandler handler,
-        ArmorStandEntity armorStand);
-  }
-
-  @FunctionalInterface
   public static interface PressAction<P extends AbstractArmorStandScreen, T extends AbstractArmorStandScreen> {
     public void accept(
         NavigationButton<P, T> button,

@@ -11,7 +11,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenConstructor;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
@@ -347,5 +346,12 @@ public abstract class AbstractArmorStandScreen
         int uIndex) {
       return new ScreenFactory<>(tooltip, uIndex, null);
     }
+  }
+
+  @FunctionalInterface
+  public static interface ScreenConstructor<T extends AbstractArmorStandScreen> {
+    public T accept(
+        ArmorStandScreenHandler handler,
+        ArmorStandEntity armorStand);
   }
 }
