@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
@@ -38,6 +39,11 @@ public class ArmorStandInventoryScreen
 
     this.utilizesInventory = true;
     this.passEvents = false;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.INVENTORY;
   }
 
   @Override

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen.ScreenFactory;
+import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -68,7 +69,9 @@ public class NavigationButton<P extends AbstractArmorStandScreen, T extends Abst
             return;
           }
           client.currentScreen = null;
-          client.setScreen(factory.constructor.accept(handler, armorStand));
+          AbstractArmorStandScreen nextScreen = factory.constructor.accept(handler, armorStand);
+          LastUsedScreen.set(nextScreen);
+          client.setScreen(nextScreen);
         },
         factory.constructor == null,
         factory.uIndex);

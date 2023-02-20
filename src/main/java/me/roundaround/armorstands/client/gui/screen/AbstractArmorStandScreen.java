@@ -13,6 +13,7 @@ import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.gui.widget.NavigationButton.ScreenConstructor;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
@@ -61,6 +62,8 @@ public abstract class AbstractArmorStandScreen
 
     this.passEvents = true;
   }
+
+  public abstract ScreenType getScreenType();
 
   @Override
   public ArmorStandEntity getArmorStand() {

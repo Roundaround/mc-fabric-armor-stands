@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -32,6 +33,11 @@ public class ArmorStandUtilitiesScreen
       ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.UTILITIES;
   }
 
   @Override

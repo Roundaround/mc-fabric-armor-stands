@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -65,6 +66,11 @@ public class ArmorStandPoseScreen
     previewStand.tick();
 
     return previewStand;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.POSE;
   }
 
   @Override

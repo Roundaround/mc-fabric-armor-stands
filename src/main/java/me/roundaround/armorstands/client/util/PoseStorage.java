@@ -1,4 +1,4 @@
-package me.roundaround.armorstands.client;
+package me.roundaround.armorstands.client.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

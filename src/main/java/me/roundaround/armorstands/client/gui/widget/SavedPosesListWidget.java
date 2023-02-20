@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import me.roundaround.armorstands.client.PoseStorage;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.util.PoseStorage;
 import me.roundaround.armorstands.util.SavedPose;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;

@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.client.network;
 
 import io.netty.buffer.Unpooled;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandUtilitiesScreen;
+import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.NetworkPackets;
 import me.roundaround.armorstands.network.UtilityAction;
@@ -53,9 +53,7 @@ public class ClientNetworking {
           armorStand);
 
       player.currentScreenHandler = screenHandler;
-      client.setScreen(new ArmorStandUtilitiesScreen(
-          screenHandler,
-          armorStand));
+      client.setScreen(LastUsedScreen.get(screenHandler, armorStand));
     });
   }
 

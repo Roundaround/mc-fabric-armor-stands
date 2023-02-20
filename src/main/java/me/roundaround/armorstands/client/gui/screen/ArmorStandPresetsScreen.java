@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.gui.widget.PresetPosesListWidget;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
@@ -108,6 +109,11 @@ public class ArmorStandPresetsScreen
     }
 
     this.previewStand.tick();
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.PRESETS;
   }
 
   @Override

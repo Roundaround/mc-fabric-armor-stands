@@ -12,6 +12,7 @@ import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.render.BufferBuilder;
@@ -57,6 +58,11 @@ public class ArmorStandMoveScreen
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.MOVE;
   }
 
   @Override
