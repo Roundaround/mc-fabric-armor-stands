@@ -78,5 +78,12 @@
   "armorstands.preset.cupid": "Cupid",
   "armorstands.preset.stargazing": "Stargazing",
   "armorstands.preset.block": "* Block",
-  "armorstands.preset.item": "* Item"
+  "armorstands.preset.item": "* Item",
+  "armorstands.part.head": "Head",
+  "armorstands.part.body": "Body",
+  "armorstands.part.rightArm": "Right arm",
+  "armorstands.part.leftArm": "Left arm",
+  "armorstands.part.rightLeg": "Right leg",
+  "armorstands.part.leftLeg": "Left leg",
+  "armorstands.adjustPose.label": "%s°"
 }

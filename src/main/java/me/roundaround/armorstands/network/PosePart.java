@@ -3,6 +3,7 @@ package me.roundaround.armorstands.network;
 import java.util.Arrays;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
 public enum PosePart {
@@ -22,6 +23,10 @@ public enum PosePart {
   @Override
   public String toString() {
     return id;
+  }
+
+  public Text getDisplayName() {
+    return Text.translatable("armorstands.part." + id);
   }
 
   public EulerAngle get(ArmorStandEntity armorStand) {

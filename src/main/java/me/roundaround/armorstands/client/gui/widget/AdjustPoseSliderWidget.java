@@ -49,8 +49,8 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   @Override
   protected void updateMessage() {
     setMessage(Text.translatable(
-        "armorstands.adjustpose.label",
-        getAngle()));
+        "armorstands.adjustPose.label",
+        String.format("%.2f", getAngle())));
   }
 
   @Override

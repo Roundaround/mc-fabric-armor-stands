@@ -6,6 +6,7 @@ import me.roundaround.armorstands.client.gui.widget.NavigationButton;
 import me.roundaround.armorstands.client.gui.widget.PresetPosesListWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -51,6 +52,10 @@ public class ArmorStandPresetsScreen
         continue;
       }
       flag.setValue(this.previewStand, flag.getValue(this.armorStand));
+    }
+
+    for (PosePart part : PosePart.values()) {
+      part.set(this.previewStand, part.get(this.armorStand));
     }
 
     setEquipmentType(Equipment.ACTUAL);
