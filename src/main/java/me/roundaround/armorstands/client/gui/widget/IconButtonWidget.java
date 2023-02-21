@@ -14,12 +14,12 @@ import net.minecraft.util.Identifier;
 public class IconButtonWidget<P extends AbstractArmorStandScreen> extends ButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
-  protected static final Identifier BACKGROUND_TEXTURE = new Identifier(
-      Identifier.DEFAULT_NAMESPACE,
-      "textures/gui/widgets.png");
-  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
+  protected static final Identifier TEXTURE = new Identifier(
       ArmorStandsMod.MOD_ID,
       "textures/gui/widgets.png");
+  protected static final int TEXTURE_WIDTH = 256;
+  protected static final int TEXTURE_HEIGHT = 256;
+  protected static final int ICONS_PER_ROW = TEXTURE_WIDTH / WIDTH;
 
   protected final P parent;
   protected final int textureIndex;
@@ -50,12 +50,13 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
     RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+    RenderSystem.setShaderTexture(0, TEXTURE);
     RenderSystem.enableDepthTest();
 
-    int vIndex = !this.active ? 0 : (isHovered() ? 2 : 1);
+    int uIndex = this.textureIndex % ICONS_PER_ROW;
+    int vIndex = (this.textureIndex / ICONS_PER_ROW) + (!this.active ? 0 : (isHovered() ? 2 : 1));
 
-    int u = this.textureIndex * WIDTH;
+    int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
     drawTexture(matrixStack, x, y, u, v, WIDTH, HEIGHT);
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.lwjgl.glfw.GLFW;
-
+import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPoseButtonWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -29,6 +29,9 @@ public class ArmorStandPresetsScreen
 
   private final ArrayList<PresetPoseButtonWidget> presetButtons = new ArrayList<>();
 
+  private IconButtonWidget<ArmorStandPresetsScreen> prevPageButton;
+  private IconButtonWidget<ArmorStandPresetsScreen> nextPageButton;
+  private LabelWidget pageLabel;
   private int page = 0;
 
   public ArmorStandPresetsScreen(
@@ -83,24 +86,32 @@ public class ArmorStandPresetsScreen
           CONTROL_HEIGHT)));
     }
 
-    // TODO: Add next and previous buttons
+    this.prevPageButton = addSelectableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
+        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        12,
+        Text.translatable("armorstands.presets.previous"),
+        (button) -> previousPage()));
+    this.nextPageButton = addSelectableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
+        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        13,
+        Text.translatable("armorstands.presets.next"),
+        (button) -> nextPage()));
+
+    this.pageLabel = addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.presets.page", this.page + 1, MAX_PAGE + 1),
+        this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH / 2,
+        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT / 2)
+        .alignedMiddle()
+        .justifiedCenter()
+        .build());
 
     setPage(0);
-  }
-
-  @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_LEFT) {
-      previousPage();
-      playClickSound();
-      return true;
-    } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
-      nextPage();
-      playClickSound();
-      return true;
-    }
-
-    return super.keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override
@@ -110,6 +121,9 @@ public class ArmorStandPresetsScreen
     this.presetButtons.forEach((button) -> {
       button.render(matrixStack, mouseX, mouseY, partialTicks);
     });
+
+    this.prevPageButton.render(matrixStack, mouseX, mouseY, partialTicks);
+    this.nextPageButton.render(matrixStack, mouseX, mouseY, partialTicks);
   }
 
   private void setPage(int page) {
@@ -128,7 +142,9 @@ public class ArmorStandPresetsScreen
       }
     }
 
-    // TODO: Set next and previous buttons active/inactive
+    this.prevPageButton.active = this.page > 0;
+    this.nextPageButton.active = this.page < MAX_PAGE;
+    this.pageLabel.setText(Text.translatable("armorstands.presets.page", this.page + 1, MAX_PAGE + 1));
   }
 
   private void nextPage() {
