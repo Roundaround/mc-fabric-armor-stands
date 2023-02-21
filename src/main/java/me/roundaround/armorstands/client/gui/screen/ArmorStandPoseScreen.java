@@ -21,6 +21,8 @@ public class ArmorStandPoseScreen
   private static final int CONTROL_HEIGHT = 20;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
+  private static final int PART_PAD_VERTICAL = 8;
+  private static final int PART_PAD_HORIZONTAL = 4;
 
   private PosePart posePart = PosePart.HEAD;
   private IconButtonWidget<ArmorStandPoseScreen> activePosePartButton;
@@ -70,8 +72,8 @@ public class ArmorStandPoseScreen
     this.headButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 4 * BETWEEN_PAD,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL,
         6,
         PosePart.HEAD.getDisplayName(),
         (button) -> {
@@ -88,7 +90,7 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - 2 * BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
         8,
         PosePart.RIGHT_ARM.getDisplayName(),
         (button) -> {
@@ -102,8 +104,8 @@ public class ArmorStandPoseScreen
     this.bodyButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - 2 * BETWEEN_PAD,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
         7,
         PosePart.BODY.getDisplayName(),
         (button) -> {
@@ -117,8 +119,8 @@ public class ArmorStandPoseScreen
     this.leftArmButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - 2 * BETWEEN_PAD,
+        SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
         9,
         PosePart.LEFT_ARM.getDisplayName(),
         (button) -> {
@@ -132,7 +134,7 @@ public class ArmorStandPoseScreen
     this.rightLegButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + BETWEEN_PAD) / 2,
+        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
         this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         11,
         PosePart.RIGHT_LEG.getDisplayName(),
@@ -147,7 +149,7 @@ public class ArmorStandPoseScreen
     this.leftLegButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + BETWEEN_PAD) / 2 + IconButtonWidget.WIDTH + BETWEEN_PAD,
+        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2 + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         10,
         PosePart.LEFT_LEG.getDisplayName(),
