@@ -18,7 +18,7 @@ public class ArmorStandPoseScreen
   public static final int U_INDEX = 3;
 
   private static final int CONTROL_WIDTH = 100;
-  private static final int CONTROL_HEIGHT = 16;
+  private static final int CONTROL_HEIGHT = 20;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
 
