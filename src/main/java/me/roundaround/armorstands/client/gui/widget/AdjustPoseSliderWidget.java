@@ -14,9 +14,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 public class AdjustPoseSliderWidget extends SliderWidget {
-  private final PosePart part;
-  private final EulerAngleParameter parameter;
   private final ArmorStandEntity armorStand;
+
+  private PosePart part;
+  private EulerAngleParameter parameter;
 
   public AdjustPoseSliderWidget(
       int x,
@@ -32,7 +33,17 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     this.parameter = parameter;
     this.armorStand = armorStand;
 
-    setAngle(this.parameter.get(this.part.get(this.armorStand)));
+    readAngle();
+  }
+
+  public void setPart(PosePart part) {
+    this.part = part;
+    readAngle();
+  }
+
+  public void setParameter(EulerAngleParameter parameter) {
+    this.parameter = parameter;
+    readAngle();
   }
 
   @Override
@@ -81,6 +92,10 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   @Override
   public void playDownSound(SoundManager soundManager) {
     soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
+  }
+
+  private void readAngle() {
+    setAngle(this.parameter.get(this.part.get(this.armorStand)));
   }
 
   private float getAngle() {
