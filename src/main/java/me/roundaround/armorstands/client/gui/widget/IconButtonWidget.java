@@ -24,6 +24,7 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
   protected final P parent;
   protected final int textureIndex;
 
+  @SuppressWarnings("unchecked")
   public IconButtonWidget(
       MinecraftClient client,
       P parent,
@@ -31,14 +32,16 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
       int y,
       int textureIndex,
       Text tooltip,
-      PressAction onPress) {
+      PressAction<P> onPress) {
     super(
         x,
         y,
         WIDTH,
         HEIGHT,
         tooltip,
-        onPress);
+        (button) -> {
+          onPress.accept((IconButtonWidget<P>) button);
+        });
 
     this.parent = parent;
     this.textureIndex = textureIndex;
@@ -50,7 +53,7 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableDepthTest();
 
-    int vIndex = isHovered() ? 2 : 1;
+    int vIndex = !this.active ? 0 : (isHovered() ? 2 : 1);
 
     int u = this.textureIndex * WIDTH;
     int v = vIndex * HEIGHT;
@@ -67,5 +70,10 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
   @Override
   public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
     this.parent.renderTooltip(matrixStack, getMessage(), mouseX, mouseY);
+  }
+
+  @FunctionalInterface
+  public static interface PressAction<P extends AbstractArmorStandScreen> {
+    void accept(IconButtonWidget<P> button);
   }
 }
