@@ -2,7 +2,9 @@ package me.roundaround.armorstands.server.network;
 
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.NetworkPackets;
+import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
@@ -41,6 +43,9 @@ public class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.SET_POSE_PACKET,
         ServerNetworking::handleSetPosePacket);
+    ServerPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.ADJUST_POSE_PACKET,
+        ServerNetworking::handleAdjustPosePacket);
     ServerPlayNetworking.registerGlobalReceiver(
         NetworkPackets.UNDO_PACKET,
         ServerNetworking::handleUndoPacket);
@@ -181,6 +186,25 @@ public class ServerNetworking {
         readEulerAngle(buf),
         readEulerAngle(buf),
         readEulerAngle(buf));
+  }
+
+  private static void handleAdjustPosePacket(
+      MinecraftServer server,
+      ServerPlayerEntity player,
+      ServerPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    PosePart part = PosePart.fromString(buf.readString());
+    EulerAngleParameter parameter = EulerAngleParameter.fromString(buf.readString());
+    float amount = buf.readFloat();
+
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
+      return;
+    }
+
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
+    editor.adjustPose(part, parameter, amount);
   }
 
   private static void handleUndoPacket(

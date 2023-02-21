@@ -2,28 +2,23 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
-import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
-import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.EulerAngleParameter;
+import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 
 public class ArmorStandPoseScreen
     extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.screen.pose");
   public static final int U_INDEX = 3;
 
-  private static final int PADDING = 4;
-  private static final int HEADER_HEIGHT = 20;
-  private static final int FOOTER_HEIGHT = NavigationButton.HEIGHT + PADDING + NAV_BUTTON_BOTTOM_PADDING;
+  private static final int SCREEN_EDGE_PAD = 4;
+  private static final int BETWEEN_PAD = 2;
 
-  private final ArmorStandEntity previewStand;
+  private AdjustPoseSliderWidget headYawSlider;
 
   public ArmorStandPoseScreen(
       ArmorStandScreenHandler handler,
@@ -31,51 +26,12 @@ public class ArmorStandPoseScreen
     super(handler, TITLE, armorStand);
 
     this.supportsUndoRedo = true;
-    this.passEvents = false;
-
-    this.previewStand = initializePreviewStand();
-  }
-
-  private ArmorStandEntity initializePreviewStand() {
-    ArmorStandEntity previewStand = new ArmorStandEntity(
-        EntityType.ARMOR_STAND,
-        this.armorStand.world);
-
-    for (ArmorStandFlag flag : ArmorStandFlag.values()) {
-      if (flag == ArmorStandFlag.GRAVITY) {
-        flag.setValue(previewStand, true);
-        continue;
-      }
-      flag.setValue(previewStand, flag.getValue(armorStand));
-    }
-
-    previewStand.equipStack(EquipmentSlot.HEAD,
-        this.armorStand.getEquippedStack(EquipmentSlot.HEAD).copy());
-    previewStand.equipStack(EquipmentSlot.CHEST,
-        this.armorStand.getEquippedStack(EquipmentSlot.CHEST).copy());
-    previewStand.equipStack(EquipmentSlot.LEGS,
-        this.armorStand.getEquippedStack(EquipmentSlot.LEGS).copy());
-    previewStand.equipStack(EquipmentSlot.FEET,
-        this.armorStand.getEquippedStack(EquipmentSlot.FEET).copy());
-
-    previewStand.equipStack(EquipmentSlot.MAINHAND,
-        this.armorStand.getEquippedStack(EquipmentSlot.MAINHAND).copy());
-    previewStand.equipStack(EquipmentSlot.OFFHAND,
-        this.armorStand.getEquippedStack(EquipmentSlot.OFFHAND).copy());
-
-    previewStand.tick();
-
-    return previewStand;
+    this.passEvents = true;
   }
 
   @Override
   public ScreenType getScreenType() {
     return ScreenType.POSE;
-  }
-
-  @Override
-  public boolean shouldPause() {
-    return true;
   }
 
   @Override
@@ -106,27 +62,15 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-  }
 
-  @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    renderBackgroundTexture(0);
-
-    int size = MathHelper.floor(Math.min(
-        this.width / 2 - 4 * PADDING,
-        (this.height - HEADER_HEIGHT - FOOTER_HEIGHT - 3 * PADDING) / 2.5f));
-
-    int x = this.width * 3 / 4;
-    int y = this.height - FOOTER_HEIGHT - 3 * PADDING;
-
-    InventoryScreen.drawEntity(
-        x,
-        y,
-        size,
-        2f * (this.width / 2 - mouseX),
-        2f * (y - 50 - mouseY),
-        this.previewStand);
-
-    super.render(matrixStack, mouseX, mouseY, partialTicks);
+    this.headYawSlider = new AdjustPoseSliderWidget(
+        this.width - SCREEN_EDGE_PAD - 100,
+        this.height - SCREEN_EDGE_PAD - 20,
+        100,
+        20,
+        PosePart.HEAD,
+        EulerAngleParameter.YAW,
+        this.armorStand);
+    addDrawableChild(this.headYawSlider);
   }
 }

@@ -3,7 +3,9 @@ package me.roundaround.armorstands.client.network;
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.NetworkPackets;
+import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
@@ -169,6 +171,18 @@ public class ClientNetworking {
     buf.writeFloat(eulerAngle.getPitch());
     buf.writeFloat(eulerAngle.getYaw());
     buf.writeFloat(eulerAngle.getRoll());
+  }
+
+  public static void sendAdjustPosePacket(
+      PosePart part,
+      EulerAngleParameter parameter,
+      float value) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeString(part.toString());
+    buf.writeString(parameter.toString());
+    buf.writeFloat(value);
+
+    ClientPlayNetworking.send(NetworkPackets.ADJUST_POSE_PACKET, buf);
   }
 
   public static void sendUndoPacket(boolean redo) {

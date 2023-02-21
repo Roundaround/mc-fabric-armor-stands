@@ -2,8 +2,8 @@ package me.roundaround.armorstands.util.actions;
 
 import java.util.Optional;
 
-import me.roundaround.armorstands.util.EulerAngleParameter;
-import me.roundaround.armorstands.util.PosePart;
+import me.roundaround.armorstands.network.EulerAngleParameter;
+import me.roundaround.armorstands.network.PosePart;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -28,6 +28,13 @@ public class AdjustPoseAction implements ArmorStandAction {
     this.round = round;
   }
 
+  public static AdjustPoseAction absolute(
+      PosePart part,
+      EulerAngleParameter parameter,
+      float argument) {
+    return new AdjustPoseAction(part, parameter, argument, true, false);
+  }
+
   @Override
   public Text getName(ArmorStandEntity armorStand) {
     return Text.translatable("armorstands.action.adjustPose");
@@ -35,26 +42,26 @@ public class AdjustPoseAction implements ArmorStandAction {
 
   @Override
   public void apply(ArmorStandEntity armorStand) {
-    originalValue = Optional.of(this.parameter.get(this.part.get(armorStand)));
+    this.originalValue = Optional.of(this.parameter.get(this.part.get(armorStand)));
 
     float value = this.argument;
 
     if (!this.absolute) {
-      value += originalValue.get();
+      value += this.originalValue.get();
     }
 
     if (this.round) {
       value = Math.round(value);
     }
 
-    this.part.set(armorStand, this.parameter.set(this.part.get(armorStand), value));
+    this.part.set(armorStand, this.parameter, value);
   }
 
   @Override
   public void undo(ArmorStandEntity armorStand) {
-    if (originalValue.isEmpty()) {
+    if (this.originalValue.isEmpty()) {
       return;
     }
-    this.part.set(armorStand, this.parameter.set(this.part.get(armorStand), originalValue.get()));
+    this.part.set(armorStand, this.parameter, this.originalValue.get());
   }
 }

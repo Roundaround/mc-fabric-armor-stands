@@ -40,6 +40,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "set_pose_packet");
 
+  public static final Identifier ADJUST_POSE_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "adjust_pose_packet");
+
   public static final Identifier UNDO_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "undo_packet");

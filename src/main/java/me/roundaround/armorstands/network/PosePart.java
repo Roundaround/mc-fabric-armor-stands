@@ -1,15 +1,28 @@
-package me.roundaround.armorstands.util;
+package me.roundaround.armorstands.network;
+
+import java.util.Arrays;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.EulerAngle;
 
 public enum PosePart {
-  HEAD,
-  BODY,
-  RIGHT_ARM,
-  LEFT_ARM,
-  RIGHT_LEG,
-  LEFT_LEG;
+  HEAD("head"),
+  BODY("body"),
+  RIGHT_ARM("rightArm"),
+  LEFT_ARM("leftArm"),
+  RIGHT_LEG("rightLeg"),
+  LEFT_LEG("leftLeg");
+
+  private final String id;
+
+  private PosePart(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public String toString() {
+    return id;
+  }
 
   public EulerAngle get(ArmorStandEntity armorStand) {
     switch (this) {
@@ -53,5 +66,16 @@ public enum PosePart {
       default:
         throw new IllegalArgumentException("Unknown part: " + this);
     }
+  }
+
+  public void set(ArmorStandEntity armorStand, EulerAngleParameter parameter, float value) {
+    set(armorStand, parameter.set(get(armorStand), value));
+  }
+
+  public static PosePart fromString(String value) {
+    return Arrays.stream(PosePart.values())
+        .filter((flag) -> flag.id.equals(value))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown part: " + value));
   }
 }

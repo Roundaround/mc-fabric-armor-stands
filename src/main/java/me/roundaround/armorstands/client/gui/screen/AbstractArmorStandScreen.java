@@ -134,8 +134,27 @@ public abstract class AbstractArmorStandScreen
     }
     Element focused = getFocused();
     boolean result = super.mouseClicked(mouseX, mouseY, button);
-    setFocused(focused);
+
+    if (this.utilizesInventory) {
+      setFocused(focused);
+    }
+
     return result;
+  }
+
+  @Override
+  public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    if (this.cursorLocked) {
+      return false;
+    }
+    if (this.utilizesInventory) {
+      return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    if (getFocused() != null && isDragging() && button == 0) {
+      return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+    return false;
   }
 
   @Override
@@ -143,7 +162,14 @@ public abstract class AbstractArmorStandScreen
     if (this.cursorLocked) {
       return false;
     }
-    return super.mouseReleased(mouseX, mouseY, button);
+    if (this.utilizesInventory) {
+      return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    setDragging(false);
+    return hoveredElement(mouseX, mouseY).filter((element) -> {
+      return element.mouseReleased(mouseX, mouseY, button);
+    }).isPresent();
   }
 
   @Override

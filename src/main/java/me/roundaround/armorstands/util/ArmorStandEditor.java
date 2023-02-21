@@ -3,6 +3,9 @@ package me.roundaround.armorstands.util;
 import java.util.Stack;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.EulerAngleParameter;
+import me.roundaround.armorstands.network.PosePart;
+import me.roundaround.armorstands.util.actions.AdjustPoseAction;
 import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.FlagAction;
 import me.roundaround.armorstands.util.actions.MoveAction;
@@ -100,6 +103,10 @@ public class ArmorStandEditor {
       EulerAngle rightLeg,
       EulerAngle leftLeg) {
     setPose(new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg));
+  }
+
+  public void adjustPose(PosePart part, EulerAngleParameter parameter, float amount) {
+    applyAction(AdjustPoseAction.absolute(part, parameter, amount));
   }
 
   private static class SizeLimitedStack<T> extends Stack<T> {

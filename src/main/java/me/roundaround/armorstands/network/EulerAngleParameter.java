@@ -1,11 +1,24 @@
-package me.roundaround.armorstands.util;
+package me.roundaround.armorstands.network;
+
+import java.util.Arrays;
 
 import net.minecraft.util.math.EulerAngle;
 
 public enum EulerAngleParameter {
-  PITCH,
-  YAW,
-  ROLL;
+  PITCH("pitch"),
+  YAW("yaw"),
+  ROLL("roll");
+
+  private final String id;
+
+  private EulerAngleParameter(String id) {
+    this.id = id;
+  }
+
+  @Override
+  public String toString() {
+    return id;
+  }
 
   public float get(EulerAngle angle) {
     switch (this) {
@@ -31,5 +44,12 @@ public enum EulerAngleParameter {
       default:
         throw new IllegalArgumentException("Unknown parameter: " + this);
     }
+  }
+
+  public static EulerAngleParameter fromString(String string) {
+    return Arrays.stream(values())
+        .filter(parameter -> parameter.id.equals(string))
+        .findFirst()
+        .orElseThrow(() -> new IllegalArgumentException("Unknown parameter: " + string));
   }
 }
