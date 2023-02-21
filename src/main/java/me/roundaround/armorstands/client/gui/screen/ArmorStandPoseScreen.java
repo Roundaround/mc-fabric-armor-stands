@@ -36,6 +36,20 @@ public class ArmorStandPoseScreen
     this.passEvents = true;
   }
 
+  public void onArmorStandPoseChanged(ArmorStandEntity armorStand, PosePart part) {
+    if (this.posePartButton == null || this.pitchSlider == null || this.yawSlider == null || this.rollSlider == null) {
+      return;
+    }
+
+    if (armorStand.getId() != this.armorStand.getId() || part != this.posePartButton.getValue()) {
+      return;
+    }
+
+    this.pitchSlider.refresh();
+    this.yawSlider.refresh();
+    this.rollSlider.refresh();
+  }
+
   @Override
   public ScreenType getScreenType() {
     return ScreenType.POSE;

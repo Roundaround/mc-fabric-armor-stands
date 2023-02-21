@@ -16,7 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 
 @Mixin(ArmorStandEntity.class)
-public abstract class ArmorStandEntityMixin {
+public abstract class ArmorStandEntityServerMixin {
   @Inject(method = "interactAt", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/MobEntity;getPreferredEquipmentSlot(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/entity/EquipmentSlot;"), cancellable = true)
   public void interactAt(
       PlayerEntity playerEntity,

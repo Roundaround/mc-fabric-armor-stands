@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import java.util.Optional;
+
 import org.lwjgl.glfw.GLFW;
 
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -18,6 +20,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   private PosePart part;
   private EulerAngleParameter parameter;
+  private Optional<Float> lastAngle = Optional.empty();
 
   public AdjustPoseSliderWidget(
       int x,
@@ -33,17 +36,27 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     this.parameter = parameter;
     this.armorStand = armorStand;
 
-    readAngle();
+    refresh();
   }
 
   public void setPart(PosePart part) {
     this.part = part;
-    readAngle();
+    refresh();
   }
 
   public void setParameter(EulerAngleParameter parameter) {
     this.parameter = parameter;
-    readAngle();
+    refresh();
+  }
+
+  public void refresh() {
+    float armorStandAngle = this.parameter.get(this.part.get(this.armorStand));
+    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+      return;
+    }
+
+    this.lastAngle = Optional.of(armorStandAngle);
+    setAngle(armorStandAngle);
   }
 
   @Override
@@ -92,10 +105,6 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   @Override
   public void playDownSound(SoundManager soundManager) {
     soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
-  }
-
-  private void readAngle() {
-    setAngle(this.parameter.get(this.part.get(this.armorStand)));
   }
 
   private float getAngle() {
