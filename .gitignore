@@ -38,3 +38,6 @@ remappedSrc/
 
 # Ignore Gradle build output directory
 build
+
+# Photoshop temp files/logs
+assets/*.log
