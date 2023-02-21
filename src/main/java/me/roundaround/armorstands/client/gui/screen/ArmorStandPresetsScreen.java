@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPosesListWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.PosePart;
@@ -62,9 +63,10 @@ public class ArmorStandPresetsScreen
   }
 
   public void setSelectedPose(PosePreset pose) {
-    pose.toPose().apply(this.armorStand);
     pose.toPose().apply(this.previewStand);
     this.previewStand.tick();
+
+    ClientNetworking.sendSetPosePacket(pose);
   }
 
   public void setEquipmentType(Equipment equipment) {
