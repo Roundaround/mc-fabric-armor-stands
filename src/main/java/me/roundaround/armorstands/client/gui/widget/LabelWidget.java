@@ -62,7 +62,7 @@ public class LabelWidget extends DrawableHelper implements Drawable {
           MathHelper.floor(top) - 1,
           MathHelper.ceil(right) + 2,
           MathHelper.ceil(bottom) + 1,
-          0x40000000);
+          0x80000000);
     }
 
     if (showTextShadow) {
