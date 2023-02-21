@@ -2,6 +2,7 @@ package me.roundaround.armorstands.network;
 
 import java.util.Arrays;
 
+import net.minecraft.text.Text;
 import net.minecraft.util.math.EulerAngle;
 
 public enum EulerAngleParameter {
@@ -18,6 +19,10 @@ public enum EulerAngleParameter {
   @Override
   public String toString() {
     return id;
+  }
+
+  public Text getDisplayName() {
+    return Text.translatable("armorstands.parameter." + id);
   }
 
   public float get(EulerAngle angle) {

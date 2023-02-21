@@ -59,6 +59,21 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     setAngle(armorStandAngle);
   }
 
+  public void zero() {
+    setAngle(0);
+    persistValue();
+  }
+
+  public void increment() {
+    setAngle(Math.round(getAngle() / 5) * 5 + 5);
+    persistValue();
+  }
+
+  public void decrement() {
+    setAngle(Math.round(getAngle() / 5) * 5 - 5);
+    persistValue();
+  }
+
   @Override
   protected void updateMessage() {
     setMessage(Text.translatable(
@@ -80,26 +95,15 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    float previousValue = getAngle();
-
-    boolean handled = false;
     if (keyCode == GLFW.GLFW_KEY_LEFT) {
-      this.setAngle(previousValue - 5);
-      handled = true;
+      decrement();
+      return true;
     } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
-      this.setAngle(previousValue + 5);
-      handled = true;
+      increment();
+      return true;
     }
 
-    if (!handled) {
-      handled = super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    if (Math.abs(getAngle() - previousValue) >= 0.01f) {
-      persistValue();
-    }
-
-    return handled;
+    return super.keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override

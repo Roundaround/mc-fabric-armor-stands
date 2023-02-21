@@ -53,6 +53,9 @@
   "armorstands.pose.leftArm": "Left arm",
   "armorstands.pose.rightLeg": "Right leg",
   "armorstands.pose.leftLeg": "Left leg",
+  "armorstands.pose.zero": "Reset to 0",
+  "armorstands.pose.add": "Increase",
+  "armorstands.pose.subtract": "Decrease",
   "armorstands.presets.previous": "Previous page",
   "armorstands.presets.next": "Next page",
   "armorstands.presets.page": "%s / %s",
@@ -83,5 +86,8 @@
   "armorstands.part.leftArm": "Left arm",
   "armorstands.part.rightLeg": "Right leg",
   "armorstands.part.leftLeg": "Left leg",
+  "armorstands.parameter.pitch": "X",
+  "armorstands.parameter.yaw": "Y",
+  "armorstands.parameter.roll": "Z",
   "armorstands.adjustPose.label": "%s°"
 }
