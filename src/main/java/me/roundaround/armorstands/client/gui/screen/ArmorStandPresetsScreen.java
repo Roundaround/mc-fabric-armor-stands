@@ -2,7 +2,7 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
-import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPosesListWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
@@ -27,7 +27,7 @@ public class ArmorStandPresetsScreen
 
   private static final int PADDING = 4;
   private static final int HEADER_HEIGHT = 20;
-  private static final int FOOTER_HEIGHT = NavigationButton.HEIGHT + PADDING + NAV_BUTTON_BOTTOM_PADDING;
+  private static final int FOOTER_HEIGHT = NavigationButtonWidget.HEIGHT + PADDING + NAV_BUTTON_BOTTOM_PADDING;
 
   private final ArmorStandEntity previewStand;
 

@@ -10,7 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.widget.NavigationButton;
+import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
@@ -44,7 +44,7 @@ public abstract class AbstractArmorStandScreen
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
 
-  protected NavigationButton<?, ?> activeButton;
+  protected NavigationButtonWidget<?, ?> activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
 
@@ -257,14 +257,14 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void initNavigationButtons(Collection<ScreenFactory<?>> screenFactories) {
-    int totalWidth = screenFactories.size() * NavigationButton.WIDTH
+    int totalWidth = screenFactories.size() * NavigationButtonWidget.WIDTH
         + (screenFactories.size() - 1) * NAV_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
-    int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButton.HEIGHT;
+    int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
 
     for (ScreenFactory<?> screenFactory : screenFactories) {
-      NavigationButton<?, ?> button = NavigationButton.create(
+      NavigationButtonWidget<?, ?> button = NavigationButtonWidget.create(
           this.client,
           this,
           x,
@@ -278,7 +278,7 @@ public abstract class AbstractArmorStandScreen
         addDrawableChild(button);
       }
 
-      x += NAV_BUTTON_SPACING + NavigationButton.WIDTH;
+      x += NAV_BUTTON_SPACING + NavigationButtonWidget.WIDTH;
     }
   }
 
@@ -304,7 +304,7 @@ public abstract class AbstractArmorStandScreen
         13,
         13);
     drawTexture(matrixStack,
-        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
+        this.activeButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
         activeButton.y - 2,
         12,
         22,
@@ -312,14 +312,14 @@ public abstract class AbstractArmorStandScreen
         13);
     drawTexture(matrixStack,
         this.activeButton.x - 2,
-        activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        activeButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
         0,
         34,
         13,
         12);
     drawTexture(matrixStack,
-        this.activeButton.x + NavigationButton.WIDTH / 2 + 1,
-        this.activeButton.y + NavigationButton.HEIGHT / 2 + 1,
+        this.activeButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activeButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
         12,
         34,
         12,
