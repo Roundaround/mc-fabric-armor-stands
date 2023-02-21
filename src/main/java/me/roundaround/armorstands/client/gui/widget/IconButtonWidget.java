@@ -54,7 +54,7 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
     RenderSystem.enableDepthTest();
 
     int uIndex = this.textureIndex % ICONS_PER_ROW;
-    int vIndex = (this.textureIndex / ICONS_PER_ROW) + (!this.active ? 0 : (isHovered() ? 2 : 1));
+    int vIndex = 3 * (this.textureIndex / ICONS_PER_ROW) + (!this.active ? 0 : (isHovered() ? 2 : 1));
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
