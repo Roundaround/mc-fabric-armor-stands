@@ -5,13 +5,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class IconButtonWidget<P extends AbstractArmorStandScreen> extends ButtonWidget {
+public class IconButtonWidget<P extends AbstractArmorStandScreen> extends SimpleTooltipButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
   protected static final Identifier TEXTURE = new Identifier(
@@ -34,10 +33,12 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
       Text tooltip,
       PressAction<P> onPress) {
     super(
+        parent,
         x,
         y,
         WIDTH,
         HEIGHT,
+        tooltip,
         tooltip,
         (button) -> {
           onPress.accept((IconButtonWidget<P>) button);
@@ -61,16 +62,8 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Button
     drawTexture(matrixStack, x, y, u, v, WIDTH, HEIGHT);
 
     if (isHovered()) {
-      renderTooltip(
-          matrixStack,
-          this.hovered ? mouseX : this.x,
-          this.hovered ? mouseY : this.y);
+      renderTooltip(matrixStack, mouseX, mouseY);
     }
-  }
-
-  @Override
-  public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
-    this.parent.renderTooltip(matrixStack, getMessage(), mouseX, mouseY);
   }
 
   @FunctionalInterface

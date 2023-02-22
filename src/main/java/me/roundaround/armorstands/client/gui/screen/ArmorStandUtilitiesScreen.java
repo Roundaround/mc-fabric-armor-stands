@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
-import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -21,7 +22,9 @@ public class ArmorStandUtilitiesScreen
   public static final Text TITLE = Text.translatable("armorstands.screen.utilities");
   public static final int U_INDEX = 0;
 
-  private static final int BUTTON_WIDTH = 100;
+  private static final int TOGGLE_WIDTH = 100;
+  private static final int BUTTON_WIDTH = 60;
+  private static final int BUTTON_HEIGHT = 20;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
 
@@ -58,30 +61,32 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
-        60,
-        16,
+        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - BETWEEN_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
-    addDrawableChild(new MiniButtonWidget(
-        SCREEN_EDGE_PAD + 60 + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * 16 - BETWEEN_PAD,
-        60,
-        16,
+    addDrawableChild(new ButtonWidget(
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - BETWEEN_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 16,
-        60,
-        16,
+        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.prepare"),
+        Text.translatable("armorstands.utility.prepare.tooltip"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
         }));
@@ -182,7 +187,7 @@ public class ArmorStandUtilitiesScreen
       ArmorStandFlag flag,
       int index,
       boolean inverted) {
-    int xPos = this.width - SCREEN_EDGE_PAD - BUTTON_WIDTH;
+    int xPos = this.width - SCREEN_EDGE_PAD - TOGGLE_WIDTH;
     int yPos = this.height - (index + 1) * (SCREEN_EDGE_PAD + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
@@ -191,7 +196,7 @@ public class ArmorStandUtilitiesScreen
         this.currentValues.get(flag),
         xPos,
         yPos,
-        BUTTON_WIDTH,
+        TOGGLE_WIDTH,
         label);
 
     addDrawableChild(widget);

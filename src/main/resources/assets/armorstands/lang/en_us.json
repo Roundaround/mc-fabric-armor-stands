@@ -8,6 +8,7 @@
   "armorstands.utility.copy": "Copy",
   "armorstands.utility.paste": "Paste",
   "armorstands.utility.prepare": "Prepare",
+  "armorstands.utility.prepare.tooltip": "Prepare the armor stand for posing as a character",
   "armorstands.flags.base": "Base plate",
   "armorstands.flags.arms": "Arms",
   "armorstands.flags.small": "Small",
