@@ -80,6 +80,7 @@ public class ArmorStandPresetsScreen
 
     for (int i = BUTTONS_PER_PAGE; i > 0; i--) {
       this.presetButtons.add(addSelectableChild(new PresetPoseButtonWidget(
+          this,
           this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
           this.height - SCREEN_EDGE_PAD - (i + 1) * CONTROL_HEIGHT - i * BETWEEN_PAD,
           CONTROL_WIDTH,
