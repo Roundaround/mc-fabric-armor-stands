@@ -46,7 +46,7 @@ public class ArmorStandScreenHandler
     this.inventory = new ArmorStandInventory(armorStand);
 
     if (playerInventory.player instanceof ServerPlayerEntity) {
-      this.editor = new ArmorStandEditor(armorStand);
+      this.editor = ArmorStandEditor.get((ServerPlayerEntity) playerInventory.player, armorStand);
     } else {
       this.editor = null;
     }

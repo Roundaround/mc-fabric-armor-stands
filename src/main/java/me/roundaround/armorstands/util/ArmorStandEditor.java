@@ -1,6 +1,8 @@
 package me.roundaround.armorstands.util;
 
+import java.util.HashMap;
 import java.util.Stack;
+import java.util.UUID;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
@@ -12,16 +14,39 @@ import me.roundaround.armorstands.util.actions.MoveAction;
 import me.roundaround.armorstands.util.actions.PoseAction;
 import me.roundaround.armorstands.util.actions.RotateAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
 public class ArmorStandEditor {
+  private static HashMap<UUID, Pair<UUID, ArmorStandEditor>> editors = new HashMap<>();
+
   private final ArmorStandEntity armorStand;
   private final SizeLimitedStack<ArmorStandAction> actions = new SizeLimitedStack<>(30);
   private final SizeLimitedStack<ArmorStandAction> undos = new SizeLimitedStack<>(30);
 
-  public ArmorStandEditor(ArmorStandEntity armorStand) {
+  public static ArmorStandEditor get(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+    UUID uuid = player.getUuid();
+
+    if (!editors.containsKey(uuid)) {
+      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(armorStand)));
+    }
+
+    Pair<UUID, ArmorStandEditor> pair = editors.get(uuid);
+    if (!pair.getLeft().equals(armorStand.getUuid())) {
+      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(armorStand)));
+    }
+
+    return editors.get(uuid).getRight();
+  }
+
+  public static void remove(ServerPlayerEntity player) {
+    editors.remove(player.getUuid());
+  }
+
+  private ArmorStandEditor(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
   }
 
