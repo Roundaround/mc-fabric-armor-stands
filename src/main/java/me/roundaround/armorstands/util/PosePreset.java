@@ -353,6 +353,7 @@ public enum PosePreset implements PoseSupplier {
   }
 
   public static enum Source {
+    ALL("all"),
     VANILLA("vanilla"),
     VANILLA_TWEAKS("vanillaTweaks"),
     BEDROCK("bedrock");
@@ -365,6 +366,10 @@ public enum PosePreset implements PoseSupplier {
 
     public Text getDisplayName() {
       return Text.translatable("armorstands.source." + id);
+    }
+
+    public boolean matches(Source source) {
+      return this == ALL || this == source;
     }
   }
 }
