@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
@@ -27,8 +26,6 @@ public class ArmorStandMoveScreen
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
-
-  private final ArrayList<MoveButtonWidget> moveButtons = new ArrayList<>();
 
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
@@ -207,8 +204,6 @@ public class ArmorStandMoveScreen
         .build();
     addDrawable(standBlockPosLabel);
 
-    moveButtons.clear();
-
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
     addRowOfButtons(Text.translatable("armorstands.move.south"), Direction.SOUTH, 3);
@@ -293,11 +288,5 @@ public class ArmorStandMoveScreen
     addDrawableChild(one);
     addDrawableChild(three);
     addDrawableChild(eight);
-
-    if (direction.getAxis().isHorizontal()) {
-      moveButtons.add(one);
-      moveButtons.add(three);
-      moveButtons.add(eight);
-    }
   }
 }
