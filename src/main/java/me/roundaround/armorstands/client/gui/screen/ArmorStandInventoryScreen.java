@@ -47,6 +47,16 @@ public class ArmorStandInventoryScreen
   }
 
   @Override
+  public ScreenConstructor<?> getNextScreen() {
+    return ArmorStandUtilitiesScreen::new;
+  }
+
+  @Override
+  public ScreenConstructor<?> getPreviousScreen() {
+    return ArmorStandPoseScreen::new;
+  }
+
+  @Override
   public boolean shouldPause() {
     return true;
   }

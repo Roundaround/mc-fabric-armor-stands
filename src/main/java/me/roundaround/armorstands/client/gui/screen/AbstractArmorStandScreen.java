@@ -12,6 +12,7 @@ import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
@@ -63,6 +64,10 @@ public abstract class AbstractArmorStandScreen
   }
 
   public abstract ScreenType getScreenType();
+
+  public abstract ScreenConstructor<?> getPreviousScreen();
+
+  public abstract ScreenConstructor<?> getNextScreen();
 
   @Override
   public ArmorStandEntity getArmorStand() {
@@ -206,6 +211,26 @@ public abstract class AbstractArmorStandScreen
           changeFocus(forward);
         }
         return false;
+      case GLFW.GLFW_KEY_LEFT:
+        if (this.client.options.leftKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
+          break;
+        }
+        playClickSound();
+        client.currentScreen = null;
+        AbstractArmorStandScreen nextScreen = getPreviousScreen().accept(this.handler, this.armorStand);
+        LastUsedScreen.set(nextScreen);
+        client.setScreen(nextScreen);
+        return true;
+      case GLFW.GLFW_KEY_RIGHT:
+        if (this.client.options.rightKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
+          break;
+        }
+        playClickSound();
+        client.currentScreen = null;
+        nextScreen = getNextScreen().accept(this.handler, this.armorStand);
+        LastUsedScreen.set(nextScreen);
+        client.setScreen(nextScreen);
+        return true;
       case GLFW.GLFW_KEY_Z:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;

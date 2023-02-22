@@ -41,6 +41,16 @@ public class ArmorStandUtilitiesScreen
   }
 
   @Override
+  public ScreenConstructor<?> getNextScreen() {
+    return ArmorStandMoveScreen::new;
+  }
+
+  @Override
+  public ScreenConstructor<?> getPreviousScreen() {
+    return ArmorStandInventoryScreen::new;
+  }
+
+  @Override
   public void init() {
     super.init();
 

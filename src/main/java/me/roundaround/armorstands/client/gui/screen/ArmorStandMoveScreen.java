@@ -66,6 +66,16 @@ public class ArmorStandMoveScreen
   }
 
   @Override
+  public ScreenConstructor<?> getNextScreen() {
+    return ArmorStandRotateScreen::new;
+  }
+
+  @Override
+  public ScreenConstructor<?> getPreviousScreen() {
+    return ArmorStandUtilitiesScreen::new;
+  }
+
+  @Override
   public void init() {
     super.init();
 
