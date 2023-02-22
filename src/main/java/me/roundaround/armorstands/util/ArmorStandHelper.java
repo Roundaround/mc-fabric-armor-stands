@@ -2,6 +2,7 @@ package me.roundaround.armorstands.util;
 
 import java.util.Optional;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -62,6 +63,22 @@ public class ArmorStandHelper {
     }
 
     return Optional.of(newPosition);
+  }
+
+  public static Vec3d getLocalPos(Entity entity, double x, double y, double z) {
+    return getLocalPos(entity, new Vec3d(x, y, z));
+  }
+
+  public static Vec3d getLocalPos(Entity entity, Vec3d position) {
+    return getLocalPos(entity.getYaw(), position);
+  }
+
+  public static Vec3d getLocalPos(float rotation, double x, double y, double z) {
+    return getLocalPos(rotation, new Vec3d(x, y, z));
+  }
+
+  public static Vec3d getLocalPos(float rotation, Vec3d position) {
+    return position.rotateY(rotation);
   }
 
   public static float getLookYaw(ArmorStandEntity armorStand, Vec3d point) {

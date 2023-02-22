@@ -268,25 +268,7 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(-40f, 20f, 0f),
       new EulerAngle(-4f, -20f, -10f),
       new EulerAngle(-88f, 71f, 0f),
-      new EulerAngle(-88f, 46f, 0f)),
-  BLOCK(
-      "block",
-      Source.VANILLA_TWEAKS,
-      new EulerAngle(0.0f, 0.001f, 0.0f),
-      new EulerAngle(0.0f, 0.001f, 0.0f),
-      new EulerAngle(-15.0f, -45.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f)),
-  ITEM(
-      "item",
-      Source.VANILLA_TWEAKS,
-      new EulerAngle(0.0f, 0.001f, 0.0f),
-      new EulerAngle(0.0f, 0.001f, 0.0f),
-      new EulerAngle(-90.0f, 0.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f),
-      new EulerAngle(0.0f, 0.0f, 0.0f));
+      new EulerAngle(-88f, 46f, 0f));
 
   private final String id;
   private final Text label;

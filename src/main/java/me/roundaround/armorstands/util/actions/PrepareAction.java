@@ -17,23 +17,24 @@ public class PrepareAction extends ComboAction {
   }
 
   public static PrepareAction create(ArmorStandEntity armorStand) {
-    return create(armorStand, false);
-  }
-
-  public static PrepareAction create(ArmorStandEntity armorStand, boolean small) {
     ArrayList<ArmorStandAction> actions = new ArrayList<>();
     actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
     actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
     actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
     actions.add(FlagAction.set(ArmorStandFlag.VISIBLE, false));
     actions.add(FlagAction.set(ArmorStandFlag.NAME, true));
-    actions.add(FlagAction.set(ArmorStandFlag.SMALL, small));
+
+    Vec3d position = ArmorStandHelper.getCenterPos(armorStand);
 
     Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
     if (maybeGround.isPresent()) {
-      actions.add(MoveAction.absolute(maybeGround.get()));
+      position = new Vec3d(
+        position.getX(),
+        maybeGround.get().getY(),
+        position.getZ());
     }
 
+    actions.add(MoveAction.absolute(position));
     actions.add(PoseAction.fromPose(PosePreset.DEFAULT.toPose()));
 
     return new PrepareAction(actions);

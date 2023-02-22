@@ -45,7 +45,10 @@ public class ComboAction implements ArmorStandAction {
   @Override
   public void apply(ArmorStandEntity armorStand) {
     for (int i = 0; i < actions.size(); i++) {
-      actions.get(i).apply(armorStand);
+      ArmorStandAction action = actions.get(i);
+      if (action != null) {
+        action.apply(armorStand);
+      }
     }
   }
 

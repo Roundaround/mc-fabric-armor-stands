@@ -10,6 +10,7 @@ import me.roundaround.armorstands.util.actions.ArmorStandAction;
 import me.roundaround.armorstands.util.actions.HoldingAction;
 import me.roundaround.armorstands.util.actions.PrepareAction;
 import me.roundaround.armorstands.util.actions.SnapToGroundAction;
+import me.roundaround.armorstands.util.actions.ToolRackAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
@@ -17,9 +18,9 @@ public enum UtilityAction {
   COPY("copy"),
   PASTE("paste"),
   PREPARE("prepare"),
-  PREPARE_SMALL("prepare_small"),
-  FLOATING_ITEM("floating_item"),
-  FLOATING_ITEM_SMALL("floating_item_small"),
+  TOOL_RACK("tool_rack"),
+  UPRIGHT_ITEM("upright_item"),
+  UPRIGHT_ITEM_SMALL("upright_item_small"),
   FLAT_ITEM("flat_item"),
   FLAT_ITEM_SMALL("flat_item_small"),
   BLOCK("block"),
@@ -58,12 +59,14 @@ public enum UtilityAction {
         Clipboard.paste(player, editor);
         break;
       case PREPARE:
-      case PREPARE_SMALL:
-        editor.applyAction(PrepareAction.create(armorStand, this == PREPARE_SMALL));
+        editor.applyAction(PrepareAction.create(armorStand));
         break;
-      case FLOATING_ITEM:
-      case FLOATING_ITEM_SMALL:
-        editor.applyAction(HoldingAction.floatingItem(armorStand, this == FLOATING_ITEM_SMALL));
+      case TOOL_RACK:
+        editor.applyAction(ToolRackAction.create(armorStand));
+        break;
+      case UPRIGHT_ITEM:
+      case UPRIGHT_ITEM_SMALL:
+        editor.applyAction(HoldingAction.uprightItem(armorStand, this == UPRIGHT_ITEM_SMALL));
         break;
       case FLAT_ITEM:
       case FLAT_ITEM_SMALL:
@@ -107,12 +110,9 @@ public enum UtilityAction {
 
   public UtilityAction forSmall(boolean small) {
     switch (this) {
-      case PREPARE:
-      case PREPARE_SMALL:
-        return small ? PREPARE_SMALL : PREPARE;
-      case FLOATING_ITEM:
-      case FLOATING_ITEM_SMALL:
-        return small ? FLOATING_ITEM_SMALL : FLOATING_ITEM;
+      case UPRIGHT_ITEM:
+      case UPRIGHT_ITEM_SMALL:
+        return small ? UPRIGHT_ITEM_SMALL : UPRIGHT_ITEM;
       case FLAT_ITEM:
       case FLAT_ITEM_SMALL:
         return small ? FLAT_ITEM_SMALL : FLAT_ITEM;

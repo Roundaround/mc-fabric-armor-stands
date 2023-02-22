@@ -30,6 +30,9 @@ public class ArmorStandEditor {
   }
 
   public void applyAction(ArmorStandAction action) {
+    if (action == null) {
+      return;
+    }
     action.apply(this.armorStand);
     this.actions.push(action);
     this.undos.clear();
@@ -39,7 +42,12 @@ public class ArmorStandEditor {
     if (this.actions.isEmpty()) {
       return false;
     }
+
     ArmorStandAction action = this.actions.pop();
+    if (action == null) {
+      return false;
+    }
+
     action.undo(this.armorStand);
     this.undos.push(action);
     return true;
@@ -49,7 +57,12 @@ public class ArmorStandEditor {
     if (this.undos.isEmpty()) {
       return false;
     }
+
     ArmorStandAction action = this.undos.pop();
+    if (action == null) {
+      return false;
+    }
+
     action.apply(this.armorStand);
     this.actions.push(action);
     return true;

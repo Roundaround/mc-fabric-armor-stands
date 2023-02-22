@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
@@ -66,16 +67,18 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    // [COPY] [PASTE]
-    //
-    // Setup =[SMALL]=
-    // [PREPARE]
-    // [FLOATING_ITEM] [FLAT_ITEM]
-    // [BLOCK] [TOOL]
+    // [COPY] [PASTE] // CONTROL_HEIGHT
+    // // ROW_PAD + LABEL_HEIGHT
+    // Setup // BETWEEN_PAD
+    // [PREPARE] // BETWEEN_PAD + CONTROL_HEIGHT
+    // [FLOATING_ITEM] [FLAT_ITEM] // BETWEEN_PAD + CONTROL_HEIGHT
+    // [BLOCK] [TOOL] // CONTROL_HEIGHT
 
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
+            - ROW_PAD - LabelWidget.HEIGHT_WITH_PADDING,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.copy"),
@@ -85,7 +88,9 @@ public class ArmorStandUtilitiesScreen
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
+            - ROW_PAD - LabelWidget.HEIGHT_WITH_PADDING,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.paste"),
@@ -93,18 +98,98 @@ public class ArmorStandUtilitiesScreen
           messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
+
+    addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.utility.setup"),
+        SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD)
+        .alignedBottom()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
     addDrawableChild(new SimpleTooltipButtonWidget(
         this,
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.prepare"),
         Text.translatable("armorstands.utility.prepare.tooltip"),
         (button) -> {
-          this.setupType = Optional.of(UtilityAction.PREPARE);
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
+        }));
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.utility.toolRack"),
+        Text.translatable("armorstands.utility.toolRack.tooltip"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.TOOL_RACK);
+        }));
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
+        SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.utility.uprightItem"),
+        Text.translatable("armorstands.utility.uprightItem.tooltip"),
+        (button) -> {
+          this.setupType = Optional.of(UtilityAction.UPRIGHT_ITEM);
           ClientNetworking.sendUtilityActionPacket(
-              UtilityAction.PREPARE.forSmall(
+              UtilityAction.UPRIGHT_ITEM.forSmall(
+                  ArmorStandFlag.SMALL.getValue(armorStand)));
+        }));
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.utility.flatItem"),
+        Text.translatable("armorstands.utility.flatItem.tooltip"),
+        (button) -> {
+          this.setupType = Optional.of(UtilityAction.FLAT_ITEM);
+          ClientNetworking.sendUtilityActionPacket(
+              UtilityAction.FLAT_ITEM.forSmall(
+                  ArmorStandFlag.SMALL.getValue(armorStand)));
+        }));
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
+        SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.utility.block"),
+        Text.translatable("armorstands.utility.block.tooltip"),
+        (button) -> {
+          this.setupType = Optional.of(UtilityAction.BLOCK);
+          ClientNetworking.sendUtilityActionPacket(
+              UtilityAction.BLOCK.forSmall(
+                  ArmorStandFlag.SMALL.getValue(armorStand)));
+        }));
+    addDrawableChild(new SimpleTooltipButtonWidget(
+        this,
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.utility.tool"),
+        Text.translatable("armorstands.utility.tool.tooltip"),
+        (button) -> {
+          this.setupType = Optional.of(UtilityAction.TOOL);
+          ClientNetworking.sendUtilityActionPacket(
+              UtilityAction.TOOL.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
 
@@ -226,7 +311,7 @@ public class ArmorStandUtilitiesScreen
 
   private void onSmallFlagChanged(Boolean small) {
     this.setupType.ifPresent((utilityAction) -> {
-      ClientNetworking.sendUtilityActionPacket(utilityAction.forSmall(small));
+      // ClientNetworking.sendUtilityActionPacket(utilityAction.forSmall(small));
     });
   }
 }

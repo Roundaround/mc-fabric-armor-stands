@@ -13,15 +13,15 @@ import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
 public class HoldingAction extends ComboAction {
-  private static final EulerAngle ROT_EMPTY = new EulerAngle(0.0f, 0.0f, 0.0f);
-  private static final Vec3d POS_FLOATING_ITEM = new Vec3d(0.36, -1.41, -0.5625);
-  private static final EulerAngle ROT_FLOATING_ITEM = new EulerAngle(-90.0f, 0.0f, 0.0f);
+  private static final EulerAngle ROT_EMPTY = new EulerAngle(0f, 0f, 0f);
+  private static final Vec3d POS_UPRIGHT_ITEM = new Vec3d(0.36, -1.41, -0.5625);
+  private static final EulerAngle ROT_UPRIGHT_ITEM = new EulerAngle(-90f, 0f, 0f);
   private static final Vec3d POS_FLAT_ITEM = new Vec3d(0.385, -0.78, -0.295);
-  private static final EulerAngle ROT_FLAT_ITEM = new EulerAngle(0.0f, 0.0f, 0.0f);
+  private static final EulerAngle ROT_FLAT_ITEM = new EulerAngle(0f, 0f, 0f);
   private static final Vec3d POS_BLOCK = new Vec3d(0.5725, -0.655, 0.352);
-  private static final EulerAngle ROT_BLOCK = new EulerAngle(-15.0f, 135.0f, 0.0f);
+  private static final EulerAngle ROT_BLOCK = new EulerAngle(-15f, 135f, 0f);
   private static final Vec3d POS_TOOL = new Vec3d(-0.17, -1.285, -0.44);
-  private static final EulerAngle ROT_TOOL = new EulerAngle(-10.0f, 0.0f, -90.0f);
+  private static final EulerAngle ROT_TOOL = new EulerAngle(-10f, 0f, -90f);
 
   private HoldingAction(Collection<ArmorStandAction> actions) {
     super(Text.translatable("armorstands.action.holding"), actions);
@@ -30,19 +30,23 @@ public class HoldingAction extends ComboAction {
   private static HoldingAction create(ArmorStandEntity armorStand, boolean small, Vec3d pos, EulerAngle rot) {
     ArrayList<ArmorStandAction> actions = new ArrayList<>();
     actions.add(FlagAction.set(ArmorStandFlag.VISIBLE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.BASE, false));
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, false));
+    actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
+    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
     actions.add(FlagAction.set(ArmorStandFlag.NAME, false));
     actions.add(FlagAction.set(ArmorStandFlag.SMALL, small));
 
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand);
+    Vec3d position = armorStand.getPos();
+
+    Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, true);
     if (maybeGround.isPresent()) {
-      Vec3d position = maybeGround.get();
-      position.add(small ? pos.multiply(0.5) : pos);
-      actions.add(MoveAction.absolute(position));
-    } else {
-      actions.add(MoveAction.relative(small ? pos.multiply(0.5) : pos));
+      position = new Vec3d(
+          position.getX(),
+          maybeGround.get().getY(),
+          position.getZ());
     }
+
+    Vec3d offset = ArmorStandHelper.getLocalPos(armorStand, small ? pos.multiply(0.5) : pos);
+    actions.add(MoveAction.absolute(position.add(offset)));
 
     actions.add(PoseAction.fromPose(new Pose(
         ROT_EMPTY,
@@ -55,12 +59,12 @@ public class HoldingAction extends ComboAction {
     return new HoldingAction(actions);
   }
 
-  public static HoldingAction floatingItem(ArmorStandEntity armorStand) {
-    return floatingItem(armorStand, false);
+  public static HoldingAction uprightItem(ArmorStandEntity armorStand) {
+    return uprightItem(armorStand, false);
   }
 
-  public static HoldingAction floatingItem(ArmorStandEntity armorStand, boolean small) {
-    return create(armorStand, small, POS_FLOATING_ITEM, ROT_FLOATING_ITEM);
+  public static HoldingAction uprightItem(ArmorStandEntity armorStand, boolean small) {
+    return create(armorStand, small, POS_UPRIGHT_ITEM, ROT_UPRIGHT_ITEM);
   }
 
   public static HoldingAction flatItem(ArmorStandEntity armorStand) {

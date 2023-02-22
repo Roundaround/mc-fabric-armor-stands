@@ -2,6 +2,7 @@ package me.roundaround.armorstands.util.actions;
 
 import java.util.Optional;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -41,6 +42,22 @@ public class MoveAction implements ArmorStandAction {
 
   public static MoveAction relative(double x, double y, double z) {
     return relative(x, y, z, false);
+  }
+
+  public static MoveAction local(Entity entity, Vec3d position) {
+    return relative(position.rotateY(entity.getYaw()));
+  }
+
+  public static MoveAction local(Entity entity, double x, double y, double z) {
+    return relative(new Vec3d(x, y, z).rotateY(entity.getYaw()));
+  }
+
+  public static MoveAction local(float rotation, Vec3d position) {
+    return relative(position.rotateY(rotation));
+  }
+
+  public static MoveAction local(float rotation, double x, double y, double z) {
+    return relative(new Vec3d(x, y, z).rotateY(rotation));
   }
 
   @Override
