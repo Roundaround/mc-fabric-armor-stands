@@ -92,10 +92,25 @@ public class ArmorStandInventoryScreen
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    renderBackground(matrixStack);
+    if (this.client.isPaused()) {
+      renderBackground(matrixStack);
+    }
+
     this.mouseX = mouseX;
     this.mouseY = mouseY;
     super.render(matrixStack, mouseX, mouseY, delta);
+
+    // If game is paused, render the vanilla pause text at the top
+    if (this.client.isPaused()) {
+      drawCenteredText(
+          matrixStack,
+          this.textRenderer,
+          Text.translatable("menu.paused"),
+          this.width / 2,
+          10,
+          0xFFFFFF);
+    }
+
     drawMouseoverTooltip(matrixStack, mouseX, mouseY);
   }
 
