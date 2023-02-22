@@ -192,12 +192,15 @@ public abstract class AbstractArmorStandScreen
       return false;
     }
 
-    if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+    if (this.client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
       close();
       return true;
     }
 
     switch (keyCode) {
+      case GLFW.GLFW_KEY_ESCAPE:
+        close();
+        return true;
       case GLFW.GLFW_KEY_LEFT_ALT:
       case GLFW.GLFW_KEY_RIGHT_ALT:
         if (!this.passEvents) {
