@@ -73,10 +73,13 @@ public class ArmorStandPoseScreen
   public void init() {
     super.init();
 
+    int offset = (CONTROL_WIDTH - 3 * IconButtonWidget.WIDTH - 2 * PART_PAD_HORIZONTAL) / 2;
+
     this.headButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        offset + SCREEN_EDGE_PAD
+            + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL
             - PART_PAD_VERTICAL - CONTROL_HEIGHT,
@@ -95,7 +98,7 @@ public class ArmorStandPoseScreen
     this.rightArmButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD,
+        offset + SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
             - PART_PAD_VERTICAL - CONTROL_HEIGHT,
@@ -112,7 +115,8 @@ public class ArmorStandPoseScreen
     this.bodyButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        offset + SCREEN_EDGE_PAD
+            + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
             - PART_PAD_VERTICAL - CONTROL_HEIGHT,
@@ -129,7 +133,8 @@ public class ArmorStandPoseScreen
     this.leftArmButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
+        offset + SCREEN_EDGE_PAD
+            + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
             - PART_PAD_VERTICAL - CONTROL_HEIGHT,
@@ -146,7 +151,8 @@ public class ArmorStandPoseScreen
     this.rightLegButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
+        offset + SCREEN_EDGE_PAD
+            + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
         this.height - SCREEN_EDGE_PAD
             - IconButtonWidget.HEIGHT
             - PART_PAD_VERTICAL - CONTROL_HEIGHT,
@@ -163,7 +169,7 @@ public class ArmorStandPoseScreen
     this.leftLegButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD
+        offset + SCREEN_EDGE_PAD
             + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2
             + IconButtonWidget.WIDTH
             + PART_PAD_HORIZONTAL,
