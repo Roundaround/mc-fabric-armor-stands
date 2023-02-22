@@ -12,6 +12,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "client_update_packet");
 
+  public static final Identifier MESSAGE_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "message_packet");
+
   public static final Identifier INIT_SLOTS_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "init_slots_packet");

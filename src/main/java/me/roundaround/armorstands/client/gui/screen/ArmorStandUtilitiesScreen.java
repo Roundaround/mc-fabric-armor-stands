@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
@@ -83,7 +82,6 @@ public class ArmorStandUtilitiesScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
-          messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
     addDrawableChild(new ButtonWidget(
@@ -95,7 +93,6 @@ public class ArmorStandUtilitiesScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
-          messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
 

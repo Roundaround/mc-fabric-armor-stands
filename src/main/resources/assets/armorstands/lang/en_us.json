@@ -12,6 +12,7 @@
   "armorstands.utility.prepare.tooltip": "Prepare the armor stand for posing as a character.",
   "armorstands.utility.toolRack": "Tool rack",
   "armorstands.utility.toolRack.tooltip": "Align an armor stand with a tripwire hook on the wall above it so that a tool held by it appears to be hanging up.",
+  "armorstands.utility.toolRack.noHook": "No tripwire hook found",
   "armorstands.utility.uprightItem": "Item",
   "armorstands.utility.uprightItem.tooltip": "Align an armor stand placed on a surface so that an item held by it appears upright on the surface.",
   "armorstands.utility.flatItem": "Item (flat)",

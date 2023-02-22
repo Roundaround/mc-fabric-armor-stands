@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
+import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
@@ -35,7 +36,7 @@ import net.minecraft.util.Identifier;
 
 public abstract class AbstractArmorStandScreen
     extends HandledScreen<ArmorStandScreenHandler>
-    implements HasArmorStand {
+    implements HasArmorStand, HasMessageRenderer {
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
   protected static final int NAV_BUTTON_SPACING = 0;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
@@ -72,6 +73,11 @@ public abstract class AbstractArmorStandScreen
   @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
+  }
+
+  @Override
+  public MessageRenderer getMessageRenderer() {
+    return this.messageRenderer;
   }
 
   @Override
@@ -239,7 +245,6 @@ public abstract class AbstractArmorStandScreen
           break;
         }
         playClickSound();
-        messageRenderer.addMessage(Screen.hasShiftDown() ? MessageRenderer.TEXT_REDO : MessageRenderer.TEXT_UNDO);
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
@@ -247,7 +252,6 @@ public abstract class AbstractArmorStandScreen
           break;
         }
         playClickSound();
-        messageRenderer.addMessage(MessageRenderer.TEXT_COPY);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
@@ -255,7 +259,6 @@ public abstract class AbstractArmorStandScreen
           break;
         }
         playClickSound();
-        messageRenderer.addMessage(MessageRenderer.TEXT_PASTE);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }

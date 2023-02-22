@@ -222,10 +222,15 @@ public class ServerNetworking {
     HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     if (redo) {
-      editor.redo();
+      if (editor.redo()) {
+        ServerNetworking.sendMessagePacket(player, "armorstands.message.redo");
+      }
       return;
     }
-    editor.undo();
+
+    if (editor.undo()) {
+      ServerNetworking.sendMessagePacket(player, "armorstands.message.undo");
+    }
   }
 
   public static void sendOpenScreenPacket(ServerPlayerEntity player, ArmorStandEntity armorStand, int syncId) {
@@ -245,5 +250,24 @@ public class ServerNetworking {
     buf.writeFloat(armorStand.getPitch());
 
     ServerPlayNetworking.send(player, NetworkPackets.CLIENT_UPDATE_PACKET, buf);
+  }
+
+  public static void sendMessagePacket(ServerPlayerEntity player, String message) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(true);
+    buf.writeString(message);
+    buf.writeBoolean(false);
+
+    ServerPlayNetworking.send(player, NetworkPackets.MESSAGE_PACKET, buf);
+  }
+
+  public static void sendMessagePacket(ServerPlayerEntity player, String message, int color) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeBoolean(true);
+    buf.writeString(message);
+    buf.writeBoolean(true);
+    buf.writeInt(color);
+
+    ServerPlayNetworking.send(player, NetworkPackets.MESSAGE_PACKET, buf);
   }
 }

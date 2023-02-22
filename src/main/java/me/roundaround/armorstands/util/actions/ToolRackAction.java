@@ -25,7 +25,6 @@ public class ToolRackAction extends ComboAction {
     BlockPos hookPos = findTripwireHook(armorStand);
 
     if (hookPos == null) {
-      // TODO: Show error message
       return null;
     }
 

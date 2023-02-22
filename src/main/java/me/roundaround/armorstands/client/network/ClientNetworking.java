@@ -1,6 +1,8 @@
 package me.roundaround.armorstands.client.network;
 
 import io.netty.buffer.Unpooled;
+import me.roundaround.armorstands.client.gui.MessageRenderer;
+import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
@@ -20,6 +22,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 
@@ -31,6 +34,9 @@ public class ClientNetworking {
     ClientPlayNetworking.registerGlobalReceiver(
         NetworkPackets.CLIENT_UPDATE_PACKET,
         ClientNetworking::handleClientUpdatePacket);
+    ClientPlayNetworking.registerGlobalReceiver(
+        NetworkPackets.MESSAGE_PACKET,
+        ClientNetworking::handleMessagePacket);
   }
 
   public static void handleOpenScreenPacket(
@@ -81,6 +87,32 @@ public class ClientNetworking {
       armorStand.setPos(x, y, z);
       armorStand.setYaw(yaw % 360f);
       armorStand.setPitch(pitch % 360f);
+    });
+  }
+
+  private static void handleMessagePacket(
+      MinecraftClient client,
+      ClientPlayNetworkHandler handler,
+      PacketByteBuf buf,
+      PacketSender responseSender) {
+    boolean translatable = buf.readBoolean();
+    String message = buf.readString();
+    boolean styled = buf.readBoolean();
+    int color = styled ? buf.readInt() : -1;
+
+    client.execute(() -> {
+      if (!(client.currentScreen instanceof HasMessageRenderer)) {
+        return;
+      }
+
+      MessageRenderer messageRenderer = ((HasMessageRenderer) client.currentScreen).getMessageRenderer();
+      messageRenderer.addMessage(
+          translatable
+              ? Text.translatable(message)
+              : Text.literal(message),
+          styled
+              ? color
+              : MessageRenderer.BASE_COLOR);
     });
   }
 
