@@ -9,6 +9,7 @@ import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
+import me.roundaround.armorstands.util.Pose;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.SavedPose;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -136,16 +137,17 @@ public class ClientNetworking {
   }
 
   public static void sendSetPosePacket(SavedPose pose) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeBoolean(false);
-    writeEulerAngle(buf, pose.getHead());
-    writeEulerAngle(buf, pose.getBody());
-    writeEulerAngle(buf, pose.getRightArm());
-    writeEulerAngle(buf, pose.getLeftArm());
-    writeEulerAngle(buf, pose.getRightLeg());
-    writeEulerAngle(buf, pose.getLeftLeg());
+    sendSetPosePacket(pose.toPose());
+  }
 
-    ClientPlayNetworking.send(NetworkPackets.SET_POSE_PACKET, buf);
+  public static void sendSetPosePacket(Pose pose) {
+    sendSetPosePacket(
+        pose.getHead(),
+        pose.getBody(),
+        pose.getRightArm(),
+        pose.getLeftArm(),
+        pose.getRightLeg(),
+        pose.getLeftLeg());
   }
 
   public static void sendSetPosePacket(

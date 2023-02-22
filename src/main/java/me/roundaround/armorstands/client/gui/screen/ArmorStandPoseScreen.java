@@ -5,10 +5,13 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.Pose;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -74,7 +77,9 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         6,
         PosePart.HEAD.getDisplayName(),
         (button) -> {
@@ -91,7 +96,9 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         8,
         PosePart.RIGHT_ARM.getDisplayName(),
         (button) -> {
@@ -106,7 +113,9 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         7,
         PosePart.BODY.getDisplayName(),
         (button) -> {
@@ -121,7 +130,9 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         9,
         PosePart.LEFT_ARM.getDisplayName(),
         (button) -> {
@@ -136,7 +147,9 @@ public class ArmorStandPoseScreen
         client,
         this,
         SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
-        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
+        this.height - SCREEN_EDGE_PAD
+            - IconButtonWidget.HEIGHT
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         11,
         PosePart.RIGHT_LEG.getDisplayName(),
         (button) -> {
@@ -150,9 +163,13 @@ public class ArmorStandPoseScreen
     this.leftLegButton = new IconButtonWidget<>(
         client,
         this,
-        SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2 + IconButtonWidget.WIDTH
+        SCREEN_EDGE_PAD
+            + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2
+            + IconButtonWidget.WIDTH
             + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
+        this.height - SCREEN_EDGE_PAD
+            - IconButtonWidget.HEIGHT
+            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
         10,
         PosePart.LEFT_LEG.getDisplayName(),
         (button) -> {
@@ -162,6 +179,20 @@ public class ArmorStandPoseScreen
           this.activePosePartButton.active = false;
         });
     addDrawableChild(this.leftLegButton);
+
+    addDrawableChild(new ButtonWidget(
+        SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        CONTROL_WIDTH,
+        CONTROL_HEIGHT,
+        Text.translatable("armorstands.pose.mirror"),
+        (button) -> {
+          ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
+
+          this.pitchSlider.refresh();
+          this.yawSlider.refresh();
+          this.rollSlider.refresh();
+        }));
 
     initNavigationButtons(List.of(
         ScreenFactory.create(

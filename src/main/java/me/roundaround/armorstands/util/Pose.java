@@ -88,6 +88,34 @@ public class Pose implements ArmorStandApplyable {
     return optionalLeftLeg.orElse(PosePreset.DEFAULT.getLeftLeg());
   }
 
+  public Pose mirror() {
+    return new Pose(
+        optionalHead.map((head) -> new EulerAngle(
+            head.getPitch(),
+            -head.getYaw(),
+            -head.getRoll())),
+        optionalBody.map((body) -> new EulerAngle(
+            body.getPitch(),
+            -body.getYaw(),
+            -body.getRoll())),
+        optionalLeftArm.map((leftArm) -> new EulerAngle(
+            leftArm.getPitch(),
+            -leftArm.getYaw(),
+            -leftArm.getRoll())),
+        optionalRightArm.map((rightArm) -> new EulerAngle(
+            rightArm.getPitch(),
+            -rightArm.getYaw(),
+            -rightArm.getRoll())),
+        optionalLeftLeg.map((leftLeg) -> new EulerAngle(
+            leftLeg.getPitch(),
+            -leftLeg.getYaw(),
+            -leftLeg.getRoll())),
+        optionalRightLeg.map((rightLeg) -> new EulerAngle(
+            rightLeg.getPitch(),
+            -rightLeg.getYaw(),
+            -rightLeg.getRoll())));
+  }
+
   @FunctionalInterface
   public static interface PoseSupplier {
     public Pose toPose();

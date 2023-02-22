@@ -53,6 +53,7 @@
   "armorstands.pose.leftArm": "Left arm",
   "armorstands.pose.rightLeg": "Right leg",
   "armorstands.pose.leftLeg": "Left leg",
+  "armorstands.pose.mirror": "Mirror pose",
   "armorstands.pose.zero": "Reset to 0",
   "armorstands.pose.add": "Increase",
   "armorstands.pose.subtract": "Decrease",
