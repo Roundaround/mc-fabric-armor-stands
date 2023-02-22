@@ -9,13 +9,13 @@ import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -66,7 +66,7 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
             - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
@@ -77,7 +77,7 @@ public class ArmorStandUtilitiesScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
         this.height - SCREEN_EDGE_PAD
             - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD

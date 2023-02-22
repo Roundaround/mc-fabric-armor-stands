@@ -3,12 +3,12 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
@@ -104,7 +104,7 @@ public class ArmorStandMoveScreen
         .justifiedLeft()
         .alignedBottom()
         .build());
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
@@ -113,7 +113,7 @@ public class ArmorStandMoveScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
@@ -122,7 +122,7 @@ public class ArmorStandMoveScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
@@ -131,7 +131,7 @@ public class ArmorStandMoveScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
@@ -140,7 +140,7 @@ public class ArmorStandMoveScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
         }));
-    addDrawableChild(new MiniButtonWidget(
+    addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,

@@ -4,11 +4,12 @@ import java.util.List;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
-public class SimpleTooltipButtonWidget extends MiniButtonWidget {
+public class SimpleTooltipButtonWidget extends ButtonWidget {
   private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
   private final Screen parent;

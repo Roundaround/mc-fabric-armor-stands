@@ -67,7 +67,7 @@ public class ArmorStandPresetsScreen
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 20 - BETWEEN_PAD)
+        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT - BETWEEN_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
@@ -78,9 +78,9 @@ public class ArmorStandPresetsScreen
         .omitKeyText()
         .build(
             SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 20,
+            this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
             CONTROL_WIDTH,
-            20,
+            CONTROL_HEIGHT,
             Text.translatable("armorstands.presets.source.label"),
             (button, source) -> {
               filter(source);
