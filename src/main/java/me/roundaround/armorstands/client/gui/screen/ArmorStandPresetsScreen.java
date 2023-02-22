@@ -13,8 +13,6 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.PosePreset.Source;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -32,12 +30,10 @@ public class ArmorStandPresetsScreen
 
   private final ArrayList<PresetPoseButtonWidget> presetButtons = new ArrayList<>();
 
-  private TextFieldWidget searchField;
   private IconButtonWidget<ArmorStandPresetsScreen> prevPageButton;
   private IconButtonWidget<ArmorStandPresetsScreen> nextPageButton;
   private LabelWidget pageLabel;
   private int page = 0;
-  private String search = "";
   private Source source = Source.ALL;
   private List<PosePreset> matchingPresets = new ArrayList<>();
 
@@ -67,24 +63,6 @@ public class ArmorStandPresetsScreen
   @Override
   public void init() {
     super.init();
-
-    addDrawable(LabelWidget.builder(
-        Text.translatable("armorstands.presets.search.label"),
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedBottom()
-        .justifiedLeft()
-        .shiftForPadding()
-        .build());
-    this.searchField = addSelectableChild(new TextFieldWidget(
-        this.textRenderer,
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * CONTROL_HEIGHT - BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING,
-        CONTROL_WIDTH,
-        CONTROL_HEIGHT,
-        Text.translatable("armorstands.presets.search.label")));
-    this.searchField.setChangedListener(this::filter);
-    this.searchField.setMaxLength(32);
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
@@ -173,34 +151,6 @@ public class ArmorStandPresetsScreen
     updateFilters();
   }
 
-  @Override
-  public boolean charTyped(char codePoint, int modifiers) {
-    if (this.searchField.charTyped(codePoint, modifiers)) {
-      return true;
-    }
-
-    return super.charTyped(codePoint, modifiers);
-  }
-
-  @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
-
-    this.searchField.tick();
-  }
-
-  @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-    super.render(matrixStack, mouseX, mouseY, partialTicks);
-
-    this.searchField.render(matrixStack, mouseX, mouseY, partialTicks);
-  }
-
-  private void filter(String filter) {
-    this.search = filter;
-    updateFilters();
-  }
-
   private void filter(Source source) {
     this.source = source;
     updateFilters();
@@ -209,8 +159,7 @@ public class ArmorStandPresetsScreen
   private void updateFilters() {
     this.matchingPresets = Arrays.stream(PosePreset.values())
         .filter((preset) -> {
-          return preset.getLabel().getString().toLowerCase().contains(this.search.toLowerCase())
-              && this.source.matches(preset.getSource());
+          return this.source.matches(preset.getSource());
         })
         .collect(Collectors.toList());
 
