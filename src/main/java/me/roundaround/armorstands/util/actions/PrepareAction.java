@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.ArmorStandHelper;
+import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
@@ -16,15 +17,24 @@ public class PrepareAction extends ComboAction {
   }
 
   public static PrepareAction create(ArmorStandEntity armorStand) {
+    return create(armorStand, false);
+  }
+
+  public static PrepareAction create(ArmorStandEntity armorStand, boolean small) {
     ArrayList<ArmorStandAction> actions = new ArrayList<>();
     actions.add(FlagAction.set(ArmorStandFlag.ARMS, true));
     actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
     actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+    actions.add(FlagAction.set(ArmorStandFlag.VISIBLE, false));
+    actions.add(FlagAction.set(ArmorStandFlag.NAME, true));
+    actions.add(FlagAction.set(ArmorStandFlag.SMALL, small));
 
     Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, false);
     if (maybeGround.isPresent()) {
       actions.add(MoveAction.absolute(maybeGround.get()));
     }
+
+    actions.add(PoseAction.fromPose(PosePreset.DEFAULT.toPose()));
 
     return new PrepareAction(actions);
   }

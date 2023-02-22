@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.MessageRenderer;
@@ -28,9 +29,12 @@ public class ArmorStandUtilitiesScreen
   private static final int BUTTON_HEIGHT = 20;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
+  private static final int ROW_PAD = 6;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
+
+  private Optional<UtilityAction> setupType = Optional.empty();
 
   public ArmorStandUtilitiesScreen(
       ArmorStandScreenHandler handler,
@@ -62,6 +66,13 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
+    // [COPY] [PASTE]
+    //
+    // Setup =[SMALL]=
+    // [PREPARE]
+    // [FLOATING_ITEM] [FLAT_ITEM]
+    // [BLOCK] [TOOL]
+
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - BETWEEN_PAD,
@@ -91,7 +102,10 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.prepare"),
         Text.translatable("armorstands.utility.prepare.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
+          this.setupType = Optional.of(UtilityAction.PREPARE);
+          ClientNetworking.sendUtilityActionPacket(
+              UtilityAction.PREPARE.forSmall(
+                  ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
 
     initNavigationButtons(List.of(
@@ -204,5 +218,15 @@ public class ArmorStandUtilitiesScreen
 
     addDrawableChild(widget);
     listeners.get(flag).add(widget);
+
+    if (flag == ArmorStandFlag.SMALL) {
+      listeners.get(flag).add(this::onSmallFlagChanged);
+    }
+  }
+
+  private void onSmallFlagChanged(Boolean small) {
+    this.setupType.ifPresent((utilityAction) -> {
+      ClientNetworking.sendUtilityActionPacket(utilityAction.forSmall(small));
+    });
   }
 }
