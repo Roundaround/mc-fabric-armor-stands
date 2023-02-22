@@ -73,7 +73,7 @@ public class ArmorStandScreenHandler
     }
 
     for (int i = 0; i < 2; i++) {
-      addSlot(new Slot(this.inventory, i, 116 + i * 18, 62) {
+      addSlot(new Slot(this.inventory, i, 116, 44 + i * 18) {
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
           return Pair.of(
