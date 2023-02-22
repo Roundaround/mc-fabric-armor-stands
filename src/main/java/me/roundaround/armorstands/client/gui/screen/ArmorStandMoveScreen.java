@@ -2,12 +2,7 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
-import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.HasArmorStandOverlay;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
@@ -15,25 +10,14 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
 
 public class ArmorStandMoveScreen
-    extends AbstractArmorStandScreen
-    implements HasArmorStandOverlay {
+    extends AbstractArmorStandScreen {
   public static final Text TITLE = Text.translatable("armorstands.screen.move");
   public static final int U_INDEX = 1;
 
@@ -43,9 +27,6 @@ public class ArmorStandMoveScreen
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
-  private static final Identifier INDICATORS_TEXTURE = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "textures/indicators.png");
 
   private final ArrayList<MoveButtonWidget> moveButtons = new ArrayList<>();
 
@@ -245,81 +226,6 @@ public class ArmorStandMoveScreen
     playerFacingLabel.setText(getCurrentFacingText(client.player));
     standPosLabel.setText(getCurrentPosText(this.armorStand));
     standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
-  }
-
-  @Override
-  public void renderArmorStandOverlay(
-      ArmorStandEntity armorStand,
-      float tickDelta,
-      MatrixStack matrixStack,
-      VertexConsumerProvider vertexConsumerProvider,
-      int light) {
-    if (armorStand != this.armorStand) {
-      return;
-    }
-
-    int mouseX = (int) Math.round(client.mouse.getX()
-        * client.getWindow().getScaledWidth()
-        / client.getWindow().getWidth());
-    int mouseY = (int) Math.round(client.mouse.getY()
-        * client.getWindow().getScaledHeight()
-        / client.getWindow().getHeight());
-
-    Optional<MoveButtonWidget> hoveredButton = moveButtons.stream()
-        .filter((button) -> button.isMouseOver(mouseX, mouseY))
-        .findFirst();
-
-    if (hoveredButton.isEmpty()) {
-      return;
-    }
-
-    Direction direction = hoveredButton.get().direction;
-
-    if (direction.getAxis().isVertical()) {
-      return;
-    }
-
-    matrixStack.push();
-
-    matrixStack.multiply(Direction.UP.getRotationQuaternion());
-    matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180 - direction.asRotation()));
-    matrixStack.translate(-0.5f, 0.01f, 0.125f - 1.5f);
-
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
-    RenderSystem.setShaderTexture(0, INDICATORS_TEXTURE);
-    RenderSystem.enableBlend();
-
-    Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
-    Tessellator tessellator = Tessellator.getInstance();
-    BufferBuilder buffer = tessellator.getBuffer();
-    buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-
-    float x0 = (16 - 13) / 32f;
-    float x1 = (16 + 13) / 32f;
-    float z0 = 0;
-    float z1 = 1;
-
-    float u0 = 0;
-    float v0 = 0;
-    float u1 = 13f / 256f;
-    float v1 = 16f / 256f;
-
-    buffer.vertex(matrix4f, x0, 0, z1)
-        .texture(u0, v1)
-        .next();
-    buffer.vertex(matrix4f, x1, 0, z1)
-        .texture(u1, v1)
-        .next();
-    buffer.vertex(matrix4f, x1, 0, z0)
-        .texture(u1, v0)
-        .next();
-    buffer.vertex(matrix4f, x0, 0, z0)
-        .texture(u0, v0)
-        .next();
-    tessellator.draw();
-
-    matrixStack.pop();
   }
 
   private Text getCurrentPosText(Entity entity) {
