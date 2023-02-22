@@ -23,7 +23,7 @@ public class ArmorStandPresetsScreen
   public static final int U_INDEX = 4;
 
   private static final int CONTROL_WIDTH = 120;
-  private static final int CONTROL_HEIGHT = 20;
+  private static final int CONTROL_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
   private static final int BUTTONS_PER_PAGE = 6;
@@ -67,7 +67,7 @@ public class ArmorStandPresetsScreen
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT)
+        this.height - SCREEN_EDGE_PAD - 20 - BETWEEN_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
@@ -78,9 +78,9 @@ public class ArmorStandPresetsScreen
         .omitKeyText()
         .build(
             SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+            this.height - SCREEN_EDGE_PAD - 20,
             CONTROL_WIDTH,
-            CONTROL_HEIGHT,
+            20,
             Text.translatable("armorstands.presets.source.label"),
             (button, source) -> {
               filter(source);
@@ -117,7 +117,7 @@ public class ArmorStandPresetsScreen
       this.presetButtons.add(addDrawableChild(new PresetPoseButtonWidget(
           this,
           this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-          this.height - SCREEN_EDGE_PAD - (i + 1) * CONTROL_HEIGHT - i * BETWEEN_PAD,
+          this.height - SCREEN_EDGE_PAD - i * CONTROL_HEIGHT - i * BETWEEN_PAD - IconButtonWidget.HEIGHT,
           CONTROL_WIDTH,
           CONTROL_HEIGHT)));
     }
@@ -126,7 +126,7 @@ public class ArmorStandPresetsScreen
         this.client,
         this,
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         12,
         Text.translatable("armorstands.presets.previous"),
         (button) -> previousPage()));
@@ -134,7 +134,7 @@ public class ArmorStandPresetsScreen
         this.client,
         this,
         this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         13,
         Text.translatable("armorstands.presets.next"),
         (button) -> nextPage()));
@@ -143,7 +143,7 @@ public class ArmorStandPresetsScreen
     this.pageLabel = addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH / 2,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT / 2)
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT / 2)
         .alignedMiddle()
         .justifiedCenter()
         .build());

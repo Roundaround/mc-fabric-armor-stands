@@ -109,36 +109,36 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.corner"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
-        }));
-    addDrawableChild(new MiniButtonWidget(
-        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.center"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
-        }));
-    addDrawableChild(new MiniButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.standing"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.sitting"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING);
+        }));
+    addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.snap.corner"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
+        }));
+    addDrawableChild(new MiniButtonWidget(
+        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.translatable("armorstands.snap.center"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
         }));
     addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),

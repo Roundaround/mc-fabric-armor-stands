@@ -9,13 +9,13 @@ import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.gui.widget.MiniButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -26,7 +26,7 @@ public class ArmorStandUtilitiesScreen
 
   private static final int TOGGLE_WIDTH = 100;
   private static final int BUTTON_WIDTH = 60;
-  private static final int BUTTON_HEIGHT = 20;
+  private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
   private static final int ROW_PAD = 6;
@@ -66,14 +66,7 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    // [COPY] [PASTE] // CONTROL_HEIGHT
-    // // ROW_PAD + LABEL_HEIGHT
-    // Setup // BETWEEN_PAD
-    // [PREPARE] // BETWEEN_PAD + CONTROL_HEIGHT
-    // [FLOATING_ITEM] [FLAT_ITEM] // BETWEEN_PAD + CONTROL_HEIGHT
-    // [BLOCK] [TOOL] // CONTROL_HEIGHT
-
-    addDrawableChild(new ButtonWidget(
+    addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
             - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
@@ -84,7 +77,7 @@ public class ArmorStandUtilitiesScreen
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
-    addDrawableChild(new ButtonWidget(
+    addDrawableChild(new MiniButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
         this.height - SCREEN_EDGE_PAD
             - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
