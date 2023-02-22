@@ -28,8 +28,6 @@ public class LabelWidget extends DrawableHelper implements Drawable {
   private float top;
   private float bottom;
 
-  // TODO: Add option to include background padding in positioning
-
   private LabelWidget(
       Text text,
       int posX,
