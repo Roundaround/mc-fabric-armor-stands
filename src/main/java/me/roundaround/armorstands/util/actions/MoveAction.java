@@ -2,26 +2,29 @@ package me.roundaround.armorstands.util.actions;
 
 import java.util.Optional;
 
-import net.minecraft.entity.Entity;
+import me.roundaround.armorstands.util.ArmorStandHelper;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class MoveAction implements ArmorStandAction {
   private final Vec3d argument;
-  private final boolean absolute;
+  private final MoveType moveType;
   private final boolean roundToPixel;
+  private final boolean localToPlayer;
   private Optional<Vec3d> originalPosition = Optional.empty();
 
-  private MoveAction(Vec3d argument, boolean absolute, boolean roundToPixel) {
+  private MoveAction(Vec3d argument, MoveType moveType, boolean roundToPixel, boolean localToPlayer) {
     this.argument = argument;
-    this.absolute = absolute;
+    this.moveType = moveType;
     this.roundToPixel = roundToPixel;
+    this.localToPlayer = localToPlayer;
   }
 
   public static MoveAction absolute(Vec3d position) {
-    return new MoveAction(position, true, false);
+    return new MoveAction(position, MoveType.ABSOLUTE, false, false);
   }
 
   public static MoveAction absolute(double x, double y, double z) {
@@ -29,7 +32,7 @@ public class MoveAction implements ArmorStandAction {
   }
 
   public static MoveAction relative(Vec3d position, boolean roundToPixel) {
-    return new MoveAction(position, false, roundToPixel);
+    return new MoveAction(position, MoveType.RELATIVE, roundToPixel, false);
   }
 
   public static MoveAction relative(double x, double y, double z, boolean roundToPixel) {
@@ -44,20 +47,20 @@ public class MoveAction implements ArmorStandAction {
     return relative(x, y, z, false);
   }
 
-  public static MoveAction local(Entity entity, Vec3d position) {
-    return relative(position.rotateY(entity.getYaw()));
+  public static MoveAction local(Vec3d position) {
+    return new MoveAction(position, MoveType.LOCAL, false, false);
   }
 
-  public static MoveAction local(Entity entity, double x, double y, double z) {
-    return relative(new Vec3d(x, y, z).rotateY(entity.getYaw()));
+  public static MoveAction local(double x, double y, double z) {
+    return local(new Vec3d(x, y, z));
   }
 
-  public static MoveAction local(float rotation, Vec3d position) {
-    return relative(position.rotateY(rotation));
+  public static MoveAction local(Vec3d position, boolean localToPlayer) {
+    return new MoveAction(position, MoveType.LOCAL, false, localToPlayer);
   }
 
-  public static MoveAction local(float rotation, double x, double y, double z) {
-    return relative(new Vec3d(x, y, z).rotateY(rotation));
+  public static MoveAction local(double x, double y, double z, boolean localToPlayer) {
+    return local(new Vec3d(x, y, z), localToPlayer);
   }
 
   @Override
@@ -66,14 +69,21 @@ public class MoveAction implements ArmorStandAction {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     originalPosition = Optional.of(armorStand.getPos());
 
-    Vec3d position = argument;
-
-    if (!absolute) {
-      position = position.add(originalPosition.get());
-    }
+    Vec3d position = switch (moveType) {
+      case ABSOLUTE -> argument;
+      case RELATIVE -> {
+        yield originalPosition.get().add(argument);
+      }
+      case LOCAL -> {
+        yield originalPosition.get().add(ArmorStandHelper.getLocalPos(
+          localToPlayer ? player : armorStand,
+          argument
+        ));
+      }
+    };
 
     if (roundToPixel) {
       double x = Math.round(position.x * 16) / 16.0;
@@ -86,7 +96,7 @@ public class MoveAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(ArmorStandEntity armorStand) {
+  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
     if (originalPosition.isEmpty()) {
       return;
     }
@@ -109,5 +119,31 @@ public class MoveAction implements ArmorStandAction {
 
     armorStand.updateTrackedPosition(x, y, z);
     armorStand.setPosition(new Vec3d(x, y, z));
+  }
+
+  public static enum MoveType {
+    ABSOLUTE("absolute"),
+    RELATIVE("relative"),
+    LOCAL("local");
+
+    private final String id;
+
+    private MoveType(String id) {
+      this.id = id;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public static MoveType fromId(String id) {
+      for (MoveType type : values()) {
+        if (type.id.equals(id)) {
+          return type;
+        }
+      }
+
+      return ABSOLUTE;
+    }
   }
 }

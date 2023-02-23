@@ -3,6 +3,7 @@ package me.roundaround.armorstands.util.actions;
 import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 public class RotateAction implements ArmorStandAction {
@@ -39,7 +40,7 @@ public class RotateAction implements ArmorStandAction {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     originalRotation = Optional.of(armorStand.getYaw());
 
     float rotation = argument;
@@ -52,7 +53,7 @@ public class RotateAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(ArmorStandEntity armorStand) {
+  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
     if (originalRotation.isEmpty()) {
       return;
     }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -14,7 +13,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
-import net.minecraft.util.math.Vec3d;
 
 public class ToolRackAction extends ComboAction {
   private ToolRackAction(Collection<ArmorStandAction> actions) {
@@ -59,16 +57,11 @@ public class ToolRackAction extends ComboAction {
     }
 
     actions.add(RotateAction.absolute(rotation));
-
-    Vec3d position = ArmorStandHelper.getCenterPos(armorStand);
-    position = new Vec3d(
-        position.x,
+    actions.add(MoveAction.absolute(
+        hookPos.getX() + 0.5,
         hookPos.getY() - 1,
-        position.z);
-
-    Vec3d offset = ArmorStandHelper.getLocalPos(rotation, -0.17, 0.24, -0.05);
-    actions.add(MoveAction.absolute(position.add(offset)));
-
+        hookPos.getZ() + 0.5));
+    actions.add(MoveAction.local(-0.17, 0.24, -0.05));
     actions.add(PoseAction.fromPose(new Pose(
         new EulerAngle(0f, 0.001f, 0f),
         new EulerAngle(0f, 0.001f, 0f),

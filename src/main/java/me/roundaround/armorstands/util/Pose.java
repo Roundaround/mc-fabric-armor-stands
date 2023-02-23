@@ -3,6 +3,7 @@ package me.roundaround.armorstands.util;
 import java.util.Optional;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.EulerAngle;
 
 public class Pose implements ArmorStandApplyable {
@@ -55,7 +56,7 @@ public class Pose implements ArmorStandApplyable {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     optionalHead.ifPresent((head) -> armorStand.setHeadRotation(head));
     optionalBody.ifPresent((body) -> armorStand.setBodyRotation(body));
     optionalRightArm.ifPresent((rightArm) -> armorStand.setRightArmRotation(rightArm));

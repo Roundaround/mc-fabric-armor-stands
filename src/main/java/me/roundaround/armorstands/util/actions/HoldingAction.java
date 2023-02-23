@@ -1,11 +1,8 @@
 package me.roundaround.armorstands.util.actions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
@@ -23,40 +20,21 @@ public class HoldingAction extends ComboAction {
   private static final Vec3d POS_TOOL = new Vec3d(-0.17, -1.285, -0.44);
   private static final EulerAngle ROT_TOOL = new EulerAngle(-10f, 0f, -90f);
 
-  private HoldingAction(Collection<ArmorStandAction> actions) {
-    super(Text.translatable("armorstands.action.holding"), actions);
-  }
-
-  private static HoldingAction create(ArmorStandEntity armorStand, boolean small, Vec3d pos, EulerAngle rot) {
-    ArrayList<ArmorStandAction> actions = new ArrayList<>();
-    actions.add(FlagAction.set(ArmorStandFlag.VISIBLE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-    actions.add(FlagAction.set(ArmorStandFlag.NAME, false));
-    actions.add(FlagAction.set(ArmorStandFlag.SMALL, small));
-
-    Vec3d position = armorStand.getPos();
-
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getStandingPos(armorStand, true);
-    if (maybeGround.isPresent()) {
-      position = new Vec3d(
-          position.getX(),
-          maybeGround.get().getY(),
-          position.getZ());
-    }
-
-    Vec3d offset = ArmorStandHelper.getLocalPos(armorStand, small ? pos.multiply(0.5) : pos);
-    actions.add(MoveAction.absolute(position.add(offset)));
-
-    actions.add(PoseAction.fromPose(new Pose(
-        ROT_EMPTY,
-        ROT_EMPTY,
-        rot,
-        ROT_EMPTY,
-        ROT_EMPTY,
-        ROT_EMPTY)));
-
-    return new HoldingAction(actions);
+  private HoldingAction(ArmorStandEntity armorStand, boolean small, Vec3d pos, EulerAngle rot) {
+    super(Text.translatable("armorstands.action.holding"), List.of(
+        FlagAction.set(ArmorStandFlag.VISIBLE, true),
+        FlagAction.set(ArmorStandFlag.BASE, true),
+        FlagAction.set(ArmorStandFlag.NAME, false),
+        FlagAction.set(ArmorStandFlag.SMALL, small),
+        SnapToGroundAction.standing(),
+        MoveAction.local(small ? pos.multiply(0.5) : pos),
+        PoseAction.fromPose(new Pose(
+            ROT_EMPTY,
+            ROT_EMPTY,
+            rot,
+            ROT_EMPTY,
+            ROT_EMPTY,
+            ROT_EMPTY))));
   }
 
   public static HoldingAction uprightItem(ArmorStandEntity armorStand) {
@@ -64,7 +42,7 @@ public class HoldingAction extends ComboAction {
   }
 
   public static HoldingAction uprightItem(ArmorStandEntity armorStand, boolean small) {
-    return create(armorStand, small, POS_UPRIGHT_ITEM, ROT_UPRIGHT_ITEM);
+    return new HoldingAction(armorStand, small, POS_UPRIGHT_ITEM, ROT_UPRIGHT_ITEM);
   }
 
   public static HoldingAction flatItem(ArmorStandEntity armorStand) {
@@ -72,7 +50,7 @@ public class HoldingAction extends ComboAction {
   }
 
   public static HoldingAction flatItem(ArmorStandEntity armorStand, boolean small) {
-    return create(armorStand, small, POS_FLAT_ITEM, ROT_FLAT_ITEM);
+    return new HoldingAction(armorStand, small, POS_FLAT_ITEM, ROT_FLAT_ITEM);
   }
 
   public static HoldingAction block(ArmorStandEntity armorStand) {
@@ -80,7 +58,7 @@ public class HoldingAction extends ComboAction {
   }
 
   public static HoldingAction block(ArmorStandEntity armorStand, boolean small) {
-    return create(armorStand, small, POS_BLOCK, ROT_BLOCK);
+    return new HoldingAction(armorStand, small, POS_BLOCK, ROT_BLOCK);
   }
 
   public static HoldingAction tool(ArmorStandEntity armorStand) {
@@ -88,6 +66,6 @@ public class HoldingAction extends ComboAction {
   }
 
   public static HoldingAction tool(ArmorStandEntity armorStand, boolean small) {
-    return create(armorStand, small, POS_TOOL, ROT_TOOL);
+    return new HoldingAction(armorStand, small, POS_TOOL, ROT_TOOL);
   }
 }

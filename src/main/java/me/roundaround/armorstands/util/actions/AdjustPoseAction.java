@@ -5,6 +5,7 @@ import java.util.Optional;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 public class AdjustPoseAction implements ArmorStandAction {
@@ -41,7 +42,7 @@ public class AdjustPoseAction implements ArmorStandAction {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     this.originalValue = Optional.of(this.parameter.get(this.part.get(armorStand)));
 
     float value = this.argument;
@@ -58,7 +59,7 @@ public class AdjustPoseAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(ArmorStandEntity armorStand) {
+  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
     if (this.originalValue.isEmpty()) {
       return;
     }

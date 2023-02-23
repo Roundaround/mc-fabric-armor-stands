@@ -23,6 +23,7 @@ import net.minecraft.util.math.Vec3d;
 public class ArmorStandEditor {
   private static HashMap<UUID, Pair<UUID, ArmorStandEditor>> editors = new HashMap<>();
 
+  private final ServerPlayerEntity player;
   private final ArmorStandEntity armorStand;
   private final SizeLimitedStack<ArmorStandAction> actions = new SizeLimitedStack<>(30);
   private final SizeLimitedStack<ArmorStandAction> undos = new SizeLimitedStack<>(30);
@@ -31,12 +32,12 @@ public class ArmorStandEditor {
     UUID uuid = player.getUuid();
 
     if (!editors.containsKey(uuid)) {
-      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(armorStand)));
+      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(player, armorStand)));
     }
 
     Pair<UUID, ArmorStandEditor> pair = editors.get(uuid);
     if (!pair.getLeft().equals(armorStand.getUuid())) {
-      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(armorStand)));
+      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(player, armorStand)));
     }
 
     return editors.get(uuid).getRight();
@@ -46,7 +47,8 @@ public class ArmorStandEditor {
     editors.remove(player.getUuid());
   }
 
-  private ArmorStandEditor(ArmorStandEntity armorStand) {
+  private ArmorStandEditor(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+    this.player = player;
     this.armorStand = armorStand;
   }
 
@@ -58,7 +60,7 @@ public class ArmorStandEditor {
     if (action == null) {
       return;
     }
-    action.apply(this.armorStand);
+    action.apply(this.player, this.armorStand);
     this.actions.push(action);
     this.undos.clear();
   }
@@ -73,7 +75,7 @@ public class ArmorStandEditor {
       return false;
     }
 
-    action.undo(this.armorStand);
+    action.undo(this.player, this.armorStand);
     this.undos.push(action);
     return true;
   }
@@ -88,7 +90,7 @@ public class ArmorStandEditor {
       return false;
     }
 
-    action.apply(this.armorStand);
+    action.apply(this.player, this.armorStand);
     this.actions.push(action);
     return true;
   }

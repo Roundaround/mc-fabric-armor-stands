@@ -7,6 +7,7 @@ import java.util.UUID;
 import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.actions.ClipboardPasteAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class Clipboard {
@@ -54,9 +55,9 @@ public class Clipboard {
     }
 
     @Override
-    public void apply(ArmorStandEntity armorStand) {
-      pose.ifPresent((pose) -> pose.apply(armorStand));
-      flags.ifPresent((flags) -> flags.apply(armorStand));
+    public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
+      pose.ifPresent((pose) -> pose.apply(player, armorStand));
+      flags.ifPresent((flags) -> flags.apply(player, armorStand));
     }
   }
 }

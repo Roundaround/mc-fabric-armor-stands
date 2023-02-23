@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public class FlagSnapshot implements ArmorStandApplyable {
   private HashMap<ArmorStandFlag, Boolean> values = new HashMap<>();
@@ -37,7 +38,7 @@ public class FlagSnapshot implements ArmorStandApplyable {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     values.entrySet().forEach((entry) -> {
       entry.getKey().setValue(armorStand, entry.getValue());
     });

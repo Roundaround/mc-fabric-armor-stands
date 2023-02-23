@@ -1,39 +1,27 @@
 package me.roundaround.armorstands.util.actions;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import me.roundaround.armorstands.util.ArmorStandHelper;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
 
 public class SnapToGroundAction extends ComboAction {
   private SnapToGroundAction(Collection<ArmorStandAction> actions) {
-    super(Text.translatable("armorstands.action.snap"), actions);
+    super(Text.translatable("armorstands.action.snapToGround"), actions);
   }
 
-  public static SnapToGroundAction create(ArmorStandEntity armorStand, boolean sitting) {
-    ArrayList<ArmorStandAction> actions = new ArrayList<>();
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
-
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, sitting);
-    if (maybeGround.isPresent()) {
-      actions.add(MoveAction.absolute(maybeGround.get()));
-    }
-
-    return new SnapToGroundAction(actions);
+  public static SnapToGroundAction standing() {
+    return create(false);
   }
 
-  @Deprecated
-  public static SnapToGroundAction of(Collection<ArmorStandAction> actions) {
-    throw new UnsupportedOperationException("Please use SnapToGroundAction.create");
+  public static SnapToGroundAction sitting() {
+    return create(true);
   }
 
-  @Deprecated
-  public static SnapToGroundAction of(ArmorStandAction... actions) {
-    throw new UnsupportedOperationException("Please use SnapToGroundAction.create");
+  public static SnapToGroundAction create(boolean sitting) {
+    return new SnapToGroundAction(List.of(
+        FlagAction.set(ArmorStandFlag.GRAVITY, true),
+        MoveToGroundAction.create(sitting)));
   }
 }

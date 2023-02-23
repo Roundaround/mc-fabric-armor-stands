@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import me.roundaround.armorstands.util.ArmorStandApplyable;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 public abstract class SimpleArmorStandAction<T extends ArmorStandApplyable> implements ArmorStandAction {
   private final T value;
@@ -16,13 +17,13 @@ public abstract class SimpleArmorStandAction<T extends ArmorStandApplyable> impl
   protected abstract T get(ArmorStandEntity armorStand);
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     original = Optional.of(get(armorStand));
-    value.apply(armorStand);
+    value.apply(player, armorStand);
   }
 
   @Override
-  public void undo(ArmorStandEntity armorStand) {
-    original.ifPresent((original) -> original.apply(armorStand));
+  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
+    original.ifPresent((original) -> original.apply(player, armorStand));
   }
 }

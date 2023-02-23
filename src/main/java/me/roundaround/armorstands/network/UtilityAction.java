@@ -94,7 +94,7 @@ public enum UtilityAction {
         break;
       case SNAP_STANDING:
       case SNAP_SITTING:
-        editor.applyAction(SnapToGroundAction.create(armorStand, this == SNAP_SITTING));
+        editor.applyAction(SnapToGroundAction.create(this == SNAP_SITTING));
         break;
       case SNAP_PLAYER:
         editor.setPos(player.getPos());

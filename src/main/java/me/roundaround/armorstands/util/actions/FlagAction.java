@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 
 public class FlagAction implements ArmorStandAction {
@@ -32,7 +33,7 @@ public class FlagAction implements ArmorStandAction {
   }
 
   @Override
-  public void apply(ArmorStandEntity armorStand) {
+  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     if (toggle) {
       flag.setValue(armorStand, !flag.getValue(armorStand));
       return;
@@ -43,7 +44,7 @@ public class FlagAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(ArmorStandEntity armorStand) {
+  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
     if (toggle) {
       flag.setValue(armorStand, !flag.getValue(armorStand));
       return;
