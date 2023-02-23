@@ -29,7 +29,6 @@ public class ArmorStandUtilitiesScreen
   private static final int BUTTON_HEIGHT = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
-  private static final int ROW_PAD = 6;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
@@ -68,9 +67,7 @@ public class ArmorStandUtilitiesScreen
 
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
-            - ROW_PAD - LabelWidget.HEIGHT_WITH_PADDING,
+        SCREEN_EDGE_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.copy"),
@@ -79,9 +76,7 @@ public class ArmorStandUtilitiesScreen
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 4 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
-            - ROW_PAD - LabelWidget.HEIGHT_WITH_PADDING,
+        SCREEN_EDGE_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
         Text.translatable("armorstands.utility.paste"),
