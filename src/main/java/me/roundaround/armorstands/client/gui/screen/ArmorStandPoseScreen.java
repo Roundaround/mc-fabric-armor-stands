@@ -238,7 +238,7 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         EulerAngleParameter.PITCH.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
         this.height - SCREEN_EDGE_PAD
@@ -322,7 +322,7 @@ public class ArmorStandPoseScreen
         this.armorStand);
     addDrawableChild(this.pitchSlider);
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         EulerAngleParameter.YAW.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
         this.height - SCREEN_EDGE_PAD
@@ -406,7 +406,7 @@ public class ArmorStandPoseScreen
         this.armorStand);
     addDrawableChild(this.yawSlider);
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         EulerAngleParameter.ROLL.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
         this.height - SCREEN_EDGE_PAD

@@ -58,7 +58,7 @@ public class ArmorStandRotateScreen
   public void init() {
     super.init();
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD)
@@ -67,7 +67,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    this.playerFacingLabel = addDrawable(LabelWidget.builder(
+    this.playerFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
@@ -76,7 +76,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    this.playerRotationLabel = addDrawable(LabelWidget.builder(
+    this.playerRotationLabel = addLabel(LabelWidget.builder(
         getCurrentRotationText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -85,7 +85,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 4 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -94,7 +94,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    this.standFacingLabel = addDrawable(LabelWidget.builder(
+    this.standFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(this.armorStand),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -103,7 +103,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    this.standRotationLabel = addDrawable(LabelWidget.builder(
+    this.standRotationLabel = addLabel(LabelWidget.builder(
         getCurrentRotationText(this.armorStand),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -112,7 +112,7 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.face.label"),
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - BETWEEN_PAD)
@@ -213,7 +213,7 @@ public class ArmorStandRotateScreen
         - index * (2 * BETWEEN_PAD + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
     String modifier = direction.equals(RotateDirection.CLOCKWISE) ? "+" : "-";
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         direction.getLabel(),
         this.width - SCREEN_EDGE_PAD,
         refY - BETWEEN_PAD)

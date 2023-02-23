@@ -84,7 +84,7 @@ public class ArmorStandUtilitiesScreen
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         }));
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.utility.setup"),
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD

@@ -57,7 +57,7 @@ public class ArmorStandMoveScreen
   public void init() {
     super.init();
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD)
@@ -66,7 +66,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.playerPosLabel = addDrawable(LabelWidget.builder(
+    this.playerPosLabel = addLabel(LabelWidget.builder(
         getCurrentPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
@@ -75,7 +75,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.playerBlockPosLabel = addDrawable(LabelWidget.builder(
+    this.playerBlockPosLabel = addLabel(LabelWidget.builder(
         getCurrentBlockPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -84,7 +84,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.playerFacingLabel = addDrawable(LabelWidget.builder(
+    this.playerFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 3 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -93,7 +93,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -102,7 +102,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.standPosLabel = addDrawable(LabelWidget.builder(
+    this.standPosLabel = addLabel(LabelWidget.builder(
         getCurrentPosText(this.armorStand),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -111,7 +111,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.standBlockPosLabel = addDrawable(LabelWidget.builder(
+    this.standBlockPosLabel = addLabel(LabelWidget.builder(
         getCurrentBlockPosText(this.armorStand),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 7 * LabelWidget.HEIGHT_WITH_PADDING)
@@ -120,7 +120,7 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.snap.label"),
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - 2 * (BUTTON_HEIGHT + BETWEEN_PAD))
@@ -248,7 +248,7 @@ public class ArmorStandMoveScreen
     int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
     int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         label,
         refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH) - 4,
         refY + MINI_BUTTON_HEIGHT / 2)

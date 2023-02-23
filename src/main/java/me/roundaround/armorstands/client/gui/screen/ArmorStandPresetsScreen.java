@@ -89,7 +89,7 @@ public class ArmorStandPresetsScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    addDrawable(LabelWidget.builder(
+    addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
         this.width - SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
@@ -146,7 +146,7 @@ public class ArmorStandPresetsScreen
         (button) -> nextPage()));
 
     int maxPage = MathHelper.ceil(PosePreset.values().length / (float) BUTTONS_PER_PAGE) - 1;
-    this.pageLabel = addDrawable(LabelWidget.builder(
+    this.pageLabel = addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH / 2,
         this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT / 2)

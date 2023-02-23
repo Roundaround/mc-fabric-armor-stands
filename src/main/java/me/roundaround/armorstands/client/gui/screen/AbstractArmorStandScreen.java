@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
+import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
@@ -45,6 +47,7 @@ public abstract class AbstractArmorStandScreen
 
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
+  protected final ArrayList<LabelWidget> labels = new ArrayList<>();
 
   protected NavigationButtonWidget<?, ?> activeButton;
   protected boolean supportsUndoRedo = false;
@@ -70,6 +73,11 @@ public abstract class AbstractArmorStandScreen
 
   public abstract ScreenConstructor<?> getNextScreen();
 
+  protected LabelWidget addLabel(LabelWidget label) {
+    this.labels.add(label);
+    return label;
+  }
+
   @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
@@ -89,6 +97,8 @@ public abstract class AbstractArmorStandScreen
   public void init() {
     this.handler.initSlots(this.utilizesInventory);
     ClientNetworking.sendInitSlotsPacket(this.utilizesInventory);
+
+    this.labels.clear();
 
     super.init();
   }
@@ -115,6 +125,12 @@ public abstract class AbstractArmorStandScreen
 
     RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
+
+    // Render labels before all other widgets so they are rendered on bottom
+    for (LabelWidget label : this.labels) {
+      label.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+    }
+
     super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
 
     renderActivePageButtonHighlight(matrixStack);
