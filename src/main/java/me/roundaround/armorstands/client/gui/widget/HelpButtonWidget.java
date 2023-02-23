@@ -1,10 +1,14 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import org.lwjgl.glfw.GLFW;
+
 import me.roundaround.armorstands.ArmorStandsMod;
+import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -21,7 +25,7 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         x,
         y,
         16,
-        wrapLines(Text.translatable("armorstands.help"), Math.max(200, parent.width / 2)),
+        wrapLines(getTooltip(client), Math.max(200, 3 * parent.width / 4)),
         (button) -> {
           FabricLoader.getInstance().getModContainer(ArmorStandsMod.MOD_ID).ifPresent((mod) -> {
             mod.getMetadata().getContact().get("homepage").ifPresent((url) -> {
@@ -52,5 +56,41 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         this.x,
         this.y + IconButtonWidget.HEIGHT);
     matrixStack.pop();
+  }
+
+  private static Text getTooltip(MinecraftClient client) {
+    String alt = Text.translatable("armorstands.help.alt").getString();
+    String inventory = client.options.inventoryKey
+        .getBoundKeyLocalizedText()
+        .getString();
+    String left = InputUtil.fromKeyCode(GLFW.GLFW_KEY_LEFT, 0)
+        .getLocalizedText()
+        .getString();
+    String right = InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT, 0)
+        .getLocalizedText()
+        .getString();
+    String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding
+        .getBoundKeyLocalizedText()
+        .getString();
+    String control = Text.translatable("armorstands.help."
+        + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl")).getString();
+    String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0)
+        .getLocalizedText()
+        .getString();
+    String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)
+        .getLocalizedText()
+        .getString();
+
+    return Text.translatable(
+        "armorstands.help",
+        alt,
+        inventory,
+        left,
+        right,
+        highlight,
+        control,
+        c,
+        control,
+        v);
   }
 }
