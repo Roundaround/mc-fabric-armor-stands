@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
@@ -204,6 +205,12 @@ public class ArmorStandUtilitiesScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
+
+    addDrawableChild(new HelpButtonWidget(
+        this.client,
+        this,
+        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
+        SCREEN_EDGE_PAD));
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),

@@ -2,6 +2,7 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
+import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
@@ -220,6 +221,12 @@ public class ArmorStandMoveScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
+
+    addDrawableChild(new HelpButtonWidget(
+        this.client,
+        this,
+        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
+        SCREEN_EDGE_PAD));
 
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);

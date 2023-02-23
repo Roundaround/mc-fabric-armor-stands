@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import java.util.List;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
@@ -7,6 +9,7 @@ import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -30,6 +33,31 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Simple
       int x,
       int y,
       int textureIndex,
+      List<OrderedText> tooltip,
+      PressAction<P> onPress) {
+    super(
+        parent,
+        x,
+        y,
+        WIDTH,
+        HEIGHT,
+        Text.empty(),
+        tooltip,
+        (button) -> {
+          onPress.accept((IconButtonWidget<P>) button);
+        });
+
+    this.parent = parent;
+    this.textureIndex = textureIndex;
+  }
+
+  @SuppressWarnings("unchecked")
+  public IconButtonWidget(
+      MinecraftClient client,
+      P parent,
+      int x,
+      int y,
+      int textureIndex,
       Text tooltip,
       PressAction<P> onPress) {
     super(
@@ -38,7 +66,7 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Simple
         y,
         WIDTH,
         HEIGHT,
-        tooltip,
+        Text.empty(),
         tooltip,
         (button) -> {
           onPress.accept((IconButtonWidget<P>) button);

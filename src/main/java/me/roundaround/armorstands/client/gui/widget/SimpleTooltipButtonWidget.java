@@ -51,6 +51,10 @@ public class SimpleTooltipButtonWidget extends ButtonWidget {
     this.tooltip = tooltip;
   }
 
+  public List<OrderedText> getTooltip() {
+    return this.tooltip;
+  }
+
   @Override
   public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
     matrixStack.push();
@@ -63,7 +67,7 @@ public class SimpleTooltipButtonWidget extends ButtonWidget {
     matrixStack.pop();
   }
 
-  private static List<OrderedText> wrapLines(Text text, int width) {
+  protected static List<OrderedText> wrapLines(Text text, int width) {
     return CLIENT.textRenderer.wrapLines(text, width);
   }
 }

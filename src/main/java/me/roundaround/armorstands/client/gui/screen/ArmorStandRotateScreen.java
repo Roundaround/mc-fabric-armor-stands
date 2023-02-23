@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 import java.util.Locale;
 
+import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -194,6 +195,12 @@ public class ArmorStandRotateScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
+
+    addDrawableChild(new HelpButtonWidget(
+        this.client,
+        this,
+        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
+        SCREEN_EDGE_PAD));
 
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);
