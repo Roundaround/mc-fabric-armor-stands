@@ -33,7 +33,8 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
           onPress.accept((NavigationButtonWidget<P, T>) button, parent.getScreenHandler(), parent.getArmorStand());
         });
 
-    this.clickable = true;
+    this.clickable = clickable;
+    this.active = clickable;
   }
 
   public static NavigationButtonWidget<?, ?> create(
@@ -57,7 +58,7 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
           LastUsedScreen.set(nextScreen);
           client.setScreen(nextScreen);
         },
-        factory.constructor == null,
+        factory.constructor != null,
         factory.uIndex);
   }
 
