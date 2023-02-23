@@ -53,11 +53,14 @@ public class SimpleTooltipButtonWidget extends ButtonWidget {
 
   @Override
   public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
+    matrixStack.push();
+    matrixStack.translate(0, 0, 100);
     this.parent.renderOrderedTooltip(
         matrixStack,
         this.tooltip,
         this.hovered ? mouseX : this.x,
         this.hovered ? mouseY : this.y);
+    matrixStack.pop();
   }
 
   private static List<OrderedText> wrapLines(Text text, int width) {
