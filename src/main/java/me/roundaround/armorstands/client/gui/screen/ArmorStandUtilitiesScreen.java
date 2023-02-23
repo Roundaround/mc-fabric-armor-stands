@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -15,7 +16,6 @@ import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -65,20 +65,22 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    addDrawableChild(new ButtonWidget(
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
+        14,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
         SCREEN_EDGE_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
+        15,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
           ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);

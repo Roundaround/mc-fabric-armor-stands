@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import java.util.List;
 import java.util.Locale;
 
+import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
@@ -58,10 +59,31 @@ public class ArmorStandRotateScreen
   public void init() {
     super.init();
 
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD,
+        14,
+        Text.translatable("armorstands.utility.copy"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
+        SCREEN_EDGE_PAD,
+        15,
+        Text.translatable("armorstands.utility.paste"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        }));
+
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -70,7 +92,7 @@ public class ArmorStandRotateScreen
     this.playerFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -79,7 +101,7 @@ public class ArmorStandRotateScreen
     this.playerRotationLabel = addLabel(LabelWidget.builder(
         getCurrentRotationText(client.player),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -88,7 +110,7 @@ public class ArmorStandRotateScreen
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 4 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -97,7 +119,7 @@ public class ArmorStandRotateScreen
     this.standFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -106,7 +128,7 @@ public class ArmorStandRotateScreen
     this.standRotationLabel = addLabel(LabelWidget.builder(
         getCurrentRotationText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()

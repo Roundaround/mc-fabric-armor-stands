@@ -2,6 +2,7 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
+import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -57,10 +58,31 @@ public class ArmorStandMoveScreen
   public void init() {
     super.init();
 
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD,
+        14,
+        Text.translatable("armorstands.utility.copy"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
+        SCREEN_EDGE_PAD,
+        15,
+        Text.translatable("armorstands.utility.paste"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        }));
+
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -69,7 +91,7 @@ public class ArmorStandMoveScreen
     this.playerPosLabel = addLabel(LabelWidget.builder(
         getCurrentPosText(client.player),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -78,7 +100,7 @@ public class ArmorStandMoveScreen
     this.playerBlockPosLabel = addLabel(LabelWidget.builder(
         getCurrentBlockPosText(client.player),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -87,7 +109,7 @@ public class ArmorStandMoveScreen
     this.playerFacingLabel = addLabel(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 3 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 4 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -96,7 +118,7 @@ public class ArmorStandMoveScreen
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -105,7 +127,7 @@ public class ArmorStandMoveScreen
     this.standPosLabel = addLabel(LabelWidget.builder(
         getCurrentPosText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -114,7 +136,7 @@ public class ArmorStandMoveScreen
     this.standBlockPosLabel = addLabel(LabelWidget.builder(
         getCurrentBlockPosText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 7 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 8 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()

@@ -10,6 +10,7 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
+import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -85,6 +86,27 @@ public class ArmorStandPoseScreen
   @Override
   public void init() {
     super.init();
+
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD,
+        14,
+        Text.translatable("armorstands.utility.copy"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
+        SCREEN_EDGE_PAD,
+        15,
+        Text.translatable("armorstands.utility.paste"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        }));
 
     int offset = (CONTROL_WIDTH - 3 * IconButtonWidget.WIDTH - 2 * PART_PAD_HORIZONTAL) / 2;
 
