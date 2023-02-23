@@ -24,15 +24,11 @@ public class ArmorStandHelper {
     return getGroundPos(armorStand, false);
   }
 
-  public static Optional<Vec3d> getStandingPos(ArmorStandEntity armorStand, boolean hasBasePlate) {
-    return getGroundPos(armorStand, false, hasBasePlate);
+  public static Optional<Vec3d> getSittingPos(ArmorStandEntity armorStand) {
+    return getGroundPos(armorStand, true);
   }
 
   public static Optional<Vec3d> getGroundPos(ArmorStandEntity armorStand, boolean sitting) {
-    return getGroundPos(armorStand, sitting, !armorStand.shouldHideBasePlate());
-  }
-
-  public static Optional<Vec3d> getGroundPos(ArmorStandEntity armorStand, boolean sitting, boolean hasBasePlate) {
     Vec3d position = armorStand.getPos();
 
     World world = armorStand.getWorld();
@@ -58,27 +54,38 @@ public class ArmorStandHelper {
       newPosition = newPosition.subtract(0, 11 * 0.0625, 0);
     }
 
-    if (!hasBasePlate && !sitting) {
-      newPosition = newPosition.subtract(0, 0.0625, 0);
-    }
-
     return Optional.of(newPosition);
   }
 
-  public static Vec3d getLocalPos(Entity entity, double x, double y, double z) {
-    return getLocalPos(entity, new Vec3d(x, y, z));
-  }
+  public static Vec3d localToRelative(Entity entity, Vec3d amount) {
+    float pitch = entity.getPitch();
+    float yaw = entity.getYaw();
 
-  public static Vec3d getLocalPos(Entity entity, Vec3d position) {
-    return getLocalPos(entity.getYaw(), position);
-  }
+    float pi = (float) Math.PI;
 
-  public static Vec3d getLocalPos(float rotation, double x, double y, double z) {
-    return getLocalPos(rotation, new Vec3d(x, y, z));
-  }
+    float f = MathHelper.cos((yaw + 90f) * pi / 180f);
+    float g = MathHelper.sin((yaw + 90f) * pi / 180f);
+    float h = MathHelper.cos(-pitch * pi / 180f);
+    float i = MathHelper.sin(-pitch * pi / 180f);
+    float j = MathHelper.cos((-pitch + 90f) * pi / 180f);
+    float k = MathHelper.sin((-pitch + 90f) * pi / 180f);
 
-  public static Vec3d getLocalPos(float rotation, Vec3d position) {
-    return position.rotateY(rotation);
+    Vec3d vec3d2 = new Vec3d(f * h, i, g * h);
+    Vec3d vec3d3 = new Vec3d(f * j, k, g * j);
+
+    Vec3d vec3d4 = vec3d2.crossProduct(vec3d3).multiply(-1);
+
+    double x = vec3d2.x * amount.z
+        + vec3d3.x * amount.y
+        + vec3d4.x * amount.x;
+    double y = vec3d2.y * amount.z
+        + vec3d3.y * amount.y
+        + vec3d4.y * amount.x;
+    double z = vec3d2.z * amount.z
+        + vec3d3.z * amount.y
+        + vec3d4.z * amount.x;
+
+    return new Vec3d(x, y, z);
   }
 
   public static float getLookYaw(ArmorStandEntity armorStand, Vec3d point) {

@@ -11,7 +11,6 @@ import net.minecraft.block.TripwireHookBlock;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 
 public class ToolRackAction extends ComboAction {
@@ -33,30 +32,9 @@ public class ToolRackAction extends ComboAction {
     actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
     actions.add(FlagAction.set(ArmorStandFlag.NAME, false));
     actions.add(FlagAction.set(ArmorStandFlag.SMALL, false));
-
-    Direction facing = armorStand.world
+    actions.add(RotateAction.absolute(armorStand.world
         .getBlockState(hookPos)
-        .get(TripwireHookBlock.FACING);
-
-    float rotation = 0f;
-    switch (facing) {
-      case NORTH:
-        rotation = 180f;
-        break;
-      case SOUTH:
-        rotation = -90f;
-        break;
-      case EAST:
-        rotation = 0f;
-        break;
-      case WEST:
-        rotation = 90f;
-        break;
-      default:
-        break;
-    }
-
-    actions.add(RotateAction.absolute(rotation));
+        .get(TripwireHookBlock.FACING).asRotation()));
     actions.add(MoveAction.absolute(
         hookPos.getX() + 0.5,
         hookPos.getY() - 1,

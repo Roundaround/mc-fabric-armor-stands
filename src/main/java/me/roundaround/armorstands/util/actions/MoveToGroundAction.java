@@ -37,8 +37,7 @@ public class MoveToGroundAction implements ArmorStandAction {
   public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
     Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(
         armorStand,
-        this.sitting,
-        !armorStand.shouldHideBasePlate());
+        this.sitting);
 
     if (maybeGround.isPresent()) {
       originalPosition = Optional.of(armorStand.getPos());

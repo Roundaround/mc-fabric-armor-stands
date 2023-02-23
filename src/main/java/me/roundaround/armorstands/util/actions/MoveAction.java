@@ -78,7 +78,7 @@ public class MoveAction implements ArmorStandAction {
         yield originalPosition.get().add(argument);
       }
       case LOCAL -> {
-        yield originalPosition.get().add(ArmorStandHelper.getLocalPos(
+        yield originalPosition.get().add(ArmorStandHelper.localToRelative(
           localToPlayer ? player : armorStand,
           argument
         ));
