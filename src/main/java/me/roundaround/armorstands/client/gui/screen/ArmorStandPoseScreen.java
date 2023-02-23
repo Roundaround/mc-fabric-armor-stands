@@ -2,10 +2,13 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
@@ -15,6 +18,8 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
@@ -509,6 +514,54 @@ public class ArmorStandPoseScreen
         EulerAngleParameter.ROLL,
         this.armorStand);
     addDrawableChild(this.rollSlider);
+  }
+
+  @Override
+  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
+    super.renderActivePageButtonHighlight(matrixStack);
+
+    if (this.activePosePartButton == null) {
+      return;
+    }
+
+    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+    RenderSystem.enableBlend();
+    RenderSystem.defaultBlendFunc();
+
+    matrixStack.push();
+    matrixStack.translate(0, 0, 100);
+    drawTexture(
+        matrixStack,
+        this.activePosePartButton.x - 2,
+        this.activePosePartButton.y - 2,
+        0,
+        22,
+        13,
+        13);
+    drawTexture(matrixStack,
+        this.activePosePartButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activePosePartButton.y - 2,
+        12,
+        22,
+        12,
+        13);
+    drawTexture(matrixStack,
+        this.activePosePartButton.x - 2,
+        this.activePosePartButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        0,
+        34,
+        13,
+        12);
+    drawTexture(matrixStack,
+        this.activePosePartButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activePosePartButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        12,
+        34,
+        12,
+        12);
+    matrixStack.pop();
   }
 
   private void setActivePosePart(PosePart part) {
