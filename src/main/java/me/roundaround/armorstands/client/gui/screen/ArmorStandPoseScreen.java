@@ -79,7 +79,7 @@ public class ArmorStandPoseScreen
 
   @Override
   public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandPresetsScreen::new;
+    return ArmorStandRotateScreen::new;
   }
 
   @Override
@@ -227,12 +227,12 @@ public class ArmorStandPoseScreen
             ArmorStandRotateScreen.U_INDEX,
             ArmorStandRotateScreen::new),
         ScreenFactory.create(
+            ArmorStandPoseScreen.TITLE,
+            ArmorStandPoseScreen.U_INDEX),
+        ScreenFactory.create(
             ArmorStandPresetsScreen.TITLE,
             ArmorStandPresetsScreen.U_INDEX,
             ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX),
         ScreenFactory.create(
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
