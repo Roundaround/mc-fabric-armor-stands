@@ -66,35 +66,59 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    playerPosLabel = LabelWidget.builder(
+    this.playerPosLabel = addDrawable(LabelWidget.builder(
         getCurrentPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
-        .build();
-    addDrawable(playerPosLabel);
+        .build());
 
-    playerBlockPosLabel = LabelWidget.builder(
+    this.playerBlockPosLabel = addDrawable(LabelWidget.builder(
         getCurrentBlockPosText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
-        .build();
-    addDrawable(playerBlockPosLabel);
+        .build());
 
-    playerFacingLabel = LabelWidget.builder(
+    this.playerFacingLabel = addDrawable(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 3 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
-        .build();
-    addDrawable(playerFacingLabel);
+        .build());
+
+    addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.current.stand"),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
+
+    this.standPosLabel = addDrawable(LabelWidget.builder(
+        getCurrentPosText(this.armorStand),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
+
+    this.standBlockPosLabel = addDrawable(LabelWidget.builder(
+        getCurrentBlockPosText(this.armorStand),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 7 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.snap.label"),
@@ -175,35 +199,6 @@ public class ArmorStandMoveScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    addDrawable(LabelWidget.builder(
-        Text.translatable("armorstands.current.stand"),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build());
-
-    standPosLabel = LabelWidget.builder(
-        getCurrentPosText(this.armorStand),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build();
-    addDrawable(standPosLabel);
-
-    standBlockPosLabel = LabelWidget.builder(
-        getCurrentBlockPosText(this.armorStand),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build();
-    addDrawable(standBlockPosLabel);
-
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
     addRowOfButtons(Text.translatable("armorstands.move.south"), Direction.SOUTH, 3);
@@ -224,9 +219,9 @@ public class ArmorStandMoveScreen
   }
 
   private Text getCurrentPosText(Entity entity) {
-    String xStr = String.format("%.3f", entity.getX());
-    String yStr = String.format("%.3f", entity.getY());
-    String zStr = String.format("%.3f", entity.getZ());
+    String xStr = String.format("%.2f", entity.getX());
+    String yStr = String.format("%.2f", entity.getY());
+    String zStr = String.format("%.2f", entity.getZ());
     return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
   }
 

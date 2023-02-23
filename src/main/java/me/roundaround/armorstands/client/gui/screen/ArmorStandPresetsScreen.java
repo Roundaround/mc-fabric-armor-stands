@@ -64,28 +64,6 @@ public class ArmorStandPresetsScreen
   public void init() {
     super.init();
 
-    addDrawable(LabelWidget.builder(
-        Text.translatable("armorstands.presets.source.label"),
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT - BETWEEN_PAD)
-        .alignedBottom()
-        .justifiedLeft()
-        .shiftForPadding()
-        .build());
-    addDrawableChild(CyclingButtonWidget.builder(Source::getDisplayName)
-        .values(Source.values())
-        .initially(Source.ALL)
-        .omitKeyText()
-        .build(
-            SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
-            CONTROL_WIDTH,
-            CONTROL_HEIGHT,
-            Text.translatable("armorstands.presets.source.label"),
-            (button, source) -> {
-              filter(source);
-            }));
-
     initNavigationButtons(List.of(
         ScreenFactory.create(
             ArmorStandUtilitiesScreen.TITLE,
@@ -110,6 +88,34 @@ public class ArmorStandPresetsScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
+
+    addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.presets.source.label"),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
+            - (BUTTONS_PER_PAGE + 3) * BETWEEN_PAD
+            - IconButtonWidget.HEIGHT)
+        .alignedBottom()
+        .justifiedRight()
+        .shiftForPadding()
+        .build());
+    addDrawableChild(CyclingButtonWidget.builder(Source::getDisplayName)
+        .values(Source.values())
+        .initially(Source.ALL)
+        .omitKeyText()
+        .build(
+            this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
+            this.height - SCREEN_EDGE_PAD
+                - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
+                - (BUTTONS_PER_PAGE + 2) * BETWEEN_PAD
+                - IconButtonWidget.HEIGHT,
+            CONTROL_WIDTH,
+            CONTROL_HEIGHT,
+            Text.translatable("armorstands.presets.source.label"),
+            (button, source) -> {
+              filter(source);
+            }));
 
     this.presetButtons.clear();
 

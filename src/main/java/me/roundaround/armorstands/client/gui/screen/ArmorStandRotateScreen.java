@@ -67,25 +67,50 @@ public class ArmorStandRotateScreen
         .shiftForPadding()
         .build());
 
-    playerFacingLabel = LabelWidget.builder(
+    this.playerFacingLabel = addDrawable(LabelWidget.builder(
         getCurrentFacingText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
-        .build();
-    addDrawable(playerFacingLabel);
+        .build());
 
-    playerRotationLabel = LabelWidget.builder(
+    this.playerRotationLabel = addDrawable(LabelWidget.builder(
         getCurrentRotationText(client.player),
         SCREEN_EDGE_PAD,
         SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
-        .build();
-    addDrawable(playerRotationLabel);
+        .build());
+
+    addDrawable(LabelWidget.builder(
+        Text.translatable("armorstands.current.stand"),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 4 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
+
+    this.standFacingLabel = addDrawable(LabelWidget.builder(
+        getCurrentFacingText(this.armorStand),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
+
+    this.standRotationLabel = addDrawable(LabelWidget.builder(
+        getCurrentRotationText(this.armorStand),
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+        .alignedTop()
+        .justifiedLeft()
+        .shiftForPadding()
+        .build());
 
     addDrawable(LabelWidget.builder(
         Text.translatable("armorstands.face.label"),
@@ -147,35 +172,6 @@ public class ArmorStandRotateScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    addDrawable(LabelWidget.builder(
-        Text.translatable("armorstands.current.stand"),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build());
-
-    standFacingLabel = LabelWidget.builder(
-        getCurrentFacingText(this.armorStand),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build();
-    addDrawable(standFacingLabel);
-
-    standRotationLabel = LabelWidget.builder(
-        getCurrentRotationText(this.armorStand),
-        this.width - SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + 2 * LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedTop()
-        .justifiedRight()
-        .shiftForPadding()
-        .build();
-    addDrawable(standRotationLabel);
 
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);

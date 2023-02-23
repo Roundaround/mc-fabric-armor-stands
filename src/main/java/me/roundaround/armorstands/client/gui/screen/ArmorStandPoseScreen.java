@@ -5,6 +5,7 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
@@ -21,7 +22,9 @@ public class ArmorStandPoseScreen
   public static final int U_INDEX = 3;
 
   private static final int CONTROL_WIDTH = 100;
-  private static final int CONTROL_HEIGHT = 20;
+  private static final int SLIDER_HEIGHT = 20;
+  private static final int BUTTON_HEIGHT = 16;
+  private static final int BUTTON_WIDTH = 16;
   private static final int SCREEN_EDGE_PAD = 4;
   private static final int BETWEEN_PAD = 2;
   private static final int ROW_PAD = 6;
@@ -92,7 +95,7 @@ public class ArmorStandPoseScreen
             + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         6,
         PosePart.HEAD.getDisplayName(),
         (button) -> {
@@ -111,7 +114,7 @@ public class ArmorStandPoseScreen
         offset + SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         8,
         PosePart.RIGHT_ARM.getDisplayName(),
         (button) -> {
@@ -129,7 +132,7 @@ public class ArmorStandPoseScreen
             + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         7,
         PosePart.BODY.getDisplayName(),
         (button) -> {
@@ -147,7 +150,7 @@ public class ArmorStandPoseScreen
             + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         9,
         PosePart.LEFT_ARM.getDisplayName(),
         (button) -> {
@@ -165,7 +168,7 @@ public class ArmorStandPoseScreen
             + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
         this.height - SCREEN_EDGE_PAD
             - IconButtonWidget.HEIGHT
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         11,
         PosePart.RIGHT_LEG.getDisplayName(),
         (button) -> {
@@ -185,7 +188,7 @@ public class ArmorStandPoseScreen
             + PART_PAD_HORIZONTAL,
         this.height - SCREEN_EDGE_PAD
             - IconButtonWidget.HEIGHT
-            - PART_PAD_VERTICAL - CONTROL_HEIGHT,
+            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         10,
         PosePart.LEFT_LEG.getDisplayName(),
         (button) -> {
@@ -198,9 +201,9 @@ public class ArmorStandPoseScreen
 
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         CONTROL_WIDTH,
-        CONTROL_HEIGHT,
+        BUTTON_HEIGHT,
         Text.translatable("armorstands.pose.mirror"),
         (button) -> {
           ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
@@ -238,17 +241,28 @@ public class ArmorStandPoseScreen
     addDrawable(LabelWidget.builder(
         EulerAngleParameter.PITCH.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - 5 * CONTROL_HEIGHT - 3 * BETWEEN_PAD - 2 * ROW_PAD)
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 3 * BETWEEN_PAD
+            - 2 * ROW_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
         .build());
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 3 * IconButtonWidget.WIDTH - 2 * BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 6 * CONTROL_HEIGHT - 3 * BETWEEN_PAD - 2 * ROW_PAD,
-        15,
+        this.width - SCREEN_EDGE_PAD
+            - 3 * BUTTON_WIDTH
+            - 2 * BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 3 * BUTTON_HEIGHT
+            - 3 * BETWEEN_PAD
+            - 2 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("-"),
         Text.translatable("armorstands.pose.subtract"),
         (button) -> {
           if (this.pitchSlider == null) {
@@ -256,12 +270,19 @@ public class ArmorStandPoseScreen
           }
           this.pitchSlider.decrement();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 2 * IconButtonWidget.WIDTH - BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 6 * CONTROL_HEIGHT - 3 * BETWEEN_PAD - 2 * ROW_PAD,
-        14,
+        this.width - SCREEN_EDGE_PAD
+            - 2 * BUTTON_WIDTH
+            - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 3 * BUTTON_HEIGHT
+            - 3 * BETWEEN_PAD
+            - 2 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("+"),
         Text.translatable("armorstands.pose.add"),
         (button) -> {
           if (this.pitchSlider == null) {
@@ -269,12 +290,17 @@ public class ArmorStandPoseScreen
           }
           this.pitchSlider.increment();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        this.height - SCREEN_EDGE_PAD - 6 * CONTROL_HEIGHT - 3 * BETWEEN_PAD - 2 * ROW_PAD,
-        16,
+        this.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 3 * BUTTON_HEIGHT
+            - 3 * BETWEEN_PAD
+            - 2 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("0"),
         Text.translatable("armorstands.pose.zero"),
         (button) -> {
           if (this.pitchSlider == null) {
@@ -284,9 +310,13 @@ public class ArmorStandPoseScreen
         }));
     this.pitchSlider = new AdjustPoseSliderWidget(
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - 5 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - 2 * ROW_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 2 * BETWEEN_PAD
+            - 2 * ROW_PAD,
         CONTROL_WIDTH,
-        CONTROL_HEIGHT,
+        SLIDER_HEIGHT,
         this.posePart,
         EulerAngleParameter.PITCH,
         this.armorStand);
@@ -295,17 +325,28 @@ public class ArmorStandPoseScreen
     addDrawable(LabelWidget.builder(
         EulerAngleParameter.YAW.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - 3 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - 1 * ROW_PAD)
+        this.height - SCREEN_EDGE_PAD
+            - 2 * SLIDER_HEIGHT
+            - 1 * BUTTON_HEIGHT
+            - 2 * BETWEEN_PAD
+            - 1 * ROW_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
         .build());
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 3 * IconButtonWidget.WIDTH - 2 * BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 4 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - 1 * ROW_PAD,
-        15,
+        this.width - SCREEN_EDGE_PAD
+            - 3 * BUTTON_WIDTH
+            - 2 * BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 2 * BETWEEN_PAD
+            - 1 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("-"),
         Text.translatable("armorstands.pose.subtract"),
         (button) -> {
           if (this.yawSlider == null) {
@@ -313,12 +354,19 @@ public class ArmorStandPoseScreen
           }
           this.yawSlider.decrement();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 2 * IconButtonWidget.WIDTH - BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 4 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - 1 * ROW_PAD,
-        14,
+        this.width - SCREEN_EDGE_PAD
+            - 2 * BUTTON_WIDTH
+            - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 2 * BETWEEN_PAD
+            - 1 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("+"),
         Text.translatable("armorstands.pose.add"),
         (button) -> {
           if (this.yawSlider == null) {
@@ -326,12 +374,17 @@ public class ArmorStandPoseScreen
           }
           this.yawSlider.increment();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        this.height - SCREEN_EDGE_PAD - 4 * CONTROL_HEIGHT - 2 * BETWEEN_PAD - 1 * ROW_PAD,
-        16,
+        this.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 2 * BETWEEN_PAD
+            - 1 * ROW_PAD,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("0"),
         Text.translatable("armorstands.pose.zero"),
         (button) -> {
           if (this.yawSlider == null) {
@@ -341,9 +394,13 @@ public class ArmorStandPoseScreen
         }));
     this.yawSlider = new AdjustPoseSliderWidget(
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - 3 * CONTROL_HEIGHT - 1 * BETWEEN_PAD - 1 * ROW_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 2 * SLIDER_HEIGHT
+            - 1 * BUTTON_HEIGHT
+            - 1 * BETWEEN_PAD
+            - 1 * ROW_PAD,
         CONTROL_WIDTH,
-        CONTROL_HEIGHT,
+        SLIDER_HEIGHT,
         this.posePart,
         EulerAngleParameter.YAW,
         this.armorStand);
@@ -352,17 +409,25 @@ public class ArmorStandPoseScreen
     addDrawable(LabelWidget.builder(
         EulerAngleParameter.ROLL.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT - BETWEEN_PAD)
+        this.height - SCREEN_EDGE_PAD
+            - SLIDER_HEIGHT
+            - BETWEEN_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
         .build());
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 3 * IconButtonWidget.WIDTH - 2 * BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * CONTROL_HEIGHT - BETWEEN_PAD,
-        15,
+        this.width - SCREEN_EDGE_PAD
+            - 3 * BUTTON_WIDTH
+            - 2 * BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - SLIDER_HEIGHT
+            - BETWEEN_PAD
+            - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("-"),
         Text.translatable("armorstands.pose.subtract"),
         (button) -> {
           if (this.rollSlider == null) {
@@ -370,12 +435,18 @@ public class ArmorStandPoseScreen
           }
           this.rollSlider.decrement();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - 2 * IconButtonWidget.WIDTH - BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * CONTROL_HEIGHT - BETWEEN_PAD,
-        14,
+        this.width - SCREEN_EDGE_PAD
+            - 2 * BUTTON_WIDTH
+            - BETWEEN_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - SLIDER_HEIGHT
+            - BETWEEN_PAD
+            - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("+"),
         Text.translatable("armorstands.pose.add"),
         (button) -> {
           if (this.rollSlider == null) {
@@ -383,12 +454,16 @@ public class ArmorStandPoseScreen
           }
           this.rollSlider.increment();
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
+    addDrawableChild(new SimpleTooltipButtonWidget(
         this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        this.height - SCREEN_EDGE_PAD - 2 * CONTROL_HEIGHT - BETWEEN_PAD,
-        16,
+        this.width - SCREEN_EDGE_PAD - BUTTON_WIDTH,
+        this.height - SCREEN_EDGE_PAD
+            - SLIDER_HEIGHT
+            - BETWEEN_PAD
+            - BUTTON_HEIGHT,
+        BUTTON_WIDTH,
+        BUTTON_HEIGHT,
+        Text.literal("0"),
         Text.translatable("armorstands.pose.zero"),
         (button) -> {
           if (this.rollSlider == null) {
@@ -398,9 +473,9 @@ public class ArmorStandPoseScreen
         }));
     this.rollSlider = new AdjustPoseSliderWidget(
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-        this.height - SCREEN_EDGE_PAD - CONTROL_HEIGHT,
+        this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT,
         CONTROL_WIDTH,
-        CONTROL_HEIGHT,
+        SLIDER_HEIGHT,
         this.posePart,
         EulerAngleParameter.ROLL,
         this.armorStand);
