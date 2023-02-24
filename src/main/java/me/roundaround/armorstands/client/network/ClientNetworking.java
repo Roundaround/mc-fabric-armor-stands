@@ -76,6 +76,7 @@ public class ClientNetworking {
     double z = buf.readDouble();
     float yaw = buf.readFloat();
     float pitch = buf.readFloat();
+    boolean invulnerable = buf.readBoolean();
 
     client.execute(() -> {
       if (!(client.player.currentScreenHandler instanceof HasArmorStand)) {
@@ -87,6 +88,7 @@ public class ClientNetworking {
       armorStand.setPos(x, y, z);
       armorStand.setYaw(yaw % 360f);
       armorStand.setPitch(pitch % 360f);
+      armorStand.setInvulnerable(invulnerable);
     });
   }
 

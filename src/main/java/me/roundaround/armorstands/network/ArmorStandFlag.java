@@ -5,8 +5,6 @@ import java.util.Arrays;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.util.actions.MoveAction;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -53,7 +51,6 @@ public enum ArmorStandFlag {
     }
   }
 
-  @Environment(EnvType.SERVER)
   public void setValue(ArmorStandEntity armorStand, boolean value) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 

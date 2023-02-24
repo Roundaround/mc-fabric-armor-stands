@@ -248,6 +248,7 @@ public class ServerNetworking {
     buf.writeDouble(armorStand.getZ());
     buf.writeFloat(armorStand.getYaw());
     buf.writeFloat(armorStand.getPitch());
+    buf.writeBoolean(armorStand.isInvulnerable());
 
     ServerPlayNetworking.send(player, NetworkPackets.CLIENT_UPDATE_PACKET, buf);
   }
