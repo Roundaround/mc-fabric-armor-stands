@@ -27,9 +27,9 @@ public class ToolRackAction extends ComboAction {
 
     ArrayList<ArmorStandAction> actions = new ArrayList<>();
 
-    actions.add(FlagAction.set(ArmorStandFlag.VISIBLE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.BASE, true));
-    actions.add(FlagAction.set(ArmorStandFlag.GRAVITY, true));
+    actions.add(FlagAction.set(ArmorStandFlag.INVISIBLE, true));
+    actions.add(FlagAction.set(ArmorStandFlag.HIDE_BASE_PLATE, true));
+    actions.add(FlagAction.set(ArmorStandFlag.NO_GRAVITY, true));
     actions.add(FlagAction.set(ArmorStandFlag.NAME, false));
     actions.add(FlagAction.set(ArmorStandFlag.SMALL, false));
     actions.add(RotateAction.absolute(armorStand.world

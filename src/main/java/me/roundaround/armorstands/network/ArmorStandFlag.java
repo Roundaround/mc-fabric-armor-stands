@@ -5,16 +5,18 @@ import java.util.Arrays;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.util.actions.MoveAction;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public enum ArmorStandFlag {
-  BASE("base"),
-  ARMS("arms"),
+  HIDE_BASE_PLATE("base"),
+  SHOW_ARMS("arms"),
   SMALL("small"),
-  GRAVITY("gravity"),
-  VISIBLE("visible"),
+  NO_GRAVITY("gravity"),
+  INVISIBLE("visible"),
   NAME("name"),
   INVULNERABLE("invulnerable"),
   UNKNOWN("unknown");
@@ -32,15 +34,15 @@ public enum ArmorStandFlag {
 
   public boolean getValue(ArmorStandEntity armorStand) {
     switch (this) {
-      case BASE:
+      case HIDE_BASE_PLATE:
         return armorStand.shouldHideBasePlate();
-      case ARMS:
+      case SHOW_ARMS:
         return armorStand.shouldShowArms();
       case SMALL:
         return armorStand.isSmall();
-      case GRAVITY:
+      case NO_GRAVITY:
         return armorStand.hasNoGravity();
-      case VISIBLE:
+      case INVISIBLE:
         return armorStand.isInvisible();
       case NAME:
         return armorStand.isCustomNameVisible();
@@ -51,20 +53,21 @@ public enum ArmorStandFlag {
     }
   }
 
+  @Environment(EnvType.SERVER)
   public void setValue(ArmorStandEntity armorStand, boolean value) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
     switch (this) {
-      case BASE:
+      case HIDE_BASE_PLATE:
         accessor.invokeSetHideBasePlate(value);
         break;
-      case ARMS:
+      case SHOW_ARMS:
         accessor.invokeSetShowArms(value);
         break;
       case SMALL:
         accessor.invokeSetSmall(value);
         break;
-      case GRAVITY:
+      case NO_GRAVITY:
         if (!value) {
           Vec3d pos = armorStand.getPos();
           double blockY = (double) armorStand.getBlockY();
@@ -75,7 +78,7 @@ public enum ArmorStandFlag {
         }
         armorStand.setNoGravity(value);
         break;
-      case VISIBLE:
+      case INVISIBLE:
         armorStand.setInvisible(value);
         break;
       case NAME:

@@ -22,8 +22,8 @@ public class HoldingAction extends ComboAction {
 
   private HoldingAction(ArmorStandEntity armorStand, boolean small, Vec3d pos, EulerAngle rot) {
     super(Text.translatable("armorstands.action.holding"), List.of(
-        FlagAction.set(ArmorStandFlag.VISIBLE, true),
-        FlagAction.set(ArmorStandFlag.BASE, true),
+        FlagAction.set(ArmorStandFlag.INVISIBLE, true),
+        FlagAction.set(ArmorStandFlag.HIDE_BASE_PLATE, true),
         FlagAction.set(ArmorStandFlag.NAME, false),
         FlagAction.set(ArmorStandFlag.SMALL, small),
         SnapToGroundAction.standing(),

@@ -21,7 +21,7 @@ public class SnapToGroundAction extends ComboAction {
 
   public static SnapToGroundAction create(boolean sitting) {
     return new SnapToGroundAction(List.of(
-        FlagAction.set(ArmorStandFlag.GRAVITY, true),
+        FlagAction.set(ArmorStandFlag.NO_GRAVITY, true),
         MoveToGroundAction.create(sitting)));
   }
 }

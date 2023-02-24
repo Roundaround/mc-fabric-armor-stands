@@ -214,13 +214,13 @@ public class ArmorStandUtilitiesScreen
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),
-        ArmorStandFlag.BASE,
+        ArmorStandFlag.HIDE_BASE_PLATE,
         6,
         true);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.arms"),
-        ArmorStandFlag.ARMS,
+        ArmorStandFlag.SHOW_ARMS,
         5,
         false);
 
@@ -232,13 +232,13 @@ public class ArmorStandUtilitiesScreen
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.gravity"),
-        ArmorStandFlag.GRAVITY,
+        ArmorStandFlag.NO_GRAVITY,
         3,
         true);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.visible"),
-        ArmorStandFlag.VISIBLE,
+        ArmorStandFlag.INVISIBLE,
         2,
         false);
 
