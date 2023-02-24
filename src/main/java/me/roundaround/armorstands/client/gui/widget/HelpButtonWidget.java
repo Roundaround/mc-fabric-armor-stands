@@ -73,7 +73,13 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         .getBoundKeyLocalizedText()
         .getString();
     String control = Text.translatable("armorstands.help."
-        + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl")).getString();
+        + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
+        .getString();
+    String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0)
+        .getLocalizedText()
+        .getString();
+    String shift = Text.translatable("armorstands.help.shift")
+        .getString();
     String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0)
         .getLocalizedText()
         .getString();
@@ -88,9 +94,9 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         left,
         right,
         highlight,
-        control,
-        c,
-        control,
-        v);
+        control, z,
+        control, shift, z,
+        control, c,
+        control, v);
   }
 }

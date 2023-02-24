@@ -1,8 +1,9 @@
 {
-  "armorstands.help": "Unlike with most other menus/screens, these ones do not stop you from moving! You can freely move around line normal, and even jump.\n\nPress this button to open the mod's homepage for more info.\n\nShortcuts:\n%s: Free look\n%s: Close this screen\n%s: Previous screen\n%s: Next screen\n%s: Highlight current armor stand\n%s+%s: Copy pose and toggles\n%s+%s: Paste pose and toggles",
+  "armorstands.help": "Unlike with most other menus/screens, these ones do not stop you from moving! You can freely move around line normal, and even jump.\n\nPress this button to open the mod's homepage for more info.\n\nShortcuts:\n  • %s :  Free look\n  • %s :  Close this screen\n  • %s :  Previous screen\n  • %s :  Next screen\n  • %s :  Highlight current armor stand\n  • %s+%s :  Undo\n  • %s+%s+%s :  Redo\n  • %s+%s :  Copy\n  • %s+%s :  Paste",
   "armorstands.help.alt": "Alt",
   "armorstands.help.ctrl": "Ctrl",
   "armorstands.help.cmd": "⌘",
+  "armorstands.help.shift": "Shift",
   "armorstands.screen.utilities": "Utilities",
   "armorstands.screen.move": "Move",
   "armorstands.screen.rotate": "Rotate",
