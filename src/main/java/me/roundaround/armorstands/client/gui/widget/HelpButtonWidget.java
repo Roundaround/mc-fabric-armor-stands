@@ -2,16 +2,12 @@ package me.roundaround.armorstands.client.gui.widget;
 
 import org.lwjgl.glfw.GLFW;
 
-import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Util;
 
 public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen> {
   public HelpButtonWidget(
@@ -27,22 +23,6 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         16,
         wrapLines(getTooltip(client), Math.max(200, 3 * parent.width / 4)),
         (button) -> {
-          FabricLoader.getInstance().getModContainer(ArmorStandsMod.MOD_ID).ifPresent((mod) -> {
-            mod.getMetadata().getContact().get("homepage").ifPresent((url) -> {
-              // Clear currentScreen before changing to avoid closing the
-              // screen handler
-
-              client.currentScreen = null;
-              client.setScreen(new ConfirmChatLinkScreen((confirmed) -> {
-                if (confirmed) {
-                  Util.getOperatingSystem().open(url);
-                }
-                client.currentScreen = null;
-                client.setScreen(parent);
-              }, url, false));
-            });
-          });
-
         });
   }
 
@@ -56,6 +36,16 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
         this.x + IconButtonWidget.WIDTH,
         this.y + IconButtonWidget.HEIGHT);
     matrixStack.pop();
+  }
+
+  @Override
+  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    return false;
+  }
+
+  @Override
+  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    return false;
   }
 
   private static Text getTooltip(MinecraftClient client) {
