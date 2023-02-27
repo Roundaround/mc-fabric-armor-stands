@@ -85,19 +85,10 @@ public class ArmorStandMoveScreen
         .shiftForPadding()
         .build());
 
-    this.playerFacingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(client.player),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 4 * LabelWidget.HEIGHT_WITH_PADDING)
-        .alignedTop()
-        .justifiedLeft()
-        .shiftForPadding()
-        .build());
-
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.stand"),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -106,7 +97,7 @@ public class ArmorStandMoveScreen
     this.standPosLabel = addLabel(LabelWidget.builder(
         getCurrentPosText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -115,7 +106,7 @@ public class ArmorStandMoveScreen
     this.standBlockPosLabel = addLabel(LabelWidget.builder(
         getCurrentBlockPosText(this.armorStand),
         SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 8 * LabelWidget.HEIGHT_WITH_PADDING)
+        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -199,6 +190,15 @@ public class ArmorStandMoveScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
+
+    this.playerFacingLabel = addLabel(LabelWidget.builder(
+        getCurrentFacingText(client.player),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - 6 * (BETWEEN_PAD + MINI_BUTTON_HEIGHT))
+        .alignedBottom()
+        .justifiedRight()
+        .shiftForPadding()
+        .build());
 
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
