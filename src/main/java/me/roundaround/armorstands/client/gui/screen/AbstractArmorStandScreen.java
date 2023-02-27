@@ -12,6 +12,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
+import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -39,6 +41,8 @@ import net.minecraft.util.Identifier;
 public abstract class AbstractArmorStandScreen
     extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStand, HasMessageRenderer {
+  protected static final int SCREEN_EDGE_PAD = 4;
+  protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
   protected static final int NAV_BUTTON_SPACING = 0;
   protected static final Identifier WIDGETS_TEXTURE = new Identifier(
@@ -301,6 +305,34 @@ public abstract class AbstractArmorStandScreen
 
   public boolean isCursorLocked() {
     return this.cursorLocked;
+  }
+
+  protected void initUtilityButtons() {
+    addDrawableChild(new HelpButtonWidget(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD,
+        SCREEN_EDGE_PAD));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
+        SCREEN_EDGE_PAD,
+        14,
+        Text.translatable("armorstands.utility.copy"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + 2 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
+        SCREEN_EDGE_PAD,
+        15,
+        Text.translatable("armorstands.utility.paste"),
+        (button) -> {
+          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        }));
   }
 
   protected void initNavigationButtons(Collection<ScreenFactory<?>> screenFactories) {

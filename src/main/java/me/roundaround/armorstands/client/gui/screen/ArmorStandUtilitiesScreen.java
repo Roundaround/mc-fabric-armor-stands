@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
-import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -28,8 +26,6 @@ public class ArmorStandUtilitiesScreen
   private static final int TOGGLE_WIDTH = 100;
   private static final int BUTTON_WIDTH = 60;
   private static final int BUTTON_HEIGHT = 16;
-  private static final int SCREEN_EDGE_PAD = 4;
-  private static final int BETWEEN_PAD = 2;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
@@ -66,26 +62,7 @@ public class ArmorStandUtilitiesScreen
 
     refreshFlags();
 
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD,
-        14,
-        Text.translatable("armorstands.utility.copy"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
-        }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        SCREEN_EDGE_PAD,
-        15,
-        Text.translatable("armorstands.utility.paste"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
-        }));
+    initUtilityButtons();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.utility.setup"),
@@ -205,12 +182,6 @@ public class ArmorStandUtilitiesScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    addDrawableChild(new HelpButtonWidget(
-        this.client,
-        this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        SCREEN_EDGE_PAD));
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),

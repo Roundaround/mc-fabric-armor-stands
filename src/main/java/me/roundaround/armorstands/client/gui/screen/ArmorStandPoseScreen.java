@@ -5,7 +5,6 @@ import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
-import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
@@ -14,7 +13,6 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
-import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -32,8 +30,6 @@ public class ArmorStandPoseScreen
   private static final int SLIDER_HEIGHT = 20;
   private static final int BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 16;
-  private static final int SCREEN_EDGE_PAD = 4;
-  private static final int BETWEEN_PAD = 2;
   private static final int ROW_PAD = 6;
   private static final int PART_PAD_VERTICAL = 10;
   private static final int PART_PAD_HORIZONTAL = 4;
@@ -93,26 +89,7 @@ public class ArmorStandPoseScreen
   public void init() {
     super.init();
 
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD,
-        14,
-        Text.translatable("armorstands.utility.copy"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
-        }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        SCREEN_EDGE_PAD,
-        15,
-        Text.translatable("armorstands.utility.paste"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
-        }));
+    initUtilityButtons();
 
     int offset = (CONTROL_WIDTH - 3 * IconButtonWidget.WIDTH - 2 * PART_PAD_HORIZONTAL) / 2;
 
@@ -265,12 +242,6 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    addDrawableChild(new HelpButtonWidget(
-        this.client,
-        this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        SCREEN_EDGE_PAD));
 
     addLabel(LabelWidget.builder(
         EulerAngleParameter.PITCH.getDisplayName(),

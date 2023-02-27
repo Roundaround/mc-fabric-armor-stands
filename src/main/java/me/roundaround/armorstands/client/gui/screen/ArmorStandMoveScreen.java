@@ -2,7 +2,6 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
-import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
@@ -26,8 +25,6 @@ public class ArmorStandMoveScreen
   private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
-  private static final int SCREEN_EDGE_PAD = 4;
-  private static final int BETWEEN_PAD = 2;
 
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
@@ -59,26 +56,7 @@ public class ArmorStandMoveScreen
   public void init() {
     super.init();
 
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD,
-        14,
-        Text.translatable("armorstands.utility.copy"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
-        }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        SCREEN_EDGE_PAD,
-        15,
-        Text.translatable("armorstands.utility.paste"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
-        }));
+    initUtilityButtons();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
@@ -221,12 +199,6 @@ public class ArmorStandMoveScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    addDrawableChild(new HelpButtonWidget(
-        this.client,
-        this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        SCREEN_EDGE_PAD));
 
     addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
     addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);

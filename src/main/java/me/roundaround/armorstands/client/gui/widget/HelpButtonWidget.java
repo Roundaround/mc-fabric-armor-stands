@@ -53,7 +53,7 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
     this.parent.renderOrderedTooltip(
         matrixStack,
         getTooltip(),
-        this.x,
+        this.x + IconButtonWidget.WIDTH,
         this.y + IconButtonWidget.HEIGHT);
     matrixStack.pop();
   }

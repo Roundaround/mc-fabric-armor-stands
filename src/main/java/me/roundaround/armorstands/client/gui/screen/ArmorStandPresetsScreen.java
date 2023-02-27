@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPoseButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
-import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.PosePreset.Source;
@@ -27,8 +24,6 @@ public class ArmorStandPresetsScreen
 
   private static final int CONTROL_WIDTH = 120;
   private static final int CONTROL_HEIGHT = 16;
-  private static final int SCREEN_EDGE_PAD = 4;
-  private static final int BETWEEN_PAD = 2;
   private static final int BUTTONS_PER_PAGE = 6;
 
   private final ArrayList<PresetPoseButtonWidget> presetButtons = new ArrayList<>();
@@ -67,26 +62,7 @@ public class ArmorStandPresetsScreen
   public void init() {
     super.init();
 
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD,
-        14,
-        Text.translatable("armorstands.utility.copy"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
-        }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        SCREEN_EDGE_PAD,
-        15,
-        Text.translatable("armorstands.utility.paste"),
-        (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
-        }));
+    initUtilityButtons();
 
     initNavigationButtons(List.of(
         ScreenFactory.create(
@@ -112,12 +88,6 @@ public class ArmorStandPresetsScreen
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
-
-    addDrawableChild(new HelpButtonWidget(
-        this.client,
-        this,
-        this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
-        SCREEN_EDGE_PAD));
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
