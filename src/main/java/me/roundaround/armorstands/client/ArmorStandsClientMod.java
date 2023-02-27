@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.option.KeyBinding;
@@ -16,6 +18,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.resource.ZipResourcePack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 
 public class ArmorStandsClientMod implements ClientModInitializer {
@@ -31,6 +34,11 @@ public class ArmorStandsClientMod implements ClientModInitializer {
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
         KeyBinding.MISC_CATEGORY));
+
+    ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
+        .register((atlasTexture, registry) -> {
+          registry.register(ArmorStandScreenHandler.EMPTY_MAINHAND_ARMOR_SLOT);
+        });
 
     // Detect Vanilla Tweaks dark UI and automatically adjust textures to match
     // if it is loaded

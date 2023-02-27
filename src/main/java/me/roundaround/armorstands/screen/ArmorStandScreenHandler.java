@@ -2,6 +2,7 @@ package me.roundaround.armorstands.screen;
 
 import com.mojang.datafixers.util.Pair;
 
+import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.server.network.ServerNetworking;
@@ -22,11 +23,18 @@ import net.minecraft.util.Identifier;
 public class ArmorStandScreenHandler
     extends ScreenHandler
     implements HasArmorStand, HasArmorStandEditor {
+  public static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "item/empty_armor_slot_sword");
+
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE };
+  private static final Identifier[] EMPTY_HAND_SLOT_TEXTURES = new Identifier[] {
+      EMPTY_MAINHAND_ARMOR_SLOT,
+      PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT };
   private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[] {
       EquipmentSlot.HEAD,
       EquipmentSlot.CHEST,
@@ -73,12 +81,13 @@ public class ArmorStandScreenHandler
     }
 
     for (int i = 0; i < 2; i++) {
-      addSlot(new Slot(this.inventory, i, 116, 44 + i * 18) {
+      int index = i;
+      addSlot(new Slot(this.inventory, index, 116, 44 + index * 18) {
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
           return Pair.of(
               PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT);
+              EMPTY_HAND_SLOT_TEXTURES[index]);
         }
       });
     }
