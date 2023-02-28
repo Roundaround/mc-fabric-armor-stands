@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
@@ -29,8 +28,6 @@ public class ArmorStandUtilitiesScreen
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
-
-  private Optional<UtilityAction> setupType = Optional.empty();
 
   public ArmorStandUtilitiesScreen(
       ArmorStandScreenHandler handler,
@@ -107,7 +104,6 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.uprightItem"),
         Text.translatable("armorstands.utility.uprightItem.tooltip"),
         (button) -> {
-          this.setupType = Optional.of(UtilityAction.UPRIGHT_ITEM);
           ClientNetworking.sendUtilityActionPacket(
               UtilityAction.UPRIGHT_ITEM.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
@@ -122,7 +118,6 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.flatItem"),
         Text.translatable("armorstands.utility.flatItem.tooltip"),
         (button) -> {
-          this.setupType = Optional.of(UtilityAction.FLAT_ITEM);
           ClientNetworking.sendUtilityActionPacket(
               UtilityAction.FLAT_ITEM.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
@@ -137,7 +132,6 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.block"),
         Text.translatable("armorstands.utility.block.tooltip"),
         (button) -> {
-          this.setupType = Optional.of(UtilityAction.BLOCK);
           ClientNetworking.sendUtilityActionPacket(
               UtilityAction.BLOCK.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
@@ -152,7 +146,6 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.tool"),
         Text.translatable("armorstands.utility.tool.tooltip"),
         (button) -> {
-          this.setupType = Optional.of(UtilityAction.TOOL);
           ClientNetworking.sendUtilityActionPacket(
               UtilityAction.TOOL.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
@@ -268,15 +261,5 @@ public class ArmorStandUtilitiesScreen
 
     addDrawableChild(widget);
     listeners.get(flag).add(widget);
-
-    if (flag == ArmorStandFlag.SMALL) {
-      listeners.get(flag).add(this::onSmallFlagChanged);
-    }
-  }
-
-  private void onSmallFlagChanged(Boolean small) {
-    this.setupType.ifPresent((utilityAction) -> {
-      // ClientNetworking.sendUtilityActionPacket(utilityAction.forSmall(small));
-    });
   }
 }
