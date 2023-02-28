@@ -132,10 +132,21 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);
   }
 
-  public static void sendAdjustPosPacket(Direction direction, int pixels) {
+  public static void sendAdjustPosPacket(Direction direction, int amount) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeInt(direction.getId());
-    buf.writeInt(pixels);
+    buf.writeInt(amount);
+    buf.writeBoolean(false);
+
+    ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
+  }
+
+  public static void sendAdjustPosPacket(Direction direction, int amount, boolean localToPlayer) {
+    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+    buf.writeInt(direction.getId());
+    buf.writeInt(amount);
+    buf.writeBoolean(true);
+    buf.writeBoolean(localToPlayer);
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
   }

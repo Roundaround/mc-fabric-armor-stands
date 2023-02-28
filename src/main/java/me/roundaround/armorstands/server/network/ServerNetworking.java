@@ -10,6 +10,7 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
 import me.roundaround.armorstands.util.PosePreset;
+import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -95,7 +96,9 @@ public class ServerNetworking {
       PacketByteBuf buf,
       PacketSender responseSender) {
     Direction direction = Direction.byId(buf.readInt());
-    int pixels = buf.readInt();
+    int amount = buf.readInt();
+    boolean isLocal = buf.readBoolean();
+    boolean localToPlayer = isLocal ? buf.readBoolean() : false;
 
     if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
@@ -103,7 +106,9 @@ public class ServerNetworking {
 
     HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
-    editor.movePos(direction, pixels);
+    editor.applyAction(isLocal
+        ? AdjustPosAction.local(direction, amount, localToPlayer)
+        : AdjustPosAction.relative(direction, amount));
   }
 
   private static void handleUtilityActionPacket(

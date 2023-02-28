@@ -1,15 +1,19 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget.Mode;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
@@ -21,16 +25,21 @@ public class ArmorStandMoveScreen
   public static final Text TITLE = Text.translatable("armorstands.screen.move");
   public static final int U_INDEX = 1;
 
-  private static final int MINI_BUTTON_WIDTH = 16;
+  private static final int MINI_BUTTON_WIDTH = 28;
   private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
 
+  private final HashMap<Direction, LabelWidget> directionLabels = new HashMap<>();
+  private final ArrayList<MoveButtonWidget> moveButtons = new ArrayList<>();
+
   private LabelWidget playerPosLabel;
   private LabelWidget playerBlockPosLabel;
-  private LabelWidget playerFacingLabel;
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
+  private LabelWidget unitsLabel;
+  private LabelWidget facingLabel;
+  private Mode mode = Mode.RELATIVE;
 
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
@@ -191,21 +200,62 @@ public class ArmorStandMoveScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    this.playerFacingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(client.player),
+    int topOfMoveButtons = this.height - SCREEN_EDGE_PAD
+        - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
+
+    addDrawableChild(CyclingButtonWidget.builder(Mode::getOptionValueText)
+        .values(Mode.values())
+        .initially(this.mode)
+        .build(
+            this.width - SCREEN_EDGE_PAD - 120,
+            topOfMoveButtons - 2 * (BETWEEN_PAD + LabelWidget.HEIGHT_WITH_PADDING) - MINI_BUTTON_HEIGHT,
+            120,
+            MINI_BUTTON_HEIGHT,
+            Mode.getOptionLabelText(),
+            (button, mode) -> {
+              this.mode = mode;
+              this.facingLabel.setText(getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+                  ? this.armorStand
+                  : client.player));
+              this.unitsLabel
+                  .setText(Text.translatable("armorstands.move.units", this.mode.getUnitsText().getString()));
+              this.directionLabels.forEach((direction, label) -> {
+                label.setText(this.mode.getDirectionText(direction));
+              });
+              this.moveButtons.forEach((moveButton) -> {
+                moveButton.setMode(this.mode);
+              });
+            }));
+
+    this.unitsLabel = addLabel(LabelWidget.builder(
+        Text.translatable("armorstands.move.units", this.mode.getUnitsText().getString()),
         this.width - SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - 6 * (BETWEEN_PAD + MINI_BUTTON_HEIGHT))
+        topOfMoveButtons - BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING)
+        .shiftForPadding()
         .alignedBottom()
         .justifiedRight()
-        .shiftForPadding()
         .build());
 
-    addRowOfButtons(Text.translatable("armorstands.move.up"), Direction.UP, 5);
-    addRowOfButtons(Text.translatable("armorstands.move.down"), Direction.DOWN, 4);
-    addRowOfButtons(Text.translatable("armorstands.move.south"), Direction.SOUTH, 3);
-    addRowOfButtons(Text.translatable("armorstands.move.north"), Direction.NORTH, 2);
-    addRowOfButtons(Text.translatable("armorstands.move.east"), Direction.EAST, 1);
-    addRowOfButtons(Text.translatable("armorstands.move.west"), Direction.WEST, 0);
+    this.facingLabel = addLabel(LabelWidget.builder(
+        getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+            ? this.armorStand
+            : client.player),
+        this.width - SCREEN_EDGE_PAD,
+        topOfMoveButtons - BETWEEN_PAD)
+        .shiftForPadding()
+        .alignedBottom()
+        .justifiedRight()
+        .build());
+
+    directionLabels.clear();
+    moveButtons.clear();
+
+    addRowOfButtons(Direction.UP, 5);
+    addRowOfButtons(Direction.DOWN, 4);
+    addRowOfButtons(Direction.SOUTH, 3);
+    addRowOfButtons(Direction.NORTH, 2);
+    addRowOfButtons(Direction.EAST, 1);
+    addRowOfButtons(Direction.WEST, 0);
   }
 
   @Override
@@ -214,9 +264,12 @@ public class ArmorStandMoveScreen
 
     playerPosLabel.setText(getCurrentPosText(client.player));
     playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
-    playerFacingLabel.setText(getCurrentFacingText(client.player));
     standPosLabel.setText(getCurrentPosText(this.armorStand));
     standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
+
+    facingLabel.setText(getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+        ? this.armorStand
+        : client.player));
   }
 
   private Text getCurrentPosText(Entity entity) {
@@ -245,44 +298,44 @@ public class ArmorStandMoveScreen
     return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
   }
 
-  private void addRowOfButtons(Text label, Direction direction, int index) {
-    int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
+  private void addRowOfButtons(Direction direction, int index) {
+    int refX = this.width - SCREEN_EDGE_PAD;
     int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
 
-    addLabel(LabelWidget.builder(
-        label,
-        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH) - 4,
+    directionLabels.put(direction, addLabel(LabelWidget.builder(
+        this.mode.getDirectionText(direction),
+        refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
         refY + MINI_BUTTON_HEIGHT / 2)
         .justifiedRight()
         .alignedMiddle()
-        .build());
+        .shiftForPadding()
+        .build()));
 
-    MoveButtonWidget one = new MoveButtonWidget(
-        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
+    moveButtons.add(addDrawableChild(new MoveButtonWidget(
+        refX - 3 * MINI_BUTTON_WIDTH - 2 * BETWEEN_PAD,
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
         direction,
-        1);
+        1,
+        this.mode)));
 
-    MoveButtonWidget three = new MoveButtonWidget(
-        refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
+    moveButtons.add(addDrawableChild(new MoveButtonWidget(
+        refX - 2 * MINI_BUTTON_WIDTH - BETWEEN_PAD,
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
         direction,
-        3);
+        2,
+        this.mode)));
 
-    MoveButtonWidget eight = new MoveButtonWidget(
-        refX,
+    moveButtons.add(addDrawableChild(new MoveButtonWidget(
+        refX - MINI_BUTTON_WIDTH,
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,
         direction,
-        8);
-
-    addDrawableChild(one);
-    addDrawableChild(three);
-    addDrawableChild(eight);
+        3,
+        this.mode)));
   }
 }
