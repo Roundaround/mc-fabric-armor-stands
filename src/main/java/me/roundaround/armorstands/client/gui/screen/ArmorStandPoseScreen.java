@@ -244,6 +244,20 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen::new)));
 
     addLabel(LabelWidget.builder(
+        Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - 3 * SLIDER_HEIGHT
+            - 2 * BUTTON_HEIGHT
+            - 3 * BETWEEN_PAD
+            - 2 * ROW_PAD
+            - 2 * LabelWidget.HEIGHT_WITH_PADDING)
+        .shiftForPadding()
+        .alignedBottom()
+        .justifiedRight()
+        .build());
+
+    addLabel(LabelWidget.builder(
         EulerAngleParameter.PITCH.getDisplayName(),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
         this.height - SCREEN_EDGE_PAD
