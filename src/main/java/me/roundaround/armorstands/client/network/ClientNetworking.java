@@ -11,6 +11,8 @@ import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
+import me.roundaround.armorstands.util.MoveMode;
+import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.Pose;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.SavedPose;
@@ -132,21 +134,12 @@ public class ClientNetworking {
     ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, buf);
   }
 
-  public static void sendAdjustPosPacket(Direction direction, int amount) {
+  public static void sendAdjustPosPacket(Direction direction, int amount, MoveMode mode, MoveUnits units) {
     PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
     buf.writeInt(direction.getId());
     buf.writeInt(amount);
-    buf.writeBoolean(false);
-
-    ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
-  }
-
-  public static void sendAdjustPosPacket(Direction direction, int amount, boolean localToPlayer) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeInt(direction.getId());
-    buf.writeInt(amount);
-    buf.writeBoolean(true);
-    buf.writeBoolean(localToPlayer);
+    buf.writeString(mode.getId());
+    buf.writeString(units.getId());
 
     ClientPlayNetworking.send(NetworkPackets.ADJUST_POS_PACKET, buf);
   }

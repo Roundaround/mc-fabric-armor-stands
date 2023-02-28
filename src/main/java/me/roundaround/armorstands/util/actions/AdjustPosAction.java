@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.util.actions;
 
+import me.roundaround.armorstands.util.MoveUnits;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
@@ -13,14 +14,18 @@ public class AdjustPosAction implements ArmorStandAction {
     this.moveAction = moveAction;
   }
 
-  public static AdjustPosAction relative(Direction direction, int amount) {
+  public static AdjustPosAction relative(Direction direction, int amount, MoveUnits units) {
     return new AdjustPosAction(
-        MoveAction.relative(new Vec3d(direction.getUnitVector()).multiply(getPixelAmount(amount)), true));
+        MoveAction.relative(
+            new Vec3d(direction.getUnitVector()).multiply(units.getAmount(amount)),
+            true));
   }
 
-  public static AdjustPosAction local(Direction direction, int amount, boolean localToPlayer) {
+  public static AdjustPosAction local(Direction direction, int amount, MoveUnits units, boolean localToPlayer) {
     return new AdjustPosAction(
-        MoveAction.local(new Vec3d(direction.getUnitVector()).multiply(getBlockAmount(amount)), localToPlayer));
+        MoveAction.local(
+            new Vec3d(direction.getUnitVector()).multiply(units.getAmount(amount)),
+            localToPlayer));
   }
 
   @Override
@@ -36,29 +41,5 @@ public class AdjustPosAction implements ArmorStandAction {
   @Override
   public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
     this.moveAction.undo(player, armorStand);
-  }
-
-  private static double getPixelAmount(int amount) {
-    // 1, 3, and 8 pixels
-    switch (amount) {
-      case 2:
-        return 0.1875;
-      case 3:
-        return 0.5;
-      default:
-        return 0.0625;
-    }
-  }
-
-  private static double getBlockAmount(int amount) {
-    // 1/4, 1/3, and 1 block
-    switch (amount) {
-      case 2:
-        return 1d / 3d;
-      case 3:
-        return 1;
-      default:
-        return 0.25;
-    }
   }
 }

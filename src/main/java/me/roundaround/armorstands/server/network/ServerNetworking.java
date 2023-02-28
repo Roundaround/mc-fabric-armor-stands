@@ -9,6 +9,8 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
+import me.roundaround.armorstands.util.MoveMode;
+import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -97,8 +99,8 @@ public class ServerNetworking {
       PacketSender responseSender) {
     Direction direction = Direction.byId(buf.readInt());
     int amount = buf.readInt();
-    boolean isLocal = buf.readBoolean();
-    boolean localToPlayer = isLocal ? buf.readBoolean() : false;
+    MoveMode mode = MoveMode.fromId(buf.readString());
+    MoveUnits units = MoveUnits.fromId(buf.readString());
 
     if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
@@ -106,9 +108,9 @@ public class ServerNetworking {
 
     HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
-    editor.applyAction(isLocal
-        ? AdjustPosAction.local(direction, amount, localToPlayer)
-        : AdjustPosAction.relative(direction, amount));
+    editor.applyAction(mode.isLocal()
+        ? AdjustPosAction.local(direction, amount, units, mode.isLocalToPlayer())
+        : AdjustPosAction.relative(direction, amount, units));
   }
 
   private static void handleUtilityActionPacket(

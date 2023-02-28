@@ -7,11 +7,12 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget.Mode;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.MoveMode;
+import me.roundaround.armorstands.util.MoveUnits;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.Entity;
@@ -37,9 +38,10 @@ public class ArmorStandMoveScreen
   private LabelWidget playerBlockPosLabel;
   private LabelWidget standPosLabel;
   private LabelWidget standBlockPosLabel;
-  private LabelWidget unitsLabel;
   private LabelWidget facingLabel;
-  private Mode mode = Mode.RELATIVE;
+  private CyclingButtonWidget<MoveUnits> unitsButton;
+  private MoveMode mode = MoveMode.RELATIVE;
+  private MoveUnits units = MoveUnits.PIXELS;
 
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
@@ -203,41 +205,56 @@ public class ArmorStandMoveScreen
     int topOfMoveButtons = this.height - SCREEN_EDGE_PAD
         - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
 
-    addDrawableChild(CyclingButtonWidget.builder(Mode::getOptionValueText)
-        .values(Mode.values())
+    addDrawableChild(CyclingButtonWidget.builder(MoveMode::getOptionValueText)
+        .values(MoveMode.values())
         .initially(this.mode)
         .build(
             this.width - SCREEN_EDGE_PAD - 120,
-            topOfMoveButtons - 2 * (BETWEEN_PAD + LabelWidget.HEIGHT_WITH_PADDING) - MINI_BUTTON_HEIGHT,
+            topOfMoveButtons
+                - LabelWidget.HEIGHT_WITH_PADDING
+                - 3 * BETWEEN_PAD
+                - 2 * MINI_BUTTON_HEIGHT,
             120,
             MINI_BUTTON_HEIGHT,
-            Mode.getOptionLabelText(),
+            MoveMode.getOptionLabelText(),
             (button, mode) -> {
               this.mode = mode;
-              this.facingLabel.setText(getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+              this.units = this.mode.getDefaultUnits();
+
+              this.facingLabel.setText(getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
                   ? this.armorStand
                   : client.player));
-              this.unitsLabel
-                  .setText(Text.translatable("armorstands.move.units", this.mode.getUnitsText().getString()));
               this.directionLabels.forEach((direction, label) -> {
                 label.setText(this.mode.getDirectionText(direction));
               });
+
+              this.unitsButton.setValue(this.units);
               this.moveButtons.forEach((moveButton) -> {
-                moveButton.setMode(this.mode);
+                moveButton.setUnits(this.units);
               });
             }));
 
-    this.unitsLabel = addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.move.units", this.mode.getUnitsText().getString()),
-        this.width - SCREEN_EDGE_PAD,
-        topOfMoveButtons - BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING)
-        .shiftForPadding()
-        .alignedBottom()
-        .justifiedRight()
-        .build());
+    this.unitsButton = addDrawableChild(CyclingButtonWidget.builder(MoveUnits::getOptionValueText)
+        .values(MoveUnits.values())
+        .initially(this.units)
+        .build(
+            this.width - SCREEN_EDGE_PAD - 120,
+            topOfMoveButtons
+                - LabelWidget.HEIGHT_WITH_PADDING
+                - 2 * BETWEEN_PAD
+                - MINI_BUTTON_HEIGHT,
+            120,
+            MINI_BUTTON_HEIGHT,
+            MoveUnits.getOptionLabelText(),
+            (button, units) -> {
+              this.units = units;
+              this.moveButtons.forEach((moveButton) -> {
+                moveButton.setUnits(this.units);
+              });
+            }));
 
     this.facingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+        getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
             ? this.armorStand
             : client.player),
         this.width - SCREEN_EDGE_PAD,
@@ -267,7 +284,7 @@ public class ArmorStandMoveScreen
     standPosLabel.setText(getCurrentPosText(this.armorStand));
     standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
 
-    facingLabel.setText(getCurrentFacingText(this.mode.equals(Mode.LOCAL_TO_STAND)
+    facingLabel.setText(getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
         ? this.armorStand
         : client.player));
   }
@@ -318,7 +335,8 @@ public class ArmorStandMoveScreen
         MINI_BUTTON_HEIGHT,
         direction,
         1,
-        this.mode)));
+        this.mode,
+        this.units)));
 
     moveButtons.add(addDrawableChild(new MoveButtonWidget(
         refX - 2 * MINI_BUTTON_WIDTH - BETWEEN_PAD,
@@ -327,7 +345,8 @@ public class ArmorStandMoveScreen
         MINI_BUTTON_HEIGHT,
         direction,
         2,
-        this.mode)));
+        this.mode,
+        this.units)));
 
     moveButtons.add(addDrawableChild(new MoveButtonWidget(
         refX - MINI_BUTTON_WIDTH,
@@ -336,6 +355,7 @@ public class ArmorStandMoveScreen
         MINI_BUTTON_HEIGHT,
         direction,
         3,
-        this.mode)));
+        this.mode,
+        this.units)));
   }
 }
