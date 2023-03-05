@@ -10,6 +10,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class LabelWidget extends DrawableHelper implements Drawable {
   public static final int HEIGHT_WITH_PADDING = 13;
+  public static final int PADDING = 2;
 
   private final int posX;
   private final int posY;

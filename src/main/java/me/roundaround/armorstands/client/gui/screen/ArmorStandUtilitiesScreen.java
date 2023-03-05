@@ -22,7 +22,6 @@ public class ArmorStandUtilitiesScreen
   public static final Text TITLE = Text.translatable("armorstands.screen.utilities");
   public static final int U_INDEX = 0;
 
-  private static final int TOGGLE_WIDTH = 100;
   private static final int BUTTON_WIDTH = 60;
   private static final int BUTTON_HEIGHT = 16;
 
@@ -247,16 +246,16 @@ public class ArmorStandUtilitiesScreen
       ArmorStandFlag flag,
       int index,
       boolean inverted) {
-    int xPos = this.width - SCREEN_EDGE_PAD - TOGGLE_WIDTH;
+    int xPos = this.width - SCREEN_EDGE_PAD;
     int yPos = this.height - (index + 1) * (SCREEN_EDGE_PAD + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
+        this.textRenderer,
         flag,
         inverted,
         this.currentValues.get(flag),
         xPos,
         yPos,
-        TOGGLE_WIDTH,
         label);
 
     addDrawableChild(widget);

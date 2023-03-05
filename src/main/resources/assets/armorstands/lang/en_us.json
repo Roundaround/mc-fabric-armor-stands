@@ -33,6 +33,8 @@
   "armorstands.flags.visible": "Invisible",
   "armorstands.flags.name": "Show name",
   "armorstands.flags.invulnerable": "Invulnerable",
+  "armorstands.flagToggle.on": "Yes",
+  "armorstands.flagToggle.off": "No",
   "armorstands.move.up": "Up (+Y)",
   "armorstands.move.down": "Down (-Y)",
   "armorstands.move.south": "South (+Z)",

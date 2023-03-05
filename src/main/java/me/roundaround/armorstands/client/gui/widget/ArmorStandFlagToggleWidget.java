@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -21,35 +22,49 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   private final ArmorStandFlag flag;
   private final boolean inverted;
-  private final LabelWidget labelWidget;
+  private final LabelWidget flagLabel;
+  private final LabelWidget valueLabel;
   private final int widgetX;
   private final int widgetY;
   private boolean currentValue = false;
 
   public ArmorStandFlagToggleWidget(
+      TextRenderer textRenderer,
       ArmorStandFlag flag,
       boolean inverted,
       boolean initialValue,
       int x,
       int y,
-      int width,
       Text label) {
-    super(x, y, width, WIDGET_HEIGHT, label);
+    super(x, y, 100, WIDGET_HEIGHT, label);
     this.flag = flag;
     this.inverted = inverted;
 
-    this.labelWidget = LabelWidget.builder(
+    int valueLabelWidth = 2 * LabelWidget.PADDING + Math.max(
+        textRenderer.getWidth(Text.translatable("armorstands.flagToggle.on")),
+        textRenderer.getWidth(Text.translatable("armorstands.flagToggle.off")));
+
+    this.flagLabel = LabelWidget.builder(
         label,
-        x + width - WIDGET_WIDTH - 2,
+        x - WIDGET_WIDTH - 2 - valueLabelWidth - 2,
         y + height / 2)
         .justifiedRight()
         .alignedMiddle()
         .shiftForPadding()
         .build();
 
+    this.valueLabel = LabelWidget.builder(
+        Text.translatable("armorstands.flagToggle." + (initialValue ^ inverted ? "on" : "off")),
+        x - valueLabelWidth / 2,
+        y + height / 2)
+        .justifiedCenter()
+        .alignedMiddle()
+        .shiftForPadding()
+        .build();
+
     currentValue = initialValue;
 
-    widgetX = x + width - WIDGET_WIDTH;
+    widgetX = x - WIDGET_WIDTH - 2 - valueLabelWidth;
     widgetY = y + (height - WIDGET_HEIGHT) / 2;
   }
 
@@ -65,12 +80,13 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
   @Override
   public void accept(Boolean newValue) {
     currentValue = newValue;
+    valueLabel.setText(Text.translatable("armorstands.flagToggle." + (newValue ^ inverted ? "on" : "off")));
   }
 
   @Override
   public boolean isMouseOver(double mouseX, double mouseY) {
     return active && visible
-        && (labelWidget.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY));
+        && (flagLabel.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY));
   }
 
   @Override
@@ -80,10 +96,11 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    hovered = labelWidget.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY);
+    hovered = flagLabel.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY);
 
     renderWidget(matrixStack, mouseX, mouseY, delta);
-    labelWidget.render(matrixStack, mouseX, mouseY, delta);
+    flagLabel.render(matrixStack, mouseX, mouseY, delta);
+    valueLabel.render(matrixStack, mouseX, mouseY, delta);
   }
 
   private void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
