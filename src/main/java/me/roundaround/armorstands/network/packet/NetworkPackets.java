@@ -1,4 +1,4 @@
-package me.roundaround.armorstands.network;
+package me.roundaround.armorstands.network.packet;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import net.minecraft.util.Identifier;

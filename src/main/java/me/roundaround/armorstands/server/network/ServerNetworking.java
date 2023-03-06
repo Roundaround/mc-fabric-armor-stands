@@ -3,9 +3,10 @@ package me.roundaround.armorstands.server.network;
 import io.netty.buffer.Unpooled;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
-import me.roundaround.armorstands.network.NetworkPackets;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.NetworkPackets;
+import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
@@ -64,14 +65,14 @@ public class ServerNetworking {
       ServerPlayNetworkHandler handler,
       PacketByteBuf buf,
       PacketSender responseSender) {
-    boolean fillSlots = buf.readBoolean();
+    InitSlotsPacket packet = new InitSlotsPacket(buf);
 
     if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
       return;
     }
 
     ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
-    screenHandler.initSlots(fillSlots);
+    screenHandler.initSlots(packet.shouldFillSlots());
   }
 
   private static void handleAdjustYawPacket(

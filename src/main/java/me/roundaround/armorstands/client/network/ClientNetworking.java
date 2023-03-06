@@ -6,9 +6,10 @@ import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
-import me.roundaround.armorstands.network.NetworkPackets;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.NetworkPackets;
+import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.MoveMode;
@@ -121,10 +122,7 @@ public class ClientNetworking {
   }
 
   public static void sendInitSlotsPacket(boolean fillSlots) {
-    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-    buf.writeBoolean(fillSlots);
-
-    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, buf);
+    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, new InitSlotsPacket(fillSlots).toPacket());
   }
 
   public static void sendAdjustYawPacket(int amount) {
