@@ -81,20 +81,20 @@ public class MessagePacket {
   public static void sendToClient(ServerPlayerEntity player, String message) {
     ServerPlayNetworking.send(
         player,
-        NetworkPackets.CLIENT_UPDATE_PACKET,
+        NetworkPackets.MESSAGE_PACKET,
         new MessagePacket(message).toPacket());
   }
 
   public static void sendToClient(ServerPlayerEntity player, String message, int color) {
     ServerPlayNetworking.send(
         player,
-        NetworkPackets.CLIENT_UPDATE_PACKET,
+        NetworkPackets.MESSAGE_PACKET,
         new MessagePacket(message, color).toPacket());
   }
 
   public static void registerClientReceiver() {
     ClientPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.CLIENT_UPDATE_PACKET,
+        NetworkPackets.MESSAGE_PACKET,
         (client, handler, buf, responseSender) -> {
           MessagePacket packet = new MessagePacket(buf);
           client.execute(() -> {
