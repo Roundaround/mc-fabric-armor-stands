@@ -3,9 +3,17 @@ package me.roundaround.armorstands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import me.roundaround.armorstands.network.packet.c2s.AdjustPosPacket;
+import me.roundaround.armorstands.network.packet.c2s.AdjustPosePacket;
+import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
+import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
+import me.roundaround.armorstands.network.packet.c2s.SetFlagPacket;
+import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
+import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
+import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
+import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.command.ArmorStandsCommand;
-import me.roundaround.armorstands.server.network.ServerNetworking;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
@@ -15,7 +23,7 @@ public final class ArmorStandsMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
-    ServerNetworking.registerReceivers();
+    registerReceivers();
 
     CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
       if (environment.dedicated) {
@@ -28,5 +36,17 @@ public final class ArmorStandsMod implements ModInitializer {
         }
       }
     });
+  }
+
+  private static void registerReceivers() {
+    InitSlotsPacket.registerServerReceiver();
+    AdjustYawPacket.registerServerReceiver();
+    AdjustPosPacket.registerServerReceiver();
+    UtilityActionPacket.registerServerReceiver();
+    SetFlagPacket.registerServerReceiver();
+    SetPosePacket.registerServerReceiver();
+    SetPosePresetPacket.registerServerReceiver();
+    AdjustPosePacket.registerServerReceiver();
+    UndoPacket.registerServerReceiver();
   }
 }

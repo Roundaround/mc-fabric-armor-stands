@@ -5,9 +5,10 @@ import java.util.Locale;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
+import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
@@ -128,7 +129,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.toward"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD);
+          UtilityActionPacket.sendToServer(UtilityAction.FACE_TOWARD);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -137,7 +138,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.away"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY);
+          UtilityActionPacket.sendToServer(UtilityAction.FACE_AWAY);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
@@ -146,7 +147,7 @@ public class ArmorStandRotateScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.face.with"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH);
+          UtilityActionPacket.sendToServer(UtilityAction.FACE_WITH);
         }));
 
     initNavigationButtons(List.of(
@@ -229,7 +230,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "1"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(direction.offset() * 1);
+          AdjustYawPacket.sendToServer(direction.offset() * 1);
         }));
     addDrawableChild(new ButtonWidget(
         refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
@@ -238,7 +239,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "5"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(direction.offset() * 5);
+          AdjustYawPacket.sendToServer(direction.offset() * 5);
         }));
     addDrawableChild(new ButtonWidget(
         refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
@@ -247,7 +248,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "15"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(direction.offset() * 15);
+          AdjustYawPacket.sendToServer(direction.offset() * 15);
         }));
     addDrawableChild(new ButtonWidget(
         refX,
@@ -256,7 +257,7 @@ public class ArmorStandRotateScreen
         MINI_BUTTON_HEIGHT,
         Text.literal(modifier + "45"),
         (button) -> {
-          ClientNetworking.sendAdjustYawPacket(direction.offset() * 45);
+          AdjustYawPacket.sendToServer(direction.offset() * 45);
         }));
   }
 

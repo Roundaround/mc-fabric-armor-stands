@@ -9,10 +9,10 @@ import java.util.function.Consumer;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
@@ -79,7 +79,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.prepare"),
         Text.translatable("armorstands.utility.prepare.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE);
+          UtilityActionPacket.sendToServer(UtilityAction.PREPARE);
         }));
     addDrawableChild(new SimpleTooltipButtonWidget(
         this,
@@ -91,7 +91,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.toolRack"),
         Text.translatable("armorstands.utility.toolRack.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.TOOL_RACK);
+          UtilityActionPacket.sendToServer(UtilityAction.TOOL_RACK);
         }));
     addDrawableChild(new SimpleTooltipButtonWidget(
         this,
@@ -103,7 +103,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.uprightItem"),
         Text.translatable("armorstands.utility.uprightItem.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(
+          UtilityActionPacket.sendToServer(
               UtilityAction.UPRIGHT_ITEM.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
@@ -117,7 +117,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.flatItem"),
         Text.translatable("armorstands.utility.flatItem.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(
+          UtilityActionPacket.sendToServer(
               UtilityAction.FLAT_ITEM.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
@@ -131,7 +131,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.block"),
         Text.translatable("armorstands.utility.block.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(
+          UtilityActionPacket.sendToServer(
               UtilityAction.BLOCK.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
@@ -145,7 +145,7 @@ public class ArmorStandUtilitiesScreen
         Text.translatable("armorstands.utility.tool"),
         Text.translatable("armorstands.utility.tool.tooltip"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(
+          UtilityActionPacket.sendToServer(
               UtilityAction.TOOL.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));

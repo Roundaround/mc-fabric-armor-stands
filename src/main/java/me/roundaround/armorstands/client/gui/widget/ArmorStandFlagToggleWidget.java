@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.packet.c2s.SetFlagPacket;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
@@ -70,7 +70,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void onPress() {
-    ClientNetworking.sendSetFlagPacket(flag, !currentValue);
+    SetFlagPacket.sendToServer(flag, !currentValue);
   }
 
   @Override

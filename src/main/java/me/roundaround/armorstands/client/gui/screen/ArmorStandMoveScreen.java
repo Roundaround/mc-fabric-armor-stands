@@ -7,9 +7,9 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
@@ -138,7 +138,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.standing"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING);
+          UtilityActionPacket.sendToServer(UtilityAction.SNAP_STANDING);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -147,7 +147,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.sitting"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING);
+          UtilityActionPacket.sendToServer(UtilityAction.SNAP_SITTING);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
@@ -156,7 +156,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.corner"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER);
+          UtilityActionPacket.sendToServer(UtilityAction.SNAP_CORNER);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
@@ -165,7 +165,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.center"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER);
+          UtilityActionPacket.sendToServer(UtilityAction.SNAP_CENTER);
         }));
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
@@ -174,7 +174,7 @@ public class ArmorStandMoveScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.snap.player"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER);
+          UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
         }));
 
     initNavigationButtons(List.of(

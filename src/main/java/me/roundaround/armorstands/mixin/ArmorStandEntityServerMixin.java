@@ -5,9 +5,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.server.ArmorStandUsers;
-import me.roundaround.armorstands.server.network.ServerNetworking;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -43,7 +43,7 @@ public abstract class ArmorStandEntityServerMixin {
 
     ArmorStandEntity armorStand = (ArmorStandEntity) (Object) this;
 
-    ServerNetworking.sendOpenScreenPacket(player, armorStand, syncId);
+    OpenScreenPacket.sendToClient(player, syncId, armorStand);
 
     ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
         syncId,

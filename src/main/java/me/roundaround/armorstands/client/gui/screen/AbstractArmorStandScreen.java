@@ -16,13 +16,15 @@ import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
+import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
+import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
 import net.minecraft.client.gui.Element;
@@ -100,7 +102,7 @@ public abstract class AbstractArmorStandScreen
   @Override
   public void init() {
     this.handler.initSlots(this.utilizesInventory);
-    ClientNetworking.sendInitSlotsPacket(this.utilizesInventory);
+    InitSlotsPacket.sendToServer(this.utilizesInventory);
 
     this.labels.clear();
 
@@ -265,21 +267,21 @@ public abstract class AbstractArmorStandScreen
           break;
         }
         playClickSound();
-        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        UndoPacket.sendToServer(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+        UtilityActionPacket.sendToServer(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
-        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+        UtilityActionPacket.sendToServer(UtilityAction.PASTE);
         return true;
     }
 
@@ -321,7 +323,7 @@ public abstract class AbstractArmorStandScreen
         14,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
+          UtilityActionPacket.sendToServer(UtilityAction.COPY);
         }));
     addDrawableChild(new IconButtonWidget<>(
         this.client,
@@ -331,7 +333,7 @@ public abstract class AbstractArmorStandScreen
         15,
         Text.translatable("armorstands.utility.paste"),
         (button) -> {
-          ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
+          UtilityActionPacket.sendToServer(UtilityAction.PASTE);
         }));
   }
 

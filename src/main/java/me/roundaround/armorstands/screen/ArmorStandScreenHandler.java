@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
-import me.roundaround.armorstands.server.network.ServerNetworking;
+import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
@@ -138,7 +138,7 @@ public class ArmorStandScreenHandler
   @Override
   public void sendContentUpdates() {
     if (this.playerInventory.player instanceof ServerPlayerEntity) {
-      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) this.playerInventory.player, this.armorStand);
+      ClientUpdatePacket.sendToClient((ServerPlayerEntity) this.playerInventory.player, this.armorStand);
     }
 
     super.sendContentUpdates();

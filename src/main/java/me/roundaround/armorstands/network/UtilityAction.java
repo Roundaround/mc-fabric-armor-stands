@@ -3,7 +3,7 @@ package me.roundaround.armorstands.network;
 import java.util.Arrays;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.server.network.ServerNetworking;
+import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Clipboard;
@@ -65,7 +65,7 @@ public enum UtilityAction {
       case TOOL_RACK:
         ToolRackAction action = ToolRackAction.create(armorStand);
         if (action == null) {
-          ServerNetworking.sendMessagePacket(player, "armorstands.utility.toolRack.noHook", 0xFF0000);
+          MessagePacket.sendToClient(player, "armorstands.utility.toolRack.noHook", 0xFF0000);
         } else {
           editor.applyAction(action);
         }

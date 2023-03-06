@@ -20,10 +20,6 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "init_slots_packet");
 
-  public static final Identifier TOGGLE_FLAG_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "toggle_flag_packet");
-
   public static final Identifier SET_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "set_flag_packet");
@@ -39,6 +35,10 @@ public class NetworkPackets {
   public static final Identifier UTILITY_ACTION_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "utility_action_packet");
+
+  public static final Identifier SET_POSE_PRESET_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "set_pose_preset_packet");
 
   public static final Identifier SET_POSE_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,

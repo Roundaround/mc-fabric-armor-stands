@@ -1,7 +1,8 @@
 package me.roundaround.armorstands.network.packet.c2s;
 
 import me.roundaround.armorstands.network.packet.NetworkPackets;
-import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.ArmorStandEditor;
+import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -11,20 +12,20 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class InitSlotsPacket {
-  private final boolean fillSlots;
+public class AdjustYawPacket {
+  private final int amount;
 
-  public InitSlotsPacket(PacketByteBuf buf) {
-    this.fillSlots = buf.readBoolean();
+  public AdjustYawPacket(PacketByteBuf buf) {
+    this.amount = buf.readInt();
   }
 
-  public InitSlotsPacket(boolean fillSlots) {
-    this.fillSlots = fillSlots;
+  public AdjustYawPacket(int amount) {
+    this.amount = amount;
   }
 
   private PacketByteBuf toPacket() {
     PacketByteBuf buf = new PacketByteBuf(PacketByteBufs.create());
-    buf.writeBoolean(this.fillSlots);
+    buf.writeInt(this.amount);
     return buf;
   }
 
@@ -33,23 +34,24 @@ public class InitSlotsPacket {
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketSender responseSender) {
-    if (!(player.currentScreenHandler instanceof ArmorStandScreenHandler)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
       return;
     }
 
-    ArmorStandScreenHandler screenHandler = (ArmorStandScreenHandler) player.currentScreenHandler;
-    screenHandler.initSlots(this.fillSlots);
+    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
+    ArmorStandEditor editor = screenHandler.getEditor();
+    editor.rotate(this.amount);
   }
 
-  public static void sendToServer(boolean fillSlots) {
-    ClientPlayNetworking.send(NetworkPackets.INIT_SLOTS_PACKET, new InitSlotsPacket(fillSlots).toPacket());
+  public static void sendToServer(int amount) {
+    ClientPlayNetworking.send(NetworkPackets.ADJUST_YAW_PACKET, new AdjustYawPacket(amount).toPacket());
   }
 
   public static void registerServerReceiver() {
     ServerPlayNetworking.registerGlobalReceiver(
-        NetworkPackets.INIT_SLOTS_PACKET,
+        NetworkPackets.ADJUST_YAW_PACKET,
         (server, player, handler, buf, responseSender) -> {
-          new InitSlotsPacket(buf).handleOnServer(server, player, handler, responseSender);
+          new AdjustYawPacket(buf).handleOnServer(server, player, handler, responseSender);
         });
   }
 }

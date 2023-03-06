@@ -1,6 +1,6 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.network.packet.c2s.AdjustPosPacket;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -31,7 +31,7 @@ public class MoveButtonWidget extends ButtonWidget {
         getText(amount, units),
         (rawButton) -> {
           MoveButtonWidget button = (MoveButtonWidget) rawButton;
-          ClientNetworking.sendAdjustPosPacket(
+          AdjustPosPacket.sendToServer(
               button.direction,
               button.amount,
               button.mode,

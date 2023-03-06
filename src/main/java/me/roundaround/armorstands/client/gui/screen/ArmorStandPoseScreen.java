@@ -9,10 +9,10 @@ import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
+import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -211,7 +211,7 @@ public class ArmorStandPoseScreen
         BUTTON_HEIGHT,
         Text.translatable("armorstands.pose.mirror"),
         (button) -> {
-          ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
+          SetPosePacket.sendToServer(new Pose(this.armorStand).mirror());
 
           this.pitchSlider.refresh();
           this.yawSlider.refresh();

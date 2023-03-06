@@ -1,6 +1,6 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
 import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -23,7 +23,7 @@ public class PresetPoseButtonWidget extends SimpleTooltipButtonWidget {
         Text.empty(),
         Text.empty(),
         (button) -> {
-          ClientNetworking.sendSetPosePacket(((PresetPoseButtonWidget) button).getPose());
+          SetPosePresetPacket.sendToServer(((PresetPoseButtonWidget) button).getPose());
         });
 
     updateMessage();

@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
-import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
+import me.roundaround.armorstands.network.packet.c2s.AdjustPosePacket;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -129,6 +129,6 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   private void persistValue() {
-    ClientNetworking.sendAdjustPosePacket(this.part, this.parameter, getAngle());
+    AdjustPosePacket.sendToServer(this.part, this.parameter, getAngle());
   }
 }

@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
+import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
+import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -27,7 +29,7 @@ public class ArmorStandsClientMod implements ClientModInitializer {
 
   @Override
   public void onInitializeClient() {
-    ClientNetworking.registerReceivers();
+    registerReceivers();
 
     highlightArmorStandKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
         "armorstands.key.highlight_armor_stand",
@@ -81,5 +83,11 @@ public class ArmorStandsClientMod implements ClientModInitializer {
             });
           }
         });
+  }
+
+  private static void registerReceivers() {
+    OpenScreenPacket.registerClientReceiver();
+    ClientUpdatePacket.registerClientReceiver();
+    MessagePacket.registerClientReceiver();
   }
 }
