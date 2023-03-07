@@ -2,6 +2,7 @@ package me.roundaround.armorstands.network.packet.c2s;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
+import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -46,6 +47,8 @@ public class SetFlagPacket {
     HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
     editor.setFlag(this.flag, this.value);
+
+    ClientUpdatePacket.sendToClient(player, editor.getArmorStand());
   }
 
   public static void sendToServer(ArmorStandFlag flag, boolean value) {

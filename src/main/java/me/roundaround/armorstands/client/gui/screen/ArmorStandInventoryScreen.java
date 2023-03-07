@@ -6,7 +6,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
+import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
+import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
@@ -31,6 +33,7 @@ public class ArmorStandInventoryScreen
 
   private float mouseX;
   private float mouseY;
+  private ArmorStandFlagToggleWidget toggle;
 
   public ArmorStandInventoryScreen(
       ArmorStandScreenHandler handler,
@@ -64,6 +67,7 @@ public class ArmorStandInventoryScreen
   @Override
   public void init() {
     super.init();
+
     initNavigationButtons(List.of(
         ScreenFactory.create(
             ArmorStandUtilitiesScreen.TITLE,
@@ -88,6 +92,23 @@ public class ArmorStandInventoryScreen
         ScreenFactory.create(
             ArmorStandInventoryScreen.TITLE,
             ArmorStandInventoryScreen.U_INDEX)));
+
+    this.toggle = addDrawableChild(
+        new ArmorStandFlagToggleWidget(
+            this.textRenderer,
+            ArmorStandFlag.LOCK_INVENTORY,
+            false,
+            ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand),
+            this.width - SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - ArmorStandFlagToggleWidget.WIDGET_HEIGHT,
+            Text.translatable("armorstands.flags.inventory")));
+  }
+
+  @Override
+  public void handledScreenTick() {
+    super.handledScreenTick();
+
+    this.toggle.accept(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
   }
 
   @Override
