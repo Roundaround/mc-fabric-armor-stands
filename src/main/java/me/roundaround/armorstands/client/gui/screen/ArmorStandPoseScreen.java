@@ -525,6 +525,35 @@ public class ArmorStandPoseScreen
   }
 
   @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    if (this.pitchSlider != null && this.pitchSlider.mouseScrolled(mouseX, mouseY, amount)) {
+      return true;
+    }
+    if (this.yawSlider != null && this.yawSlider.mouseScrolled(mouseX, mouseY, amount)) {
+      return true;
+    }
+    if (this.rollSlider != null && this.rollSlider.mouseScrolled(mouseX, mouseY, amount)) {
+      return true;
+    }
+    return super.mouseScrolled(mouseX, mouseY, amount);
+  }
+
+  @Override
+  protected void handledScreenTick() {
+    super.handledScreenTick();
+
+    if (this.pitchSlider != null) {
+      this.pitchSlider.tick();
+    }
+    if (this.yawSlider != null) {
+      this.yawSlider.tick();
+    }
+    if (this.rollSlider != null) {
+      this.rollSlider.tick();
+    }
+  }
+
+  @Override
   protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
     super.renderActivePageButtonHighlight(matrixStack);
 

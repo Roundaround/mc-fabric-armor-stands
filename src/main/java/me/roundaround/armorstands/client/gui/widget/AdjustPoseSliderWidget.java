@@ -23,6 +23,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   private Optional<Float> lastAngle = Optional.empty();
   private int min = -180;
   private int max = 180;
+  private Optional<Long> lastScroll = Optional.empty();
 
   public AdjustPoseSliderWidget(
       int x,
@@ -90,6 +91,15 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     persistValue();
   }
 
+  public void tick() {
+    this.lastScroll.ifPresent(lastScroll -> {
+      if (System.currentTimeMillis() - lastScroll > 500) {
+        this.lastScroll = Optional.empty();
+        persistValue();
+      }
+    });
+  }
+
   @Override
   protected void updateMessage() {
     setMessage(Text.translatable(
@@ -107,6 +117,18 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     super.onRelease(mouseX, mouseY);
 
     persistValue();
+  }
+
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    if (isMouseOver(mouseX, mouseY)) {
+      setAngle(getAngle() + (float) amount);
+      applyValue();
+      this.lastScroll = Optional.of(System.currentTimeMillis());
+      return true;
+    }
+
+    return super.mouseScrolled(mouseX, mouseY, amount);
   }
 
   @Override
@@ -132,7 +154,11 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   private void setAngle(float value) {
-    this.value = angleToValue(MathHelper.clamp(value, this.min, this.max), this.min, this.max);
+    setValue(angleToValue(value, this.min, this.max));
+  }
+
+  private void setValue(double value) {
+    this.value = MathHelper.clamp(value, 0, 1);
     updateMessage();
   }
 
@@ -147,6 +173,9 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   private void persistValue() {
+    // Cancel any pending scroll updates
+    this.lastScroll = Optional.empty();
+
     AdjustPosePacket.sendToServer(this.part, this.parameter, getAngle());
   }
 }
