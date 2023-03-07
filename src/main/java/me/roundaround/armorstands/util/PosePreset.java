@@ -268,7 +268,52 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(-40f, 20f, 0f),
       new EulerAngle(-4f, -20f, -10f),
       new EulerAngle(-88f, 71f, 0f),
-      new EulerAngle(-88f, 46f, 0f));
+      new EulerAngle(-88f, 46f, 0f)),
+  JUMP_ATTACK(
+      "jump_attack",
+      Source.ROUNDAROUND,
+      new EulerAngle(-43f, 0f, 0f),
+      new EulerAngle(4f, 0f, 0f),
+      new EulerAngle(-144f, -10f, 28f),
+      new EulerAngle(-129f, 47f, -7f),
+      new EulerAngle(30f, 0f, 20f),
+      new EulerAngle(30f, 0f, -20f)),
+  STEWARD(
+      "steward",
+      Source.ROUNDAROUND,
+      new EulerAngle(-3f, 0f, 0f),
+      new EulerAngle(0f, 0f, 2f),
+      new EulerAngle(-105f, -45f, 180f),
+      new EulerAngle(-2f, 0f, -20f),
+      new EulerAngle(0f, 0f, 5f),
+      new EulerAngle(0f, 0f, -5f)),
+  SCARECROW(
+      "scarecrow",
+      Source.ROUNDAROUND,
+      new EulerAngle(8f, 26f, -6f),
+      new EulerAngle(0f, 0f, 5f),
+      new EulerAngle(-15f, 0f, 79f),
+      new EulerAngle(-16f, 0f, -40f),
+      new EulerAngle(0f, 0f, -18f),
+      new EulerAngle(16f, 20f, 0f)),
+  PRETTY(
+      "pretty",
+      Source.ROUNDAROUND,
+      new EulerAngle(-17f, 0f, 0f),
+      new EulerAngle(0f, 0f, -8f),
+      new EulerAngle(-12f, 20f, 0f),
+      new EulerAngle(130f, -14f, -3f),
+      new EulerAngle(-100f, -44f, 0f),
+      new EulerAngle(-90f, -10f, 0f)),
+  DRUM_MAJOR(
+      "drum_major",
+      Source.ROUNDAROUND,
+      new EulerAngle(-13f, 0f, 0f),
+      new EulerAngle(9f, 0f, 0f),
+      new EulerAngle(110f, 125f, 180f),
+      new EulerAngle(-10f, 0f, -20f),
+      new EulerAngle(-94f, 0f, 0f),
+      new EulerAngle(15f, 0f, 0f));
 
   private final String id;
   private final Text label;
@@ -356,7 +401,8 @@ public enum PosePreset implements PoseSupplier {
     ALL("all"),
     VANILLA("vanilla"),
     VANILLA_TWEAKS("vanillaTweaks"),
-    BEDROCK("bedrock");
+    BEDROCK("bedrock"),
+    ROUNDAROUND("roundaround");
 
     private final String id;
 
