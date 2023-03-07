@@ -101,6 +101,22 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     calculateBounds();
   }
 
+  public int getLeft() {
+    return MathHelper.floor(left);
+  }
+
+  public int getRight() {
+    return MathHelper.ceil(right);
+  }
+
+  public int getTop() {
+    return MathHelper.floor(top);
+  }
+
+  public int getBottom() {
+    return MathHelper.ceil(bottom);
+  }
+
   private void calculateBounds() {
     switch (alignmentH) {
       case CENTER:

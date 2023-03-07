@@ -85,8 +85,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public boolean isMouseOver(double mouseX, double mouseY) {
-    return active && visible
-        && (flagLabel.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY));
+    return active && visible && isWithinBounds(mouseX, mouseY);
   }
 
   @Override
@@ -96,7 +95,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
 
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    hovered = flagLabel.isMouseOver(mouseX, mouseY) || isWidgetMouseOver(mouseX, mouseY);
+    hovered = isWithinBounds(mouseX, mouseY);
 
     renderWidget(matrixStack, mouseX, mouseY, delta);
     flagLabel.render(matrixStack, mouseX, mouseY, delta);
@@ -191,8 +190,8 @@ public class ArmorStandFlagToggleWidget extends PressableWidget implements Consu
         WIDGET_HEIGHT / 2);
   }
 
-  private boolean isWidgetMouseOver(double mouseX, double mouseY) {
-    return mouseX >= widgetX && mouseX < widgetX + WIDGET_WIDTH
-        && mouseY >= widgetY && mouseY < widgetY + WIDGET_HEIGHT;
+  private boolean isWithinBounds(double mouseX, double mouseY) {
+    return mouseX >= this.flagLabel.getLeft() && mouseX < this.valueLabel.getRight()
+        && mouseY >= this.flagLabel.getTop() && mouseY < this.flagLabel.getBottom();
   }
 }
