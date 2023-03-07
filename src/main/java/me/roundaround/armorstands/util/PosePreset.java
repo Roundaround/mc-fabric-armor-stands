@@ -224,8 +224,8 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(4.0f, 8.0f, 237.0f),
       new EulerAngle(8.0f, 20.0f, 4.0f),
       new EulerAngle(-14.0f, -18.0f, -16.0f)),
-  PLEDGEING(
-      "pledgeing",
+  PLEDGING(
+      "pledging",
       Source.BEDROCK,
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
