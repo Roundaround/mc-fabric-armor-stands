@@ -12,7 +12,7 @@ import net.minecraft.util.collection.DefaultedList;
 public interface ArmorStandEntityAccessor {
   @Invoker("setSmall")
   public void invokeSetSmall(boolean small);
-  
+
   @Invoker("setShowArms")
   public void invokeSetShowArms(boolean showArms);
 
@@ -27,4 +27,10 @@ public interface ArmorStandEntityAccessor {
 
   @Accessor("armorItems")
   public DefaultedList<ItemStack> getArmorItems();
+
+  @Accessor("disabledSlots")
+  public int getDisabledSlots();
+
+  @Accessor("disabledSlots")
+  public void setDisabledSlots(int disabledSlots);
 }

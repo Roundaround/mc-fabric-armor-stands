@@ -17,7 +17,11 @@ public enum ArmorStandFlag {
   INVISIBLE("visible"),
   NAME("name"),
   INVULNERABLE("invulnerable"),
+  LOCK_INVENTORY("lock_inventory"),
   UNKNOWN("unknown");
+
+  // Magic number from Vanilla Tweaks armor stand data pack. ¯\_(ツ)_/¯
+  private static final int ALL_SLOTS_DISABLED = 4144959;
 
   private final String id;
 
@@ -31,6 +35,8 @@ public enum ArmorStandFlag {
   }
 
   public boolean getValue(ArmorStandEntity armorStand) {
+    ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
+
     switch (this) {
       case HIDE_BASE_PLATE:
         return armorStand.shouldHideBasePlate();
@@ -46,6 +52,8 @@ public enum ArmorStandFlag {
         return armorStand.isCustomNameVisible();
       case INVULNERABLE:
         return armorStand.isInvulnerable();
+      case LOCK_INVENTORY:
+        return accessor.getDisabledSlots() == ALL_SLOTS_DISABLED;
       default:
         return false;
     }
@@ -83,6 +91,9 @@ public enum ArmorStandFlag {
         break;
       case INVULNERABLE:
         armorStand.setInvulnerable(value);
+        break;
+      case LOCK_INVENTORY:
+        accessor.setDisabledSlots(value ? ALL_SLOTS_DISABLED : 0);
         break;
       default:
         // Do nothing for unknown
