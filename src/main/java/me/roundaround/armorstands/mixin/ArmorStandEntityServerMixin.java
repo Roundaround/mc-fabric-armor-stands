@@ -30,7 +30,7 @@ public abstract class ArmorStandEntityServerMixin {
     ServerPlayerEntity player = (ServerPlayerEntity) playerEntity;
     ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) playerEntity;
 
-    if (!ArmorStandUsers.canEditArmorStands(player)) {
+    if (!ArmorStandUsers.canEditArmorStands(player) || player.isSneaking()) {
       return;
     }
 
