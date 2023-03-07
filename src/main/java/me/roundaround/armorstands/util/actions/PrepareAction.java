@@ -18,7 +18,6 @@ public class PrepareAction extends ComboAction {
         FlagAction.set(ArmorStandFlag.SHOW_ARMS, true),
         FlagAction.set(ArmorStandFlag.HIDE_BASE_PLATE, true),
         FlagAction.set(ArmorStandFlag.INVISIBLE, false),
-        FlagAction.set(ArmorStandFlag.NAME, true),
         SnapToGroundAction.standing(),
         PoseAction.fromPose(PosePreset.DEFAULT.toPose())));
   }
