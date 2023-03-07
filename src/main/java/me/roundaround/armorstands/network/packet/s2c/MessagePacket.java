@@ -51,7 +51,7 @@ public class MessagePacket {
 
   private PacketByteBuf toPacket() {
     PacketByteBuf buf = new PacketByteBuf(PacketByteBufs.create());
-    buf.writeBoolean(this.styled);
+    buf.writeBoolean(this.translatable);
     buf.writeString(this.message);
     buf.writeBoolean(this.styled);
     if (this.styled) {
