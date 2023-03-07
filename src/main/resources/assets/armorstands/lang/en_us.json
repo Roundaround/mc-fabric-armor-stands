@@ -109,6 +109,7 @@
   "armorstands.presets.source": "Source: %s",
   "armorstands.preset.default": "Default",
   "armorstands.preset.attention": "Attention",
+  "armorstands.preset.confident": "Confident",
   "armorstands.preset.walking": "Walking",
   "armorstands.preset.running": "Running",
   "armorstands.preset.salute": "Salute",

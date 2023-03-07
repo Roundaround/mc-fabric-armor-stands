@@ -26,6 +26,15 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(0f, 0f, 0f),
       new EulerAngle(0f, 0f, 0f),
       new EulerAngle(0f, 0f, 0f)),
+  CONFIDENT(
+      "confident",
+      Source.VANILLA_TWEAKS,
+      new EulerAngle(-10f, 20f, 0f),
+      new EulerAngle(-2f, 0f, 0f),
+      new EulerAngle(5f, 0f, 0f),
+      new EulerAngle(5f, 0f, 0f),
+      new EulerAngle(16f, 2f, 10f),
+      new EulerAngle(0f, -10f, -4f)),
   WALKING(
       "walking",
       Source.VANILLA_TWEAKS,
