@@ -157,6 +157,19 @@ public class ArmorStandPresetsScreen
     updateFilters();
   }
 
+  @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    if (isMouseOverList(mouseX, mouseY)) {
+      if (amount < 0) {
+        nextPage();
+      } else {
+        previousPage();
+      }
+      return true;
+    }
+    return super.mouseScrolled(mouseX, mouseY, amount);
+  }
+
   private void filter(Source source) {
     this.source = source;
     updateFilters();
@@ -210,5 +223,13 @@ public class ArmorStandPresetsScreen
     if (this.page > 0) {
       setPage(this.page - 1);
     }
+  }
+
+  private boolean isMouseOverList(double mouseX, double mouseY) {
+    return mouseX >= this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH
+        && mouseX < this.width - SCREEN_EDGE_PAD
+        && mouseY >= this.height - SCREEN_EDGE_PAD - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
+            - (BUTTONS_PER_PAGE + 2) * BETWEEN_PAD - IconButtonWidget.HEIGHT
+        && mouseY < this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT;
   }
 }
