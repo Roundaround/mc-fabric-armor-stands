@@ -2,7 +2,9 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
@@ -13,7 +15,9 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -155,6 +159,16 @@ public class ArmorStandInventoryScreen
         0,
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT);
+
+    ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = ((ArmorStandScreenHandler) this.handler).getArmorSlots();
+    for (int index = 0; index < armorSlots.size(); index++) {
+      Slot slot = armorSlots.get(index).getFirst();
+      EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
+      if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
+        // TODO: Make this a texture
+        fill(matrixStack, x + slot.x, y + slot.y, x + slot.x + 16, y + slot.y + 16, 0x80000000);
+      }
+    }
 
     InventoryScreen.drawEntity(
         x + 88,

@@ -1,9 +1,13 @@
 package me.roundaround.armorstands.screen;
 
+import java.util.ArrayList;
+
+import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
+import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.util.ArmorStandEditor;
@@ -40,11 +44,15 @@ public class ArmorStandScreenHandler
       EquipmentSlot.CHEST,
       EquipmentSlot.LEGS,
       EquipmentSlot.FEET };
+  private static final EquipmentSlot[] HAND_SLOT_ORDER = new EquipmentSlot[] {
+      EquipmentSlot.MAINHAND,
+      EquipmentSlot.OFFHAND };
 
   private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
   private final ArmorStandInventory inventory;
   private final ArmorStandEditor editor;
+  private final ArrayList<Pair<Slot, EquipmentSlot>> armorSlots = new ArrayList<>();
 
   public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
     super(null, syncId);
@@ -64,6 +72,7 @@ public class ArmorStandScreenHandler
 
   public void initSlots(boolean fillSlots) {
     slots.clear();
+    armorSlots.clear();
     ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
     ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
 
@@ -81,20 +90,43 @@ public class ArmorStandScreenHandler
     }
 
     for (int i = 0; i < 2; i++) {
-      int index = i;
-      addSlot(new Slot(this.inventory, index, 116, 44 + index * 18) {
+      final int index = i;
+      final EquipmentSlot equipmentSlot = HAND_SLOT_ORDER[i];
+
+      Slot slot = addSlot(new Slot(this.inventory, index, 116, 44 + index * 18) {
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
           return Pair.of(
               PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
               EMPTY_HAND_SLOT_TEXTURES[index]);
         }
+
+        @Override
+        public boolean canTakeItems(PlayerEntity player) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
+              && isSlotDisabled(armorStand, equipmentSlot)) {
+            return false;
+          }
+          return super.canTakeItems(player);
+        }
+
+        @Override
+        public boolean canInsert(ItemStack stack) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
+              && isSlotDisabled(armorStand, equipmentSlot)) {
+            return false;
+          }
+          return super.canInsert(stack);
+        }
       });
+
+      armorSlots.add(Pair.of(slot, equipmentSlot));
     }
 
     for (int i = 0; i < 4; i++) {
       final EquipmentSlot equipmentSlot = EQUIPMENT_SLOT_ORDER[i];
-      addSlot(new Slot(this.inventory, 2 + 3 - i, 44, 8 + i * 18) {
+
+      Slot slot = addSlot(new Slot(this.inventory, 2 + 3 - i, 44, 8 + i * 18) {
         @Override
         public void setStack(ItemStack stack) {
           ArmorStandScreenHandler.this.armorStand.equipStack(equipmentSlot, stack);
@@ -107,7 +139,20 @@ public class ArmorStandScreenHandler
         }
 
         @Override
+        public boolean canTakeItems(PlayerEntity player) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
+              && isSlotDisabled(armorStand, equipmentSlot)) {
+            return false;
+          }
+          return super.canTakeItems(player);
+        }
+
+        @Override
         public boolean canInsert(ItemStack stack) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
+              && isSlotDisabled(armorStand, equipmentSlot)) {
+            return false;
+          }
           return equipmentSlot == ArmorStandEntity.getPreferredEquipmentSlot(stack);
         }
 
@@ -118,7 +163,13 @@ public class ArmorStandScreenHandler
               EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]);
         }
       });
+
+      armorSlots.add(Pair.of(slot, equipmentSlot));
     }
+  }
+
+  public ImmutableList<Pair<Slot, EquipmentSlot>> getArmorSlots() {
+    return ImmutableList.copyOf(this.armorSlots);
   }
 
   @Override
@@ -208,6 +259,11 @@ public class ArmorStandScreenHandler
 
     int targetIndex = this.slots.size() - 1 - equipmentSlot.getEntitySlotId();
     Slot slot = this.slots.get(targetIndex);
+
+    if (!slot.canInsert(stack)) {
+      return false;
+    }
+
     ItemStack equipped = slot.getStack();
     slot.setStack(stack);
     source.setStack(equipped);
@@ -216,12 +272,24 @@ public class ArmorStandScreenHandler
   }
 
   private boolean tryTransferToMainHand(ItemStack stack) {
+    if (isSlotDisabled(this.armorStand, EquipmentSlot.MAINHAND)) {
+      return false;
+    }
+
     int targetIndex = PlayerInventory.MAIN_SIZE;
     return insertItem(stack, targetIndex, targetIndex + 1, false);
   }
 
   private boolean tryTransferToOffHand(ItemStack stack) {
+    if (isSlotDisabled(this.armorStand, EquipmentSlot.OFFHAND)) {
+      return false;
+    }
+
     int targetIndex = PlayerInventory.MAIN_SIZE + 1;
     return insertItem(stack, targetIndex, targetIndex + 1, false);
+  }
+
+  public static boolean isSlotDisabled(ArmorStandEntity armorStand, EquipmentSlot slot) {
+    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
   }
 }
