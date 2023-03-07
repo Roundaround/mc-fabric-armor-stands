@@ -65,12 +65,20 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   public void increment() {
-    setAngle(Math.round(getAngle() / 1) * 1 + 1);
+    double up = Math.ceil(getAngle());
+    if (up - getAngle() < MathHelper.EPSILON) {
+      up += 1;
+    }
+    setAngle((float) up);
     persistValue();
   }
 
   public void decrement() {
-    setAngle(Math.round(getAngle() / 1) * 1 - 1);
+    double down = Math.floor(getAngle());
+    if (getAngle() - down < MathHelper.EPSILON) {
+      down -= 1;
+    }
+    setAngle((float) down);
     persistValue();
   }
 
