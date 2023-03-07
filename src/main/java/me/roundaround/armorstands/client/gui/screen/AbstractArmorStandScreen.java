@@ -199,6 +199,11 @@ public abstract class AbstractArmorStandScreen
       return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    if (isDragging() && getFocused() != null && button == 0) {
+      setDragging(false);
+      return getFocused().mouseReleased(mouseX, mouseY, button);
+    }
+
     setDragging(false);
     return hoveredElement(mouseX, mouseY).filter((element) -> {
       return element.mouseReleased(mouseX, mouseY, button);
