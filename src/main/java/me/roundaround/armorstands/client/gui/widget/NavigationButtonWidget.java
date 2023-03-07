@@ -67,6 +67,11 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
     return this.clickable && super.isHovered();
   }
 
+  public boolean isMouseOverIgnoreState(double mouseX, double mouseY) {
+    return mouseX >= this.x && mouseY >= this.y
+        && mouseX < (this.x + this.width) && mouseY < (this.y + this.height);
+  }
+
   @FunctionalInterface
   public static interface PressAction<P extends AbstractArmorStandScreen, T extends AbstractArmorStandScreen> {
     public void accept(

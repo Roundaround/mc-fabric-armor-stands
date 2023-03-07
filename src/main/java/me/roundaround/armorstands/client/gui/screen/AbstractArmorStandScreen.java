@@ -54,6 +54,7 @@ public abstract class AbstractArmorStandScreen
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
   protected final ArrayList<LabelWidget> labels = new ArrayList<>();
+  protected final ArrayList<NavigationButtonWidget<?, ?>> navigationButtons = new ArrayList<>();
 
   protected NavigationButtonWidget<?, ?> activeButton;
   protected boolean supportsUndoRedo = false;
@@ -105,6 +106,7 @@ public abstract class AbstractArmorStandScreen
     InitSlotsPacket.sendToServer(this.utilizesInventory);
 
     this.labels.clear();
+    this.navigationButtons.clear();
 
     super.init();
   }
@@ -211,6 +213,24 @@ public abstract class AbstractArmorStandScreen
   }
 
   @Override
+  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    if (this.cursorLocked) {
+      return false;
+    }
+    for (NavigationButtonWidget<?, ?> button : this.navigationButtons) {
+      if (button.isMouseOverIgnoreState(mouseX, mouseY)) {
+        if (amount > 0) {
+          goToPreviousScreen();
+        } else {
+          goToNextScreen();
+        }
+        return true;
+      }
+    }
+    return super.mouseScrolled(mouseX, mouseY, amount);
+  }
+
+  @Override
   public Optional<Element> hoveredElement(double mouseX, double mouseY) {
     if (this.cursorLocked) {
       return Optional.empty();
@@ -252,20 +272,14 @@ public abstract class AbstractArmorStandScreen
           break;
         }
         playClickSound();
-        client.currentScreen = null;
-        AbstractArmorStandScreen nextScreen = getPreviousScreen().accept(this.handler, this.armorStand);
-        LastUsedScreen.set(nextScreen);
-        client.setScreen(nextScreen);
+        goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
         if (this.client.options.rightKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
-        client.currentScreen = null;
-        nextScreen = getNextScreen().accept(this.handler, this.armorStand);
-        LastUsedScreen.set(nextScreen);
-        client.setScreen(nextScreen);
+        goToNextScreen();
         return true;
       case GLFW.GLFW_KEY_Z:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
@@ -365,6 +379,8 @@ public abstract class AbstractArmorStandScreen
       }
 
       x += NAV_BUTTON_SPACING + NavigationButtonWidget.WIDTH;
+
+      this.navigationButtons.add(button);
     }
   }
 
@@ -433,6 +449,20 @@ public abstract class AbstractArmorStandScreen
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
     InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+  }
+
+  protected void goToPreviousScreen() {
+    this.client.currentScreen = null;
+    AbstractArmorStandScreen nextScreen = getPreviousScreen().accept(this.handler, this.armorStand);
+    LastUsedScreen.set(nextScreen);
+    this.client.setScreen(nextScreen);
+  }
+
+  protected void goToNextScreen() {
+    this.client.currentScreen = null;
+    AbstractArmorStandScreen nextScreen = getNextScreen().accept(this.handler, this.armorStand);
+    LastUsedScreen.set(nextScreen);
+    this.client.setScreen(nextScreen);
   }
 
   public static class ScreenFactory<T extends AbstractArmorStandScreen> {
