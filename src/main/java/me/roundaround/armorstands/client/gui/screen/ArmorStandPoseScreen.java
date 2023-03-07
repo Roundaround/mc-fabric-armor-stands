@@ -79,7 +79,7 @@ public class ArmorStandPoseScreen
 
   @Override
   public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandInventoryScreen::new;
+    return ArmorStandPresetsScreen::new;
   }
 
   @Override
