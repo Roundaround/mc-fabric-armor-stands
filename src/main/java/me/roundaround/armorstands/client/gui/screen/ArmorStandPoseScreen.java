@@ -43,6 +43,7 @@ public class ArmorStandPoseScreen
   private IconButtonWidget<ArmorStandPoseScreen> rightArmButton;
   private IconButtonWidget<ArmorStandPoseScreen> leftLegButton;
   private IconButtonWidget<ArmorStandPoseScreen> rightLegButton;
+  private LabelWidget posePartLabel;
   private AdjustPoseSliderWidget pitchSlider;
   private AdjustPoseSliderWidget yawSlider;
   private AdjustPoseSliderWidget rollSlider;
@@ -243,7 +244,7 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    addLabel(LabelWidget.builder(
+    this.posePartLabel = addLabel(LabelWidget.builder(
         Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()),
         this.width - SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
@@ -554,5 +555,9 @@ public class ArmorStandPoseScreen
     this.pitchSlider.setPart(part);
     this.yawSlider.setPart(part);
     this.rollSlider.setPart(part);
+    this.posePartLabel.setText(
+        Text.translatable(
+            "armorstands.pose.editing",
+            this.posePart.getDisplayName().getString()));
   }
 }
