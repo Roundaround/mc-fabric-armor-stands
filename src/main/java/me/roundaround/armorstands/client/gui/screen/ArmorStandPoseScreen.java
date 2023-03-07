@@ -16,6 +16,7 @@ import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -244,14 +245,35 @@ public class ArmorStandPoseScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
+    addDrawableChild(CyclingButtonWidget.builder(SliderRange::getDisplayName)
+        .initially(SliderRange.FULL)
+        .values(SliderRange.values())
+        .omitKeyText()
+        .build(
+            this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
+            this.height - SCREEN_EDGE_PAD
+                - 3 * SLIDER_HEIGHT
+                - 3 * BUTTON_HEIGHT
+                - 3 * BETWEEN_PAD
+                - 3 * ROW_PAD
+                - 2 * LabelWidget.HEIGHT_WITH_PADDING,
+            CONTROL_WIDTH,
+            BUTTON_HEIGHT,
+            Text.translatable("armorstands.pose.range"),
+            (button, value) -> {
+              this.pitchSlider.setRange(value.getMin(), value.getMax());
+              this.yawSlider.setRange(value.getMin(), value.getMax());
+              this.rollSlider.setRange(value.getMin(), value.getMax());
+            }));
+
     this.posePartLabel = addLabel(LabelWidget.builder(
         Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()),
         this.width - SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD
             - 3 * SLIDER_HEIGHT
-            - 2 * BUTTON_HEIGHT
-            - 3 * BETWEEN_PAD
-            - 2 * ROW_PAD
+            - 3 * BUTTON_HEIGHT
+            - 4 * BETWEEN_PAD
+            - 3 * ROW_PAD
             - 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .shiftForPadding()
         .alignedBottom()
@@ -559,5 +581,31 @@ public class ArmorStandPoseScreen
         Text.translatable(
             "armorstands.pose.editing",
             this.posePart.getDisplayName().getString()));
+  }
+
+  private static enum SliderRange {
+    FULL(-180, 180),
+    HALF(-90, 90),
+    TIGHT(-35, 35);
+
+    private final int min;
+    private final int max;
+
+    private SliderRange(int min, int max) {
+      this.min = min;
+      this.max = max;
+    }
+
+    public int getMin() {
+      return this.min;
+    }
+
+    public int getMax() {
+      return this.max;
+    }
+
+    public Text getDisplayName() {
+      return Text.translatable("armorstands.pose.range." + this.name().toLowerCase());
+    }
   }
 }

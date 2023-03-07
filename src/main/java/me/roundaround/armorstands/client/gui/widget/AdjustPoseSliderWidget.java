@@ -21,6 +21,8 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   private PosePart part;
   private EulerAngleParameter parameter;
   private Optional<Float> lastAngle = Optional.empty();
+  private int min = -180;
+  private int max = 180;
 
   public AdjustPoseSliderWidget(
       int x,
@@ -46,6 +48,12 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void setParameter(EulerAngleParameter parameter) {
     this.parameter = parameter;
+    refresh();
+  }
+
+  public void setRange(int min, int max) {
+    this.min = min;
+    this.max = max;
     refresh();
   }
 
@@ -120,20 +128,22 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   private float getAngle() {
-    return valueToAngle(this.value);
+    return valueToAngle(this.value, this.min, this.max);
   }
 
   private void setAngle(float value) {
-    this.value = angleToValue(value);
+    this.value = angleToValue(MathHelper.clamp(value, this.min, this.max), this.min, this.max);
     updateMessage();
   }
 
-  private static double angleToValue(float value) {
-    return MathHelper.clamp((value + 180f) / 360f, 0f, 1f);
+  private static double angleToValue(float value, int min, int max) {
+    // Map angle (min-max) to value (0-1)
+    return (value - min) / (max - min);
   }
 
-  private static float valueToAngle(double value) {
-    return (float) (value * 360f - 180f);
+  private static float valueToAngle(double value, int min, int max) {
+    // Map value (0-1) to angle (min-max)
+    return (float) (value * (max - min) + min);
   }
 
   private void persistValue() {
