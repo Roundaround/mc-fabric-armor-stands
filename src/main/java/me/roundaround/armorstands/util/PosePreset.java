@@ -44,8 +44,8 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(40f, 0f, -10f),
       new EulerAngle(-40f, 0f, 0f),
       new EulerAngle(40f, 0f, 0f)),
-  LUNGEING(
-      "lungeing",
+  LUNGING(
+      "lunging",
       Source.VANILLA_TWEAKS,
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(15.0f, 0.0f, 0.0f),
