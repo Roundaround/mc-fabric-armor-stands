@@ -33,6 +33,7 @@
   "armorstands.flags.visible": "Invisible",
   "armorstands.flags.name": "Show name",
   "armorstands.flags.invulnerable": "Invulnerable",
+  "armorstands.flags.inventory": "Lock items",
   "armorstands.flagToggle.on": "Yes",
   "armorstands.flagToggle.off": "No",
   "armorstands.move.up": "Up (+Y)",

@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.network.packet.s2c;
 
+import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
 import me.roundaround.armorstands.util.HasArmorStand;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,6 +20,7 @@ public class ClientUpdatePacket {
   private final float yaw;
   private final float pitch;
   private final boolean invulnerable;
+  private final int disabledSlots;
 
   private ClientUpdatePacket(PacketByteBuf buf) {
     this.x = buf.readDouble();
@@ -27,6 +29,7 @@ public class ClientUpdatePacket {
     this.yaw = buf.readFloat();
     this.pitch = buf.readFloat();
     this.invulnerable = buf.readBoolean();
+    this.disabledSlots = buf.readInt();
   }
 
   public ClientUpdatePacket(ArmorStandEntity armorStand) {
@@ -36,6 +39,7 @@ public class ClientUpdatePacket {
     this.yaw = armorStand.getYaw();
     this.pitch = armorStand.getPitch();
     this.invulnerable = armorStand.isInvulnerable();
+    this.disabledSlots = ((ArmorStandEntityAccessor) armorStand).getDisabledSlots();
   }
 
   private PacketByteBuf toPacket() {
@@ -46,6 +50,7 @@ public class ClientUpdatePacket {
     buf.writeFloat(this.yaw);
     buf.writeFloat(this.pitch);
     buf.writeBoolean(this.invulnerable);
+    buf.writeInt(this.disabledSlots);
     return buf;
   }
 
@@ -63,6 +68,7 @@ public class ClientUpdatePacket {
     armorStand.setYaw(this.yaw % 360f);
     armorStand.setPitch(this.pitch % 360f);
     armorStand.setInvulnerable(this.invulnerable);
+    ((ArmorStandEntityAccessor) armorStand).setDisabledSlots(this.disabledSlots);
   }
 
   public static void sendToClient(ServerPlayerEntity player, ArmorStandEntity armorStand) {

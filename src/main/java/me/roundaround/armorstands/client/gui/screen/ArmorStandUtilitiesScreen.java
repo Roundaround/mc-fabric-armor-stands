@@ -178,42 +178,48 @@ public class ArmorStandUtilitiesScreen
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.base"),
         ArmorStandFlag.HIDE_BASE_PLATE,
-        6,
+        7,
         true);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.arms"),
         ArmorStandFlag.SHOW_ARMS,
-        5,
+        6,
         false);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.small"),
         ArmorStandFlag.SMALL,
-        4,
+        5,
         false);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.gravity"),
         ArmorStandFlag.NO_GRAVITY,
-        3,
+        4,
         true);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.visible"),
         ArmorStandFlag.INVISIBLE,
-        2,
+        3,
         false);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.name"),
         ArmorStandFlag.NAME,
-        1,
+        2,
         false);
 
     addFlagToggleWidget(
         Text.translatable("armorstands.flags.invulnerable"),
         ArmorStandFlag.INVULNERABLE,
+        1,
+        false);
+
+    addFlagToggleWidget(
+        Text.translatable("armorstands.flags.inventory"),
+        ArmorStandFlag.LOCK_INVENTORY,
         0,
         false);
   }
