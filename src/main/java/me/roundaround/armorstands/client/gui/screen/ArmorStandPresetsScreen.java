@@ -1,9 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
@@ -11,6 +9,7 @@ import me.roundaround.armorstands.client.gui.widget.PresetPoseButtonWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
+import me.roundaround.armorstands.util.PosePreset.Category;
 import me.roundaround.armorstands.util.PosePreset.Source;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -33,6 +32,7 @@ public class ArmorStandPresetsScreen
   private LabelWidget pageLabel;
   private int page = 0;
   private Source source = Source.ALL;
+  private Category category = Category.ALL;
   private List<PosePreset> matchingPresets = new ArrayList<>();
 
   public ArmorStandPresetsScreen(
@@ -95,14 +95,48 @@ public class ArmorStandPresetsScreen
         this.height - SCREEN_EDGE_PAD
             - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
             - (BUTTONS_PER_PAGE + 3) * BETWEEN_PAD
-            - IconButtonWidget.HEIGHT)
+            - IconButtonWidget.HEIGHT
+            - CONTROL_HEIGHT
+            - LabelWidget.HEIGHT_WITH_PADDING
+            - 3 * BETWEEN_PAD)
         .alignedBottom()
         .justifiedRight()
         .shiftForPadding()
         .build());
     addDrawableChild(CyclingButtonWidget.builder(Source::getDisplayName)
-        .values(Source.values())
+        .values(Source.getSources())
         .initially(Source.ALL)
+        .omitKeyText()
+        .build(
+            this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
+            this.height - SCREEN_EDGE_PAD
+                - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
+                - (BUTTONS_PER_PAGE + 2) * BETWEEN_PAD
+                - IconButtonWidget.HEIGHT
+                - CONTROL_HEIGHT
+                - LabelWidget.HEIGHT_WITH_PADDING
+                - 3 * BETWEEN_PAD,
+            CONTROL_WIDTH,
+            CONTROL_HEIGHT,
+            Text.translatable("armorstands.presets.source.label"),
+            (button, source) -> {
+              filter(source);
+            }));
+
+    addLabel(LabelWidget.builder(
+        Text.translatable("armorstands.presets.category.label"),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD
+            - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
+            - (BUTTONS_PER_PAGE + 3) * BETWEEN_PAD
+            - IconButtonWidget.HEIGHT)
+        .alignedBottom()
+        .justifiedRight()
+        .shiftForPadding()
+        .build());
+    addDrawableChild(CyclingButtonWidget.builder(Category::getDisplayName)
+        .values(Category.getCategories())
+        .initially(Category.ALL)
         .omitKeyText()
         .build(
             this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
@@ -112,9 +146,9 @@ public class ArmorStandPresetsScreen
                 - IconButtonWidget.HEIGHT,
             CONTROL_WIDTH,
             CONTROL_HEIGHT,
-            Text.translatable("armorstands.presets.source.label"),
-            (button, source) -> {
-              filter(source);
+            Text.translatable("armorstands.presets.category.label"),
+            (button, category) -> {
+              filter(category);
             }));
 
     this.presetButtons.clear();
@@ -145,7 +179,8 @@ public class ArmorStandPresetsScreen
         Text.translatable("armorstands.presets.next"),
         (button) -> nextPage()));
 
-    int maxPage = MathHelper.ceil(PosePreset.values().length / (float) BUTTONS_PER_PAGE) - 1;
+    int maxPage = MathHelper.ceil(
+        PosePreset.getPresets(this.source, this.category).size() / (float) BUTTONS_PER_PAGE) - 1;
     this.pageLabel = addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1),
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH / 2,
@@ -175,18 +210,18 @@ public class ArmorStandPresetsScreen
     updateFilters();
   }
 
-  private void updateFilters() {
-    this.matchingPresets = Arrays.stream(PosePreset.values())
-        .filter((preset) -> {
-          return this.source.matches(preset.getSource());
-        })
-        .collect(Collectors.toList());
+  private void filter(Category category) {
+    this.category = category;
+    updateFilters();
+  }
 
+  private void updateFilters() {
+    this.matchingPresets = PosePreset.getPresets(this.source, this.category);
     setPage(0);
   }
 
   private void setPage(int page) {
-    int maxPage = MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1;
+    int maxPage = Math.max(0, MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1);
 
     this.page = page;
     List<PosePreset> presets = this.matchingPresets
@@ -228,8 +263,13 @@ public class ArmorStandPresetsScreen
   private boolean isMouseOverList(double mouseX, double mouseY) {
     return mouseX >= this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH
         && mouseX < this.width - SCREEN_EDGE_PAD
-        && mouseY >= this.height - SCREEN_EDGE_PAD - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT
-            - (BUTTONS_PER_PAGE + 2) * BETWEEN_PAD - IconButtonWidget.HEIGHT
-        && mouseY < this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT;
+        && mouseY >= this.height
+            - SCREEN_EDGE_PAD
+            - IconButtonWidget.HEIGHT
+            - BUTTONS_PER_PAGE * CONTROL_HEIGHT
+            - (BUTTONS_PER_PAGE + 1) * BETWEEN_PAD
+        && mouseY < this.height
+            - SCREEN_EDGE_PAD
+            - IconButtonWidget.HEIGHT;
   }
 }

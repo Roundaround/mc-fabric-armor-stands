@@ -40,6 +40,6 @@ public class PresetPoseButtonWidget extends SimpleTooltipButtonWidget {
 
   private void updateMessage() {
     setTooltip(Text.translatable("armorstands.presets.source", pose.getSource().getDisplayName()));
-    setMessage(this.pose.getLabel());
+    setMessage(this.pose.getDisplayName());
   }
 }

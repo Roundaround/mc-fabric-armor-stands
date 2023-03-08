@@ -1,6 +1,8 @@
 package me.roundaround.armorstands.util;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.Pose.PoseSupplier;
@@ -11,6 +13,7 @@ public enum PosePreset implements PoseSupplier {
   DEFAULT(
       "default",
       Source.VANILLA,
+      Category.STANDING,
       new EulerAngle(0f, 0f, 0f),
       new EulerAngle(0f, 0f, 0f),
       new EulerAngle(-15f, 0f, 10f),
@@ -20,6 +23,7 @@ public enum PosePreset implements PoseSupplier {
   ATTENTION(
       "attention",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(0f, 0f, 0f),
@@ -29,6 +33,7 @@ public enum PosePreset implements PoseSupplier {
   CONFIDENT(
       "confident",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(-10f, 20f, 0f),
       new EulerAngle(-2f, 0f, 0f),
       new EulerAngle(5f, 0f, 0f),
@@ -38,6 +43,7 @@ public enum PosePreset implements PoseSupplier {
   WALKING(
       "walking",
       Source.VANILLA_TWEAKS,
+      Category.MOVING,
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(20f, 0f, 10f),
@@ -47,6 +53,7 @@ public enum PosePreset implements PoseSupplier {
   RUNNING(
       "running",
       Source.VANILLA_TWEAKS,
+      Category.MOVING,
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(-40f, 0f, 10f),
@@ -56,6 +63,7 @@ public enum PosePreset implements PoseSupplier {
   LUNGING(
       "lunging",
       Source.VANILLA_TWEAKS,
+      Category.MOVING,
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(15.0f, 0.0f, 0.0f),
       new EulerAngle(-60.0f, -10.0f, 0.0f),
@@ -65,6 +73,7 @@ public enum PosePreset implements PoseSupplier {
   POINTING(
       "pointing",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(0f, 20f, 0f),
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(-90f, 18f, 0f),
@@ -74,6 +83,7 @@ public enum PosePreset implements PoseSupplier {
   FACEPALM(
       "facepalm",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(45f, -4f, 1f),
       new EulerAngle(10f, 0f, 0f),
       new EulerAngle(18f, -14f, 0f),
@@ -83,6 +93,7 @@ public enum PosePreset implements PoseSupplier {
   BLOCKING(
       "blocking",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(-20f, -20f, 0f),
@@ -92,6 +103,7 @@ public enum PosePreset implements PoseSupplier {
   CONFUSED(
       "confused",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(0.0f, 30.0f, 0f),
       new EulerAngle(0.0f, 13.0f, 0.0f),
       new EulerAngle(-22.0f, 31.0f, 10.0f),
@@ -101,6 +113,7 @@ public enum PosePreset implements PoseSupplier {
   WINNING(
       "winning",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(-15.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(-120.0f, -10.0f, 0.0f),
@@ -110,6 +123,7 @@ public enum PosePreset implements PoseSupplier {
   FORMAL(
       "formal",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(4.0f, 0.0f, 0.0f),
       new EulerAngle(4.0f, 0.0f, 0.0f),
       new EulerAngle(30.0f, 22.0f, -20.0f),
@@ -119,6 +133,7 @@ public enum PosePreset implements PoseSupplier {
   SALUTE(
       "salute",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(0f, 0.001f, 0f),
       new EulerAngle(5f, 0f, 0f),
       new EulerAngle(-124f, -51f, -35f),
@@ -128,6 +143,7 @@ public enum PosePreset implements PoseSupplier {
   SAD(
       "sad",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(63.0f, 0.0f, 0.0f),
       new EulerAngle(10.0f, 0.0f, 0.0f),
       new EulerAngle(-5.0f, 0.0f, 5.0f),
@@ -137,6 +153,7 @@ public enum PosePreset implements PoseSupplier {
   ARABESQUE(
       "arabesque",
       Source.VANILLA_TWEAKS,
+      Category.DYNAMIC,
       new EulerAngle(-15.0f, 0.0f, 0.0f),
       new EulerAngle(10.0f, 0.0f, 0.0f),
       new EulerAngle(-140.0f, -10.0f, 0.0f),
@@ -146,6 +163,7 @@ public enum PosePreset implements PoseSupplier {
   CANCAN(
       "cancan",
       Source.BEDROCK,
+      Category.DYNAMIC,
       new EulerAngle(-5.0f, 18.0f, 0.0f),
       new EulerAngle(0.0f, 22.0f, 0.0f),
       new EulerAngle(0.0f, 84.0f, 111.0f),
@@ -155,6 +173,7 @@ public enum PosePreset implements PoseSupplier {
   JOYOUS(
       "joyous",
       Source.VANILLA_TWEAKS,
+      Category.DYNAMIC,
       new EulerAngle(-11.0f, 0.0f, 0.0f),
       new EulerAngle(-4.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 100.0f),
@@ -164,6 +183,7 @@ public enum PosePreset implements PoseSupplier {
   CUPID(
       "cupid",
       Source.VANILLA_TWEAKS,
+      Category.DYNAMIC,
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(10.0f, 0.0f, 0.0f),
       new EulerAngle(-90.0f, -10.0f, 0.0f),
@@ -173,6 +193,7 @@ public enum PosePreset implements PoseSupplier {
   STARGAZING(
       "stargazing",
       Source.VANILLA_TWEAKS,
+      Category.STANDING,
       new EulerAngle(-22.0f, 25.0f, 0.0f),
       new EulerAngle(-4.0f, 10.0f, 0.0f),
       new EulerAngle(-153.0f, 34.0f, -3.0f),
@@ -182,6 +203,7 @@ public enum PosePreset implements PoseSupplier {
   GUARD(
       "guard",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(-5.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 2.0f),
       new EulerAngle(-60.0f, 20.0f, -10.0f),
@@ -191,6 +213,7 @@ public enum PosePreset implements PoseSupplier {
   BRANDISH(
       "brandish",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(-15.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, -2.0f),
       new EulerAngle(-110.0f, 50.0f, 0.0f),
@@ -200,6 +223,7 @@ public enum PosePreset implements PoseSupplier {
   SPEAKING(
       "speaking",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(-15.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(-110.0f, 35.0f, 0.0f),
@@ -209,6 +233,7 @@ public enum PosePreset implements PoseSupplier {
   INSPIRING(
       "inspiring",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(-4.0f, 67.0f, 0.0f),
       new EulerAngle(0.0f, 8.0f, 0.0f),
       new EulerAngle(-99.0f, 63.0f, 0.0f),
@@ -218,6 +243,7 @@ public enum PosePreset implements PoseSupplier {
   THANKING(
       "thanking",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(-15.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(-110.0f, -35.0f, 0.0f),
@@ -227,6 +253,7 @@ public enum PosePreset implements PoseSupplier {
   DABBING(
       "dabbing",
       Source.BEDROCK,
+      Category.DYNAMIC,
       new EulerAngle(16.0f, 20.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(246.0f, 0.0f, 89.0f),
@@ -236,6 +263,7 @@ public enum PosePreset implements PoseSupplier {
   PLEDGING(
       "pledging",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(-70.0f, -40.0f, 0.0f),
@@ -245,6 +273,7 @@ public enum PosePreset implements PoseSupplier {
   CONTEMPLATING(
       "contemplating",
       Source.BEDROCK,
+      Category.STANDING,
       new EulerAngle(15.0f, 0.0f, 0.0f),
       new EulerAngle(0.0f, 0.0f, 2.0f),
       new EulerAngle(-60.0f, -20.0f, -10.0f),
@@ -254,6 +283,7 @@ public enum PosePreset implements PoseSupplier {
   ZOMBIE(
       "zombie",
       Source.BEDROCK,
+      Category.MOVING,
       new EulerAngle(-10.0f, 0.0f, -5.0f),
       new EulerAngle(0.0f, 0.0f, 0.0f),
       new EulerAngle(-100.0f, 0.0f, 0.0f),
@@ -263,6 +293,7 @@ public enum PosePreset implements PoseSupplier {
   SITTING(
       "sitting",
       Source.VANILLA_TWEAKS,
+      Category.SITTING,
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(0.0f, 0.001f, 0.0f),
       new EulerAngle(-80.0f, 20.0f, 0.0f),
@@ -272,6 +303,7 @@ public enum PosePreset implements PoseSupplier {
   LAZING(
       "lazing",
       Source.VANILLA_TWEAKS,
+      Category.SITTING,
       new EulerAngle(14f, -12f, 6f),
       new EulerAngle(5f, 0f, 0f),
       new EulerAngle(-40f, 20f, 0f),
@@ -279,8 +311,9 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(-88f, 71f, 0f),
       new EulerAngle(-88f, 46f, 0f)),
   JUMP_ATTACK(
-      "jump_attack",
+      "jumpAttack",
       Source.ROUNDAROUND,
+      Category.DYNAMIC,
       new EulerAngle(-43f, 0f, 0f),
       new EulerAngle(4f, 0f, 0f),
       new EulerAngle(-144f, -10f, 28f),
@@ -290,6 +323,7 @@ public enum PosePreset implements PoseSupplier {
   STEWARD(
       "steward",
       Source.ROUNDAROUND,
+      Category.STANDING,
       new EulerAngle(-3f, 0f, 0f),
       new EulerAngle(0f, 0f, 2f),
       new EulerAngle(-105f, -45f, 180f),
@@ -299,6 +333,7 @@ public enum PosePreset implements PoseSupplier {
   SCARECROW(
       "scarecrow",
       Source.ROUNDAROUND,
+      Category.DYNAMIC,
       new EulerAngle(8f, 26f, -6f),
       new EulerAngle(0f, 0f, 5f),
       new EulerAngle(-15f, 0f, 79f),
@@ -308,6 +343,7 @@ public enum PosePreset implements PoseSupplier {
   PRETTY(
       "pretty",
       Source.ROUNDAROUND,
+      Category.SITTING,
       new EulerAngle(-17f, 0f, 0f),
       new EulerAngle(0f, 0f, -8f),
       new EulerAngle(-12f, 20f, 0f),
@@ -315,8 +351,9 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(-100f, -44f, 0f),
       new EulerAngle(-90f, -10f, 0f)),
   DRUM_MAJOR(
-      "drum_major",
+      "drumMajor",
       Source.ROUNDAROUND,
+      Category.DYNAMIC,
       new EulerAngle(-13f, 0f, 0f),
       new EulerAngle(9f, 0f, 0f),
       new EulerAngle(110f, 125f, 180f),
@@ -327,6 +364,7 @@ public enum PosePreset implements PoseSupplier {
   private final String id;
   private final Text label;
   private final Source source;
+  private final Category category;
   private final EulerAngle head;
   private final EulerAngle body;
   private final EulerAngle rightArm;
@@ -337,6 +375,7 @@ public enum PosePreset implements PoseSupplier {
   private PosePreset(
       String id,
       Source source,
+      Category category,
       EulerAngle head,
       EulerAngle body,
       EulerAngle rightArm,
@@ -346,6 +385,7 @@ public enum PosePreset implements PoseSupplier {
     this.id = id;
     this.label = Text.translatable("armorstands.preset." + id);
     this.source = source;
+    this.category = category;
     this.head = head;
     this.body = body;
     this.rightArm = rightArm;
@@ -364,12 +404,16 @@ public enum PosePreset implements PoseSupplier {
     return new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg);
   }
 
-  public Text getLabel() {
+  public Text getDisplayName() {
     return label;
   }
 
   public Source getSource() {
     return source;
+  }
+
+  public Category getCategory() {
+    return category;
   }
 
   public EulerAngle getHead() {
@@ -406,6 +450,32 @@ public enum PosePreset implements PoseSupplier {
         });
   }
 
+  public static List<PosePreset> getPresets() {
+    return getPresets(Source.ALL, Category.ALL);
+  }
+
+  public static List<PosePreset> getPresets(Source source, Category category) {
+    return Arrays.stream(PosePreset.values())
+        .filter((pose) -> pose.getSource().matches(source) && pose.getCategory().matches(category))
+        .sorted((a, b) -> {
+          if (category != Category.ALL) {
+            int sourceCompare = a.getSource().compareTo(b.getSource());
+            if (sourceCompare != 0) {
+              return sourceCompare;
+            }
+          } else {
+            int categoryCompare = a.getCategory().compareTo(b.getCategory());
+            if (categoryCompare != 0) {
+              return categoryCompare;
+            }
+          }
+
+          return a.getDisplayName().getString()
+              .compareTo(b.getDisplayName().getString());
+        })
+        .collect(Collectors.toList());
+  }
+
   public static enum Source {
     ALL("all"),
     VANILLA("vanilla"),
@@ -424,7 +494,50 @@ public enum PosePreset implements PoseSupplier {
     }
 
     public boolean matches(Source source) {
-      return this == ALL || this == source;
+      return this == ALL || source == ALL || this == source;
+    }
+
+    public static List<Source> getSources() {
+      return Arrays.stream(Source.values())
+          .filter((source) -> {
+            return source == Source.ALL
+                || Arrays.stream(PosePreset.values())
+                    .anyMatch((pose) -> pose.getSource() == source);
+          })
+          .collect(Collectors.toList());
+    }
+  }
+
+  public static enum Category {
+    ALL("all"),
+    STANDING("standing"),
+    MOVING("moving"),
+    DYNAMIC("dynamic"),
+    SITTING("sitting"),
+    OTHER("other");
+
+    private final String id;
+
+    private Category(String id) {
+      this.id = id;
+    }
+
+    public Text getDisplayName() {
+      return Text.translatable("armorstands.category." + id);
+    }
+
+    public boolean matches(Category category) {
+      return this == ALL || category == ALL || this == category;
+    }
+
+    public static List<Category> getCategories() {
+      return Arrays.stream(Category.values())
+          .filter((category) -> {
+            return category == Category.ALL
+                || Arrays.stream(PosePreset.values())
+                    .anyMatch((pose) -> pose.getCategory() == category);
+          })
+          .collect(Collectors.toList());
     }
   }
 }
