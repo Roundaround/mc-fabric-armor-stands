@@ -94,13 +94,15 @@ public abstract class AbstractArmorStandScreen
 
   @Override
   public void init() {
-    this.handler.initSlots(this.utilizesInventory);
-    InitSlotsPacket.sendToServer(this.utilizesInventory);
-
-    this.labels.clear();
-    this.navigationButtons.clear();
+    initStart();
 
     super.init();
+
+    initLeft();
+    initNavigationButtons();
+    initRight();
+
+    initEnd();
   }
 
   @Override
@@ -320,7 +322,19 @@ public abstract class AbstractArmorStandScreen
     return this.cursorLocked;
   }
 
+  protected void initStart() {
+    this.handler.initSlots(this.utilizesInventory);
+    InitSlotsPacket.sendToServer(this.utilizesInventory);
+
+    this.labels.clear();
+    this.navigationButtons.clear();
+  }
+
   protected void initUtilityButtons() {
+    if (!this.supportsUndoRedo) {
+      return;
+    }
+
     addDrawableChild(new HelpButtonWidget(
         this.client,
         this,
@@ -346,6 +360,10 @@ public abstract class AbstractArmorStandScreen
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.PASTE);
         }));
+  }
+
+  protected void initLeft() {
+    initUtilityButtons();
   }
 
   protected void initNavigationButtons() {
@@ -375,6 +393,12 @@ public abstract class AbstractArmorStandScreen
 
       this.navigationButtons.add(button);
     }
+  }
+
+  protected void initRight() {
+  }
+
+  protected void initEnd() {
   }
 
   protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {

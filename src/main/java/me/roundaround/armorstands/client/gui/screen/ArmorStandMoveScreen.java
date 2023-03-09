@@ -47,10 +47,16 @@ public class ArmorStandMoveScreen
   }
 
   @Override
-  public void init() {
-    super.init();
+  protected void initStart() {
+    super.initStart();
 
-    initUtilityButtons();
+    directionLabels.clear();
+    moveButtons.clear();
+  }
+
+  @Override
+  protected void initLeft() {
+    super.initLeft();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
@@ -159,8 +165,11 @@ public class ArmorStandMoveScreen
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
         }));
+  }
 
-    initNavigationButtons();
+  @Override
+  protected void initRight() {
+    super.initRight();
 
     int topOfMoveButtons = this.height - SCREEN_EDGE_PAD
         - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
@@ -223,9 +232,6 @@ public class ArmorStandMoveScreen
         .alignedBottom()
         .justifiedRight()
         .build());
-
-    directionLabels.clear();
-    moveButtons.clear();
 
     Direction[] directions = new Direction[] {
         Direction.UP,

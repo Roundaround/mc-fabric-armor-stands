@@ -26,22 +26,22 @@ public class ArmorStandUtilitiesScreen
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, Consumer<Boolean>> listeners = new HashMap<>();
 
-  public ArmorStandUtilitiesScreen(
-      ArmorStandScreenHandler handler,
-      ArmorStandEntity armorStand) {
+  public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 
   @Override
-  public void init() {
-    super.init();
+  protected void initStart() {
+    super.initStart();
 
     listeners.clear();
-
     refreshFlags();
+  }
 
-    initUtilityButtons();
+  @Override
+  protected void initLeft() {
+    super.initLeft();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.utility.setup"),
@@ -132,8 +132,11 @@ public class ArmorStandUtilitiesScreen
               UtilityAction.TOOL.forSmall(
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
+  }
 
-    initNavigationButtons();
+  @Override
+  protected void initRight() {
+    super.initRight();
 
     List<ArmorStandFlag> flags = ArmorStandFlag.getFlags();
     for (int i = flags.size() - 1; i >= 0; i--) {

@@ -46,13 +46,9 @@ public class ArmorStandPoseScreen
   private AdjustPoseSliderWidget yawSlider;
   private AdjustPoseSliderWidget rollSlider;
 
-  public ArmorStandPoseScreen(
-      ArmorStandScreenHandler handler,
-      ArmorStandEntity armorStand) {
+  public ArmorStandPoseScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
-
     this.supportsUndoRedo = true;
-    this.passEvents = true;
   }
 
   public void onArmorStandPoseChanged(ArmorStandEntity armorStand, PosePart part) {
@@ -70,10 +66,8 @@ public class ArmorStandPoseScreen
   }
 
   @Override
-  public void init() {
-    super.init();
-
-    initUtilityButtons();
+  protected void initLeft() {
+    super.initLeft();
 
     int offset = (CONTROL_WIDTH - 3 * IconButtonWidget.WIDTH - 2 * PART_PAD_HORIZONTAL) / 2;
 
@@ -201,8 +195,11 @@ public class ArmorStandPoseScreen
           this.yawSlider.refresh();
           this.rollSlider.refresh();
         }));
+  }
 
-    initNavigationButtons();
+  @Override
+  protected void initRight() {
+    super.initRight();
 
     addDrawableChild(CyclingButtonWidget.builder(SliderRange::getDisplayName)
         .initially(SliderRange.FULL)

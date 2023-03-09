@@ -30,18 +30,14 @@ public class ArmorStandRotateScreen
   private LabelWidget standFacingLabel;
   private LabelWidget standRotationLabel;
 
-  public ArmorStandRotateScreen(
-      ArmorStandScreenHandler handler,
-      ArmorStandEntity armorStand) {
+  public ArmorStandRotateScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
   }
 
   @Override
-  public void init() {
-    super.init();
-
-    initUtilityButtons();
+  protected void initLeft() {
+    super.initLeft();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
@@ -132,8 +128,11 @@ public class ArmorStandRotateScreen
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.FACE_WITH);
         }));
+  }
 
-    initNavigationButtons();
+  @Override
+  protected void initRight() {
+    super.initRight();
 
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);

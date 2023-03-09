@@ -34,20 +34,21 @@ public class ArmorStandPresetsScreen
   private Category category = Category.ALL;
   private List<PosePreset> matchingPresets = new ArrayList<>();
 
-  public ArmorStandPresetsScreen(
-      ArmorStandScreenHandler handler,
-      ArmorStandEntity armorStand) {
+  public ArmorStandPresetsScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
-
     this.supportsUndoRedo = true;
   }
 
   @Override
-  public void init() {
-    super.init();
+  protected void initStart() {
+    super.initStart();
 
-    initUtilityButtons();
-    initNavigationButtons();
+    this.presetButtons.clear();
+  }
+
+  @Override
+  protected void initRight() {
+    super.initRight();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),
@@ -111,8 +112,6 @@ public class ArmorStandPresetsScreen
               filter(category);
             }));
 
-    this.presetButtons.clear();
-
     for (int i = BUTTONS_PER_PAGE; i > 0; i--) {
       this.presetButtons.add(addDrawableChild(new PresetPoseButtonWidget(
           this,
@@ -148,7 +147,10 @@ public class ArmorStandPresetsScreen
         .alignedMiddle()
         .justifiedCenter()
         .build());
+  }
 
+  @Override
+  protected void initEnd() {
     updateFilters();
   }
 

@@ -51,11 +51,7 @@ public class ArmorStandInventoryScreen
   }
 
   @Override
-  public void init() {
-    super.init();
-
-    initNavigationButtons();
-
+  protected void initRight() {
     this.toggle = addDrawableChild(
         new ArmorStandFlagToggleWidget(
             this.textRenderer,
