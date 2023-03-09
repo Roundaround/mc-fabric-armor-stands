@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ public class ArmorStandUtilitiesScreen
   private static final int BUTTON_HEIGHT = 16;
 
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
-  private final HashMap<ArmorStandFlag, ArrayList<Consumer<Boolean>>> listeners = new HashMap<>();
+  private final HashMap<ArmorStandFlag, Consumer<Boolean>> listeners = new HashMap<>();
 
   public ArmorStandUtilitiesScreen(
       ArmorStandScreenHandler handler,
@@ -54,7 +53,7 @@ public class ArmorStandUtilitiesScreen
   public void init() {
     super.init();
 
-    listeners.values().forEach(ArrayList::clear);
+    listeners.clear();
 
     refreshFlags();
 
@@ -175,53 +174,10 @@ public class ArmorStandUtilitiesScreen
             ArmorStandInventoryScreen.U_INDEX,
             ArmorStandInventoryScreen::new)));
 
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.base"),
-        ArmorStandFlag.HIDE_BASE_PLATE,
-        7,
-        true);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.arms"),
-        ArmorStandFlag.SHOW_ARMS,
-        6,
-        false);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.small"),
-        ArmorStandFlag.SMALL,
-        5,
-        false);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.gravity"),
-        ArmorStandFlag.NO_GRAVITY,
-        4,
-        true);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.visible"),
-        ArmorStandFlag.INVISIBLE,
-        3,
-        false);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.name"),
-        ArmorStandFlag.NAME,
-        2,
-        false);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.invulnerable"),
-        ArmorStandFlag.INVULNERABLE,
-        1,
-        false);
-
-    addFlagToggleWidget(
-        Text.translatable("armorstands.flags.inventory"),
-        ArmorStandFlag.LOCK_INVENTORY,
-        0,
-        false);
+    List<ArmorStandFlag> flags = ArmorStandFlag.getFlags();
+    for (int i = flags.size() - 1; i >= 0; i--) {
+      addFlagToggleWidget(flags.get(flags.size() - i - 1), i);
+    }
   }
 
   @Override
@@ -233,38 +189,31 @@ public class ArmorStandUtilitiesScreen
 
   private void refreshFlags() {
     Arrays.stream(ArmorStandFlag.values()).forEach((flag) -> {
-      if (!listeners.containsKey(flag)) {
-        listeners.put(flag, new ArrayList<>());
-      }
+      Consumer<Boolean> listener = listeners.getOrDefault(flag, (value) -> {
+      });
 
       boolean curr = flag.getValue(this.armorStand);
       boolean prev = currentValues.getOrDefault(flag, !curr);
 
       if (curr != prev) {
         currentValues.put(flag, curr);
-        listeners.get(flag).forEach((listener) -> listener.accept(curr));
+        listener.accept(curr);
       }
     });
   }
 
-  private void addFlagToggleWidget(
-      Text label,
-      ArmorStandFlag flag,
-      int index,
-      boolean inverted) {
+  private void addFlagToggleWidget(ArmorStandFlag flag, int index) {
     int xPos = this.width - SCREEN_EDGE_PAD;
     int yPos = this.height - (index + 1) * (SCREEN_EDGE_PAD + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
 
     ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(
         this.textRenderer,
         flag,
-        inverted,
         this.currentValues.get(flag),
         xPos,
-        yPos,
-        label);
+        yPos);
 
     addDrawableChild(widget);
-    listeners.get(flag).add(widget);
+    listeners.put(flag, widget::setValue);
   }
 }

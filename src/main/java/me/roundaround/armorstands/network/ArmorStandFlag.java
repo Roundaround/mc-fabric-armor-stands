@@ -1,37 +1,49 @@
 package me.roundaround.armorstands.network;
 
 import java.util.Arrays;
+import java.util.List;
 
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public enum ArmorStandFlag {
-  HIDE_BASE_PLATE("base"),
-  SHOW_ARMS("arms"),
-  SMALL("small"),
-  NO_GRAVITY("gravity"),
-  INVISIBLE("visible"),
-  NAME("name"),
-  INVULNERABLE("invulnerable"),
-  LOCK_INVENTORY("lock_inventory"),
-  UNKNOWN("unknown");
+  HIDE_BASE_PLATE("base", true),
+  SHOW_ARMS("arms", false),
+  SMALL("small", false),
+  NO_GRAVITY("gravity", true),
+  INVISIBLE("visible", false),
+  NAME("name", false),
+  INVULNERABLE("invulnerable", false),
+  LOCK_INVENTORY("inventory", false),
+  UNKNOWN("unknown", false);
 
   // Magic number from Vanilla Tweaks armor stand data pack. ¯\_(ツ)_/¯
   private static final int ALL_SLOTS_DISABLED = 4144959;
 
   private final String id;
+  private final boolean invertControl;
 
-  private ArmorStandFlag(String id) {
+  private ArmorStandFlag(String id, boolean invertControl) {
     this.id = id;
+    this.invertControl = invertControl;
   }
 
   @Override
   public String toString() {
-    return id;
+    return this.id;
+  }
+
+  public Text getDisplayName() {
+    return Text.translatable("armorstands.flags." + this.id);
+  }
+
+  public boolean invertControl() {
+    return this.invertControl;
   }
 
   public boolean getValue(ArmorStandEntity armorStand) {
@@ -109,5 +121,12 @@ public enum ArmorStandFlag {
           ArmorStandsMod.LOGGER.warn("Unknown flag id '{}'. Returning UNKNOWN.", value);
           return UNKNOWN;
         });
+  }
+
+  public static List<ArmorStandFlag> getFlags() {
+    return Arrays.asList(values())
+        .stream()
+        .filter((flag) -> flag != UNKNOWN)
+        .toList();
   }
 }

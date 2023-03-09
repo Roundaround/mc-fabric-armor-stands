@@ -101,18 +101,16 @@ public class ArmorStandInventoryScreen
         new ArmorStandFlagToggleWidget(
             this.textRenderer,
             ArmorStandFlag.LOCK_INVENTORY,
-            false,
             ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand),
             this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - ArmorStandFlagToggleWidget.WIDGET_HEIGHT,
-            Text.translatable("armorstands.flags.inventory")));
+            this.height - SCREEN_EDGE_PAD - ArmorStandFlagToggleWidget.WIDGET_HEIGHT));
   }
 
   @Override
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.toggle.accept(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
+    this.toggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
   }
 
   @Override
