@@ -322,6 +322,10 @@ public abstract class AbstractArmorStandScreen
     return this.cursorLocked;
   }
 
+  public void updateYawOnClient(float yaw) {
+    this.armorStand.setYaw(yaw);
+  }
+
   protected void initStart() {
     this.handler.initSlots(this.utilizesInventory);
     InitSlotsPacket.sendToServer(this.utilizesInventory);

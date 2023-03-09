@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.network.packet.s2c;
 
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
 import me.roundaround.armorstands.util.HasArmorStand;
@@ -62,10 +63,16 @@ public class ClientUpdatePacket {
       return;
     }
 
+    if (!(client.currentScreen instanceof AbstractArmorStandScreen)) {
+      return;
+    }
+
     HasArmorStand screenHandler = (HasArmorStand) client.player.currentScreenHandler;
+    AbstractArmorStandScreen screen = (AbstractArmorStandScreen) client.currentScreen;
     ArmorStandEntity armorStand = screenHandler.getArmorStand();
+
     armorStand.setPos(this.x, this.y, this.z);
-    armorStand.setYaw(this.yaw % 360f);
+    screen.updateYawOnClient(this.yaw % 360f);
     armorStand.setPitch(this.pitch % 360f);
     armorStand.setInvulnerable(this.invulnerable);
     ((ArmorStandEntityAccessor) armorStand).setDisabledSlots(this.disabledSlots);

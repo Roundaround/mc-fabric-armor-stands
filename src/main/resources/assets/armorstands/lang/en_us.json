@@ -69,6 +69,7 @@
   "armorstands.move.snap.player": "Player",
   "armorstands.rotate.clockwise": "Clockwise",
   "armorstands.rotate.counter": "Counter-clockwise",
+  "armorstands.rotate.label": "%s°",
   "armorstands.rotate.snap": "Snap to",
   "armorstands.rotate.snap.north": "North (-Z)",
   "armorstands.rotate.snap.east": "East (+X)",
