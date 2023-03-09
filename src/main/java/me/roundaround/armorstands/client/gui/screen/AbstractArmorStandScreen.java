@@ -21,6 +21,7 @@ import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
+import me.roundaround.armorstands.network.packet.c2s.PingPacket;
 import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -57,8 +58,10 @@ public abstract class AbstractArmorStandScreen
   protected NavigationButtonWidget<?, ?> activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
+  protected long currentSyncDelay = 0;
 
   private boolean cursorLocked = false;
+  private long lastPing = 0;
 
   protected AbstractArmorStandScreen(
       ArmorStandScreenHandler handler,
@@ -320,6 +323,15 @@ public abstract class AbstractArmorStandScreen
 
   public boolean isCursorLocked() {
     return this.cursorLocked;
+  }
+
+  public void sendPing() {
+    this.lastPing = System.currentTimeMillis();
+    PingPacket.sendToServer(this.client.player);
+  }
+
+  public void onPong() {
+    this.currentSyncDelay = System.currentTimeMillis() - this.lastPing;
   }
 
   public void updateYawOnClient(float yaw) {

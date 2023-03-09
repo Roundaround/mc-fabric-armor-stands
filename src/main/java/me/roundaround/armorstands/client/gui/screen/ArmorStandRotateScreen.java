@@ -216,6 +216,7 @@ public class ArmorStandRotateScreen
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);
 
     this.rotateSlider = addDrawableChild(new RotateSliderWidget(
+        this,
         this.width - SCREEN_EDGE_PAD - SLIDER_WIDTH,
         this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT,
         SLIDER_WIDTH,
@@ -241,9 +242,18 @@ public class ArmorStandRotateScreen
     }
 
     super.updateYawOnClient(yaw);
-    
+
     if (this.rotateSlider != null) {
       this.rotateSlider.setAngle(yaw);
+    }
+  }
+
+  @Override
+  public void onPong() {
+    super.onPong();
+
+    if (this.rotateSlider != null) {
+      this.rotateSlider.onPong();
     }
   }
 

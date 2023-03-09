@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
 
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.SliderWidget;
@@ -15,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 public class RotateSliderWidget extends SliderWidget {
+  private final AbstractArmorStandScreen parent;
   private final ArmorStandEntity armorStand;
 
   private Optional<Float> lastAngle = Optional.empty();
@@ -22,9 +24,10 @@ public class RotateSliderWidget extends SliderWidget {
   private int max = 180;
   private Optional<Long> lastScroll = Optional.empty();
   private boolean isDragging = false;
-  private Optional<Long> dragEnded = Optional.empty();
+  private boolean pendingDragPing = false;
 
   public RotateSliderWidget(
+      AbstractArmorStandScreen parent,
       int x,
       int y,
       int width,
@@ -32,6 +35,7 @@ public class RotateSliderWidget extends SliderWidget {
       ArmorStandEntity armorStand) {
     super(x, y, width, height, Text.empty(), 0);
 
+    this.parent = parent;
     this.armorStand = armorStand;
 
     refresh();
@@ -87,15 +91,14 @@ public class RotateSliderWidget extends SliderWidget {
         persistValue();
       }
     });
-    this.dragEnded.ifPresent(dragEnded -> {
-      if (System.currentTimeMillis() - dragEnded > 200) {
-        this.dragEnded = Optional.empty();
-      }
-    });
   }
 
   public boolean isDragging() {
-    return this.isDragging || this.dragEnded.isPresent();
+    return this.isDragging || this.pendingDragPing;
+  }
+
+  public void onPong() {
+    this.pendingDragPing = false;
   }
 
   @Override
@@ -115,7 +118,6 @@ public class RotateSliderWidget extends SliderWidget {
     super.onClick(mouseX, mouseY);
 
     this.isDragging = true;
-    this.dragEnded = Optional.empty();
   }
 
   @Override
@@ -123,7 +125,8 @@ public class RotateSliderWidget extends SliderWidget {
     super.onRelease(mouseX, mouseY);
 
     this.isDragging = false;
-    this.dragEnded = Optional.of(System.currentTimeMillis());
+    this.pendingDragPing = true;
+    this.parent.sendPing();
 
     persistValue();
   }

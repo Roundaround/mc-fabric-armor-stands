@@ -9,6 +9,7 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
 import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
+import me.roundaround.armorstands.network.packet.s2c.PongPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -89,5 +90,6 @@ public class ArmorStandsClientMod implements ClientModInitializer {
     OpenScreenPacket.registerClientReceiver();
     ClientUpdatePacket.registerClientReceiver();
     MessagePacket.registerClientReceiver();
+    PongPacket.registerClientReceiver();
   }
 }

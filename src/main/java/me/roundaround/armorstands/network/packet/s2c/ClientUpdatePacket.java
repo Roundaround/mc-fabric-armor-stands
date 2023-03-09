@@ -33,7 +33,7 @@ public class ClientUpdatePacket {
     this.disabledSlots = buf.readInt();
   }
 
-  public ClientUpdatePacket(ArmorStandEntity armorStand) {
+  private ClientUpdatePacket(ArmorStandEntity armorStand) {
     this.x = armorStand.getX();
     this.y = armorStand.getY();
     this.z = armorStand.getZ();
