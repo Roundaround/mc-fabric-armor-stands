@@ -6,7 +6,6 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPoseButtonWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.PosePreset.Category;
@@ -44,50 +43,11 @@ public class ArmorStandPresetsScreen
   }
 
   @Override
-  public ScreenType getScreenType() {
-    return ScreenType.PRESETS;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandInventoryScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandPoseScreen::new;
-  }
-
-  @Override
   public void init() {
     super.init();
 
     initUtilityButtons();
-
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX,
-            ArmorStandUtilitiesScreen::new),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX,
-            ArmorStandMoveScreen::new),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX,
-            ArmorStandRotateScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX,
-            ArmorStandPoseScreen::new),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX,
-            ArmorStandInventoryScreen::new)));
+    initNavigationButtons();
 
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.presets.source.label"),

@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
@@ -32,21 +31,6 @@ public class ArmorStandUtilitiesScreen
       ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
-  }
-
-  @Override
-  public ScreenType getScreenType() {
-    return ScreenType.UTILITIES;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandMoveScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandInventoryScreen::new;
   }
 
   @Override
@@ -149,30 +133,7 @@ public class ArmorStandUtilitiesScreen
                   ArmorStandFlag.SMALL.getValue(armorStand)));
         }));
 
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX,
-            ArmorStandMoveScreen::new),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX,
-            ArmorStandRotateScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX,
-            ArmorStandPoseScreen::new),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX,
-            ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX,
-            ArmorStandInventoryScreen::new)));
+    initNavigationButtons();
 
     List<ArmorStandFlag> flags = ArmorStandFlag.getFlags();
     for (int i = flags.size() - 1; i >= 0; i--) {

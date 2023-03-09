@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen.ScreenFactory;
+import me.roundaround.armorstands.client.gui.screen.ScreenFactory;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
@@ -42,24 +42,25 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
       AbstractArmorStandScreen parent,
       int x,
       int y,
-      ScreenFactory<?> factory) {
+      ScreenFactory factory) {
     return new NavigationButtonWidget<>(
         client,
         parent,
         x,
         y,
-        factory.tooltip,
+        factory.getTooltip(),
         (button, handler, armorStand) -> {
-          if (factory.constructor == null) {
+          if (factory.matchesClass(parent.getClass())) {
             return;
           }
+
           client.currentScreen = null;
-          AbstractArmorStandScreen nextScreen = factory.constructor.accept(handler, armorStand);
-          LastUsedScreen.set(nextScreen);
+          AbstractArmorStandScreen nextScreen = factory.construct(handler, armorStand);
+          LastUsedScreen.set(factory, armorStand);
           client.setScreen(nextScreen);
         },
-        factory.constructor != null,
-        factory.uIndex);
+        !factory.matchesClass(parent.getClass()),
+        factory.getUIndex());
   }
 
   @Override

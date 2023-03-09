@@ -2,7 +2,6 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Optional;
 
 import org.lwjgl.glfw.GLFW;
@@ -17,7 +16,6 @@ import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
@@ -73,12 +71,6 @@ public abstract class AbstractArmorStandScreen
 
     this.passEvents = true;
   }
-
-  public abstract ScreenType getScreenType();
-
-  public abstract ScreenConstructor<?> getPreviousScreen();
-
-  public abstract ScreenConstructor<?> getNextScreen();
 
   protected LabelWidget addLabel(LabelWidget label) {
     this.labels.add(label);
@@ -356,14 +348,15 @@ public abstract class AbstractArmorStandScreen
         }));
   }
 
-  protected void initNavigationButtons(Collection<ScreenFactory<?>> screenFactories) {
-    int totalWidth = screenFactories.size() * NavigationButtonWidget.WIDTH
-        + (screenFactories.size() - 1) * NAV_BUTTON_SPACING;
+  protected void initNavigationButtons() {
+    ScreenFactory[] screenFactories = ScreenFactory.values();
+    int totalWidth = screenFactories.length * NavigationButtonWidget.WIDTH
+        + (screenFactories.length - 1) * NAV_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
     int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
 
-    for (ScreenFactory<?> screenFactory : screenFactories) {
+    for (ScreenFactory screenFactory : screenFactories) {
       NavigationButtonWidget<?, ?> button = NavigationButtonWidget.create(
           this.client,
           this,
@@ -371,7 +364,7 @@ public abstract class AbstractArmorStandScreen
           y,
           screenFactory);
 
-      if (screenFactory.constructor == null) {
+      if (screenFactory.matchesClass(getClass())) {
         this.activeButton = button;
         addDrawable(button);
       } else {
@@ -453,47 +446,15 @@ public abstract class AbstractArmorStandScreen
 
   protected void goToPreviousScreen() {
     this.client.currentScreen = null;
-    AbstractArmorStandScreen nextScreen = getPreviousScreen().accept(this.handler, this.armorStand);
-    LastUsedScreen.set(nextScreen);
-    this.client.setScreen(nextScreen);
+    ScreenFactory previous = ScreenFactory.getPrevious(getClass());
+    LastUsedScreen.set(previous, this.armorStand);
+    this.client.setScreen(previous.construct(this.handler, this.armorStand));
   }
 
   protected void goToNextScreen() {
     this.client.currentScreen = null;
-    AbstractArmorStandScreen nextScreen = getNextScreen().accept(this.handler, this.armorStand);
-    LastUsedScreen.set(nextScreen);
-    this.client.setScreen(nextScreen);
-  }
-
-  public static class ScreenFactory<T extends AbstractArmorStandScreen> {
-    public final Text tooltip;
-    public final int uIndex;
-    public final ScreenConstructor<T> constructor;
-
-    private ScreenFactory(Text tooltip, int uIndex, ScreenConstructor<T> constructor) {
-      this.tooltip = tooltip;
-      this.uIndex = uIndex;
-      this.constructor = constructor;
-    }
-
-    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
-        Text tooltip,
-        int uIndex,
-        ScreenConstructor<T> constructor) {
-      return new ScreenFactory<>(tooltip, uIndex, constructor);
-    }
-
-    public static <T extends AbstractArmorStandScreen> ScreenFactory<T> create(
-        Text tooltip,
-        int uIndex) {
-      return new ScreenFactory<>(tooltip, uIndex, null);
-    }
-  }
-
-  @FunctionalInterface
-  public static interface ScreenConstructor<T extends AbstractArmorStandScreen> {
-    public T accept(
-        ArmorStandScreenHandler handler,
-        ArmorStandEntity armorStand);
+    ScreenFactory next = ScreenFactory.getNext(getClass());
+    LastUsedScreen.set(next, this.armorStand);
+    this.client.setScreen(next.construct(this.handler, this.armorStand));
   }
 }

@@ -1,7 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
@@ -9,7 +7,6 @@ import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -49,21 +46,6 @@ public class ArmorStandInventoryScreen
   }
 
   @Override
-  public ScreenType getScreenType() {
-    return ScreenType.INVENTORY;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandUtilitiesScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandPresetsScreen::new;
-  }
-
-  @Override
   public boolean shouldPause() {
     return true;
   }
@@ -72,30 +54,7 @@ public class ArmorStandInventoryScreen
   public void init() {
     super.init();
 
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX,
-            ArmorStandUtilitiesScreen::new),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX,
-            ArmorStandMoveScreen::new),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX,
-            ArmorStandRotateScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX,
-            ArmorStandPoseScreen::new),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX,
-            ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX)));
+    initNavigationButtons();
 
     this.toggle = addDrawableChild(
         new ArmorStandFlagToggleWidget(

@@ -1,11 +1,9 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.List;
 import java.util.Locale;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
@@ -37,21 +35,6 @@ public class ArmorStandRotateScreen
       ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
-  }
-
-  @Override
-  public ScreenType getScreenType() {
-    return ScreenType.ROTATE;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandPoseScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandMoveScreen::new;
   }
 
   @Override
@@ -150,30 +133,7 @@ public class ArmorStandRotateScreen
           UtilityActionPacket.sendToServer(UtilityAction.FACE_WITH);
         }));
 
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX,
-            ArmorStandUtilitiesScreen::new),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX,
-            ArmorStandMoveScreen::new),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX,
-            ArmorStandPoseScreen::new),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX,
-            ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX,
-            ArmorStandInventoryScreen::new)));
+    initNavigationButtons();
 
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);

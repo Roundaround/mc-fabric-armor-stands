@@ -1,7 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.List;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
@@ -9,7 +7,6 @@ import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
@@ -70,21 +67,6 @@ public class ArmorStandPoseScreen
     this.pitchSlider.refresh();
     this.yawSlider.refresh();
     this.rollSlider.refresh();
-  }
-
-  @Override
-  public ScreenType getScreenType() {
-    return ScreenType.POSE;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandPresetsScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandRotateScreen::new;
   }
 
   @Override
@@ -220,30 +202,7 @@ public class ArmorStandPoseScreen
           this.rollSlider.refresh();
         }));
 
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX,
-            ArmorStandUtilitiesScreen::new),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX,
-            ArmorStandMoveScreen::new),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX,
-            ArmorStandRotateScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX,
-            ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX,
-            ArmorStandInventoryScreen::new)));
+    initNavigationButtons();
 
     addDrawableChild(CyclingButtonWidget.builder(SliderRange::getDisplayName)
         .initially(SliderRange.FULL)

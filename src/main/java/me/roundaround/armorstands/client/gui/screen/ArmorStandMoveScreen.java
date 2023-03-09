@@ -2,12 +2,10 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -46,21 +44,6 @@ public class ArmorStandMoveScreen
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
     this.supportsUndoRedo = true;
-  }
-
-  @Override
-  public ScreenType getScreenType() {
-    return ScreenType.MOVE;
-  }
-
-  @Override
-  public ScreenConstructor<?> getNextScreen() {
-    return ArmorStandRotateScreen::new;
-  }
-
-  @Override
-  public ScreenConstructor<?> getPreviousScreen() {
-    return ArmorStandUtilitiesScreen::new;
   }
 
   @Override
@@ -177,30 +160,7 @@ public class ArmorStandMoveScreen
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
         }));
 
-    initNavigationButtons(List.of(
-        ScreenFactory.create(
-            ArmorStandUtilitiesScreen.TITLE,
-            ArmorStandUtilitiesScreen.U_INDEX,
-            ArmorStandUtilitiesScreen::new),
-        ScreenFactory.create(
-            ArmorStandMoveScreen.TITLE,
-            ArmorStandMoveScreen.U_INDEX),
-        ScreenFactory.create(
-            ArmorStandRotateScreen.TITLE,
-            ArmorStandRotateScreen.U_INDEX,
-            ArmorStandRotateScreen::new),
-        ScreenFactory.create(
-            ArmorStandPoseScreen.TITLE,
-            ArmorStandPoseScreen.U_INDEX,
-            ArmorStandPoseScreen::new),
-        ScreenFactory.create(
-            ArmorStandPresetsScreen.TITLE,
-            ArmorStandPresetsScreen.U_INDEX,
-            ArmorStandPresetsScreen::new),
-        ScreenFactory.create(
-            ArmorStandInventoryScreen.TITLE,
-            ArmorStandInventoryScreen.U_INDEX,
-            ArmorStandInventoryScreen::new)));
+    initNavigationButtons();
 
     int topOfMoveButtons = this.height - SCREEN_EDGE_PAD
         - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
