@@ -28,6 +28,10 @@ public class NetworkPackets {
       ArmorStandsMod.MOD_ID,
       "adjust_yaw_packet");
 
+  public static final Identifier SET_YAW_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "set_yaw_packet");
+
   public static final Identifier ADJUST_POS_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "adjust_pos_packet");

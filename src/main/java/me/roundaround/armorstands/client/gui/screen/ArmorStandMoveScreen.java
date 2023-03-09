@@ -113,7 +113,7 @@ public class ArmorStandMoveScreen
         .build());
 
     addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.snap.label"),
+        Text.translatable("armorstands.move.snap"),
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - 2 * (BUTTON_HEIGHT + BETWEEN_PAD))
         .shiftForPadding()
@@ -125,7 +125,7 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.standing"),
+        Text.translatable("armorstands.move.snap.standing"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_STANDING);
         }));
@@ -134,7 +134,7 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.sitting"),
+        Text.translatable("armorstands.move.snap.sitting"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_SITTING);
         }));
@@ -143,7 +143,7 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.corner"),
+        Text.translatable("armorstands.move.snap.corner"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_CORNER);
         }));
@@ -152,7 +152,7 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.center"),
+        Text.translatable("armorstands.move.snap.center"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_CENTER);
         }));
@@ -161,7 +161,7 @@ public class ArmorStandMoveScreen
         this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
         BUTTON_WIDTH,
         BUTTON_HEIGHT,
-        Text.translatable("armorstands.snap.player"),
+        Text.translatable("armorstands.move.snap.player"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
         }));

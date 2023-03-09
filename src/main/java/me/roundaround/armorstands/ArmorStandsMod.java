@@ -10,6 +10,7 @@ import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetFlagPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
+import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
 import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.server.ArmorStandUsers;
@@ -41,6 +42,7 @@ public final class ArmorStandsMod implements ModInitializer {
   private static void registerReceivers() {
     InitSlotsPacket.registerServerReceiver();
     AdjustYawPacket.registerServerReceiver();
+    SetYawPacket.registerServerReceiver();
     AdjustPosPacket.registerServerReceiver();
     UtilityActionPacket.registerServerReceiver();
     SetFlagPacket.registerServerReceiver();
