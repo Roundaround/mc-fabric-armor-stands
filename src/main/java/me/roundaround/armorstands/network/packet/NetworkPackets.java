@@ -55,4 +55,12 @@ public class NetworkPackets {
   public static final Identifier UNDO_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "undo_packet");
+
+  public static final Identifier PING_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "ping_packet");
+
+  public static final Identifier PONG_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "pong_packet");
 }

@@ -498,15 +498,9 @@ public class ArmorStandPoseScreen
   protected void handledScreenTick() {
     super.handledScreenTick();
 
-    if (this.pitchSlider != null) {
-      this.pitchSlider.tick();
-    }
-    if (this.yawSlider != null) {
-      this.yawSlider.tick();
-    }
-    if (this.rollSlider != null) {
-      this.rollSlider.tick();
-    }
+    this.pitchSlider.tick();
+    this.yawSlider.tick();
+    this.rollSlider.tick();
   }
 
   @Override

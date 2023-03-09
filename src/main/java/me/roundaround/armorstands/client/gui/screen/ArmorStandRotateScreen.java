@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.gui.widget.RotateSliderWidget;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
@@ -21,16 +22,19 @@ public class ArmorStandRotateScreen
   public static final Text TITLE = Text.translatable("armorstands.screen.rotate");
   public static final int U_INDEX = 2;
 
-  private static final int MINI_BUTTON_WIDTH = 24;
-  private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
   private static final int DIRECTION_BUTTON_WIDTH = 70;
+  private static final int MINI_BUTTON_WIDTH = 24;
+  private static final int MINI_BUTTON_HEIGHT = 16;
+  private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * BETWEEN_PAD;
+  private static final int SLIDER_HEIGHT = 20;
 
   private LabelWidget playerFacingLabel;
   private LabelWidget playerRotationLabel;
   private LabelWidget standFacingLabel;
   private LabelWidget standRotationLabel;
+  private RotateSliderWidget rotateSlider;
 
   public ArmorStandRotateScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, TITLE, armorStand);
@@ -210,16 +214,47 @@ public class ArmorStandRotateScreen
 
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);
+
+    this.rotateSlider = addDrawableChild(new RotateSliderWidget(
+        this,
+        this.width - SCREEN_EDGE_PAD - SLIDER_WIDTH,
+        this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT,
+        SLIDER_WIDTH,
+        SLIDER_HEIGHT,
+        this.armorStand));
   }
 
   @Override
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    playerFacingLabel.setText(getCurrentFacingText(client.player));
-    playerRotationLabel.setText(getCurrentRotationText(client.player));
-    standFacingLabel.setText(getCurrentFacingText(this.armorStand));
-    standRotationLabel.setText(getCurrentRotationText(this.armorStand));
+    this.playerFacingLabel.setText(getCurrentFacingText(this.client.player));
+    this.playerRotationLabel.setText(getCurrentRotationText(this.client.player));
+    this.standFacingLabel.setText(getCurrentFacingText(this.armorStand));
+    this.standRotationLabel.setText(getCurrentRotationText(this.armorStand));
+    this.rotateSlider.tick();
+  }
+
+  @Override
+  public void updateYawOnClient(float yaw) {
+    if (this.rotateSlider != null && this.rotateSlider.isPending(this)) {
+      return;
+    }
+
+    super.updateYawOnClient(yaw);
+
+    if (this.rotateSlider != null) {
+      this.rotateSlider.setAngle(yaw);
+    }
+  }
+
+  @Override
+  public void onPong() {
+    super.onPong();
+
+    if (this.rotateSlider != null) {
+      this.rotateSlider.onPong();
+    }
   }
 
   private Text getCurrentFacingText(Entity entity) {
@@ -244,7 +279,9 @@ public class ArmorStandRotateScreen
 
   private void addRowOfButtons(RotateDirection direction, int index) {
     int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
-    int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT
+    int refY = this.height - SCREEN_EDGE_PAD
+        - SLIDER_HEIGHT - 2 * BETWEEN_PAD
+        - MINI_BUTTON_HEIGHT
         - index * (2 * BETWEEN_PAD + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
     String modifier = direction.equals(RotateDirection.CLOCKWISE) ? "+" : "-";
 
