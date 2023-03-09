@@ -22,7 +22,8 @@
     "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
-    "PlayerEntityRendererMixin"
+    "PlayerEntityRendererMixin",
+    "SliderWidgetMixin"
   ],
   "server": [],
   "injectors": {

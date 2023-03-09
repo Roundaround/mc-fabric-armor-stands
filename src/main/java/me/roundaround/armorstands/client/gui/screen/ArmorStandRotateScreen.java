@@ -28,7 +28,7 @@ public class ArmorStandRotateScreen
   private static final int MINI_BUTTON_WIDTH = 24;
   private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * BETWEEN_PAD;
-  private static final int SLIDER_HEIGHT = 20;
+  private static final int SLIDER_HEIGHT = 16;
 
   private LabelWidget playerFacingLabel;
   private LabelWidget playerRotationLabel;

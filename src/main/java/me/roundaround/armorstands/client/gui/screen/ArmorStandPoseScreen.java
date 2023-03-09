@@ -25,7 +25,7 @@ public class ArmorStandPoseScreen
   public static final int U_INDEX = 3;
 
   private static final int CONTROL_WIDTH = 100;
-  private static final int SLIDER_HEIGHT = 20;
+  private static final int SLIDER_HEIGHT = 16;
   private static final int BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 16;
   private static final int ROW_PAD = 6;

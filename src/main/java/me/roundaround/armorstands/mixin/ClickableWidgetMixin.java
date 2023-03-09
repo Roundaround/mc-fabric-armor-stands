@@ -48,10 +48,19 @@ public abstract class ClickableWidgetMixin {
   protected abstract int getYImage(boolean hovered);
 
   @Shadow
-  protected abstract void renderBackground(MatrixStack matrixStack, MinecraftClient client, int mouseX, int mouseY);
+  protected abstract void renderBackground(
+      MatrixStack matrixStack,
+      MinecraftClient client,
+      int mouseX,
+      int mouseY);
 
-  @Inject(at = @At("HEAD"), method = "renderButton", cancellable = true)
-  public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta, CallbackInfo info) {
+  @Inject(method = "renderButton", at = @At("HEAD"), cancellable = true)
+  public void renderButton(
+      MatrixStack matrixStack,
+      int mouseX,
+      int mouseY,
+      float delta,
+      CallbackInfo info) {
     if (this.width >= TEX_WIDTH && this.height >= TEX_HEIGHT) {
       return;
     }
