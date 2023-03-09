@@ -227,12 +227,17 @@ public class ArmorStandMoveScreen
     directionLabels.clear();
     moveButtons.clear();
 
-    addRowOfButtons(Direction.UP, 5);
-    addRowOfButtons(Direction.DOWN, 4);
-    addRowOfButtons(Direction.SOUTH, 3);
-    addRowOfButtons(Direction.NORTH, 2);
-    addRowOfButtons(Direction.EAST, 1);
-    addRowOfButtons(Direction.WEST, 0);
+    Direction[] directions = new Direction[] {
+        Direction.UP,
+        Direction.DOWN,
+        Direction.SOUTH,
+        Direction.NORTH,
+        Direction.EAST,
+        Direction.WEST
+    };
+    for (int i = directions.length - 1; i >= 0; i--) {
+      addRowOfButtons(directions[directions.length - i - 1], i);
+    }
   }
 
   @Override
