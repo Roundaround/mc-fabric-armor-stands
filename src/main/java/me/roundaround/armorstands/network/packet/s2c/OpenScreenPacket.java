@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.network.packet.s2c;
 
+import me.roundaround.armorstands.client.gui.screen.ScreenFactory;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -54,7 +55,10 @@ public class OpenScreenPacket {
         armorStand);
 
     player.currentScreenHandler = screenHandler;
-    client.setScreen(LastUsedScreen.get(screenHandler, armorStand));
+
+    ScreenFactory screenFactory = LastUsedScreen.get(armorStand, ScreenFactory.UTILITIES);
+    LastUsedScreen.set(screenFactory, armorStand);
+    client.setScreen(screenFactory.construct(screenHandler, armorStand));
   }
 
   public static void sendToClient(ServerPlayerEntity player, int syncId, ArmorStandEntity armorStand) {

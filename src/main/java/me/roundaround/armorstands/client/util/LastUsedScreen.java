@@ -2,22 +2,20 @@ package me.roundaround.armorstands.client.util;
 
 import java.util.Optional;
 
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.gui.screen.ScreenFactory;
-import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public class LastUsedScreen {
   private static Optional<Integer> lastEditedArmorStandId = Optional.empty();
   private static Optional<ScreenFactory> lastUsedScreen = Optional.empty();
 
-  public static AbstractArmorStandScreen get(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
+  public static ScreenFactory get(ArmorStandEntity armorStand, ScreenFactory defaultFactory) {
     if (lastEditedArmorStandId.isPresent()
         && lastEditedArmorStandId.get() == armorStand.getId()
         && lastUsedScreen.isPresent()) {
-      return lastUsedScreen.get().construct(handler, armorStand);
+      return lastUsedScreen.get();
     }
-    return ScreenFactory.UTILITIES.construct(handler, armorStand);
+    return defaultFactory;
   }
 
   public static void set(ScreenFactory screenFactory, ArmorStandEntity armorStand) {
