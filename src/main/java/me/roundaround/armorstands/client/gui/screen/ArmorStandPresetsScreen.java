@@ -6,6 +6,7 @@ import java.util.List;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.PresetPoseButtonWidget;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.PosePreset.Category;
@@ -15,11 +16,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
-public class ArmorStandPresetsScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.presets");
-  public static final int U_INDEX = 4;
-
+public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
   private static final int CONTROL_WIDTH = 120;
   private static final int CONTROL_HEIGHT = 16;
   private static final int BUTTONS_PER_PAGE = 6;
@@ -35,8 +32,13 @@ public class ArmorStandPresetsScreen
   private List<PosePreset> matchingPresets = new ArrayList<>();
 
   public ArmorStandPresetsScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+    super(handler, ScreenType.PRESETS.getDisplayName(), armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.PRESETS;
   }
 
   @Override

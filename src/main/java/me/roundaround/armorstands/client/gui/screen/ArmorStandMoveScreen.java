@@ -6,6 +6,7 @@ import java.util.HashMap;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -19,11 +20,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-public class ArmorStandMoveScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.move");
-  public static final int U_INDEX = 1;
-
+public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private static final int MINI_BUTTON_WIDTH = 28;
   private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 46;
@@ -42,8 +39,13 @@ public class ArmorStandMoveScreen
   private MoveUnits units = MoveUnits.PIXELS;
 
   public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+    super(handler, ScreenType.MOVE.getDisplayName(), armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.MOVE;
   }
 
   @Override

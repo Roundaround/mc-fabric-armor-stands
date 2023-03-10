@@ -1,8 +1,8 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import me.roundaround.armorstands.client.gui.screen.ScreenFactory;
-import me.roundaround.armorstands.client.util.LastUsedScreen;
+import me.roundaround.armorstands.network.ScreenType;
+import me.roundaround.armorstands.network.packet.c2s.RequestScreenPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -42,25 +42,22 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
       AbstractArmorStandScreen parent,
       int x,
       int y,
-      ScreenFactory factory) {
+      ScreenType screenType) {
     return new NavigationButtonWidget<>(
         client,
         parent,
         x,
         y,
-        factory.getTooltip(),
+        screenType.getDisplayName(),
         (button, handler, armorStand) -> {
-          if (factory.matchesClass(parent.getClass())) {
+          if (parent.getScreenType() == screenType) {
             return;
           }
 
-          client.currentScreen = null;
-          AbstractArmorStandScreen nextScreen = factory.construct(handler, armorStand);
-          LastUsedScreen.set(factory, armorStand);
-          client.setScreen(nextScreen);
+          RequestScreenPacket.sendToServer(armorStand, screenType);
         },
-        !factory.matchesClass(parent.getClass()),
-        factory.getUIndex());
+        parent.getScreenType() != screenType,
+        screenType.getUIndex());
   }
 
   @Override

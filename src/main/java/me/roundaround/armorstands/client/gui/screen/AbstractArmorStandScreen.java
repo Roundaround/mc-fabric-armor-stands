@@ -15,14 +15,14 @@ import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
-import me.roundaround.armorstands.client.util.LastUsedScreen;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
-import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
 import me.roundaround.armorstands.network.packet.c2s.PingPacket;
+import me.roundaround.armorstands.network.packet.c2s.RequestScreenPacket;
 import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -75,6 +75,8 @@ public abstract class AbstractArmorStandScreen
 
     this.passEvents = true;
   }
+
+  public abstract ScreenType getScreenType();
 
   protected LabelWidget addLabel(LabelWidget label) {
     this.labels.add(label);
@@ -356,9 +358,6 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void initStart() {
-    this.handler.initSlots(this.utilizesInventory);
-    InitSlotsPacket.sendToServer(this.utilizesInventory);
-
     this.labels.clear();
     this.navigationButtons.clear();
   }
@@ -400,22 +399,22 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void initNavigationButtons() {
-    ScreenFactory[] screenFactories = ScreenFactory.values();
-    int totalWidth = screenFactories.length * NavigationButtonWidget.WIDTH
-        + (screenFactories.length - 1) * NAV_BUTTON_SPACING;
+    ScreenType[] screenTypes = ScreenType.values();
+    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH
+        + (screenTypes.length - 1) * NAV_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
     int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
 
-    for (ScreenFactory screenFactory : screenFactories) {
+    for (ScreenType screenType : screenTypes) {
       NavigationButtonWidget<?, ?> button = NavigationButtonWidget.create(
           this.client,
           this,
           x,
           y,
-          screenFactory);
+          screenType);
 
-      if (screenFactory.matchesClass(getClass())) {
+      if (getScreenType() == screenType) {
         this.activeButton = button;
         addDrawable(button);
       } else {
@@ -502,16 +501,10 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void goToPreviousScreen() {
-    this.client.currentScreen = null;
-    ScreenFactory previous = ScreenFactory.getPrevious(getClass());
-    LastUsedScreen.set(previous, this.armorStand);
-    this.client.setScreen(previous.construct(this.handler, this.armorStand));
+    RequestScreenPacket.sendToServer(this.armorStand, getScreenType().previous());
   }
 
   protected void goToNextScreen() {
-    this.client.currentScreen = null;
-    ScreenFactory next = ScreenFactory.getNext(getClass());
-    LastUsedScreen.set(next, this.armorStand);
-    this.client.setScreen(next.construct(this.handler, this.armorStand));
+    RequestScreenPacket.sendToServer(this.armorStand, getScreenType().next());
   }
 }

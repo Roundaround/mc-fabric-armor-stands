@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 import me.roundaround.armorstands.network.packet.c2s.AdjustPosPacket;
 import me.roundaround.armorstands.network.packet.c2s.AdjustPosePacket;
 import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
-import me.roundaround.armorstands.network.packet.c2s.InitSlotsPacket;
 import me.roundaround.armorstands.network.packet.c2s.PingPacket;
+import me.roundaround.armorstands.network.packet.c2s.RequestScreenPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetFlagPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
@@ -41,7 +41,7 @@ public final class ArmorStandsMod implements ModInitializer {
   }
 
   private static void registerReceivers() {
-    InitSlotsPacket.registerServerReceiver();
+    RequestScreenPacket.registerServerReceiver();
     AdjustYawPacket.registerServerReceiver();
     SetYawPacket.registerServerReceiver();
     AdjustPosPacket.registerServerReceiver();

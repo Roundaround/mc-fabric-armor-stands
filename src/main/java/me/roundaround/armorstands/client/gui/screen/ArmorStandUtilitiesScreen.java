@@ -9,17 +9,14 @@ import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
-public class ArmorStandUtilitiesScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.utilities");
-  public static final int U_INDEX = 0;
-
+public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 60;
   private static final int BUTTON_HEIGHT = 16;
 
@@ -27,8 +24,13 @@ public class ArmorStandUtilitiesScreen
   private final HashMap<ArmorStandFlag, Consumer<Boolean>> listeners = new HashMap<>();
 
   public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+    super(handler, ScreenType.UTILITIES.getDisplayName(), armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.UTILITIES;
   }
 
   @Override

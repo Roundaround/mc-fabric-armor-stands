@@ -8,6 +8,7 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
@@ -18,11 +19,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class ArmorStandInventoryScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.inventory");
-  public static final int U_INDEX = 5;
-
+public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
@@ -36,13 +33,16 @@ public class ArmorStandInventoryScreen
   private float mouseY;
   private ArmorStandFlagToggleWidget toggle;
 
-  public ArmorStandInventoryScreen(
-      ArmorStandScreenHandler handler,
-      ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+  public ArmorStandInventoryScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
+    super(handler, ScreenType.INVENTORY.getDisplayName(), armorStand);
 
     this.utilizesInventory = true;
     this.passEvents = false;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.INVENTORY;
   }
 
   @Override

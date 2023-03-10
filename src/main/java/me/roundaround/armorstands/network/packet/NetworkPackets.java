@@ -4,6 +4,10 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import net.minecraft.util.Identifier;
 
 public class NetworkPackets {
+  public static final Identifier REQUEST_SCREEN_PACKET = new Identifier(
+      ArmorStandsMod.MOD_ID,
+      "request_screen_packet");
+
   public static final Identifier OPEN_SCREEN_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "open_screen_packet");
@@ -15,10 +19,6 @@ public class NetworkPackets {
   public static final Identifier MESSAGE_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,
       "message_packet");
-
-  public static final Identifier INIT_SLOTS_PACKET = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "init_slots_packet");
 
   public static final Identifier SET_FLAG_PACKET = new Identifier(
       ArmorStandsMod.MOD_ID,

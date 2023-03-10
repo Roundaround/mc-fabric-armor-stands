@@ -1,7 +1,13 @@
 package me.roundaround.armorstands.network.packet.s2c;
 
-import me.roundaround.armorstands.client.gui.screen.ScreenFactory;
-import me.roundaround.armorstands.client.util.LastUsedScreen;
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandInventoryScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandMoveScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandPoseScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandPresetsScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandRotateScreen;
+import me.roundaround.armorstands.client.gui.screen.ArmorStandUtilitiesScreen;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -19,21 +25,25 @@ import net.minecraft.server.network.ServerPlayerEntity;
 public class OpenScreenPacket {
   private final int syncId;
   private final int armorStandId;
+  private final ScreenType screenType;
 
-  public OpenScreenPacket(PacketByteBuf buf) {
+  private OpenScreenPacket(PacketByteBuf buf) {
     this.syncId = buf.readInt();
     this.armorStandId = buf.readInt();
+    this.screenType = ScreenType.fromId(buf.readString());
   }
 
-  public OpenScreenPacket(int syncId, ArmorStandEntity armorStand) {
+  private OpenScreenPacket(int syncId, ArmorStandEntity armorStand, ScreenType screenType) {
     this.syncId = syncId;
     this.armorStandId = armorStand.getId();
+    this.screenType = screenType;
   }
 
   private PacketByteBuf toPacket() {
     PacketByteBuf buf = new PacketByteBuf(PacketByteBufs.create());
     buf.writeInt(this.syncId);
     buf.writeInt(this.armorStandId);
+    buf.writeString(this.screenType.getId());
     return buf;
   }
 
@@ -52,20 +62,32 @@ public class OpenScreenPacket {
     ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
         this.syncId,
         player.getInventory(),
-        armorStand);
+        armorStand,
+        this.screenType);
 
     player.currentScreenHandler = screenHandler;
 
-    ScreenFactory screenFactory = LastUsedScreen.get(armorStand, ScreenFactory.UTILITIES);
-    LastUsedScreen.set(screenFactory, armorStand);
-    client.setScreen(screenFactory.construct(screenHandler, armorStand));
+    AbstractArmorStandScreen screen = switch (screenType) {
+      case UTILITIES -> new ArmorStandUtilitiesScreen(screenHandler, screenHandler.getArmorStand());
+      case MOVE -> new ArmorStandMoveScreen(screenHandler, screenHandler.getArmorStand());
+      case ROTATE -> new ArmorStandRotateScreen(screenHandler, screenHandler.getArmorStand());
+      case POSE -> new ArmorStandPoseScreen(screenHandler, screenHandler.getArmorStand());
+      case PRESETS -> new ArmorStandPresetsScreen(screenHandler, screenHandler.getArmorStand());
+      case INVENTORY -> new ArmorStandInventoryScreen(screenHandler, screenHandler.getArmorStand());
+    };
+
+    client.setScreen(screen);
   }
 
-  public static void sendToClient(ServerPlayerEntity player, int syncId, ArmorStandEntity armorStand) {
+  public static void sendToClient(
+      ServerPlayerEntity player,
+      int syncId,
+      ArmorStandEntity armorStand,
+      ScreenType screenType) {
     ServerPlayNetworking.send(
         player,
         NetworkPackets.OPEN_SCREEN_PACKET,
-        new OpenScreenPacket(syncId, armorStand).toPacket());
+        new OpenScreenPacket(syncId, armorStand, screenType).toPacket());
   }
 
   public static void registerClientReceiver() {

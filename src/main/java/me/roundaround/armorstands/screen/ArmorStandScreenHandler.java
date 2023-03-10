@@ -8,11 +8,15 @@ import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
-import me.roundaround.armorstands.mixin.ScreenHandlerAccessor;
+import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
+import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
+import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
+import me.roundaround.armorstands.util.LastUsedScreen;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -50,15 +54,22 @@ public class ArmorStandScreenHandler
 
   private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
+  private final ScreenType screenType;
   private final ArmorStandInventory inventory;
   private final ArmorStandEditor editor;
   private final ArrayList<Pair<Slot, EquipmentSlot>> armorSlots = new ArrayList<>();
 
-  public ArmorStandScreenHandler(int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand) {
+  public ArmorStandScreenHandler(
+      int syncId,
+      PlayerInventory playerInventory,
+      ArmorStandEntity armorStand,
+      ScreenType screenType) {
     super(null, syncId);
 
     this.playerInventory = playerInventory;
     this.armorStand = armorStand;
+    this.screenType = screenType;
+
     this.inventory = new ArmorStandInventory(armorStand);
 
     if (playerInventory.player instanceof ServerPlayerEntity) {
@@ -68,18 +79,13 @@ public class ArmorStandScreenHandler
     }
 
     this.inventory.onOpen(this.playerInventory.player);
+
+    if (this.screenType.usesInventory()) {
+      initSlots();
+    }
   }
 
-  public void initSlots(boolean fillSlots) {
-    slots.clear();
-    armorSlots.clear();
-    ((ScreenHandlerAccessor) this).getTrackedStacks().clear();
-    ((ScreenHandlerAccessor) this).getPreviousTrackedStacks().clear();
-
-    if (!fillSlots) {
-      return;
-    }
-
+  public void initSlots() {
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
     }
@@ -94,6 +100,12 @@ public class ArmorStandScreenHandler
       final EquipmentSlot equipmentSlot = HAND_SLOT_ORDER[i];
 
       Slot slot = addSlot(new Slot(this.inventory, index, 116, 44 + index * 18) {
+        @Override
+        public void setStack(ItemStack stack) {
+          ArmorStandScreenHandler.this.armorStand.equipStack(equipmentSlot, stack);
+          markDirty();
+        }
+
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
           return Pair.of(
@@ -193,6 +205,10 @@ public class ArmorStandScreenHandler
     }
 
     super.sendContentUpdates();
+
+    if (this.screenType.usesInventory()) {
+      this.armorStand.tick();
+    }
   }
 
   @Override
@@ -247,7 +263,6 @@ public class ArmorStandScreenHandler
   @Override
   public void close(PlayerEntity player) {
     super.close(player);
-    this.inventory.onClose(player);
   }
 
   private boolean tryTransferArmor(Slot source, ItemStack stack) {
@@ -291,5 +306,36 @@ public class ArmorStandScreenHandler
 
   public static boolean isSlotDisabled(ArmorStandEntity armorStand, EquipmentSlot slot) {
     return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
+  }
+
+  public static void createOnServer(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+    createOnServer(player, armorStand, LastUsedScreen.getOrDefault(player, armorStand, ScreenType.UTILITIES));
+  }
+
+  public static void createOnServer(ServerPlayerEntity player, ArmorStandEntity armorStand, ScreenType screenType) {
+    ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) player;
+
+    if (!ArmorStandUsers.canEditArmorStands(player) || player.isSneaking()) {
+      return;
+    }
+
+    if (player.currentScreenHandler != player.playerScreenHandler) {
+      player.closeScreenHandler();
+    }
+
+    accessor.invokeIncrementScreenHandlerSyncId();
+    int syncId = accessor.getScreenHandlerSyncId();
+
+    LastUsedScreen.set(player, armorStand, screenType);
+    OpenScreenPacket.sendToClient(player, syncId, armorStand, screenType);
+
+    ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
+        syncId,
+        player.getInventory(),
+        armorStand,
+        screenType);
+
+    player.currentScreenHandler = screenHandler;
+    accessor.invokeOnScreenHandlerOpened(screenHandler);
   }
 }

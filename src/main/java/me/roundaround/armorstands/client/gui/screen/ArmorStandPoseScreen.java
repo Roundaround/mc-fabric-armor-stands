@@ -9,6 +9,7 @@ import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
@@ -19,11 +20,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
-public class ArmorStandPoseScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.pose");
-  public static final int U_INDEX = 3;
-
+public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private static final int CONTROL_WIDTH = 100;
   private static final int SLIDER_HEIGHT = 16;
   private static final int BUTTON_HEIGHT = 16;
@@ -47,7 +44,7 @@ public class ArmorStandPoseScreen
   private AdjustPoseSliderWidget rollSlider;
 
   public ArmorStandPoseScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+    super(handler, ScreenType.POSE.getDisplayName(), armorStand);
     this.supportsUndoRedo = true;
   }
 
@@ -63,6 +60,11 @@ public class ArmorStandPoseScreen
     this.pitchSlider.refresh();
     this.yawSlider.refresh();
     this.rollSlider.refresh();
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.POSE;
   }
 
   @Override

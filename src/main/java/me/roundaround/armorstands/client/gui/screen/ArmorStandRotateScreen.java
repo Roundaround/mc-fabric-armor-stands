@@ -5,6 +5,7 @@ import java.util.Locale;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.RotateSliderWidget;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.AdjustYawPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
@@ -17,11 +18,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
-public class ArmorStandRotateScreen
-    extends AbstractArmorStandScreen {
-  public static final Text TITLE = Text.translatable("armorstands.screen.rotate");
-  public static final int U_INDEX = 2;
-
+public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
   private static final int DIRECTION_BUTTON_WIDTH = 70;
@@ -37,8 +34,13 @@ public class ArmorStandRotateScreen
   private RotateSliderWidget rotateSlider;
 
   public ArmorStandRotateScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, TITLE, armorStand);
+    super(handler, ScreenType.ROTATE.getDisplayName(), armorStand);
     this.supportsUndoRedo = true;
+  }
+
+  @Override
+  public ScreenType getScreenType() {
+    return ScreenType.ROTATE;
   }
 
   @Override

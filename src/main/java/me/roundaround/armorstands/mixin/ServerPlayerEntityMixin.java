@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.Clipboard;
+import me.roundaround.armorstands.util.LastUsedScreen;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 @Mixin(ServerPlayerEntity.class)
@@ -15,5 +16,6 @@ public abstract class ServerPlayerEntityMixin {
   public void onDisconnect(CallbackInfo info) {
     Clipboard.remove((ServerPlayerEntity) (Object) this);
     ArmorStandEditor.remove((ServerPlayerEntity) (Object) this);
+    LastUsedScreen.remove((ServerPlayerEntity) (Object) this);
   }
 }
