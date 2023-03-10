@@ -359,7 +359,17 @@ public enum PosePreset implements PoseSupplier {
       new EulerAngle(110f, 125f, 180f),
       new EulerAngle(-10f, 0f, -20f),
       new EulerAngle(-94f, 0f, 0f),
-      new EulerAngle(15f, 0f, 0f));
+      new EulerAngle(15f, 0f, 0f)),
+  FISHING(
+      "fishing",
+      Source.ROUNDAROUND,
+      Category.SITTING,
+      new EulerAngle(-15f, 0f, -12f),
+      new EulerAngle(-8f, 0f, 0f),
+      new EulerAngle(-68f, -24f, 0f),
+      new EulerAngle(-80f, 44f, 0f),
+      new EulerAngle(-90f, 20f, 0f),
+      new EulerAngle(-90f, -20f, 0f));
 
   private final String id;
   private final Text label;
