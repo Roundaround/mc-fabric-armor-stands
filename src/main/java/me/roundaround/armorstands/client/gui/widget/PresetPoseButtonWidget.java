@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import java.util.List;
+
 import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
 import me.roundaround.armorstands.util.PosePreset;
 import net.minecraft.client.gui.screen.Screen;
@@ -39,7 +41,9 @@ public class PresetPoseButtonWidget extends SimpleTooltipButtonWidget {
   }
 
   private void updateMessage() {
-    setTooltip(Text.translatable("armorstands.presets.source", pose.getSource().getDisplayName()));
+    setTooltip(List.of(
+        Text.translatable("armorstands.presets.source", pose.getSource().getDisplayName()).asOrderedText(),
+        Text.translatable("armorstands.presets.category", pose.getCategory().getDisplayName()).asOrderedText()));
     setMessage(this.pose.getDisplayName());
   }
 }

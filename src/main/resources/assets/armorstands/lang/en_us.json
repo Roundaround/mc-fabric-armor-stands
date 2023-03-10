@@ -114,6 +114,7 @@
   "armorstands.presets.next": "Next page",
   "armorstands.presets.page": "%s / %s",
   "armorstands.presets.source": "Source: %s",
+  "armorstands.presets.category": "Category: %s",
   "armorstands.preset.default": "Default",
   "armorstands.preset.attention": "Attention",
   "armorstands.preset.confident": "Confident",
