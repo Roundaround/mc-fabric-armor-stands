@@ -118,7 +118,6 @@ public class ArmorStandInventoryScreen
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
       if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
-        // TODO: Make this a texture
         fill(matrixStack, x + slot.x, y + slot.y, x + slot.x + 16, y + slot.y + 16, 0x80000000);
       }
     }
