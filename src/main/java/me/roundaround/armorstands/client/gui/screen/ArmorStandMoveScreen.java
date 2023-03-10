@@ -58,6 +58,11 @@ public class ArmorStandMoveScreen
   protected void initLeft() {
     super.initLeft();
 
+    initCurrentStatus();
+    initSnapButtons();
+  }
+
+  private void initCurrentStatus() {
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.current.player"),
         SCREEN_EDGE_PAD,
@@ -111,7 +116,9 @@ public class ArmorStandMoveScreen
         .justifiedLeft()
         .shiftForPadding()
         .build());
+  }
 
+  private void initSnapButtons() {
     addLabel(LabelWidget.builder(
         Text.translatable("armorstands.move.snap"),
         SCREEN_EDGE_PAD,
@@ -120,6 +127,7 @@ public class ArmorStandMoveScreen
         .justifiedLeft()
         .alignedBottom()
         .build());
+
     addDrawableChild(new ButtonWidget(
         SCREEN_EDGE_PAD,
         this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
@@ -246,46 +254,6 @@ public class ArmorStandMoveScreen
     }
   }
 
-  @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
-
-    playerPosLabel.setText(getCurrentPosText(client.player));
-    playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
-    standPosLabel.setText(getCurrentPosText(this.armorStand));
-    standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
-
-    facingLabel.setText(getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
-        ? this.armorStand
-        : client.player));
-  }
-
-  private Text getCurrentPosText(Entity entity) {
-    String xStr = String.format("%.2f", entity.getX());
-    String yStr = String.format("%.2f", entity.getY());
-    String zStr = String.format("%.2f", entity.getZ());
-    return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
-  }
-
-  private Text getCurrentBlockPosText(Entity entity) {
-    BlockPos pos = entity.getBlockPos();
-    return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
-  }
-
-  private Text getCurrentFacingText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    Direction currentFacing = Direction.fromRotation(currentRotation);
-    String towardsI18n = switch (currentFacing) {
-      case NORTH -> "negZ";
-      case SOUTH -> "posZ";
-      case WEST -> "negX";
-      case EAST -> "posX";
-      default -> "posX";
-    };
-    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
-    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
-  }
-
   private void addRowOfButtons(Direction direction, int index) {
     int refX = this.width - SCREEN_EDGE_PAD;
     int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
@@ -328,5 +296,45 @@ public class ArmorStandMoveScreen
         3,
         this.mode,
         this.units)));
+  }
+
+  @Override
+  public void handledScreenTick() {
+    super.handledScreenTick();
+
+    playerPosLabel.setText(getCurrentPosText(client.player));
+    playerBlockPosLabel.setText(getCurrentBlockPosText(client.player));
+    standPosLabel.setText(getCurrentPosText(this.armorStand));
+    standBlockPosLabel.setText(getCurrentBlockPosText(this.armorStand));
+
+    facingLabel.setText(getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
+        ? this.armorStand
+        : client.player));
+  }
+
+  private Text getCurrentPosText(Entity entity) {
+    String xStr = String.format("%.2f", entity.getX());
+    String yStr = String.format("%.2f", entity.getY());
+    String zStr = String.format("%.2f", entity.getZ());
+    return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
+  }
+
+  private Text getCurrentBlockPosText(Entity entity) {
+    BlockPos pos = entity.getBlockPos();
+    return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
+  }
+
+  private Text getCurrentFacingText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    Direction currentFacing = Direction.fromRotation(currentRotation);
+    String towardsI18n = switch (currentFacing) {
+      case NORTH -> "negZ";
+      case SOUTH -> "posZ";
+      case WEST -> "negX";
+      case EAST -> "posX";
+      default -> "posX";
+    };
+    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
+    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
   }
 }

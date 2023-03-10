@@ -224,59 +224,6 @@ public class ArmorStandRotateScreen
         this.armorStand));
   }
 
-  @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
-
-    this.playerFacingLabel.setText(getCurrentFacingText(this.client.player));
-    this.playerRotationLabel.setText(getCurrentRotationText(this.client.player));
-    this.standFacingLabel.setText(getCurrentFacingText(this.armorStand));
-    this.standRotationLabel.setText(getCurrentRotationText(this.armorStand));
-    this.rotateSlider.tick();
-  }
-
-  @Override
-  public void updateYawOnClient(float yaw) {
-    if (this.rotateSlider != null && this.rotateSlider.isPending(this)) {
-      return;
-    }
-
-    super.updateYawOnClient(yaw);
-
-    if (this.rotateSlider != null) {
-      this.rotateSlider.setAngle(yaw);
-    }
-  }
-
-  @Override
-  public void onPong() {
-    super.onPong();
-
-    if (this.rotateSlider != null) {
-      this.rotateSlider.onPong();
-    }
-  }
-
-  private Text getCurrentFacingText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    Direction currentFacing = Direction.fromRotation(currentRotation);
-    String towardsI18n = switch (currentFacing) {
-      case NORTH -> "negZ";
-      case SOUTH -> "posZ";
-      case WEST -> "negX";
-      case EAST -> "posX";
-      default -> "posX";
-    };
-    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
-    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
-  }
-
-  private Text getCurrentRotationText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    return Text.translatable("armorstands.current.rotation",
-        String.format(Locale.ROOT, "%.1f", Float.valueOf(MathHelper.wrapDegrees(currentRotation))));
-  }
-
   private void addRowOfButtons(RotateDirection direction, int index) {
     int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
     int refY = this.height - SCREEN_EDGE_PAD
@@ -329,6 +276,59 @@ public class ArmorStandRotateScreen
         (button) -> {
           AdjustYawPacket.sendToServer(direction.offset() * 45);
         }));
+  }
+
+  @Override
+  public void handledScreenTick() {
+    super.handledScreenTick();
+
+    this.playerFacingLabel.setText(getCurrentFacingText(this.client.player));
+    this.playerRotationLabel.setText(getCurrentRotationText(this.client.player));
+    this.standFacingLabel.setText(getCurrentFacingText(this.armorStand));
+    this.standRotationLabel.setText(getCurrentRotationText(this.armorStand));
+    this.rotateSlider.tick();
+  }
+
+  @Override
+  public void updateYawOnClient(float yaw) {
+    if (this.rotateSlider != null && this.rotateSlider.isPending(this)) {
+      return;
+    }
+
+    super.updateYawOnClient(yaw);
+
+    if (this.rotateSlider != null) {
+      this.rotateSlider.setAngle(yaw);
+    }
+  }
+
+  @Override
+  public void onPong() {
+    super.onPong();
+
+    if (this.rotateSlider != null) {
+      this.rotateSlider.onPong();
+    }
+  }
+
+  private Text getCurrentFacingText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    Direction currentFacing = Direction.fromRotation(currentRotation);
+    String towardsI18n = switch (currentFacing) {
+      case NORTH -> "negZ";
+      case SOUTH -> "posZ";
+      case WEST -> "negX";
+      case EAST -> "posX";
+      default -> "posX";
+    };
+    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
+    return Text.translatable("armorstands.current.facing", currentFacing, towards.getString());
+  }
+
+  private Text getCurrentRotationText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    return Text.translatable("armorstands.current.rotation",
+        String.format(Locale.ROOT, "%.1f", Float.valueOf(MathHelper.wrapDegrees(currentRotation))));
   }
 
   public static enum RotateDirection {
