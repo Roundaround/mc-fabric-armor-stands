@@ -178,6 +178,6 @@ public class ArmorStandUtilitiesScreen
         yPos);
 
     addDrawableChild(widget);
-    listeners.put(flag, widget::setValue);
+    listeners.put(flag, t -> widget.setValue(t));
   }
 }
