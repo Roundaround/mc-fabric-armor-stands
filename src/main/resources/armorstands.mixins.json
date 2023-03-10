@@ -15,6 +15,7 @@
   "client": [
     "ArmorStandEntityClientMixin",
     "ClickableWidgetMixin",
+    "ClientPlayerEntityMixin",
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
