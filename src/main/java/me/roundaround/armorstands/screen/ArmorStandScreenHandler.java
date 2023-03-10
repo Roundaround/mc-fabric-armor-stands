@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.mixin.LivingEntityAccessor;
 import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
@@ -206,8 +207,8 @@ public class ArmorStandScreenHandler
 
     super.sendContentUpdates();
 
-    if (this.screenType.usesInventory()) {
-      this.armorStand.tick();
+    if (this.screenType.usesInventory() && this.playerInventory.player instanceof ServerPlayerEntity) {
+      ((LivingEntityAccessor) this.armorStand).invokeSendEquipmentChanges();
     }
   }
 

@@ -6,6 +6,7 @@
   "mixins": [
     "ArmorStandEntityAccessor",
     "ArmorStandEntityServerMixin",
+    "LivingEntityAccessor",
     "NameTagItemMixin",
     "ScreenHandlerAccessor",
     "ServerPlayerEntityAccessor",
