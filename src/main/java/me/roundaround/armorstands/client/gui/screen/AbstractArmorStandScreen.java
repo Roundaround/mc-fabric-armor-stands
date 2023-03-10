@@ -16,6 +16,7 @@ import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.util.LastUsedScreen;
+import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
@@ -334,8 +335,24 @@ public abstract class AbstractArmorStandScreen
     this.currentSyncDelay = System.currentTimeMillis() - this.lastPing;
   }
 
+  public void updatePosOnClient(double x, double y, double z) {
+    this.armorStand.setPos(x, y, z);
+  }
+
   public void updateYawOnClient(float yaw) {
     this.armorStand.setYaw(yaw);
+  }
+
+  public void updatePitchOnClient(float pitch) {
+    this.armorStand.setPitch(pitch);
+  }
+
+  public void updateInvulnerableOnClient(boolean invulnerable) {
+    this.armorStand.setInvulnerable(invulnerable);
+  }
+
+  public void updateDisabledSlotsOnClient(int disabledSlots) {
+    ((ArmorStandEntityAccessor) this.armorStand).setDisabledSlots(disabledSlots);
   }
 
   protected void initStart() {

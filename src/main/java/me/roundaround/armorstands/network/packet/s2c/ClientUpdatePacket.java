@@ -3,7 +3,6 @@ package me.roundaround.armorstands.network.packet.s2c;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
-import me.roundaround.armorstands.util.HasArmorStand;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -13,6 +12,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.MathHelper;
 
 public class ClientUpdatePacket {
   private final double x;
@@ -59,23 +59,16 @@ public class ClientUpdatePacket {
       MinecraftClient client,
       ClientPlayNetworkHandler handler,
       PacketSender responseSender) {
-    if (!(client.player.currentScreenHandler instanceof HasArmorStand)) {
-      return;
-    }
-
     if (!(client.currentScreen instanceof AbstractArmorStandScreen)) {
       return;
     }
 
-    HasArmorStand screenHandler = (HasArmorStand) client.player.currentScreenHandler;
     AbstractArmorStandScreen screen = (AbstractArmorStandScreen) client.currentScreen;
-    ArmorStandEntity armorStand = screenHandler.getArmorStand();
-
-    armorStand.setPos(this.x, this.y, this.z);
-    screen.updateYawOnClient(this.yaw % 360f);
-    armorStand.setPitch(this.pitch % 360f);
-    armorStand.setInvulnerable(this.invulnerable);
-    ((ArmorStandEntityAccessor) armorStand).setDisabledSlots(this.disabledSlots);
+    screen.updatePosOnClient(this.x, this.y, this.z);
+    screen.updateYawOnClient(MathHelper.wrapDegrees(this.yaw));
+    screen.updatePitchOnClient(MathHelper.wrapDegrees(this.pitch));
+    screen.updateInvulnerableOnClient(this.invulnerable);
+    screen.updateDisabledSlotsOnClient(this.disabledSlots);
   }
 
   public static void sendToClient(ServerPlayerEntity player, ArmorStandEntity armorStand) {
