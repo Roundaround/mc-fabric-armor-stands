@@ -46,11 +46,6 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public boolean shouldPause() {
-    return true;
-  }
-
-  @Override
   protected void initRight() {
     this.toggle = addDrawableChild(
         new ArmorStandFlagToggleWidget(
@@ -70,9 +65,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    if (this.client.isPaused()) {
-      renderBackground(matrixStack);
-    }
+    renderBackground(matrixStack);
 
     this.mouseX = mouseX;
     this.mouseY = mouseY;
