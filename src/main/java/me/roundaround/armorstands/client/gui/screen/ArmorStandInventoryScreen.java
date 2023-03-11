@@ -31,7 +31,8 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   private float mouseX;
   private float mouseY;
-  private ArmorStandFlagToggleWidget toggle;
+  private ArmorStandFlagToggleWidget showArmsToggle;
+  private ArmorStandFlagToggleWidget lockInventoryToggle;
 
   public ArmorStandInventoryScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
     super(handler, ScreenType.INVENTORY.getDisplayName(), armorStand);
@@ -47,7 +48,14 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void initRight() {
-    this.toggle = addDrawableChild(
+    this.showArmsToggle = addDrawableChild(
+        new ArmorStandFlagToggleWidget(
+            this.textRenderer,
+            ArmorStandFlag.SHOW_ARMS,
+            ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand),
+            this.width - SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 2 * ArmorStandFlagToggleWidget.WIDGET_HEIGHT - BETWEEN_PAD));
+    this.lockInventoryToggle = addDrawableChild(
         new ArmorStandFlagToggleWidget(
             this.textRenderer,
             ArmorStandFlag.LOCK_INVENTORY,
@@ -60,7 +68,8 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.toggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
+    this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand));
+    this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
   }
 
   @Override
