@@ -12,7 +12,6 @@ import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
-import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
@@ -311,12 +310,12 @@ public class ArmorStandScreenHandler
   public static void createOnServer(ServerPlayerEntity player, ArmorStandEntity armorStand, ScreenType screenType) {
     ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) player;
 
-    if (!ArmorStandUsers.canEditArmorStands(player) || player.isSneaking()) {
-      return;
-    }
-
     if (player.currentScreenHandler != player.playerScreenHandler) {
-      player.closeScreenHandler();
+      if (player.currentScreenHandler instanceof ArmorStandScreenHandler) {
+        player.closeScreenHandler();
+      } else {
+        player.closeHandledScreen();
+      }
     }
 
     accessor.invokeIncrementScreenHandlerSyncId();

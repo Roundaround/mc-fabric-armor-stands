@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.server.ArmorStandUsers;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -22,6 +23,10 @@ public abstract class ArmorStandEntityServerMixin {
       Hand hand,
       CallbackInfoReturnable<ActionResult> info) {
     if (!(player instanceof ServerPlayerEntity)) {
+      return;
+    }
+
+    if (!ArmorStandUsers.canEditArmorStands(player) || player.isSneaking()) {
       return;
     }
 
