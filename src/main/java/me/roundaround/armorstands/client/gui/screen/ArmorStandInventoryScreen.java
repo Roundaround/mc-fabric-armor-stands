@@ -14,7 +14,6 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -34,8 +33,8 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private ArmorStandFlagToggleWidget showArmsToggle;
   private ArmorStandFlagToggleWidget lockInventoryToggle;
 
-  public ArmorStandInventoryScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.INVENTORY.getDisplayName(), armorStand);
+  public ArmorStandInventoryScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.INVENTORY.getDisplayName());
 
     this.utilizesInventory = true;
     this.passEvents = false;

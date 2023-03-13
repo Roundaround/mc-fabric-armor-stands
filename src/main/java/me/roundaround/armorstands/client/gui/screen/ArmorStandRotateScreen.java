@@ -13,7 +13,6 @@ import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -33,8 +32,8 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private LabelWidget standRotationLabel;
   private RotateSliderWidget rotateSlider;
 
-  public ArmorStandRotateScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.ROTATE.getDisplayName(), armorStand);
+  public ArmorStandRotateScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.ROTATE.getDisplayName());
     this.supportsUndoRedo = true;
   }
 

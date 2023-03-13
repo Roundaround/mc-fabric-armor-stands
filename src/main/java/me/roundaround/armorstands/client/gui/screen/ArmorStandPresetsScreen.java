@@ -12,7 +12,6 @@ import me.roundaround.armorstands.util.PosePreset;
 import me.roundaround.armorstands.util.PosePreset.Category;
 import me.roundaround.armorstands.util.PosePreset.Source;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -31,8 +30,8 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
   private Category category = Category.ALL;
   private List<PosePreset> matchingPresets = new ArrayList<>();
 
-  public ArmorStandPresetsScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.PRESETS.getDisplayName(), armorStand);
+  public ArmorStandPresetsScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.PRESETS.getDisplayName());
     this.supportsUndoRedo = true;
   }
 

@@ -15,7 +15,6 @@ import me.roundaround.armorstands.util.MoveUnits;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -38,8 +37,8 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private MoveMode mode = MoveMode.RELATIVE;
   private MoveUnits units = MoveUnits.PIXELS;
 
-  public ArmorStandMoveScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.MOVE.getDisplayName(), armorStand);
+  public ArmorStandMoveScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.MOVE.getDisplayName());
     this.supportsUndoRedo = true;
   }
 

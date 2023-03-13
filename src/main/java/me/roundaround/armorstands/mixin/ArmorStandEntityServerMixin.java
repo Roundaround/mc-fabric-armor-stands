@@ -5,8 +5,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.server.ArmorStandUsers;
+import me.roundaround.armorstands.util.LastUsedScreen;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,7 +32,14 @@ public abstract class ArmorStandEntityServerMixin {
       return;
     }
 
-    ArmorStandScreenHandler.createOnServer((ServerPlayerEntity) player, (ArmorStandEntity) (Object) this);
+    ArmorStandEntity armorStand = (ArmorStandEntity) (Object) this;
+
+    ScreenType screenType = LastUsedScreen.getOrDefault(
+        (ServerPlayerEntity) player,
+        armorStand,
+        ScreenType.UTILITIES);
+
+    player.openHandledScreen(ArmorStandScreenHandler.Factory.create(screenType, armorStand));
     info.setReturnValue(ActionResult.PASS);
   }
 }

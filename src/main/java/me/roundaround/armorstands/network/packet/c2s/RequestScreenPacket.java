@@ -3,6 +3,7 @@ package me.roundaround.armorstands.network.packet.c2s;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.NetworkPackets;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.LastUsedScreen;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -45,7 +46,14 @@ public class RequestScreenPacket {
       return;
     }
 
-    ArmorStandScreenHandler.createOnServer(player, armorStand, this.screenType);
+    if (player.currentScreenHandler instanceof ArmorStandScreenHandler) {
+      // Bypass the normal screen closing logic, as we don't want to send a
+      // close packet to the client.
+      player.closeScreenHandler();
+    }
+
+    LastUsedScreen.set(player, armorStand, this.screenType);
+    player.openHandledScreen(ArmorStandScreenHandler.Factory.create(this.screenType, armorStand));
   }
 
   public static void sendToServer(ArmorStandEntity armorStand, ScreenType screenType) {

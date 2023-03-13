@@ -14,14 +14,27 @@ import me.roundaround.armorstands.network.packet.c2s.SetPosePresetPacket;
 import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
 import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.command.ArmorStandsCommand;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.util.registry.Registry;
 
 public final class ArmorStandsMod implements ModInitializer {
   public static final String MOD_ID = "armorstands";
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+
+  public static final ExtendedScreenHandlerType<ArmorStandScreenHandler> ARMOR_STAND_SCREEN_HANDLER_TYPE = new ExtendedScreenHandlerType<ArmorStandScreenHandler>(
+      ArmorStandScreenHandler::new);
+
+  static {
+    Registry.register(
+        Registry.SCREEN_HANDLER,
+        "armorstands:armor_stand",
+        ARMOR_STAND_SCREEN_HANDLER_TYPE);
+  }
 
   @Override
   public void onInitialize() {

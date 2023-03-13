@@ -17,19 +17,17 @@ public class ArmorStandInventory implements Inventory {
   private final DefaultedList<ItemStack> armorItems;
   private final List<DefaultedList<ItemStack>> fullInventory;
 
-  public ArmorStandInventory() {
-    this.armorStand = null;
-
-    this.heldItems = DefaultedList.ofSize(2, ItemStack.EMPTY);
-    this.armorItems = DefaultedList.ofSize(4, ItemStack.EMPTY);
-    this.fullInventory = List.of(heldItems, armorItems);
-  }
-
   public ArmorStandInventory(ArmorStandEntity armorStand) {
     this.armorStand = armorStand;
 
-    this.heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
-    this.armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
+    if (this.armorStand == null) {
+      this.heldItems = DefaultedList.ofSize(2, ItemStack.EMPTY);
+      this.armorItems = DefaultedList.ofSize(4, ItemStack.EMPTY);
+    } else {
+      this.heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
+      this.armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
+    }
+
     this.fullInventory = List.of(heldItems, armorItems);
   }
 

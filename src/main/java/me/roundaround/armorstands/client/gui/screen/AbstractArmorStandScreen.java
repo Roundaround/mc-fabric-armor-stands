@@ -64,13 +64,10 @@ public abstract class AbstractArmorStandScreen
   private boolean cursorLocked = false;
   private long lastPing = 0;
 
-  protected AbstractArmorStandScreen(
-      ArmorStandScreenHandler handler,
-      Text title,
-      ArmorStandEntity armorStand) {
+  protected AbstractArmorStandScreen(ArmorStandScreenHandler handler, Text title) {
     super(handler, handler.getPlayerInventory(), title);
+    this.armorStand = handler.getArmorStand();
 
-    this.armorStand = armorStand;
     this.messageRenderer = new MessageRenderer(this);
 
     this.passEvents = true;

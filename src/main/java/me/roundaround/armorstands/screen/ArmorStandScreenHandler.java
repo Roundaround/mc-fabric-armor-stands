@@ -8,23 +8,23 @@ import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
-import me.roundaround.armorstands.mixin.ServerPlayerEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
-import me.roundaround.armorstands.network.packet.s2c.OpenScreenPacket;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
-import me.roundaround.armorstands.util.LastUsedScreen;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ArmorStandScreenHandler
@@ -63,7 +63,7 @@ public class ArmorStandScreenHandler
       PlayerInventory playerInventory,
       ArmorStandEntity armorStand,
       ScreenType screenType) {
-    super(null, syncId);
+    super(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE, syncId);
 
     this.playerInventory = playerInventory;
     this.armorStand = armorStand;
@@ -79,12 +79,23 @@ public class ArmorStandScreenHandler
 
     this.inventory.onOpen(this.playerInventory.player);
 
-    if (this.screenType.usesInventory()) {
+    if (this.screenType != null && this.screenType.usesInventory()) {
       initSlots();
     }
   }
 
-  public void initSlots() {
+  public ArmorStandScreenHandler(
+      int syncId,
+      PlayerInventory playerInventory,
+      PacketByteBuf buf) {
+    this(
+        syncId,
+        playerInventory,
+        (ArmorStandEntity) playerInventory.player.world.getEntityById(buf.readInt()),
+        ScreenType.fromId(buf.readString()));
+  }
+
+  private void initSlots() {
     for (int col = 0; col < 9; ++col) {
       addSlot(new Slot(this.playerInventory, col, 8 + col * 18, 142));
     }
@@ -181,6 +192,10 @@ public class ArmorStandScreenHandler
 
   public ImmutableList<Pair<Slot, EquipmentSlot>> getArmorSlots() {
     return ImmutableList.copyOf(this.armorSlots);
+  }
+
+  public ScreenType getScreenType() {
+    return this.screenType;
   }
 
   @Override
@@ -303,34 +318,37 @@ public class ArmorStandScreenHandler
     return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
   }
 
-  public static void createOnServer(ServerPlayerEntity player, ArmorStandEntity armorStand) {
-    createOnServer(player, armorStand, LastUsedScreen.getOrDefault(player, armorStand, ScreenType.UTILITIES));
-  }
+  public static class Factory implements ExtendedScreenHandlerFactory {
+    private final ScreenType screenType;
+    private final ArmorStandEntity armorStand;
 
-  public static void createOnServer(ServerPlayerEntity player, ArmorStandEntity armorStand, ScreenType screenType) {
-    ServerPlayerEntityAccessor accessor = (ServerPlayerEntityAccessor) player;
-
-    if (player.currentScreenHandler != player.playerScreenHandler) {
-      if (player.currentScreenHandler instanceof ArmorStandScreenHandler) {
-        player.closeScreenHandler();
-      } else {
-        player.closeHandledScreen();
-      }
+    private Factory(ScreenType screenType, ArmorStandEntity armorStand) {
+      this.screenType = screenType;
+      this.armorStand = armorStand;
     }
 
-    accessor.invokeIncrementScreenHandlerSyncId();
-    int syncId = accessor.getScreenHandlerSyncId();
+    public static Factory create(ScreenType screenType, ArmorStandEntity armorStand) {
+      return new Factory(screenType, armorStand);
+    }
 
-    LastUsedScreen.set(player, armorStand, screenType);
-    OpenScreenPacket.sendToClient(player, syncId, armorStand, screenType);
+    @Override
+    public Text getDisplayName() {
+      return screenType.getDisplayName();
+    }
 
-    ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(
-        syncId,
-        player.getInventory(),
-        armorStand,
-        screenType);
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+      return new ArmorStandScreenHandler(
+          syncId,
+          playerInventory,
+          this.armorStand,
+          this.screenType);
+    }
 
-    player.currentScreenHandler = screenHandler;
-    accessor.invokeOnScreenHandlerOpened(screenHandler);
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+      buf.writeInt(this.armorStand.getId());
+      buf.writeString(this.screenType.getId());
+    }
   }
 }

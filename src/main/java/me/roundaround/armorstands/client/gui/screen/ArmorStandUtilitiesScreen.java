@@ -13,7 +13,6 @@ import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
@@ -23,8 +22,8 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private final HashMap<ArmorStandFlag, Boolean> currentValues = new HashMap<>();
   private final HashMap<ArmorStandFlag, Consumer<Boolean>> listeners = new HashMap<>();
 
-  public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.UTILITIES.getDisplayName(), armorStand);
+  public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.UTILITIES.getDisplayName());
     this.supportsUndoRedo = true;
   }
 

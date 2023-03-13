@@ -43,8 +43,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private AdjustPoseSliderWidget yawSlider;
   private AdjustPoseSliderWidget rollSlider;
 
-  public ArmorStandPoseScreen(ArmorStandScreenHandler handler, ArmorStandEntity armorStand) {
-    super(handler, ScreenType.POSE.getDisplayName(), armorStand);
+  public ArmorStandPoseScreen(ArmorStandScreenHandler handler) {
+    super(handler, ScreenType.POSE.getDisplayName());
     this.supportsUndoRedo = true;
   }
 
