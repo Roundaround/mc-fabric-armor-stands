@@ -7,8 +7,6 @@
     "ArmorStandEntityAccessor",
     "ArmorStandEntityServerMixin",
     "NameTagItemMixin",
-    "ScreenHandlerAccessor",
-    "ServerPlayerEntityAccessor",
     "ServerPlayerEntityMixin",
     "ServerPropertiesHandlerMixin"
   ],

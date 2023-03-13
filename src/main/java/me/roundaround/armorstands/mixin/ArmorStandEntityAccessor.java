@@ -19,9 +19,6 @@ public interface ArmorStandEntityAccessor {
   @Invoker("setHideBasePlate")
   public void invokeSetHideBasePlate(boolean hideBasePlate);
 
-  @Invoker("setMarker")
-  public void invokeSetMarker(boolean marker);
-
   @Accessor("heldItems")
   public DefaultedList<ItemStack> getHeldItems();
 
