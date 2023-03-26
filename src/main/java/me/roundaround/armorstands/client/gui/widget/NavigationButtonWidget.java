@@ -10,7 +10,8 @@ import net.minecraft.text.Text;
 
 public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extends AbstractArmorStandScreen>
     extends IconButtonWidget<P> {
-  private boolean clickable;
+  private final ScreenType screenType;
+  private final boolean clickable;
 
   @SuppressWarnings("unchecked")
   private NavigationButtonWidget(
@@ -21,7 +22,8 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
       Text tooltip,
       PressAction<P, T> onPress,
       boolean clickable,
-      int uIndex) {
+      int uIndex,
+      ScreenType screenType) {
     super(
         client,
         parent,
@@ -33,6 +35,7 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
           onPress.accept((NavigationButtonWidget<P, T>) button, parent.getScreenHandler(), parent.getArmorStand());
         });
 
+    this.screenType = screenType;
     this.clickable = clickable;
     this.active = clickable;
   }
@@ -57,17 +60,22 @@ public class NavigationButtonWidget<P extends AbstractArmorStandScreen, T extend
           RequestScreenPacket.sendToServer(armorStand, screenType);
         },
         parent.getScreenType() != screenType,
-        screenType.getUIndex());
+        screenType.getUIndex(),
+        screenType);
   }
 
-  @Override
-  public boolean isHovered() {
-    return this.clickable && super.isHovered();
+  public ScreenType getScreenType() {
+    return this.screenType;
   }
 
   public boolean isMouseOverIgnoreState(double mouseX, double mouseY) {
     return mouseX >= this.x && mouseY >= this.y
         && mouseX < (this.x + this.width) && mouseY < (this.y + this.height);
+  }
+
+  @Override
+  public boolean isHovered() {
+    return this.clickable && super.isHovered();
   }
 
   @FunctionalInterface

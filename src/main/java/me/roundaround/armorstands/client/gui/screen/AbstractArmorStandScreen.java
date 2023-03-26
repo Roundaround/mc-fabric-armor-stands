@@ -301,6 +301,21 @@ public abstract class AbstractArmorStandScreen
         return true;
     }
 
+    for (int i = 0; i < this.navigationButtons.size(); i++) {
+      NavigationButtonWidget<?, ?> button = this.navigationButtons.get(i);
+      ScreenType screenType = button.getScreenType();
+
+      if (screenType == this.getScreenType()) {
+        continue;
+      }
+
+      if (this.client.options.hotbarKeys[i].matchesKey(keyCode, scanCode)) {
+        playClickSound();
+        button.onPress();
+        return true;
+      }
+    }
+
     return getFocused() != null
         && getFocused().keyPressed(keyCode, scanCode, modifiers);
   }
