@@ -7,7 +7,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -78,12 +77,12 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Simple
 
   @Override
   public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    super.renderButton(matrixStack, mouseX, mouseY, delta);
+
     RenderSystem.setShaderTexture(0, TEXTURE);
-    RenderSystem.enableDepthTest();
 
     int uIndex = this.textureIndex % ICONS_PER_ROW;
-    int vIndex = 3 * (this.textureIndex / ICONS_PER_ROW) + (!this.active ? 0 : (isHovered() ? 2 : 1));
+    int vIndex = this.textureIndex / ICONS_PER_ROW;
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
