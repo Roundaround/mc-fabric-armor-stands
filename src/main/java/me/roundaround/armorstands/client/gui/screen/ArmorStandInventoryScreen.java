@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
@@ -24,9 +23,6 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final Identifier CUSTOM_TEXTURE = new Identifier(
       ArmorStandsMod.MOD_ID,
       "textures/gui/container/inventory.png");
-  private static final Identifier CUSTOM_TEXTURE_DARK = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "textures/gui/container/inventory_dark.png");
 
   private float mouseX;
   private float mouseY;
@@ -101,10 +97,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     int x = (this.width - BACKGROUND_WIDTH) / 2;
     int y = (this.height - BACKGROUND_HEIGHT) / 2;
 
-    RenderSystem.setShaderTexture(0,
-        ArmorStandsClientMod.darkModeDetected
-            ? CUSTOM_TEXTURE_DARK
-            : CUSTOM_TEXTURE);
+    RenderSystem.setShaderTexture(0, CUSTOM_TEXTURE);
     drawTexture(
         matrixStack,
         x,
