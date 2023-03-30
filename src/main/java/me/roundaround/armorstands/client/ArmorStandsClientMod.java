@@ -6,12 +6,7 @@ import java.time.LocalDate;
 import com.google.common.hash.Hashing;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandInventoryScreen;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandMoveScreen;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandPoseScreen;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandPresetsScreen;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandRotateScreen;
-import me.roundaround.armorstands.client.gui.screen.ArmorStandUtilitiesScreen;
+import me.roundaround.armorstands.client.gui.screen.*;
 import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
 import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
 import me.roundaround.armorstands.network.packet.s2c.PongPacket;
@@ -22,11 +17,14 @@ import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ArmorStandsClientMod implements ClientModInitializer {
@@ -55,15 +53,18 @@ public class ArmorStandsClientMod implements ClientModInitializer {
           ResourcePackActivationType.NORMAL);
     });
 
-    HandledScreens.register(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE, (handler, inventory, title) -> {
-      return switch (handler.getScreenType()) {
-        case UTILITIES -> new ArmorStandUtilitiesScreen(handler);
-        case MOVE -> new ArmorStandMoveScreen(handler);
-        case ROTATE -> new ArmorStandRotateScreen(handler);
-        case POSE -> new ArmorStandPoseScreen(handler);
-        case PRESETS -> new ArmorStandPresetsScreen(handler);
-        case INVENTORY -> new ArmorStandInventoryScreen(handler);
-      };
+    HandledScreens.register(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE, new HandledScreens.Provider<ArmorStandScreenHandler, AbstractArmorStandScreen>() {
+      @Override
+      public AbstractArmorStandScreen create(ArmorStandScreenHandler handler, PlayerInventory playerInventory, Text title) {
+        return switch (handler.getScreenType()) {
+          case UTILITIES -> new ArmorStandUtilitiesScreen(handler);
+          case MOVE -> new ArmorStandMoveScreen(handler);
+          case ROTATE -> new ArmorStandRotateScreen(handler);
+          case POSE -> new ArmorStandPoseScreen(handler);
+          case PRESETS -> new ArmorStandPresetsScreen(handler);
+          case INVENTORY -> new ArmorStandInventoryScreen(handler);
+        };
+      }
     });
   }
 
@@ -75,11 +76,11 @@ public class ArmorStandsClientMod implements ClientModInitializer {
 
   /**
    * Fun surprise for the nerd nugget
-   * 
+   * <br />
    * Used from the following mixins:
    * - ClientPlayerEntityMixin
    * - PlayerEntityRendererMixin
-   * 
+   * <br />
    * If you do not know what this is, you are not the target, and you can ignore
    * this. It actually has nothing to do with the mod, and does not affect the
    * game in any way.
