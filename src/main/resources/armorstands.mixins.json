@@ -13,7 +13,6 @@
   "client": [
     "ArmorStandEntityClientMixin",
     "ClickableWidgetMixin",
-    "ClientPlayerEntityMixin",
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
@@ -21,7 +20,6 @@
     "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
-    "PlayerEntityRendererMixin",
     "SliderWidgetMixin"
   ],
   "server": [],
