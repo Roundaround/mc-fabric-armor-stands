@@ -12,6 +12,8 @@ public class LabelWidget extends DrawableHelper implements Drawable {
   public static final int HEIGHT_WITH_PADDING = 13;
   public static final int PADDING = 2;
 
+  private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+
   private final int posX;
   private final int posY;
   private final Alignment alignmentH;
@@ -19,7 +21,6 @@ public class LabelWidget extends DrawableHelper implements Drawable {
   private final boolean showBackground;
   private final boolean showTextShadow;
   private final boolean shiftForPadding;
-  private final MinecraftClient client;
   private final TextRenderer textRenderer;
 
   private Text text;
@@ -46,8 +47,7 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     this.showTextShadow = showTextShadow;
     this.shiftForPadding = shiftForPadding;
 
-    client = MinecraftClient.getInstance();
-    textRenderer = client.textRenderer;
+    textRenderer = CLIENT.textRenderer;
 
     setText(text);
   }
@@ -85,11 +85,11 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     int pixelLeft = MathHelper.floor(left) - (showBackground ? 2 : 0);
     int pixelRight = MathHelper.ceil(right) + (showBackground ? 2 : 0);
     int pixelTop = MathHelper.floor(top) - (showBackground ? 1 : 0);
-    int pixelpixelBottom = MathHelper.ceil(bottom) + (showBackground ? 1 : 0);
+    int pixelBottom = MathHelper.ceil(bottom) + (showBackground ? 1 : 0);
     return mouseX >= pixelLeft
         && mouseY >= pixelTop
         && mouseX < pixelRight
-        && mouseY < pixelpixelBottom;
+        && mouseY < pixelBottom;
   }
 
   public void setText(Text text) {
@@ -227,14 +227,14 @@ public class LabelWidget extends DrawableHelper implements Drawable {
     }
   }
 
-  public static enum Alignment {
+  public enum Alignment {
     START(1),
     CENTER(0),
     END(-1);
 
     private final int shiftOffset;
 
-    private Alignment(int shiftOffset) {
+    Alignment(int shiftOffset) {
       this.shiftOffset = shiftOffset;
     }
 
