@@ -22,8 +22,8 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
 
   private final ArrayList<PresetPoseButtonWidget> presetButtons = new ArrayList<>();
 
-  private IconButtonWidget<ArmorStandPresetsScreen> prevPageButton;
-  private IconButtonWidget<ArmorStandPresetsScreen> nextPageButton;
+  private IconButtonWidget prevPageButton;
+  private IconButtonWidget nextPageButton;
   private LabelWidget pageLabel;
   private int page = 0;
   private Source source = Source.ALL;
@@ -115,24 +115,19 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
 
     for (int i = BUTTONS_PER_PAGE; i > 0; i--) {
       this.presetButtons.add(addDrawableChild(new PresetPoseButtonWidget(
-          this,
           this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
           this.height - SCREEN_EDGE_PAD - i * CONTROL_HEIGHT - i * BETWEEN_PAD - IconButtonWidget.HEIGHT,
           CONTROL_WIDTH,
           CONTROL_HEIGHT)));
     }
 
-    this.prevPageButton = addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
+    this.prevPageButton = addDrawableChild(new IconButtonWidget(
         this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
         this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         12,
         Text.translatable("armorstands.presets.previous"),
         (button) -> previousPage()));
-    this.nextPageButton = addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
+    this.nextPageButton = addDrawableChild(new IconButtonWidget(
         this.width - SCREEN_EDGE_PAD - IconButtonWidget.WIDTH,
         this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT,
         13,

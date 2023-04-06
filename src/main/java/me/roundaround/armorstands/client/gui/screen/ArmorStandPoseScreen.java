@@ -1,18 +1,17 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.SimpleTooltipButtonWidget;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.client.render.GameRenderer;
@@ -30,14 +29,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private static final int PART_PAD_HORIZONTAL = 4;
 
   private PosePart posePart = PosePart.HEAD;
-  private IconButtonWidget<ArmorStandPoseScreen> activePosePartButton;
+  private IconButtonWidget activePosePartButton;
 
-  private IconButtonWidget<ArmorStandPoseScreen> headButton;
-  private IconButtonWidget<ArmorStandPoseScreen> bodyButton;
-  private IconButtonWidget<ArmorStandPoseScreen> leftArmButton;
-  private IconButtonWidget<ArmorStandPoseScreen> rightArmButton;
-  private IconButtonWidget<ArmorStandPoseScreen> leftLegButton;
-  private IconButtonWidget<ArmorStandPoseScreen> rightLegButton;
   private LabelWidget posePartLabel;
   private AdjustPoseSliderWidget pitchSlider;
   private AdjustPoseSliderWidget yawSlider;
@@ -73,130 +66,101 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     int offset = (CONTROL_WIDTH - 3 * IconButtonWidget.WIDTH - 2 * PART_PAD_HORIZONTAL) / 2;
 
-    this.headButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD
-            + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD
-            - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget headButton = new IconButtonWidget(
+        offset + SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL -
+            PART_PAD_VERTICAL - BUTTON_HEIGHT,
         6,
         PosePart.HEAD.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.HEAD);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    this.headButton.active = false;
-    this.activePosePartButton = this.headButton;
-    addDrawableChild(this.headButton);
+    headButton.active = false;
+    this.activePosePartButton = headButton;
+    addDrawableChild(headButton);
 
-    this.rightArmButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget rightArmButton = new IconButtonWidget(offset + SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
+            PART_PAD_VERTICAL - BUTTON_HEIGHT,
         8,
         PosePart.RIGHT_ARM.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.RIGHT_ARM);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    addDrawableChild(this.rightArmButton);
+    addDrawableChild(rightArmButton);
 
-    this.bodyButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD
-            + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD
-            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget bodyButton = new IconButtonWidget(
+        offset + SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
+            PART_PAD_VERTICAL - BUTTON_HEIGHT,
         7,
         PosePart.BODY.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.BODY);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    addDrawableChild(this.bodyButton);
+    addDrawableChild(bodyButton);
 
-    this.leftArmButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD
-            + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD
-            - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget leftArmButton = new IconButtonWidget(
+        offset + SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
+            PART_PAD_VERTICAL - BUTTON_HEIGHT,
         9,
         PosePart.LEFT_ARM.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.LEFT_ARM);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    addDrawableChild(this.leftArmButton);
+    addDrawableChild(leftArmButton);
 
-    this.rightLegButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD
-            + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
-        this.height - SCREEN_EDGE_PAD
-            - IconButtonWidget.HEIGHT
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget rightLegButton = new IconButtonWidget(
+        offset + SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         11,
         PosePart.RIGHT_LEG.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.RIGHT_LEG);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    addDrawableChild(this.rightLegButton);
+    addDrawableChild(rightLegButton);
 
-    this.leftLegButton = new IconButtonWidget<>(
-        client,
-        this,
-        offset + SCREEN_EDGE_PAD
-            + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2
-            + IconButtonWidget.WIDTH
-            + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD
-            - IconButtonWidget.HEIGHT
-            - PART_PAD_VERTICAL - BUTTON_HEIGHT,
+    IconButtonWidget leftLegButton = new IconButtonWidget(
+        offset + SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2 +
+            IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT,
         10,
         PosePart.LEFT_LEG.getDisplayName(),
         (button) -> {
           setActivePosePart(PosePart.LEFT_LEG);
           this.activePosePartButton.active = true;
-          this.activePosePartButton = button;
+          this.activePosePartButton = (IconButtonWidget) button;
           this.activePosePartButton.active = false;
         });
-    addDrawableChild(this.leftLegButton);
+    addDrawableChild(leftLegButton);
 
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        CONTROL_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.pose.mirror"),
-        (button) -> {
-          SetPosePacket.sendToServer(new Pose(this.armorStand).mirror());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"),
+            (button) -> {
+              SetPosePacket.sendToServer(new Pose(this.armorStand).mirror());
 
-          this.pitchSlider.refresh();
-          this.yawSlider.refresh();
-          this.rollSlider.refresh();
-        }));
+              this.pitchSlider.refresh();
+              this.yawSlider.refresh();
+              this.rollSlider.refresh();
+            })
+        .size(CONTROL_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
   }
 
   @Override
@@ -207,14 +171,9 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .initially(SliderRange.FULL)
         .values(SliderRange.values())
         .omitKeyText()
-        .build(
-            this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-            this.height - SCREEN_EDGE_PAD
-                - 3 * SLIDER_HEIGHT
-                - 3 * BUTTON_HEIGHT
-                - 3 * BETWEEN_PAD
-                - 3 * ROW_PAD
-                - 2 * LabelWidget.HEIGHT_WITH_PADDING,
+        .build(this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
+            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT -
+                3 * BETWEEN_PAD - 3 * ROW_PAD - 2 * LabelWidget.HEIGHT_WITH_PADDING,
             CONTROL_WIDTH,
             BUTTON_HEIGHT,
             Text.translatable("armorstands.pose.range"),
@@ -224,15 +183,11 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
               this.rollSlider.setRange(value.getMin(), value.getMax());
             }));
 
-    this.posePartLabel = addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()),
-        this.width - SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 3 * SLIDER_HEIGHT
-            - 3 * BUTTON_HEIGHT
-            - 4 * BETWEEN_PAD
-            - 3 * ROW_PAD
-            - 2 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.posePartLabel = addLabel(LabelWidget.builder(Text.translatable("armorstands.pose.editing",
+                this.posePart.getDisplayName().getString()),
+            this.width - SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT - 4 * BETWEEN_PAD -
+                3 * ROW_PAD - 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .shiftForPadding()
         .alignedBottom()
         .justifiedRight()
@@ -246,11 +201,10 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private AdjustPoseSliderWidget addAdjustSlider(EulerAngleParameter parameter, int index) {
     int refRight = this.width - SCREEN_EDGE_PAD;
     int refLeft = refRight - CONTROL_WIDTH;
-    int refY = this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT
-        - index * (SLIDER_HEIGHT + BUTTON_HEIGHT + BETWEEN_PAD + ROW_PAD);
+    int refY = this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT -
+        index * (SLIDER_HEIGHT + BUTTON_HEIGHT + BETWEEN_PAD + ROW_PAD);
 
-    AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(
-        refLeft,
+    AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(refLeft,
         refY,
         CONTROL_WIDTH,
         SLIDER_HEIGHT,
@@ -258,47 +212,26 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         parameter,
         this.armorStand);
 
-    addLabel(LabelWidget.builder(
-        parameter.getDisplayName(),
-        refLeft,
-        refY - BETWEEN_PAD)
+    addLabel(LabelWidget.builder(parameter.getDisplayName(), refLeft, refY - BETWEEN_PAD)
         .alignedBottom()
         .justifiedLeft()
         .shiftForPadding()
         .build());
-    addDrawableChild(new SimpleTooltipButtonWidget(
-        this,
-        refRight - 3 * BUTTON_WIDTH - 2 * BETWEEN_PAD,
-        refY - BETWEEN_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.literal("-"),
-        Text.translatable("armorstands.pose.subtract"),
-        (button) -> {
-          slider.decrement();
-        }));
-    addDrawableChild(new SimpleTooltipButtonWidget(
-        this,
-        refRight - 2 * BUTTON_WIDTH - BETWEEN_PAD,
-        refY - BETWEEN_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.literal("+"),
-        Text.translatable("armorstands.pose.add"),
-        (button) -> {
-          slider.increment();
-        }));
-    addDrawableChild(new SimpleTooltipButtonWidget(
-        this,
-        refRight - BUTTON_WIDTH,
-        refY - BETWEEN_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.literal("0"),
-        Text.translatable("armorstands.pose.zero"),
-        (button) -> {
-          slider.zero();
-        }));
+    addDrawableChild(ButtonWidget.builder(Text.literal("-"), (button) -> slider.decrement())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(refRight - 3 * BUTTON_WIDTH - 2 * BETWEEN_PAD, refY - BETWEEN_PAD - BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.subtract")))
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.literal("+"), (button) -> slider.increment())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(refRight - 2 * BUTTON_WIDTH - BETWEEN_PAD, refY - BETWEEN_PAD - BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.add")))
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.literal("0"), (button) -> slider.zero())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(refRight - BUTTON_WIDTH, refY - BETWEEN_PAD - BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.zero")))
+        .build());
     addDrawableChild(slider);
 
     return slider;
@@ -336,38 +269,37 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     }
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
 
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawTexture(
-        matrixStack,
-        this.activePosePartButton.x - 2,
-        this.activePosePartButton.y - 2,
+    drawTexture(matrixStack,
+        this.activePosePartButton.getX() - 2,
+        this.activePosePartButton.getY() - 2,
         0,
         22,
         13,
         13);
     drawTexture(matrixStack,
-        this.activePosePartButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activePosePartButton.y - 2,
+        this.activePosePartButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activePosePartButton.getY() - 2,
         12,
         22,
         12,
         13);
     drawTexture(matrixStack,
-        this.activePosePartButton.x - 2,
-        this.activePosePartButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        this.activePosePartButton.getX() - 2,
+        this.activePosePartButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
         0,
         34,
         13,
         12);
     drawTexture(matrixStack,
-        this.activePosePartButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activePosePartButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        this.activePosePartButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activePosePartButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
         12,
         34,
         12,
@@ -380,10 +312,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.pitchSlider.setPart(part);
     this.yawSlider.setPart(part);
     this.rollSlider.setPart(part);
-    this.posePartLabel.setText(
-        Text.translatable(
-            "armorstands.pose.editing",
-            this.posePart.getDisplayName().getString()));
+    this.posePartLabel.setText(Text.translatable("armorstands.pose.editing",
+        this.posePart.getDisplayName().getString()));
   }
 
   private static enum SliderRange {

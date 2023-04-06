@@ -1,77 +1,33 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import java.util.List;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class IconButtonWidget<P extends AbstractArmorStandScreen> extends SimpleTooltipButtonWidget {
+public class IconButtonWidget extends ButtonWidget {
   public static final int WIDTH = 20;
   public static final int HEIGHT = 20;
-  protected static final Identifier TEXTURE = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "textures/gui/widgets.png");
+  protected static final Identifier TEXTURE =
+      new Identifier(ArmorStandsMod.MOD_ID, "textures/gui/widgets.png");
   protected static final int TEXTURE_WIDTH = 256;
   protected static final int ICONS_PER_ROW = TEXTURE_WIDTH / WIDTH;
 
-  protected final P parent;
   protected final int textureIndex;
 
-  @SuppressWarnings("unchecked")
   public IconButtonWidget(
-      MinecraftClient client,
-      P parent,
-      int x,
-      int y,
-      int textureIndex,
-      List<OrderedText> tooltip,
-      PressAction<P> onPress) {
-    super(
-        parent,
-        x,
-        y,
-        WIDTH,
-        HEIGHT,
-        Text.empty(),
-        tooltip,
-        (button) -> {
-          onPress.accept((IconButtonWidget<P>) button);
-        });
-
-    this.parent = parent;
-    this.textureIndex = textureIndex;
-  }
-
-  @SuppressWarnings("unchecked")
-  public IconButtonWidget(
-      MinecraftClient client,
-      P parent,
       int x,
       int y,
       int textureIndex,
       Text tooltip,
-      PressAction<P> onPress) {
-    super(
-        parent,
-        x,
-        y,
-        WIDTH,
-        HEIGHT,
-        Text.empty(),
-        tooltip,
-        (button) -> {
-          onPress.accept((IconButtonWidget<P>) button);
-        });
+      ButtonWidget.PressAction onPress) {
+    super(x, y, WIDTH, HEIGHT, Text.empty(), onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
-    this.parent = parent;
     this.textureIndex = textureIndex;
+    setTooltip(Tooltip.of(tooltip));
   }
 
   @Override
@@ -85,15 +41,6 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Simple
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
-    drawTexture(matrixStack, x, y, u, v, WIDTH, HEIGHT);
-
-    if (isHovered()) {
-      renderTooltip(matrixStack, mouseX, mouseY);
-    }
-  }
-
-  @FunctionalInterface
-  public static interface PressAction<P extends AbstractArmorStandScreen> {
-    void accept(IconButtonWidget<P> button);
+    drawTexture(matrixStack, getX(), getY(), u, v, WIDTH, HEIGHT);
   }
 }

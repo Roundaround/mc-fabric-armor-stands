@@ -70,7 +70,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget {
   }
 
   @Override
-  public void appendNarrations(NarrationMessageBuilder builder) {
+  public void appendClickableNarrations(NarrationMessageBuilder builder) {
   }
 
   @Override
@@ -98,7 +98,7 @@ public class ArmorStandFlagToggleWidget extends PressableWidget {
   }
 
   private void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();

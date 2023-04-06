@@ -70,7 +70,7 @@ public abstract class ClickableWidgetMixin {
     MinecraftClient client = MinecraftClient.getInstance();
     TextRenderer textRenderer = client.textRenderer;
 
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
     RenderSystem.enableBlend();

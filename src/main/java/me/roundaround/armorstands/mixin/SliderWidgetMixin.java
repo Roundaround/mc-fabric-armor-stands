@@ -38,8 +38,8 @@ public abstract class SliderWidgetMixin {
 
     info.cancel();
 
-    int x = ((SliderWidget) (Object) this).x;
-    int y = ((SliderWidget) (Object) this).y;
+    int x = ((SliderWidget) (Object) this).getX();
+    int y = ((SliderWidget) (Object) this).getY();
 
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);

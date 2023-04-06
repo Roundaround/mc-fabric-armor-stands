@@ -91,7 +91,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
     int x = (this.width - BACKGROUND_WIDTH) / 2;

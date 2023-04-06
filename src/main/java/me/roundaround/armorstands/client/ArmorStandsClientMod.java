@@ -8,7 +8,6 @@ import me.roundaround.armorstands.network.packet.s2c.PongPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -16,7 +15,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -33,32 +31,31 @@ public class ArmorStandsClientMod implements ClientModInitializer {
         InputUtil.UNKNOWN_KEY.getCode(),
         KeyBinding.MISC_CATEGORY));
 
-    ClientSpriteRegistryCallback.event(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE)
-        .register((atlasTexture, registry) -> {
-          registry.register(ArmorStandScreenHandler.EMPTY_MAINHAND_ARMOR_SLOT);
-        });
-
     FabricLoader.getInstance().getModContainer(ArmorStandsMod.MOD_ID).ifPresent((container) -> {
       ResourceManagerHelper.registerBuiltinResourcePack(
           new Identifier(ArmorStandsMod.MOD_ID, "armorstands-dark-ui"),
           container,
-          "Armor Stands Dark UI",
+          Text.literal("Armor Stands Dark UI"),
           ResourcePackActivationType.NORMAL);
     });
 
-    HandledScreens.register(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE, new HandledScreens.Provider<ArmorStandScreenHandler, AbstractArmorStandScreen>() {
-      @Override
-      public AbstractArmorStandScreen create(ArmorStandScreenHandler handler, PlayerInventory playerInventory, Text title) {
-        return switch (handler.getScreenType()) {
-          case UTILITIES -> new ArmorStandUtilitiesScreen(handler);
-          case MOVE -> new ArmorStandMoveScreen(handler);
-          case ROTATE -> new ArmorStandRotateScreen(handler);
-          case POSE -> new ArmorStandPoseScreen(handler);
-          case PRESETS -> new ArmorStandPresetsScreen(handler);
-          case INVENTORY -> new ArmorStandInventoryScreen(handler);
-        };
-      }
-    });
+    HandledScreens.register(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE,
+        new HandledScreens.Provider<ArmorStandScreenHandler, AbstractArmorStandScreen>() {
+          @Override
+          public AbstractArmorStandScreen create(
+              ArmorStandScreenHandler handler,
+              PlayerInventory playerInventory,
+              Text title) {
+            return switch (handler.getScreenType()) {
+              case UTILITIES -> new ArmorStandUtilitiesScreen(handler);
+              case MOVE -> new ArmorStandMoveScreen(handler);
+              case ROTATE -> new ArmorStandRotateScreen(handler);
+              case POSE -> new ArmorStandPoseScreen(handler);
+              case PRESETS -> new ArmorStandPresetsScreen(handler);
+              case INVENTORY -> new ArmorStandInventoryScreen(handler);
+            };
+          }
+        });
   }
 
   private static void registerReceivers() {

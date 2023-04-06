@@ -23,20 +23,10 @@ public class MoveButtonWidget extends ButtonWidget {
       int amount,
       MoveMode mode,
       MoveUnits units) {
-    super(
-        x,
-        y,
-        width,
-        height,
-        getText(amount, units),
-        (rawButton) -> {
-          MoveButtonWidget button = (MoveButtonWidget) rawButton;
-          AdjustPosPacket.sendToServer(
-              button.direction,
-              button.amount,
-              button.mode,
-              button.units);
-        });
+    super(x, y, width, height, getText(amount, units), (rawButton) -> {
+      MoveButtonWidget button = (MoveButtonWidget) rawButton;
+      AdjustPosPacket.sendToServer(button.direction, button.amount, button.mode, button.units);
+    }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
     this.direction = direction;
     this.amount = amount;

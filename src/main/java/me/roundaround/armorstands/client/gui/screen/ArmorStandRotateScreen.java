@@ -1,7 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.Locale;
-
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.RotateSliderWidget;
@@ -16,6 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+
+import java.util.Locale;
 
 public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 46;
@@ -52,55 +52,49 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   }
 
   private void initCurrentStatus() {
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.current.player"),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.player"),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.playerFacingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(client.player),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.playerFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(client.player),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.playerRotationLabel = addLabel(LabelWidget.builder(
-        getCurrentRotationText(client.player),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.playerRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(client.player),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.current.stand"),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.stand"),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.standFacingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(this.armorStand),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.standFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(this.armorStand),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.standRotationLabel = addLabel(LabelWidget.builder(
-        getCurrentRotationText(this.armorStand),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.standRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(this.armorStand),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -108,105 +102,85 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   }
 
   private void initSnapButtons() {
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.rotate.snap"),
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 3 * BUTTON_HEIGHT
-            - 4 * BETWEEN_PAD
-            - LabelWidget.HEIGHT_WITH_PADDING)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.snap"),
+            SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 4 * BETWEEN_PAD -
+                LabelWidget.HEIGHT_WITH_PADDING)
         .shiftForPadding()
         .justifiedLeft()
         .alignedBottom()
         .build());
 
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 3 * BUTTON_HEIGHT
-            - 3 * BETWEEN_PAD
-            - LabelWidget.HEIGHT_WITH_PADDING,
-        DIRECTION_BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.snap." + Direction.SOUTH.getName()),
-        (button) -> {
+    addDrawableChild(ButtonWidget.builder(Text.translatable(
+            "armorstands.rotate.snap." + Direction.SOUTH.getName()), (button) -> {
           SetYawPacket.sendToServer(MathHelper.wrapDegrees(Direction.SOUTH.asRotation()));
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 3 * BUTTON_HEIGHT
-            - 3 * BETWEEN_PAD
-            - LabelWidget.HEIGHT_WITH_PADDING,
-        DIRECTION_BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.snap." + Direction.NORTH.getName()),
-        (button) -> {
+        })
+        .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD -
+                LabelWidget.HEIGHT_WITH_PADDING)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable(
+            "armorstands.rotate.snap." + Direction.NORTH.getName()), (button) -> {
           SetYawPacket.sendToServer(MathHelper.wrapDegrees(Direction.NORTH.asRotation()));
-        }));
+        })
+        .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
+            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD -
+                LabelWidget.HEIGHT_WITH_PADDING)
+        .build());
 
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 2 * BUTTON_HEIGHT
-            - 2 * BETWEEN_PAD
-            - LabelWidget.HEIGHT_WITH_PADDING,
-        DIRECTION_BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.snap." + Direction.EAST.getName()),
-        (button) -> {
+    addDrawableChild(ButtonWidget.builder(Text.translatable(
+            "armorstands.rotate.snap." + Direction.EAST.getName()), (button) -> {
           SetYawPacket.sendToServer(MathHelper.wrapDegrees(Direction.EAST.asRotation()));
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD
-            - 2 * BUTTON_HEIGHT
-            - 2 * BETWEEN_PAD
-            - LabelWidget.HEIGHT_WITH_PADDING,
-        DIRECTION_BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.snap." + Direction.WEST.getName()),
-        (button) -> {
+        })
+        .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - 2 * BETWEEN_PAD -
+                LabelWidget.HEIGHT_WITH_PADDING)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable(
+            "armorstands.rotate.snap." + Direction.WEST.getName()), (button) -> {
           SetYawPacket.sendToServer(MathHelper.wrapDegrees(Direction.WEST.asRotation()));
-        }));
+        })
+        .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
+            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - 2 * BETWEEN_PAD -
+                LabelWidget.HEIGHT_WITH_PADDING)
+        .build());
   }
 
   private void initFaceButtons() {
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.rotate.face"),
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - BETWEEN_PAD)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.face"),
+            SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - BETWEEN_PAD)
         .shiftForPadding()
         .justifiedLeft()
         .alignedBottom()
         .build());
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.face.toward"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.FACE_TOWARD);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.face.away"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.FACE_AWAY);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.rotate.face.with"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.FACE_WITH);
-        }));
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.toward"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.FACE_TOWARD);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.away"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.FACE_AWAY);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.with"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.FACE_WITH);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
+            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
   }
 
   @Override
@@ -216,8 +190,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);
 
-    this.rotateSlider = addDrawableChild(new RotateSliderWidget(
-        this,
+    this.rotateSlider = addDrawableChild(new RotateSliderWidget(this,
         this.width - SCREEN_EDGE_PAD - SLIDER_WIDTH,
         this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT,
         SLIDER_WIDTH,
@@ -227,56 +200,35 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
   private void addRowOfButtons(RotateDirection direction, int index) {
     int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
-    int refY = this.height - SCREEN_EDGE_PAD
-        - SLIDER_HEIGHT - 2 * BETWEEN_PAD
-        - MINI_BUTTON_HEIGHT
-        - index * (2 * BETWEEN_PAD + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
+    int refY =
+        this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT - 2 * BETWEEN_PAD - MINI_BUTTON_HEIGHT -
+            index * (2 * BETWEEN_PAD + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
     String modifier = direction.equals(RotateDirection.CLOCKWISE) ? "+" : "-";
 
-    addLabel(LabelWidget.builder(
-        direction.getLabel(),
+    addLabel(LabelWidget.builder(direction.getLabel(),
         this.width - SCREEN_EDGE_PAD,
-        refY - BETWEEN_PAD)
-        .justifiedRight()
-        .alignedBottom()
-        .shiftForPadding()
-        .build());
-    addDrawableChild(new ButtonWidget(
-        refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "1"),
-        (button) -> {
+        refY - BETWEEN_PAD).justifiedRight().alignedBottom().shiftForPadding().build());
+    addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "1"), (button) -> {
           AdjustYawPacket.sendToServer(direction.offset() * 1);
-        }));
-    addDrawableChild(new ButtonWidget(
-        refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "5"),
-        (button) -> {
+        })
+        .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
+        .position(refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "5"), (button) -> {
           AdjustYawPacket.sendToServer(direction.offset() * 5);
-        }));
-    addDrawableChild(new ButtonWidget(
-        refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "15"),
-        (button) -> {
+        })
+        .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
+        .position(refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "15"), (button) -> {
           AdjustYawPacket.sendToServer(direction.offset() * 15);
-        }));
-    addDrawableChild(new ButtonWidget(
-        refX,
-        refY,
-        MINI_BUTTON_WIDTH,
-        MINI_BUTTON_HEIGHT,
-        Text.literal(modifier + "45"),
-        (button) -> {
-          AdjustYawPacket.sendToServer(direction.offset() * 45);
-        }));
+        })
+        .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
+        .position(refX - 1 * (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "45"), (button) -> {
+      AdjustYawPacket.sendToServer(direction.offset() * 45);
+    }).size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT).position(refX, refY).build());
   }
 
   @Override

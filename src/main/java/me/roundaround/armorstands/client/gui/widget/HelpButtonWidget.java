@@ -1,41 +1,17 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import org.lwjgl.glfw.GLFW;
-
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
-public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen> {
-  public HelpButtonWidget(
-      MinecraftClient client,
-      AbstractArmorStandScreen parent,
-      int x,
-      int y) {
-    super(
-        client,
-        parent,
-        x,
-        y,
-        16,
-        wrapLines(getTooltip(client), Math.max(200, 3 * parent.width / 4)),
-        (button) -> {
-        });
-  }
+public class HelpButtonWidget extends IconButtonWidget {
+  private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
-  @Override
-  public void renderTooltip(MatrixStack matrixStack, int mouseX, int mouseY) {
-    matrixStack.push();
-    matrixStack.translate(0, 0, 100);
-    this.parent.renderOrderedTooltip(
-        matrixStack,
-        getTooltip(),
-        this.x + IconButtonWidget.WIDTH,
-        this.y + IconButtonWidget.HEIGHT);
-    matrixStack.pop();
+  public HelpButtonWidget(int x, int y) {
+    super(x, y, 16, buildTooltipText(), (button) -> {
+    });
   }
 
   @Override
@@ -48,45 +24,35 @@ public class HelpButtonWidget extends IconButtonWidget<AbstractArmorStandScreen>
     return false;
   }
 
-  private static Text getTooltip(MinecraftClient client) {
+  private static Text buildTooltipText() {
     String alt = Text.translatable("armorstands.help.alt").getString();
-    String inventory = client.options.inventoryKey
-        .getBoundKeyLocalizedText()
-        .getString();
-    String left = InputUtil.fromKeyCode(GLFW.GLFW_KEY_LEFT, 0)
-        .getLocalizedText()
-        .getString();
-    String right = InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT, 0)
-        .getLocalizedText()
-        .getString();
-    String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding
-        .getBoundKeyLocalizedText()
-        .getString();
-    String control = Text.translatable("armorstands.help."
-        + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
-        .getString();
-    String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0)
-        .getLocalizedText()
-        .getString();
-    String shift = Text.translatable("armorstands.help.shift")
-        .getString();
-    String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0)
-        .getLocalizedText()
-        .getString();
-    String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0)
-        .getLocalizedText()
-        .getString();
+    String inventory = CLIENT.options.inventoryKey.getBoundKeyLocalizedText().getString();
+    String left = InputUtil.fromKeyCode(GLFW.GLFW_KEY_LEFT, 0).getLocalizedText().getString();
+    String right = InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT, 0).getLocalizedText().getString();
+    String highlight =
+        ArmorStandsClientMod.highlightArmorStandKeyBinding.getBoundKeyLocalizedText().getString();
+    String control =
+        Text.translatable("armorstands.help." + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
+            .getString();
+    String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0).getLocalizedText().getString();
+    String shift = Text.translatable("armorstands.help.shift").getString();
+    String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
+    String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
 
-    return Text.translatable(
-        "armorstands.help",
+    return Text.translatable("armorstands.help",
         alt,
         inventory,
         left,
         right,
         highlight,
-        control, z,
-        control, shift, z,
-        control, c,
-        control, v);
+        control,
+        z,
+        control,
+        shift,
+        z,
+        control,
+        c,
+        control,
+        v);
   }
 }

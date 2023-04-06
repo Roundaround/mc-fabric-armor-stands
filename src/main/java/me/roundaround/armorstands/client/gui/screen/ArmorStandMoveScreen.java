@@ -1,8 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.MoveButtonWidget;
@@ -18,6 +15,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private static final int MINI_BUTTON_WIDTH = 28;
@@ -64,55 +64,49 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   }
 
   private void initCurrentStatus() {
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.current.player"),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.player"),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.playerPosLabel = addLabel(LabelWidget.builder(
-        getCurrentPosText(client.player),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.playerPosLabel = addLabel(LabelWidget.builder(getCurrentPosText(client.player),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.playerBlockPosLabel = addLabel(LabelWidget.builder(
-        getCurrentBlockPosText(client.player),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.playerBlockPosLabel = addLabel(LabelWidget.builder(getCurrentBlockPosText(client.player),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.current.stand"),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.stand"),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.standPosLabel = addLabel(LabelWidget.builder(
-        getCurrentPosText(this.armorStand),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.standPosLabel = addLabel(LabelWidget.builder(getCurrentPosText(this.armorStand),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
         .build());
 
-    this.standBlockPosLabel = addLabel(LabelWidget.builder(
-        getCurrentBlockPosText(this.armorStand),
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
+    this.standBlockPosLabel = addLabel(LabelWidget.builder(getCurrentBlockPosText(this.armorStand),
+            SCREEN_EDGE_PAD,
+            SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING)
         .alignedTop()
         .justifiedLeft()
         .shiftForPadding()
@@ -120,78 +114,66 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   }
 
   private void initSnapButtons() {
-    addLabel(LabelWidget.builder(
-        Text.translatable("armorstands.move.snap"),
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * (BUTTON_HEIGHT + BETWEEN_PAD))
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.move.snap"),
+            SCREEN_EDGE_PAD,
+            this.height - SCREEN_EDGE_PAD - 2 * (BUTTON_HEIGHT + BETWEEN_PAD))
         .shiftForPadding()
         .justifiedLeft()
         .alignedBottom()
         .build());
 
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.move.snap.standing"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.SNAP_STANDING);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.move.snap.sitting"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.SNAP_SITTING);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.move.snap.corner"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.SNAP_CORNER);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.move.snap.center"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.SNAP_CENTER);
-        }));
-    addDrawableChild(new ButtonWidget(
-        SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT,
-        BUTTON_WIDTH,
-        BUTTON_HEIGHT,
-        Text.translatable("armorstands.move.snap.player"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
-        }));
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.move.snap.standing"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.SNAP_STANDING);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.move.snap.sitting"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.SNAP_SITTING);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.move.snap.corner"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.SNAP_CORNER);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.move.snap.center"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.SNAP_CENTER);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
+            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.move.snap.player"),
+            (button) -> {
+              UtilityActionPacket.sendToServer(UtilityAction.SNAP_PLAYER);
+            })
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD),
+            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .build());
   }
 
   @Override
   protected void initRight() {
     super.initRight();
 
-    int topOfMoveButtons = this.height - SCREEN_EDGE_PAD
-        - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
+    int topOfMoveButtons = this.height - SCREEN_EDGE_PAD - 6 * MINI_BUTTON_HEIGHT - 5 * BETWEEN_PAD;
 
     addDrawableChild(CyclingButtonWidget.builder(MoveMode::getOptionValueText)
         .values(MoveMode.values())
         .initially(this.mode)
-        .build(
-            this.width - SCREEN_EDGE_PAD - 120,
-            topOfMoveButtons
-                - LabelWidget.HEIGHT_WITH_PADDING
-                - 3 * BETWEEN_PAD
-                - 2 * MINI_BUTTON_HEIGHT,
+        .build(this.width - SCREEN_EDGE_PAD - 120,
+            topOfMoveButtons - LabelWidget.HEIGHT_WITH_PADDING - 3 * BETWEEN_PAD -
+                2 * MINI_BUTTON_HEIGHT,
             120,
             MINI_BUTTON_HEIGHT,
             MoveMode.getOptionLabelText(),
@@ -215,12 +197,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.unitsButton = addDrawableChild(CyclingButtonWidget.builder(MoveUnits::getOptionValueText)
         .values(MoveUnits.values())
         .initially(this.units)
-        .build(
-            this.width - SCREEN_EDGE_PAD - 120,
-            topOfMoveButtons
-                - LabelWidget.HEIGHT_WITH_PADDING
-                - 2 * BETWEEN_PAD
-                - MINI_BUTTON_HEIGHT,
+        .build(this.width - SCREEN_EDGE_PAD - 120,
+            topOfMoveButtons - LabelWidget.HEIGHT_WITH_PADDING - 2 * BETWEEN_PAD -
+                MINI_BUTTON_HEIGHT,
             120,
             MINI_BUTTON_HEIGHT,
             MoveUnits.getOptionLabelText(),
@@ -231,16 +210,14 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
               });
             }));
 
-    this.facingLabel = addLabel(LabelWidget.builder(
-        getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
-            ? this.armorStand
-            : client.player),
-        this.width - SCREEN_EDGE_PAD,
-        topOfMoveButtons - BETWEEN_PAD)
-        .shiftForPadding()
-        .alignedBottom()
-        .justifiedRight()
-        .build());
+    this.facingLabel =
+        addLabel(LabelWidget.builder(getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND)
+                ? this.armorStand
+                : client.player), this.width - SCREEN_EDGE_PAD, topOfMoveButtons - BETWEEN_PAD)
+            .shiftForPadding()
+            .alignedBottom()
+            .justifiedRight()
+            .build());
 
     Direction[] directions = new Direction[] {
         Direction.UP,
@@ -257,16 +234,17 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
 
   private void addRowOfButtons(Direction direction, int index) {
     int refX = this.width - SCREEN_EDGE_PAD;
-    int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT - index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
+    int refY = this.height - SCREEN_EDGE_PAD - MINI_BUTTON_HEIGHT -
+        index * (BETWEEN_PAD + MINI_BUTTON_HEIGHT);
 
-    directionLabels.put(direction, addLabel(LabelWidget.builder(
-        this.mode.getDirectionText(direction),
-        refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
-        refY + MINI_BUTTON_HEIGHT / 2)
-        .justifiedRight()
-        .alignedMiddle()
-        .shiftForPadding()
-        .build()));
+    directionLabels.put(direction,
+        addLabel(LabelWidget.builder(this.mode.getDirectionText(direction),
+                refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH),
+                refY + MINI_BUTTON_HEIGHT / 2)
+            .justifiedRight()
+            .alignedMiddle()
+            .shiftForPadding()
+            .build()));
 
     moveButtons.add(addDrawableChild(new MoveButtonWidget(
         refX - 3 * MINI_BUTTON_WIDTH - 2 * BETWEEN_PAD,
@@ -288,8 +266,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         this.mode,
         this.units)));
 
-    moveButtons.add(addDrawableChild(new MoveButtonWidget(
-        refX - MINI_BUTTON_WIDTH,
+    moveButtons.add(addDrawableChild(new MoveButtonWidget(refX - MINI_BUTTON_WIDTH,
         refY,
         MINI_BUTTON_WIDTH,
         MINI_BUTTON_HEIGHT,

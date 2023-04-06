@@ -1,13 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
@@ -39,24 +32,27 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.lwjgl.glfw.GLFW;
 
-public abstract class AbstractArmorStandScreen
-    extends HandledScreen<ArmorStandScreenHandler>
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+
+public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStand, HasMessageRenderer {
   protected static final int SCREEN_EDGE_PAD = 4;
   protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
   protected static final int NAV_BUTTON_SPACING = 0;
-  protected static final Identifier WIDGETS_TEXTURE = new Identifier(
-      Identifier.DEFAULT_NAMESPACE,
-      "textures/gui/widgets.png");
+  protected static final Identifier WIDGETS_TEXTURE =
+      new Identifier(Identifier.DEFAULT_NAMESPACE, "textures/gui/widgets.png");
 
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
   protected final ArrayList<LabelWidget> labels = new ArrayList<>();
-  protected final ArrayList<NavigationButtonWidget<?, ?>> navigationButtons = new ArrayList<>();
+  protected final ArrayList<NavigationButtonWidget> navigationButtons = new ArrayList<>();
 
-  protected NavigationButtonWidget<?, ?> activeButton;
+  protected NavigationButtonWidget activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
   protected long currentSyncDelay = 0;
@@ -111,12 +107,10 @@ public abstract class AbstractArmorStandScreen
   @Override
   protected void handledScreenTick() {
     // Block any inputs bound to shift so that this screen gets exclusive use
-    Arrays.stream(this.client.options.allKeys)
-        .filter((key) -> {
-          return key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) || key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0);
-        })
-        .map((key) -> (KeyBindingAccessor) key)
-        .forEach(KeyBindingAccessor::invokeReset);
+    Arrays.stream(this.client.options.allKeys).filter((key) -> {
+      return key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) ||
+          key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0);
+    }).map((key) -> (KeyBindingAccessor) key).forEach(KeyBindingAccessor::invokeReset);
 
     ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
 
@@ -175,7 +169,8 @@ public abstract class AbstractArmorStandScreen
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+  public boolean mouseDragged(
+      double mouseX, double mouseY, int button, double deltaX, double deltaY) {
     if (this.cursorLocked) {
       return false;
     }
@@ -214,7 +209,7 @@ public abstract class AbstractArmorStandScreen
     if (this.cursorLocked) {
       return false;
     }
-    for (NavigationButtonWidget<?, ?> button : this.navigationButtons) {
+    for (NavigationButtonWidget button : this.navigationButtons) {
       if (button.isMouseOverIgnoreState(mouseX, mouseY)) {
         if (amount > 0) {
           goToPreviousScreen();
@@ -272,7 +267,8 @@ public abstract class AbstractArmorStandScreen
         goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
-        if (this.client.options.rightKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
+        if (this.client.options.rightKey.matchesKey(keyCode, scanCode) &&
+            !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
@@ -302,7 +298,7 @@ public abstract class AbstractArmorStandScreen
     }
 
     for (int i = 0; i < this.navigationButtons.size(); i++) {
-      NavigationButtonWidget<?, ?> button = this.navigationButtons.get(i);
+      NavigationButtonWidget button = this.navigationButtons.get(i);
       ScreenType screenType = button.getScreenType();
 
       if (screenType == this.getScreenType()) {
@@ -316,24 +312,23 @@ public abstract class AbstractArmorStandScreen
       }
     }
 
-    return getFocused() != null
-        && getFocused().keyPressed(keyCode, scanCode, modifiers);
+    return getFocused() != null && getFocused().keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override
   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-    if (this.passEvents && (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
+    if (this.passEvents &&
+        (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
       unlockCursor();
       return true;
     }
 
-    return getFocused() != null
-        && getFocused().keyReleased(keyCode, scanCode, modifiers);
+    return getFocused() != null && getFocused().keyReleased(keyCode, scanCode, modifiers);
   }
 
   public boolean shouldHighlight(Entity entity) {
-    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed()
-        && entity == this.armorStand;
+    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed() &&
+        entity == this.armorStand;
   }
 
   public boolean isCursorLocked() {
@@ -379,24 +374,15 @@ public abstract class AbstractArmorStandScreen
       return;
     }
 
-    addDrawableChild(new HelpButtonWidget(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
-        SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
+    addDrawableChild(new HelpButtonWidget(SCREEN_EDGE_PAD, SCREEN_EDGE_PAD));
+    addDrawableChild(new IconButtonWidget(SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
         SCREEN_EDGE_PAD,
         14,
         Text.translatable("armorstands.utility.copy"),
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.COPY);
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
+    addDrawableChild(new IconButtonWidget(
         SCREEN_EDGE_PAD + 2 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
         SCREEN_EDGE_PAD,
         15,
@@ -404,9 +390,7 @@ public abstract class AbstractArmorStandScreen
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.PASTE);
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
+    addDrawableChild(new IconButtonWidget(
         SCREEN_EDGE_PAD + 3 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
         SCREEN_EDGE_PAD,
         17,
@@ -414,9 +398,7 @@ public abstract class AbstractArmorStandScreen
         (button) -> {
           UndoPacket.sendToServer(false);
         }));
-    addDrawableChild(new IconButtonWidget<>(
-        this.client,
-        this,
+    addDrawableChild(new IconButtonWidget(
         SCREEN_EDGE_PAD + 4 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
         SCREEN_EDGE_PAD,
         18,
@@ -432,19 +414,14 @@ public abstract class AbstractArmorStandScreen
 
   protected void initNavigationButtons() {
     ScreenType[] screenTypes = ScreenType.values();
-    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH
-        + (screenTypes.length - 1) * NAV_BUTTON_SPACING;
+    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH +
+        (screenTypes.length - 1) * NAV_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
     int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
 
     for (ScreenType screenType : screenTypes) {
-      NavigationButtonWidget<?, ?> button = NavigationButtonWidget.create(
-          this.client,
-          this,
-          x,
-          y,
-          screenType);
+      NavigationButtonWidget button = new NavigationButtonWidget(this, x, y, screenType);
 
       if (getScreenType() == screenType) {
         this.activeButton = button;
@@ -471,38 +448,37 @@ public abstract class AbstractArmorStandScreen
     }
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
     RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
 
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawTexture(
-        matrixStack,
-        this.activeButton.x - 2,
-        this.activeButton.y - 2,
+    drawTexture(matrixStack,
+        this.activeButton.getX() - 2,
+        this.activeButton.getY() - 2,
         0,
         22,
         13,
         13);
     drawTexture(matrixStack,
-        this.activeButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activeButton.y - 2,
+        this.activeButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activeButton.getY() - 2,
         12,
         22,
         12,
         13);
     drawTexture(matrixStack,
-        this.activeButton.x - 2,
-        this.activeButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        this.activeButton.getX() - 2,
+        this.activeButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
         0,
         34,
         13,
         12);
     drawTexture(matrixStack,
-        this.activeButton.x + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activeButton.y + NavigationButtonWidget.HEIGHT / 2 + 1,
+        this.activeButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
+        this.activeButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
         12,
         34,
         12,
@@ -511,7 +487,8 @@ public abstract class AbstractArmorStandScreen
   }
 
   protected void playClickSound() {
-    this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+    this.client.getSoundManager()
+        .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
   }
 
   protected void lockCursor() {
@@ -520,7 +497,10 @@ public abstract class AbstractArmorStandScreen
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(),
+        InputUtil.GLFW_CURSOR_DISABLED,
+        x,
+        y);
   }
 
   protected void unlockCursor() {
@@ -529,7 +509,10 @@ public abstract class AbstractArmorStandScreen
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(),
+        InputUtil.GLFW_CURSOR_NORMAL,
+        x,
+        y);
   }
 
   protected void goToPreviousScreen() {
