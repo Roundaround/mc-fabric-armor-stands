@@ -13,6 +13,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.function.Supplier;
+
 public class UndoPacket {
   private final boolean redo;
 
@@ -35,21 +37,20 @@ public class UndoPacket {
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketSender responseSender) {
-    if (!(player.currentScreenHandler instanceof HasArmorStandEditor)) {
+    if (!(player.currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
       return;
     }
 
-    HasArmorStandEditor screenHandler = (HasArmorStandEditor) player.currentScreenHandler;
     ArmorStandEditor editor = screenHandler.getEditor();
-    if (this.redo) {
-      if (editor.redo()) {
-        MessagePacket.sendToClient(player, "armorstands.message.redo");
-      }
-      return;
-    }
 
-    if (editor.undo()) {
-      MessagePacket.sendToClient(player, "armorstands.message.undo");
+    Supplier<Boolean> action = this.redo ? editor::redo : editor::undo;
+    String successMessage = this.redo ? "armorstands.message.redo" : "armorstands.message.undo";
+    String failureMessage = this.redo ? "armorstands.message.redo.fail" : "armorstands.message.undo.fail";
+
+    if (action.get()) {
+      MessagePacket.sendToClient(player, successMessage);
+    } else {
+      MessagePacket.sendToClient(player, failureMessage);
     }
   }
 

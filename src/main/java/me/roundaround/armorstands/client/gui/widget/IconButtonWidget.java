@@ -19,7 +19,6 @@ public class IconButtonWidget<P extends AbstractArmorStandScreen> extends Simple
       ArmorStandsMod.MOD_ID,
       "textures/gui/widgets.png");
   protected static final int TEXTURE_WIDTH = 256;
-  protected static final int TEXTURE_HEIGHT = 256;
   protected static final int ICONS_PER_ROW = TEXTURE_WIDTH / WIDTH;
 
   protected final P parent;

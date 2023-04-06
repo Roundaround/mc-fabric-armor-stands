@@ -404,6 +404,26 @@ public abstract class AbstractArmorStandScreen
         (button) -> {
           UtilityActionPacket.sendToServer(UtilityAction.PASTE);
         }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + 3 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
+        SCREEN_EDGE_PAD,
+        17,
+        Text.translatable("armorstands.utility.undo"),
+        (button) -> {
+          UndoPacket.sendToServer(false);
+        }));
+    addDrawableChild(new IconButtonWidget<>(
+        this.client,
+        this,
+        SCREEN_EDGE_PAD + 4 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
+        SCREEN_EDGE_PAD,
+        18,
+        Text.translatable("armorstands.utility.redo"),
+        (button) -> {
+          UndoPacket.sendToServer(true);
+        }));
   }
 
   protected void initLeft() {
