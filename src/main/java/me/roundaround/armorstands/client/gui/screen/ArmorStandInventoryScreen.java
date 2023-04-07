@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.FlagToggleWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
@@ -14,7 +14,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
@@ -26,8 +25,8 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   private float mouseX;
   private float mouseY;
-  private ArmorStandFlagToggleWidget showArmsToggle;
-  private ArmorStandFlagToggleWidget lockInventoryToggle;
+  private FlagToggleWidget showArmsToggle;
+  private FlagToggleWidget lockInventoryToggle;
 
   public ArmorStandInventoryScreen(ArmorStandScreenHandler handler) {
     super(handler, ScreenType.INVENTORY.getDisplayName());
@@ -44,19 +43,19 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   @Override
   protected void initRight() {
     this.showArmsToggle = addDrawableChild(
-        new ArmorStandFlagToggleWidget(
+        new FlagToggleWidget(
             this.textRenderer,
             ArmorStandFlag.SHOW_ARMS,
             ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand),
             this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * ArmorStandFlagToggleWidget.WIDGET_HEIGHT - BETWEEN_PAD));
+            this.height - SCREEN_EDGE_PAD - 2 * FlagToggleWidget.WIDGET_HEIGHT - BETWEEN_PAD));
     this.lockInventoryToggle = addDrawableChild(
-        new ArmorStandFlagToggleWidget(
+        new FlagToggleWidget(
             this.textRenderer,
             ArmorStandFlag.LOCK_INVENTORY,
             ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand),
             this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - ArmorStandFlagToggleWidget.WIDGET_HEIGHT));
+            this.height - SCREEN_EDGE_PAD - FlagToggleWidget.WIDGET_HEIGHT));
   }
 
   @Override
@@ -74,17 +73,6 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     this.mouseX = mouseX;
     this.mouseY = mouseY;
     super.render(matrixStack, mouseX, mouseY, delta);
-
-    // If game is paused, render the vanilla pause text at the top
-    if (this.client.isPaused()) {
-      drawCenteredText(
-          matrixStack,
-          this.textRenderer,
-          Text.translatable("menu.paused"),
-          this.width / 2,
-          10,
-          0xFFFFFF);
-    }
 
     drawMouseoverTooltip(matrixStack, mouseX, mouseY);
   }
@@ -107,7 +95,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT);
 
-    ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = ((ArmorStandScreenHandler) this.handler).getArmorSlots();
+    ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
@@ -117,6 +105,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     }
 
     InventoryScreen.drawEntity(
+        matrixStack,
         x + 88,
         y + 75,
         30,

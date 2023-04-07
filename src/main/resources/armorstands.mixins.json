@@ -12,15 +12,13 @@
   ],
   "client": [
     "ArmorStandEntityClientMixin",
-    "ClickableWidgetMixin",
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseAccessor",
-    "MouseMixin",
-    "SliderWidgetMixin"
+    "MouseMixin"
   ],
   "server": [],
   "injectors": {

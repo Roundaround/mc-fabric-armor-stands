@@ -1,6 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import me.roundaround.armorstands.client.gui.widget.ArmorStandFlagToggleWidget;
+import me.roundaround.armorstands.client.gui.widget.FlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
@@ -133,9 +133,9 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private void addFlagToggleWidget(ArmorStandFlag flag, int index) {
     int xPos = this.width - SCREEN_EDGE_PAD;
     int yPos =
-        this.height - (index + 1) * (SCREEN_EDGE_PAD + ArmorStandFlagToggleWidget.WIDGET_HEIGHT);
+        this.height - (index + 1) * (SCREEN_EDGE_PAD + FlagToggleWidget.WIDGET_HEIGHT);
 
-    ArmorStandFlagToggleWidget widget = new ArmorStandFlagToggleWidget(this.textRenderer,
+    FlagToggleWidget widget = new FlagToggleWidget(this.textRenderer,
         flag,
         this.currentValues.get(flag),
         xPos,

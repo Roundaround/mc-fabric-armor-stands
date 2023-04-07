@@ -270,11 +270,6 @@ public class ArmorStandScreenHandler
     return originalStack;
   }
 
-  @Override
-  public void close(PlayerEntity player) {
-    super.close(player);
-  }
-
   private boolean tryTransferArmor(Slot source, ItemStack stack) {
     EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
 

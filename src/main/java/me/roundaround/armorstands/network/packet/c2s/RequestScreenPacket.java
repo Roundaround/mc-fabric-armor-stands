@@ -49,7 +49,7 @@ public class RequestScreenPacket {
     if (player.currentScreenHandler instanceof ArmorStandScreenHandler) {
       // Bypass the normal screen closing logic, as we don't want to send a
       // close packet to the client.
-      player.closeScreenHandler();
+      player.onHandledScreenClosed();
     }
 
     LastUsedScreen.set(player, armorStand, this.screenType);

@@ -21,6 +21,7 @@ import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.navigation.GuiNavigation;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
@@ -123,7 +124,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(this.client.getCameraEntity());
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(matrixStack, this.client.getCameraEntity());
 
     // Render labels before all other widgets so they are rendered on bottom
     for (LabelWidget label : this.labels) {
@@ -253,12 +254,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         }
         lockCursor();
         return true;
-      case GLFW.GLFW_KEY_TAB:
-        boolean forward = !Screen.hasShiftDown();
-        if (!changeFocus(forward)) {
-          changeFocus(forward);
-        }
-        return false;
       case GLFW.GLFW_KEY_LEFT:
         if (this.client.options.leftKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
           break;
@@ -312,7 +307,11 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       }
     }
 
-    return getFocused() != null && getFocused().keyPressed(keyCode, scanCode, modifiers);
+    if (getFocused() != null && getFocused().keyPressed(keyCode, scanCode, modifiers)) {
+      return true;
+    }
+
+    return super.keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override
