@@ -124,7 +124,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(matrixStack, this.client.getCameraEntity());
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(matrixStack,
+        this.client.getCameraEntity());
 
     // Render labels before all other widgets so they are rendered on bottom
     for (LabelWidget label : this.labels) {
@@ -454,34 +455,16 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawTexture(matrixStack,
+    drawNineSlicedTexture(matrixStack,
         this.activeButton.getX() - 2,
         this.activeButton.getY() - 2,
+        25,
+        25,
+        4,
+        24,
+        24,
         0,
-        22,
-        13,
-        13);
-    drawTexture(matrixStack,
-        this.activeButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activeButton.getY() - 2,
-        12,
-        22,
-        12,
-        13);
-    drawTexture(matrixStack,
-        this.activeButton.getX() - 2,
-        this.activeButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
-        0,
-        34,
-        13,
-        12);
-    drawTexture(matrixStack,
-        this.activeButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activeButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
-        12,
-        34,
-        12,
-        12);
+        22);
     matrixStack.pop();
   }
 

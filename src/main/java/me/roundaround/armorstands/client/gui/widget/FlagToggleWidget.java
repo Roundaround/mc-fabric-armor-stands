@@ -27,36 +27,23 @@ public class FlagToggleWidget extends PressableWidget {
   private boolean currentValue = false;
 
   public FlagToggleWidget(
-      TextRenderer textRenderer,
-      ArmorStandFlag flag,
-      boolean initialValue,
-      int x,
-      int y) {
+      TextRenderer textRenderer, ArmorStandFlag flag, boolean initialValue, int x, int y) {
     super(x, y, 100, WIDGET_HEIGHT, flag.getDisplayName());
     this.flag = flag;
     this.inverted = flag.invertControl();
 
-    int valueLabelWidth = 2 * LabelWidget.PADDING + Math.max(
-        textRenderer.getWidth(Text.translatable("armorstands.flagToggle.on")),
-        textRenderer.getWidth(Text.translatable("armorstands.flagToggle.off")));
+    int valueLabelWidth = 2 * LabelWidget.PADDING +
+        Math.max(textRenderer.getWidth(Text.translatable("armorstands.flagToggle.on")),
+            textRenderer.getWidth(Text.translatable("armorstands.flagToggle.off")));
 
-    this.flagLabel = LabelWidget.builder(
-        flag.getDisplayName(),
+    this.flagLabel = LabelWidget.builder(flag.getDisplayName(),
         x - WIDGET_WIDTH - 2 - valueLabelWidth - 2,
-        y + height / 2)
-        .justifiedRight()
-        .alignedMiddle()
-        .shiftForPadding()
-        .build();
+        y + height / 2).justifiedRight().alignedMiddle().shiftForPadding().build();
 
-    this.valueLabel = LabelWidget.builder(
-        Text.translatable("armorstands.flagToggle." + (initialValue ^ inverted ? "on" : "off")),
+    this.valueLabel = LabelWidget.builder(Text.translatable(
+            "armorstands.flagToggle." + (initialValue ^ inverted ? "on" : "off")),
         x - valueLabelWidth / 2,
-        y + height / 2)
-        .justifiedCenter()
-        .alignedMiddle()
-        .shiftForPadding()
-        .build();
+        y + height / 2).justifiedCenter().alignedMiddle().shiftForPadding().build();
 
     currentValue = initialValue;
 
@@ -94,7 +81,8 @@ public class FlagToggleWidget extends PressableWidget {
 
   public void setValue(boolean newValue) {
     currentValue = newValue;
-    valueLabel.setText(Text.translatable("armorstands.flagToggle." + (newValue ^ inverted ? "on" : "off")));
+    valueLabel.setText(Text.translatable(
+        "armorstands.flagToggle." + (newValue ^ inverted ? "on" : "off")));
   }
 
   private void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
@@ -105,40 +93,16 @@ public class FlagToggleWidget extends PressableWidget {
     RenderSystem.defaultBlendFunc();
     RenderSystem.enableDepthTest();
 
-    int u1 = 0;
-    int u2 = TEXTURE_WIDTH - WIDGET_WIDTH / 2;
-    int v1 = getTextureY();
-    int v2 = v1 + TEXTURE_HEIGHT - WIDGET_HEIGHT / 2;
-
-    drawTexture(
-        matrixStack,
+    drawNineSlicedTexture(matrixStack,
         widgetX,
         widgetY,
-        u1,
-        v1,
-        WIDGET_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX + WIDGET_WIDTH / 2,
-        widgetY,
-        u2,
-        v1,
-        WIDGET_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX,
-        widgetY + WIDGET_HEIGHT / 2,
-        u1,
-        v2,
-        WIDGET_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX + WIDGET_WIDTH / 2,
-        widgetY + WIDGET_HEIGHT / 2,
-        u2,
-        v2,
-        WIDGET_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
+        WIDGET_WIDTH,
+        WIDGET_HEIGHT,
+        4,
+        200,
+        20,
+        0,
+        46);
 
     renderBar(matrixStack, mouseX, mouseY, delta);
   }
@@ -160,44 +124,20 @@ public class FlagToggleWidget extends PressableWidget {
 
     int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
 
-    int u1 = 0;
-    int u2 = TEXTURE_WIDTH - BAR_WIDTH / 2;
-    int v1 = 46 + (isHovered() ? 2 : 1) * 20;
-    int v2 = 46 + TEXTURE_HEIGHT - WIDGET_HEIGHT / 2 + (isHovered() ? 2 : 1) * 20;
-
-    drawTexture(
-        matrixStack,
+    drawNineSlicedTexture(matrixStack,
         widgetX + offset,
         widgetY,
-        u1,
-        v1,
-        BAR_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX + offset + BAR_WIDTH / 2,
-        widgetY,
-        u2,
-        v1,
-        BAR_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX + offset,
-        widgetY + WIDGET_HEIGHT / 2,
-        u1,
-        v2,
-        BAR_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
-    drawTexture(matrixStack,
-        widgetX + offset + BAR_WIDTH / 2,
-        widgetY + WIDGET_HEIGHT / 2,
-        u2,
-        v2,
-        BAR_WIDTH / 2,
-        WIDGET_HEIGHT / 2);
+        BAR_WIDTH,
+        WIDGET_HEIGHT,
+        4,
+        200,
+        20,
+        0,
+        getTextureY());
   }
 
   private boolean isWithinBounds(double mouseX, double mouseY) {
-    return mouseX >= this.flagLabel.getLeft() && mouseX < this.valueLabel.getRight()
-        && mouseY >= this.flagLabel.getTop() && mouseY < this.flagLabel.getBottom();
+    return mouseX >= this.flagLabel.getLeft() && mouseX < this.valueLabel.getRight() &&
+        mouseY >= this.flagLabel.getTop() && mouseY < this.flagLabel.getBottom();
   }
 }

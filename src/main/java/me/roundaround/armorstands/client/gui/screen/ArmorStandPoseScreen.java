@@ -276,34 +276,16 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawTexture(matrixStack,
+    drawNineSlicedTexture(matrixStack,
         this.activePosePartButton.getX() - 2,
         this.activePosePartButton.getY() - 2,
+        25,
+        25,
+        4,
+        24,
+        24,
         0,
-        22,
-        13,
-        13);
-    drawTexture(matrixStack,
-        this.activePosePartButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activePosePartButton.getY() - 2,
-        12,
-        22,
-        12,
-        13);
-    drawTexture(matrixStack,
-        this.activePosePartButton.getX() - 2,
-        this.activePosePartButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
-        0,
-        34,
-        13,
-        12);
-    drawTexture(matrixStack,
-        this.activePosePartButton.getX() + NavigationButtonWidget.WIDTH / 2 + 1,
-        this.activePosePartButton.getY() + NavigationButtonWidget.HEIGHT / 2 + 1,
-        12,
-        34,
-        12,
-        12);
+        22);
     matrixStack.pop();
   }
 
