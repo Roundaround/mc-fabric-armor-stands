@@ -18,7 +18,8 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseAccessor",
-    "MouseMixin"
+    "MouseMixin",
+    "SliderWidgetMixin"
   ],
   "server": [],
   "injectors": {
