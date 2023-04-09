@@ -1,7 +1,7 @@
 # Roundaround's Armor Stands
 
 <img src="https://img.shields.io/badge/Loader-Fabric-%23313e51?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/MC-1.19-%23313e51?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/MC-1.19--1.19.4-%23313e51?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Side-Client+Server-%23313e51?style=for-the-badge"/>
 
 Place, pose, and dress armor stands with an easy-to-use UI.
@@ -11,7 +11,7 @@ functionality, but in a much easier format!
 
 ## Download
 
-https://modrinth.com/mod/roundaround-armor-stands
+https://modrinth.com/mod/armor-stands
 
 ## License
 
