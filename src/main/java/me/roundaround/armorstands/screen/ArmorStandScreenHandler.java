@@ -250,7 +250,7 @@ public class ArmorStandScreenHandler
     ItemStack originalStack = stack.copy();
 
     if (index < PlayerInventory.MAIN_SIZE) {
-      if (!tryTransferArmor(slot, stack)
+      if (!tryTransferArmor(stack)
           && !tryTransferToMainHand(stack)
           && !tryTransferToOffHand(stack)) {
         return ItemStack.EMPTY;
@@ -275,25 +275,14 @@ public class ArmorStandScreenHandler
     super.close(player);
   }
 
-  private boolean tryTransferArmor(Slot source, ItemStack stack) {
+  private boolean tryTransferArmor(ItemStack stack) {
     EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
-
-    if (equipmentSlot.getType() != EquipmentSlot.Type.ARMOR) {
+    if (isSlotDisabled(this.armorStand, equipmentSlot)) {
       return false;
     }
 
     int targetIndex = this.slots.size() - 1 - equipmentSlot.getEntitySlotId();
-    Slot slot = this.slots.get(targetIndex);
-
-    if (!slot.canInsert(stack)) {
-      return false;
-    }
-
-    ItemStack equipped = slot.getStack();
-    slot.setStack(stack);
-    source.setStack(equipped);
-
-    return true;
+    return insertItem(stack, targetIndex, targetIndex + 1, false);
   }
 
   private boolean tryTransferToMainHand(ItemStack stack) {
