@@ -11,7 +11,7 @@ functionality, but in a much easier format!
 
 ## Download
 
-https://modrinth.com/mod/roundaround-armor-stands
+https://modrinth.com/mod/armor-stands
 
 ## License
 
