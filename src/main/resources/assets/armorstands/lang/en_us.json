@@ -4,6 +4,7 @@
   "armorstands.help.ctrl": "Ctrl",
   "armorstands.help.cmd": "⌘",
   "armorstands.help.shift": "Shift",
+  "armorstands.key.highlight_armor_stand": "Highlight armor stand in UI",
   "armorstands.screen.utilities": "Utilities",
   "armorstands.screen.move": "Move",
   "armorstands.screen.rotate": "Rotate",
