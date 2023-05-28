@@ -10,7 +10,7 @@ public abstract class SliderWidgetMixin {
   @ModifyArg(
       method = "renderButton", at = @At(
       value = "INVOKE",
-      target = "Lnet/minecraft/client/gui/widget/SliderWidget;drawNineSlicedTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIIIIIII)V",
+      target = "Lnet/minecraft/client/gui/DrawContext;drawNineSlicedTexture(Lnet/minecraft/util/Identifier;IIIIIIIIII)V",
       ordinal = 1
   ), index = 4
   )

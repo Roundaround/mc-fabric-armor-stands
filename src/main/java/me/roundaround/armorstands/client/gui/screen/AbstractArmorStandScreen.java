@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler>
-    implements HasArmorStand, HasMessageRenderer {
+    implements HasArmorStand, HasMessageRenderer, PassesEventsThrough {
   protected static final int SCREEN_EDGE_PAD = 4;
   protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
@@ -55,6 +55,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected NavigationButtonWidget activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
+  protected boolean passEvents = true;
   protected long currentSyncDelay = 0;
 
   private boolean cursorLocked = false;
@@ -65,9 +66,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     this.armorStand = handler.getArmorStand();
 
     this.messageRenderer = new MessageRenderer(this);
-
-    // TODO: Find an alternative to this
-    this.passEvents = true;
   }
 
   public abstract ScreenType getScreenType();
@@ -85,6 +83,11 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   @Override
   public MessageRenderer getMessageRenderer() {
     return this.messageRenderer;
+  }
+
+  @Override
+  public boolean shouldPassEvents() {
+    return this.passEvents;
   }
 
   @Override

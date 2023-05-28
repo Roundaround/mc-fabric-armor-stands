@@ -15,6 +15,7 @@
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
+    "KeyboardMixin",
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "MouseAccessor",
