@@ -12,6 +12,7 @@
   ],
   "client": [
     "ArmorStandEntityClientMixin",
+    "HandledScreenMixin",
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",
@@ -19,6 +20,7 @@
     "MinecraftClientMixin",
     "MouseAccessor",
     "MouseMixin",
+    "ScreenAccessor",
     "SliderWidgetMixin"
   ],
   "server": [],

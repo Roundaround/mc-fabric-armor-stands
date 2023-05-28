@@ -3,7 +3,7 @@
   "id": "armorstands",
   "version": "${version}",
   "name": "Armor Stands",
-  "description": "Place, pose, and dress armor stands with an easy-to-use UI.",
+  "description": "Place, pose, and dress armor stands with an easy-to-use UI.\n${library}",
   "authors": [
     "Roundaround"
   ],
@@ -28,7 +28,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.13.3",
-    "fabric": "*",
+    "fabric-api": "*",
     "minecraft": "1.19.x",
     "java": ">=17"
   }
