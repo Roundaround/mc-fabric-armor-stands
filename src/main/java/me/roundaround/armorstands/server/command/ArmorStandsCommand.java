@@ -1,14 +1,10 @@
 package me.roundaround.armorstands.server.command;
 
-import java.util.Collection;
-import java.util.stream.Stream;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import net.minecraft.command.CommandSource;
@@ -21,21 +17,24 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
 
+import java.util.Collection;
+import java.util.stream.Stream;
+
 public class ArmorStandsCommand {
-  private static final SimpleCommandExceptionType ADD_FAILED_EXCEPTION = new SimpleCommandExceptionType(
-      Text.translatable("armorstands.commands.add.failed"));
-  private static final SimpleCommandExceptionType REMOVE_FAILED_EXCEPTION = new SimpleCommandExceptionType(
-      Text.translatable("armorstands.commands.remove.failed"));
-  private static final SimpleCommandExceptionType RELOAD_FAILED_EXCEPTION = new SimpleCommandExceptionType(
-      Text.translatable("armorstands.commands.reload.failed"));
+  private static final SimpleCommandExceptionType ADD_FAILED_EXCEPTION =
+      new SimpleCommandExceptionType(Text.translatable("armorstands.commands.add.failed"));
+  private static final SimpleCommandExceptionType REMOVE_FAILED_EXCEPTION =
+      new SimpleCommandExceptionType(Text.translatable("armorstands.commands.remove.failed"));
+  private static final SimpleCommandExceptionType RELOAD_FAILED_EXCEPTION =
+      new SimpleCommandExceptionType(Text.translatable("armorstands.commands.reload.failed"));
 
   public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-    LiteralArgumentBuilder<ServerCommandSource> baseCommand = CommandManager.literal(ArmorStandsMod.MOD_ID)
-        .requires(source -> source.isExecutedByPlayer()
-            && (source.hasPermissionLevel(2) || source.getServer().isSingleplayer()));
+    LiteralArgumentBuilder<ServerCommandSource> baseCommand =
+        CommandManager.literal(ArmorStandsMod.MOD_ID)
+            .requires(source -> source.isExecutedByPlayer() &&
+                (source.hasPermissionLevel(2) || source.getServer().isSingleplayer()));
 
-    LiteralArgumentBuilder<ServerCommandSource> addSub = CommandManager
-        .literal("add")
+    LiteralArgumentBuilder<ServerCommandSource> addSub = CommandManager.literal("add")
         .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
             .suggests((context, builder) -> {
               PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
@@ -48,8 +47,7 @@ public class ArmorStandsCommand {
             .executes((context) -> executeAdd(context.getSource(),
                 GameProfileArgumentType.getProfileArgument(context, "targets"))));
 
-    LiteralArgumentBuilder<ServerCommandSource> removeSub = CommandManager
-        .literal("remove")
+    LiteralArgumentBuilder<ServerCommandSource> removeSub = CommandManager.literal("remove")
         .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
             .suggests((context, builder) -> {
               return CommandSource.suggestMatching(ArmorStandUsers.getNames(), builder);
@@ -57,14 +55,11 @@ public class ArmorStandsCommand {
             .executes((context) -> executeRemove(context.getSource(),
                 GameProfileArgumentType.getProfileArgument(context, "targets"))));
 
-    LiteralArgumentBuilder<ServerCommandSource> reloadSub = CommandManager
-        .literal("reload")
-        .executes((context) -> executeReload(context.getSource()));
+    LiteralArgumentBuilder<ServerCommandSource> reloadSub =
+        CommandManager.literal("reload").executes((context) -> executeReload(context.getSource()));
 
-    LiteralArgumentBuilder<ServerCommandSource> finalCommand = baseCommand
-        .then(addSub)
-        .then(removeSub)
-        .then(reloadSub);
+    LiteralArgumentBuilder<ServerCommandSource> finalCommand =
+        baseCommand.then(addSub).then(removeSub).then(reloadSub);
 
     dispatcher.register(finalCommand);
   }
@@ -81,7 +76,8 @@ public class ArmorStandsCommand {
 
       WhitelistEntry entry = new WhitelistEntry(profile);
       whitelist.add(entry);
-      source.sendFeedback(Text.translatable("armorstands.commands.add.success", Texts.toText(profile)), true);
+      source.sendFeedback(() -> Text.translatable("armorstands.commands.add.success",
+          Texts.toText(profile)), true);
       added++;
     }
 
@@ -104,7 +100,8 @@ public class ArmorStandsCommand {
 
       WhitelistEntry entry = new WhitelistEntry(profile);
       whitelist.remove(entry);
-      source.sendFeedback(Text.translatable("armorstands.commands.remove.success", Texts.toText(profile)), true);
+      source.sendFeedback(() -> Text.translatable("armorstands.commands.remove.success",
+          Texts.toText(profile)), true);
       removed++;
     }
 
@@ -123,7 +120,7 @@ public class ArmorStandsCommand {
       throw RELOAD_FAILED_EXCEPTION.create();
     }
 
-    source.sendFeedback(Text.translatable("armorstands.commands.reload.success"), true);
+    source.sendFeedback(() -> Text.translatable("armorstands.commands.reload.success"), true);
     return 1;
   }
 }

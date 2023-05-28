@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -44,13 +44,13 @@ public class MessageRenderer {
     }
   }
 
-  public void render(MatrixStack matrixStack) {
+  public void render(DrawContext drawContext) {
     shownMessage.ifPresent((message) -> {
-      message.render(screen, matrixStack);
+      message.render(screen, drawContext);
     });
   }
 
-  private static class Message extends DrawableHelper {
+  private static class Message {
     private static final int SHOW_DURATION = 40;
 
     private final Text text;
@@ -72,7 +72,7 @@ public class MessageRenderer {
       timeRemaining--;
     }
 
-    public void render(Screen screen, MatrixStack matrixStack) {
+    public void render(Screen screen, DrawContext context) {
       MinecraftClient client = MinecraftClient.getInstance();
       TextRenderer textRenderer = client.textRenderer;
       int width = textRenderer.getWidth(text);
@@ -87,8 +87,8 @@ public class MessageRenderer {
 
       RenderSystem.enableBlend();
       RenderSystem.defaultBlendFunc();
-      fill(matrixStack, x - 2, y - 2, x + width + 2, y + textRenderer.fontHeight + 2, backgroundColor);
-      textRenderer.drawWithShadow(matrixStack, text, x, y, textColor);
+      context.fill(x - 2, y - 2, x + width + 2, y + textRenderer.fontHeight + 2, backgroundColor);
+      context.drawTextWithShadow(textRenderer, text, x, y, textColor);
       RenderSystem.disableBlend();
     }
 

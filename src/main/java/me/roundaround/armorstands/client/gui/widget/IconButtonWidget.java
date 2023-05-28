@@ -1,10 +1,9 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -19,11 +18,7 @@ public class IconButtonWidget extends ButtonWidget {
   protected final int textureIndex;
 
   public IconButtonWidget(
-      int x,
-      int y,
-      int textureIndex,
-      Text tooltip,
-      ButtonWidget.PressAction onPress) {
+      int x, int y, int textureIndex, Text tooltip, ButtonWidget.PressAction onPress) {
     super(x, y, WIDTH, HEIGHT, Text.empty(), onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
     this.textureIndex = textureIndex;
@@ -31,16 +26,14 @@ public class IconButtonWidget extends ButtonWidget {
   }
 
   @Override
-  public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    super.renderButton(matrixStack, mouseX, mouseY, delta);
-
-    RenderSystem.setShaderTexture(0, TEXTURE);
+  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    super.renderButton(drawContext, mouseX, mouseY, delta);
 
     int uIndex = this.textureIndex % ICONS_PER_ROW;
     int vIndex = this.textureIndex / ICONS_PER_ROW;
 
     int u = uIndex * WIDTH;
     int v = vIndex * HEIGHT;
-    drawTexture(matrixStack, getX(), getY(), u, v, WIDTH, HEIGHT);
+    drawContext.drawTexture(TEXTURE, getX(), getY(), u, v, WIDTH, HEIGHT);
   }
 }

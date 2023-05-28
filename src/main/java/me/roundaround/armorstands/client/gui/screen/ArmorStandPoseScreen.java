@@ -4,17 +4,16 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
-import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
@@ -261,22 +260,21 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
-    super.renderActivePageButtonHighlight(matrixStack);
+  protected void renderActivePageButtonHighlight(DrawContext drawContext) {
+    super.renderActivePageButtonHighlight(drawContext);
 
     if (this.activePosePartButton == null) {
       return;
     }
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
 
+    MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawNineSlicedTexture(matrixStack,
+    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
         this.activePosePartButton.getX() - 2,
         this.activePosePartButton.getY() - 2,
         25,

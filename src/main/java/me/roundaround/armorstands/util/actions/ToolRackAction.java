@@ -32,7 +32,7 @@ public class ToolRackAction extends ComboAction {
     actions.add(FlagAction.set(ArmorStandFlag.NO_GRAVITY, true));
     actions.add(FlagAction.set(ArmorStandFlag.NAME, false));
     actions.add(FlagAction.set(ArmorStandFlag.SMALL, false));
-    actions.add(RotateAction.absolute(armorStand.world
+    actions.add(RotateAction.absolute(armorStand.getWorld()
         .getBlockState(hookPos)
         .get(TripwireHookBlock.FACING).asRotation()));
     actions.add(MoveAction.absolute(
@@ -57,7 +57,7 @@ public class ToolRackAction extends ComboAction {
 
     for (int i = 1; i <= 3; i++) {
       mutable.set(pos.getX(), pos.getY() + i, pos.getZ());
-      BlockState state = armorStand.world.getBlockState(mutable);
+      BlockState state = armorStand.getWorld().getBlockState(mutable);
       if (state.isOf(Blocks.TRIPWIRE_HOOK)) {
         return mutable.toImmutable();
       }

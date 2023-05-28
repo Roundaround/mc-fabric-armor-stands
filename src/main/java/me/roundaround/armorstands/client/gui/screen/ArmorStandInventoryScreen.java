@@ -3,15 +3,13 @@ package me.roundaround.armorstands.client.gui.screen;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
-
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.widget.FlagToggleWidget;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
@@ -19,9 +17,8 @@ import net.minecraft.util.Identifier;
 public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
-  private static final Identifier CUSTOM_TEXTURE = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "textures/gui/container/inventory.png");
+  private static final Identifier CUSTOM_TEXTURE =
+      new Identifier(ArmorStandsMod.MOD_ID, "textures/gui/container/inventory.png");
 
   private float mouseX;
   private float mouseY;
@@ -42,20 +39,16 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void initRight() {
-    this.showArmsToggle = addDrawableChild(
-        new FlagToggleWidget(
-            this.textRenderer,
-            ArmorStandFlag.SHOW_ARMS,
-            ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand),
-            this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * FlagToggleWidget.WIDGET_HEIGHT - BETWEEN_PAD));
-    this.lockInventoryToggle = addDrawableChild(
-        new FlagToggleWidget(
-            this.textRenderer,
-            ArmorStandFlag.LOCK_INVENTORY,
-            ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand),
-            this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - FlagToggleWidget.WIDGET_HEIGHT));
+    this.showArmsToggle = addDrawableChild(new FlagToggleWidget(this.textRenderer,
+        ArmorStandFlag.SHOW_ARMS,
+        ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - 2 * FlagToggleWidget.WIDGET_HEIGHT - BETWEEN_PAD));
+    this.lockInventoryToggle = addDrawableChild(new FlagToggleWidget(this.textRenderer,
+        ArmorStandFlag.LOCK_INVENTORY,
+        ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand),
+        this.width - SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - FlagToggleWidget.WIDGET_HEIGHT));
   }
 
   @Override
@@ -67,45 +60,35 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    renderBackground(matrixStack);
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    renderBackground(drawContext);
 
     this.mouseX = mouseX;
     this.mouseY = mouseY;
-    super.render(matrixStack, mouseX, mouseY, delta);
+    super.render(drawContext, mouseX, mouseY, delta);
 
-    drawMouseoverTooltip(matrixStack, mouseX, mouseY);
+    drawMouseoverTooltip(drawContext, mouseX, mouseY);
   }
 
   @Override
-  protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+  protected void drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY) {
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
     int x = (this.width - BACKGROUND_WIDTH) / 2;
     int y = (this.height - BACKGROUND_HEIGHT) / 2;
 
-    RenderSystem.setShaderTexture(0, CUSTOM_TEXTURE);
-    drawTexture(
-        matrixStack,
-        x,
-        y,
-        0,
-        0,
-        BACKGROUND_WIDTH,
-        BACKGROUND_HEIGHT);
+    drawContext.drawTexture(CUSTOM_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
     ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
       if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
-        fill(matrixStack, x + slot.x, y + slot.y, x + slot.x + 16, y + slot.y + 16, 0x80000000);
+        drawContext.fill(x + slot.x, y + slot.y, x + slot.x + 16, y + slot.y + 16, 0x80000000);
       }
     }
 
-    InventoryScreen.drawEntity(
-        matrixStack,
+    InventoryScreen.drawEntity(drawContext,
         x + 88,
         y + 75,
         30,

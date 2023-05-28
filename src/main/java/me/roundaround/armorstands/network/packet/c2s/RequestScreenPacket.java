@@ -40,7 +40,7 @@ public class RequestScreenPacket {
       ServerPlayerEntity player,
       ServerPlayNetworkHandler handler,
       PacketSender responseSender) {
-    ArmorStandEntity armorStand = (ArmorStandEntity) player.world.getEntityById(this.armorStandId);
+    ArmorStandEntity armorStand = (ArmorStandEntity) player.getWorld().getEntityById(this.armorStandId);
 
     if (armorStand == null) {
       return;

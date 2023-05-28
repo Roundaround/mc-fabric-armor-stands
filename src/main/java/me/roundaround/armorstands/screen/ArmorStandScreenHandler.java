@@ -1,10 +1,7 @@
 package me.roundaround.armorstands.screen;
 
-import java.util.ArrayList;
-
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
@@ -27,29 +24,28 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class ArmorStandScreenHandler
-    extends ScreenHandler
+import java.util.ArrayList;
+
+public class ArmorStandScreenHandler extends ScreenHandler
     implements HasArmorStand, HasArmorStandEditor {
-  public static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = new Identifier(
-      ArmorStandsMod.MOD_ID,
-      "item/empty_armor_slot_sword");
+  public static final Identifier EMPTY_MAINHAND_ARMOR_SLOT =
+      new Identifier(ArmorStandsMod.MOD_ID, "item/empty_armor_slot_sword");
 
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE,
-      PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE };
+      PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE
+  };
   private static final Identifier[] EMPTY_HAND_SLOT_TEXTURES = new Identifier[] {
-      EMPTY_MAINHAND_ARMOR_SLOT,
-      PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT };
+      EMPTY_MAINHAND_ARMOR_SLOT, PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT
+  };
   private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[] {
-      EquipmentSlot.HEAD,
-      EquipmentSlot.CHEST,
-      EquipmentSlot.LEGS,
-      EquipmentSlot.FEET };
+      EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
+  };
   private static final EquipmentSlot[] HAND_SLOT_ORDER = new EquipmentSlot[] {
-      EquipmentSlot.MAINHAND,
-      EquipmentSlot.OFFHAND };
+      EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND
+  };
 
   private final PlayerInventory playerInventory;
   private final ArmorStandEntity armorStand;
@@ -85,13 +81,10 @@ public class ArmorStandScreenHandler
   }
 
   public ArmorStandScreenHandler(
-      int syncId,
-      PlayerInventory playerInventory,
-      PacketByteBuf buf) {
-    this(
-        syncId,
+      int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    this(syncId,
         playerInventory,
-        (ArmorStandEntity) playerInventory.player.world.getEntityById(buf.readInt()),
+        (ArmorStandEntity) playerInventory.player.getWorld().getEntityById(buf.readInt()),
         ScreenType.fromId(buf.readString()));
   }
 
@@ -118,15 +111,13 @@ public class ArmorStandScreenHandler
 
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(
-              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              EMPTY_HAND_SLOT_TEXTURES[index]);
+          return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, EMPTY_HAND_SLOT_TEXTURES[index]);
         }
 
         @Override
         public boolean canTakeItems(PlayerEntity player) {
-          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
-              && isSlotDisabled(armorStand, equipmentSlot)) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative() &&
+              isSlotDisabled(armorStand, equipmentSlot)) {
             return false;
           }
           return super.canTakeItems(player);
@@ -134,8 +125,8 @@ public class ArmorStandScreenHandler
 
         @Override
         public boolean canInsert(ItemStack stack) {
-          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
-              && isSlotDisabled(armorStand, equipmentSlot)) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative() &&
+              isSlotDisabled(armorStand, equipmentSlot)) {
             return false;
           }
           return super.canInsert(stack);
@@ -162,8 +153,8 @@ public class ArmorStandScreenHandler
 
         @Override
         public boolean canTakeItems(PlayerEntity player) {
-          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
-              && isSlotDisabled(armorStand, equipmentSlot)) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative() &&
+              isSlotDisabled(armorStand, equipmentSlot)) {
             return false;
           }
           return super.canTakeItems(player);
@@ -171,8 +162,8 @@ public class ArmorStandScreenHandler
 
         @Override
         public boolean canInsert(ItemStack stack) {
-          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative()
-              && isSlotDisabled(armorStand, equipmentSlot)) {
+          if (!ArmorStandScreenHandler.this.playerInventory.player.isCreative() &&
+              isSlotDisabled(armorStand, equipmentSlot)) {
             return false;
           }
           return equipmentSlot == ArmorStandEntity.getPreferredEquipmentSlot(stack);
@@ -180,8 +171,7 @@ public class ArmorStandScreenHandler
 
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(
-              PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
+          return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
               EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]);
         }
       });
@@ -215,7 +205,8 @@ public class ArmorStandScreenHandler
   @Override
   public void sendContentUpdates() {
     if (this.playerInventory.player instanceof ServerPlayerEntity) {
-      ClientUpdatePacket.sendToClient((ServerPlayerEntity) this.playerInventory.player, this.armorStand);
+      ClientUpdatePacket.sendToClient((ServerPlayerEntity) this.playerInventory.player,
+          this.armorStand);
     }
 
     super.sendContentUpdates();
@@ -250,9 +241,8 @@ public class ArmorStandScreenHandler
     ItemStack originalStack = stack.copy();
 
     if (index < PlayerInventory.MAIN_SIZE) {
-      if (!tryTransferArmor(stack)
-          && !tryTransferToMainHand(stack)
-          && !tryTransferToOffHand(stack)) {
+      if (!tryTransferArmor(stack) && !tryTransferToMainHand(stack) &&
+          !tryTransferToOffHand(stack)) {
         return ItemStack.EMPTY;
       }
     } else {
@@ -299,7 +289,8 @@ public class ArmorStandScreenHandler
   }
 
   public static boolean isSlotDisabled(ArmorStandEntity armorStand, EquipmentSlot slot) {
-    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
+    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() &
+        1 << slot.getArmorStandSlotId()) != 0;
   }
 
   public static class Factory implements ExtendedScreenHandlerFactory {
@@ -321,12 +312,9 @@ public class ArmorStandScreenHandler
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-      return new ArmorStandScreenHandler(
-          syncId,
-          playerInventory,
-          this.armorStand,
-          this.screenType);
+    public ScreenHandler createMenu(
+        int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+      return new ArmorStandScreenHandler(syncId, playerInventory, this.armorStand, this.screenType);
     }
 
     @Override

@@ -1,14 +1,12 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.packet.c2s.SetFlagPacket;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class FlagToggleWidget extends PressableWidget {
@@ -71,12 +69,12 @@ public class FlagToggleWidget extends PressableWidget {
   }
 
   @Override
-  public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     hovered = isWithinBounds(mouseX, mouseY);
 
-    renderWidget(matrixStack, mouseX, mouseY, delta);
-    flagLabel.render(matrixStack, mouseX, mouseY, delta);
-    valueLabel.render(matrixStack, mouseX, mouseY, delta);
+    renderWidget(drawContext, mouseX, mouseY, delta);
+    flagLabel.render(drawContext, mouseX, mouseY, delta);
+    valueLabel.render(drawContext, mouseX, mouseY, delta);
   }
 
   public void setValue(boolean newValue) {
@@ -85,15 +83,13 @@ public class FlagToggleWidget extends PressableWidget {
         "armorstands.flagToggle." + (newValue ^ inverted ? "on" : "off")));
   }
 
-  private void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+  private void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
     RenderSystem.enableDepthTest();
 
-    drawNineSlicedTexture(matrixStack,
+    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
         widgetX,
         widgetY,
         WIDGET_WIDTH,
@@ -104,7 +100,7 @@ public class FlagToggleWidget extends PressableWidget {
         0,
         46);
 
-    renderBar(matrixStack, mouseX, mouseY, delta);
+    renderBar(drawContext, mouseX, mouseY, delta);
   }
 
   private int getTextureY() {
@@ -118,13 +114,12 @@ public class FlagToggleWidget extends PressableWidget {
     return 46 + i * 20;
   }
 
-  private void renderBar(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
+  private void renderBar(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
     int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
 
-    drawNineSlicedTexture(matrixStack,
+    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
         widgetX + offset,
         widgetY,
         BAR_WIDTH,

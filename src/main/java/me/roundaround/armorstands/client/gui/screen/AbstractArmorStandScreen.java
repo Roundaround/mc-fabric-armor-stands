@@ -20,11 +20,10 @@ import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
 import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.navigation.GuiNavigation;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
@@ -67,6 +66,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     this.messageRenderer = new MessageRenderer(this);
 
+    // TODO: Find an alternative to this
     this.passEvents = true;
   }
 
@@ -119,32 +119,32 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
+  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(matrixStack,
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext,
         this.client.getCameraEntity());
 
     // Render labels before all other widgets so they are rendered on bottom
     for (LabelWidget label : this.labels) {
-      label.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+      label.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
     }
 
-    super.render(matrixStack, adjustedMouseX, adjustedMouseY, delta);
+    super.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
 
-    renderActivePageButtonHighlight(matrixStack);
+    renderActivePageButtonHighlight(drawContext);
 
-    this.messageRenderer.render(matrixStack);
+    this.messageRenderer.render(drawContext);
   }
 
   @Override
-  protected void drawBackground(MatrixStack matrixStack, float delta, int mouseX, int mouseY) {
+  protected void drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY) {
   }
 
   @Override
-  protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+  protected void drawForeground(DrawContext drawContext, int mouseX, int mouseY) {
   }
 
   @Override
@@ -442,20 +442,19 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected void initEnd() {
   }
 
-  protected void renderActivePageButtonHighlight(MatrixStack matrixStack) {
+  protected void renderActivePageButtonHighlight(DrawContext drawContext) {
     if (this.activeButton == null) {
       return;
     }
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
 
+    MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawNineSlicedTexture(matrixStack,
+    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
         this.activeButton.getX() - 2,
         this.activeButton.getY() - 2,
         25,
