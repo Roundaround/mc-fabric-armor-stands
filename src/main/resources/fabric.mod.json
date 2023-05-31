@@ -3,7 +3,7 @@
   "id": "armorstands",
   "version": "${version}",
   "name": "Armor Stands",
-  "description": "Place, pose, and dress armor stands with an easy-to-use UI.",
+  "description": "Place, pose, and dress armor stands with an easy-to-use UI.\n${library}",
   "authors": [
     "Roundaround"
   ],
@@ -16,6 +16,9 @@
   "icon": "assets/armorstands/icon.png",
   "environment": "*",
   "entrypoints": {
+    "preLaunch": [
+      "me.roundaround.armorstands.ArmorStandsPreLaunch"
+    ],
     "client": [
       "me.roundaround.armorstands.client.ArmorStandsClientMod"
     ],

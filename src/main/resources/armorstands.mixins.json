@@ -12,6 +12,7 @@
   ],
   "client": [
     "ArmorStandEntityClientMixin",
+    "HandledScreenMixin",
     "InGameHudAccessor",
     "InGameHudMixin",
     "KeyBindingAccessor",

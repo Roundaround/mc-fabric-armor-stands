@@ -259,15 +259,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         lockCursor();
         return true;
       case GLFW.GLFW_KEY_LEFT:
-        if (this.client.options.leftKey.matchesKey(keyCode, scanCode) && !Screen.hasControlDown()) {
+        if (!Screen.hasControlDown()) {
           break;
         }
         playClickSound();
         goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
-        if (this.client.options.rightKey.matchesKey(keyCode, scanCode) &&
-            !Screen.hasControlDown()) {
+        if (!Screen.hasControlDown()) {
           break;
         }
         playClickSound();
