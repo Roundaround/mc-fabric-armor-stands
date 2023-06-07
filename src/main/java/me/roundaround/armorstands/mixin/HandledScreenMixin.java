@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.mixin;
 
+import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
@@ -17,7 +18,11 @@ public abstract class HandledScreenMixin extends Screen {
   @Inject(method = "keyPressed", at = @At(value = "HEAD"), cancellable = true)
   private void onKeyPressed(
       int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
-    if (((ScreenAccessor) this).getPassEvents()) {
+    if (!(((Object) this) instanceof HandledScreen screen)) {
+      return;
+    }
+
+    if (screen instanceof AbstractArmorStandScreen && ((ScreenAccessor) screen).getPassEvents()) {
       info.setReturnValue(super.keyPressed(keyCode, scanCode, modifiers));
     }
   }
