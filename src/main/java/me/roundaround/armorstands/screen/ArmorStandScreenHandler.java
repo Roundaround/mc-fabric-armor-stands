@@ -28,8 +28,8 @@ import java.util.ArrayList;
 
 public class ArmorStandScreenHandler extends ScreenHandler
     implements HasArmorStand, HasArmorStandEditor {
-  public static final Identifier EMPTY_MAINHAND_ARMOR_SLOT =
-      new Identifier(ArmorStandsMod.MOD_ID, "item/empty_armor_slot_sword");
+  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT =
+      new Identifier("item/empty_slot_sword");
 
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,

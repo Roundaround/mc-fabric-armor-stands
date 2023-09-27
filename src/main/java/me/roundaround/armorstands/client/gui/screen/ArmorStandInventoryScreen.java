@@ -96,14 +96,14 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     }
 
     InventoryScreen.drawEntity(drawContext,
-        this.x + 26,
+        this.x + 62,
         this.y + 8,
-        this.x + 75,
-        this.y + 75,
+        this.x + 114,
+        this.y + 78,
         30,
         0.0625f,
-        this.x + 45 - this.mouseX,
-        this.y + 40 - this.mouseY,
+        this.mouseX,
+        this.mouseY,
         this.armorStand);
   }
 }
