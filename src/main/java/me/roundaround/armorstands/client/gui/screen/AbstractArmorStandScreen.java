@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
@@ -40,8 +41,9 @@ import java.util.Optional;
 
 public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStand, HasMessageRenderer, PassesEventsThrough {
-  public static final Identifier WIDGETS_TEXTURE =
-      new Identifier(Identifier.DEFAULT_NAMESPACE, "textures/gui/widgets.png");
+  protected static final Identifier SELECTION_TEXTURE =
+      new Identifier(ArmorStandsMod.MOD_ID, "textures/gui/selection_frame.png");
+
   protected static final int SCREEN_EDGE_PAD = 4;
   protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
@@ -462,16 +464,15 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawGuiTexture(WIDGETS_TEXTURE,
+    drawContext.drawTexture(SELECTION_TEXTURE,
         this.activeButton.getX() - 2,
         this.activeButton.getY() - 2,
-        25,
-        25,
-        4,
-        24,
-        24,
         0,
-        22);
+        0,
+        24,
+        24,
+        24,
+        24);
     matrixStack.pop();
   }
 

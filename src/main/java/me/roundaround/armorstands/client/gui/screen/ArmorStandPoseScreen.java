@@ -278,16 +278,15 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawGuiTexture(WIDGETS_TEXTURE,
+    drawContext.drawTexture(SELECTION_TEXTURE,
         this.activePosePartButton.getX() - 2,
         this.activePosePartButton.getY() - 2,
-        25,
-        25,
-        4,
-        24,
-        24,
         0,
-        22);
+        0,
+        24,
+        24,
+        24,
+        24);
     matrixStack.pop();
   }
 
