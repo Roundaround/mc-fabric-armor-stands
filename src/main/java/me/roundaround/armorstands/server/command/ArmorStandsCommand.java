@@ -15,7 +15,6 @@ import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -77,7 +76,7 @@ public class ArmorStandsCommand {
       WhitelistEntry entry = new WhitelistEntry(profile);
       whitelist.add(entry);
       source.sendFeedback(() -> Text.translatable("armorstands.commands.add.success",
-          Texts.toText(profile)), true);
+          Text.literal(profile.getName())), true);
       added++;
     }
 
@@ -101,7 +100,7 @@ public class ArmorStandsCommand {
       WhitelistEntry entry = new WhitelistEntry(profile);
       whitelist.remove(entry);
       source.sendFeedback(() -> Text.translatable("armorstands.commands.remove.success",
-          Texts.toText(profile)), true);
+          Text.literal(profile.getName())), true);
       removed++;
     }
 

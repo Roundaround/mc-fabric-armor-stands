@@ -1,9 +1,5 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import java.util.Optional;
-
-import org.lwjgl.glfw.GLFW;
-
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.packet.c2s.AdjustPosePacket;
@@ -14,6 +10,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.Optional;
 
 public class AdjustPoseSliderWidget extends SliderWidget {
   private final ArmorStandEntity armorStand;
@@ -60,7 +59,8 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandAngle = this.parameter.get(this.part.get(this.armorStand));
-    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    if (this.lastAngle.isPresent() &&
+        Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
       return;
     }
 
@@ -102,8 +102,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable(
-        "armorstands.adjustPose.label",
+    setMessage(Text.translatable("armorstands.adjustPose.label",
         String.format("%.2f", getAngle())));
   }
 
@@ -120,15 +119,16 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+  public boolean mouseScrolled(
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (isMouseOver(mouseX, mouseY)) {
-      setAngle(getAngle() + (float) amount);
+      setAngle(getAngle() + (float) verticalAmount);
       applyValue();
       this.lastScroll = Optional.of(System.currentTimeMillis());
       return true;
     }
 
-    return super.mouseScrolled(mouseX, mouseY, amount);
+    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
   }
 
   @Override

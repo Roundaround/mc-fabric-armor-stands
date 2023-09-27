@@ -1,11 +1,5 @@
 package me.roundaround.armorstands.mixin;
 
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -14,13 +8,14 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 @Environment(value = EnvType.CLIENT)
 public abstract class LivingEntityMixin {
-  @Shadow
-  protected int bodyTrackingIncrements;
-
   @Inject(method = "updateTrackedPositionAndAngles", at = @At(value = "HEAD"), cancellable = true)
   public void updateTrackedPositionAndAngles(
       double x,
@@ -29,7 +24,6 @@ public abstract class LivingEntityMixin {
       float yaw,
       float pitch,
       int interpolationSteps,
-      boolean interpolate,
       CallbackInfo info) {
     LivingEntity self = (LivingEntity) (Object) this;
 

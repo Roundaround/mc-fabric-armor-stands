@@ -8,13 +8,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class FlagToggleWidget extends PressableWidget {
   public static final int WIDGET_WIDTH = 16;
   public static final int WIDGET_HEIGHT = 12;
   private static final int BAR_WIDTH = 10;
-  private static final int TEXTURE_WIDTH = 200;
-  private static final int TEXTURE_HEIGHT = 20;
+  private static final Identifier TEXTURE = new Identifier("widget/slider");
+  private static final Identifier HANDLE_TEXTURE = new Identifier("widget/slider_handle");
+  private static final Identifier HANDLE_HIGHLIGHTED_TEXTURE =
+      new Identifier("widget/slider_handle_highlighted");
 
   private final ArmorStandFlag flag;
   private final boolean inverted;
@@ -84,55 +87,34 @@ public class FlagToggleWidget extends PressableWidget {
   }
 
   private void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
+
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
     RenderSystem.enableBlend();
     RenderSystem.defaultBlendFunc();
     RenderSystem.enableDepthTest();
 
-    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
-        widgetX,
-        widgetY,
-        WIDGET_WIDTH,
-        WIDGET_HEIGHT,
-        4,
-        200,
-        20,
-        0,
-        46);
-
-    renderBar(drawContext, mouseX, mouseY, delta);
-  }
-
-  private int getTextureY() {
-    int i = 1;
-    if (!this.active) {
-      i = 0;
-    } else if (this.isSelected()) {
-      i = 2;
-    }
-
-    return 46 + i * 20;
-  }
-
-  private void renderBar(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-
-    int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
-
-    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
+    drawContext.drawGuiTexture(TEXTURE, widgetX, widgetY, WIDGET_WIDTH, WIDGET_HEIGHT);
+    drawContext.drawGuiTexture(getHandleTexture(),
         widgetX + offset,
         widgetY,
         BAR_WIDTH,
-        WIDGET_HEIGHT,
-        4,
-        200,
-        20,
-        0,
-        getTextureY());
+        WIDGET_HEIGHT);
   }
 
   private boolean isWithinBounds(double mouseX, double mouseY) {
     return mouseX >= this.flagLabel.getLeft() && mouseX < this.valueLabel.getRight() &&
         mouseY >= this.flagLabel.getTop() && mouseY < this.flagLabel.getBottom();
+  }
+
+  private Identifier getTexture() {
+    return TEXTURE;
+  }
+
+  private Identifier getHandleTexture() {
+    if (this.isFocused() || this.hovered) {
+      return HANDLE_HIGHLIGHTED_TEXTURE;
+    }
+    return HANDLE_TEXTURE;
   }
 }

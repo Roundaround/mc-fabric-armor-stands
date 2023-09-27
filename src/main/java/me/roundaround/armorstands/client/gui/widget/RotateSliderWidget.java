@@ -1,9 +1,5 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import java.util.Optional;
-
-import org.lwjgl.glfw.GLFW;
-
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
 import net.minecraft.client.gui.screen.Screen;
@@ -14,6 +10,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.Optional;
 
 public class RotateSliderWidget extends SliderWidget {
   private final AbstractArmorStandScreen parent;
@@ -53,7 +52,8 @@ public class RotateSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandAngle = this.armorStand.getYaw();
-    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    if (this.lastAngle.isPresent() &&
+        Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
       return;
     }
 
@@ -103,9 +103,7 @@ public class RotateSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable(
-        "armorstands.rotate.label",
-        String.format("%.2f", getAngle())));
+    setMessage(Text.translatable("armorstands.rotate.label", String.format("%.2f", getAngle())));
   }
 
   @Override
@@ -132,15 +130,16 @@ public class RotateSliderWidget extends SliderWidget {
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+  public boolean mouseScrolled(
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (isMouseOver(mouseX, mouseY)) {
-      setAngle(getAngle() + (float) amount);
+      setAngle(getAngle() + (float) verticalAmount);
       applyValue();
       this.lastScroll = Optional.of(System.currentTimeMillis());
       return true;
     }
 
-    return super.mouseScrolled(mouseX, mouseY, amount);
+    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
   }
 
   @Override

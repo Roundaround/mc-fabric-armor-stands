@@ -237,17 +237,21 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-    if (this.pitchSlider != null && this.pitchSlider.mouseScrolled(mouseX, mouseY, amount)) {
+  public boolean mouseScrolled(
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    if (this.pitchSlider != null &&
+        this.pitchSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
-    if (this.yawSlider != null && this.yawSlider.mouseScrolled(mouseX, mouseY, amount)) {
+    if (this.yawSlider != null &&
+        this.yawSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
-    if (this.rollSlider != null && this.rollSlider.mouseScrolled(mouseX, mouseY, amount)) {
+    if (this.rollSlider != null &&
+        this.rollSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
-    return super.mouseScrolled(mouseX, mouseY, amount);
+    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
   }
 
   @Override
@@ -274,7 +278,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
+    drawContext.drawGuiTexture(WIDGETS_TEXTURE,
         this.activePosePartButton.getX() - 2,
         this.activePosePartButton.getY() - 2,
         25,

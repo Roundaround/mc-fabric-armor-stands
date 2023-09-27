@@ -40,12 +40,12 @@ import java.util.Optional;
 
 public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler>
     implements HasArmorStand, HasMessageRenderer, PassesEventsThrough {
+  public static final Identifier WIDGETS_TEXTURE =
+      new Identifier(Identifier.DEFAULT_NAMESPACE, "textures/gui/widgets.png");
   protected static final int SCREEN_EDGE_PAD = 4;
   protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
   protected static final int NAV_BUTTON_SPACING = 0;
-  protected static final Identifier WIDGETS_TEXTURE =
-      new Identifier(Identifier.DEFAULT_NAMESPACE, "textures/gui/widgets.png");
 
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
@@ -143,6 +143,11 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
+  public void renderInGameBackground(DrawContext context) {
+    // No grayed out background
+  }
+
+  @Override
   protected void drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY) {
   }
 
@@ -210,13 +215,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+  public boolean mouseScrolled(
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (this.cursorLocked) {
       return false;
     }
     for (NavigationButtonWidget button : this.navigationButtons) {
       if (button.isMouseOverIgnoreState(mouseX, mouseY)) {
-        if (amount > 0) {
+        if (verticalAmount > 0) {
           goToPreviousScreen();
         } else {
           goToNextScreen();
@@ -224,7 +230,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         return true;
       }
     }
-    return super.mouseScrolled(mouseX, mouseY, amount);
+    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
   }
 
   @Override
@@ -456,7 +462,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawNineSlicedTexture(WIDGETS_TEXTURE,
+    drawContext.drawGuiTexture(WIDGETS_TEXTURE,
         this.activeButton.getX() - 2,
         this.activeButton.getY() - 2,
         25,

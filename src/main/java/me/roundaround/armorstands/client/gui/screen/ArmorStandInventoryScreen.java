@@ -61,7 +61,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    renderBackground(drawContext);
+    renderBackground(drawContext, mouseX, mouseY, delta);
 
     this.mouseX = mouseX;
     this.mouseY = mouseY;
@@ -74,26 +74,36 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   protected void drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY) {
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-    int x = (this.width - BACKGROUND_WIDTH) / 2;
-    int y = (this.height - BACKGROUND_HEIGHT) / 2;
-
-    drawContext.drawTexture(CUSTOM_TEXTURE, x, y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+    drawContext.drawTexture(CUSTOM_TEXTURE,
+        this.x,
+        this.y,
+        0,
+        0,
+        BACKGROUND_WIDTH,
+        BACKGROUND_HEIGHT);
 
     ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
       if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
-        drawContext.fill(x + slot.x, y + slot.y, x + slot.x + 16, y + slot.y + 16, 0x80000000);
+        drawContext.fill(x + slot.x,
+            this.y + slot.y,
+            this.x + slot.x + 16,
+            y + slot.y + 16,
+            0x80000000);
       }
     }
 
     InventoryScreen.drawEntity(drawContext,
-        x + 88,
-        y + 75,
+        this.x + 26,
+        this.y + 8,
+        this.x + 75,
+        this.y + 75,
         30,
-        x + 88 - this.mouseX,
-        y + 40 - this.mouseY,
+        0.0625f,
+        this.x + 45 - this.mouseX,
+        this.y + 40 - this.mouseY,
         this.armorStand);
   }
 }
