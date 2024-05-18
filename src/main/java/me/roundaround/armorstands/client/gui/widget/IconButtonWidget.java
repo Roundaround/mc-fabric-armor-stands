@@ -26,8 +26,8 @@ public class IconButtonWidget extends ButtonWidget {
   }
 
   @Override
-  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    super.renderButton(drawContext, mouseX, mouseY, delta);
+  public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    super.renderWidget(drawContext, mouseX, mouseY, delta);
 
     int uIndex = this.textureIndex % ICONS_PER_ROW;
     int vIndex = this.textureIndex / ICONS_PER_ROW;

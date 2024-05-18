@@ -72,10 +72,10 @@ public class FlagToggleWidget extends PressableWidget {
   }
 
   @Override
-  public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+  public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     hovered = isWithinBounds(mouseX, mouseY);
 
-    renderWidget(drawContext, mouseX, mouseY, delta);
+    renderControl(drawContext, mouseX, mouseY, delta);
     flagLabel.render(drawContext, mouseX, mouseY, delta);
     valueLabel.render(drawContext, mouseX, mouseY, delta);
   }
@@ -86,7 +86,7 @@ public class FlagToggleWidget extends PressableWidget {
         "armorstands.flagToggle." + (newValue ^ inverted ? "on" : "off")));
   }
 
-  private void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+  private void renderControl(DrawContext drawContext, int mouseX, int mouseY, float delta) {
     int offset = (currentValue ^ inverted) ? WIDGET_WIDTH - BAR_WIDTH : 0;
 
     RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
