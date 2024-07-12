@@ -2,10 +2,10 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import me.roundaround.armorstands.client.gui.widget.FlagToggleWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
-import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -45,55 +45,57 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   protected void initLeft() {
     super.initLeft();
 
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.utility.setup"),
-            SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD)
-        .alignedBottom()
-        .justifiedLeft()
-        .shiftForPadding()
-        .build());
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.utility.setup"), SCREEN_EDGE_PAD,
+        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
+    ).alignedBottom().justifiedLeft().shiftForPadding().build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.prepare"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.PREPARE))
+            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE)
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD)
+        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.prepare.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.toolRack"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.TOOL_RACK))
+            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.TOOL_RACK)
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD)
+            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD
+        )
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.toolRack.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.uprightItem"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.UPRIGHT_ITEM.forSmall(
-                ArmorStandFlag.SMALL.getValue(armorStand))))
+            (button) -> ClientNetworking.sendUtilityActionPacket(
+                UtilityAction.UPRIGHT_ITEM.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.uprightItem.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.flatItem"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.FLAT_ITEM.forSmall(ArmorStandFlag.SMALL.getValue(
-                armorStand))))
+            (button) -> ClientNetworking.sendUtilityActionPacket(
+                UtilityAction.FLAT_ITEM.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD)
+            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD
+        )
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.flatItem.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.block"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.BLOCK.forSmall(ArmorStandFlag.SMALL.getValue(
-                armorStand))))
+            (button) -> ClientNetworking.sendUtilityActionPacket(
+                UtilityAction.BLOCK.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.block.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.tool"),
-            (button) -> UtilityActionPacket.sendToServer(UtilityAction.TOOL.forSmall(ArmorStandFlag.SMALL.getValue(
-                armorStand))))
+            (button) -> ClientNetworking.sendUtilityActionPacket(
+                UtilityAction.TOOL.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
+        )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.tool.tooltip")))
         .build());
   }
@@ -132,14 +134,9 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
 
   private void addFlagToggleWidget(ArmorStandFlag flag, int index) {
     int xPos = this.width - SCREEN_EDGE_PAD;
-    int yPos =
-        this.height - (index + 1) * (SCREEN_EDGE_PAD + FlagToggleWidget.WIDGET_HEIGHT);
+    int yPos = this.height - (index + 1) * (SCREEN_EDGE_PAD + FlagToggleWidget.WIDGET_HEIGHT);
 
-    FlagToggleWidget widget = new FlagToggleWidget(this.textRenderer,
-        flag,
-        this.currentValues.get(flag),
-        xPos,
-        yPos);
+    FlagToggleWidget widget = new FlagToggleWidget(this.textRenderer, flag, this.currentValues.get(flag), xPos, yPos);
 
     addDrawableChild(widget);
     listeners.put(flag, widget::setValue);

@@ -1,59 +1,63 @@
 package me.roundaround.armorstands.network;
 
-import java.util.Arrays;
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.EulerAngle;
 
+import java.util.Arrays;
+import java.util.function.IntFunction;
+
 public enum EulerAngleParameter {
-  PITCH("pitch"),
-  YAW("yaw"),
-  ROLL("roll");
+  PITCH(0, "pitch"), YAW(1, "yaw"), ROLL(2, "roll");
 
-  private final String id;
+  public static final IntFunction<EulerAngleParameter> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      EulerAngleParameter::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final PacketCodec<ByteBuf, EulerAngleParameter> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, EulerAngleParameter::getId);
 
-  private EulerAngleParameter(String id) {
+  private final int id;
+  private final String name;
+
+  EulerAngleParameter(int id, String name) {
     this.id = id;
+    this.name = name;
   }
 
   @Override
   public String toString() {
-    return id;
+    return name;
+  }
+
+  public int getId() {
+    return this.id;
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.parameter." + id);
+    return Text.translatable("armorstands.parameter." + name);
   }
 
   public float get(EulerAngle angle) {
-    switch (this) {
-      case PITCH:
-        return angle.getPitch();
-      case YAW:
-        return angle.getYaw();
-      case ROLL:
-        return angle.getRoll();
-      default:
-        throw new IllegalArgumentException("Unknown parameter: " + this);
-    }
+    return switch (this) {
+      case PITCH -> angle.getPitch();
+      case YAW -> angle.getYaw();
+      case ROLL -> angle.getRoll();
+    };
   }
 
   public EulerAngle set(EulerAngle angle, float value) {
-    switch (this) {
-      case PITCH:
-        return new EulerAngle(value, angle.getYaw(), angle.getRoll());
-      case YAW:
-        return new EulerAngle(angle.getPitch(), value, angle.getRoll());
-      case ROLL:
-        return new EulerAngle(angle.getPitch(), angle.getYaw(), value);
-      default:
-        throw new IllegalArgumentException("Unknown parameter: " + this);
-    }
+    return switch (this) {
+      case PITCH -> new EulerAngle(value, angle.getYaw(), angle.getRoll());
+      case YAW -> new EulerAngle(angle.getPitch(), value, angle.getRoll());
+      case ROLL -> new EulerAngle(angle.getPitch(), angle.getYaw(), value);
+    };
   }
 
   public static EulerAngleParameter fromString(String string) {
     return Arrays.stream(values())
-        .filter(parameter -> parameter.id.equals(string))
+        .filter(parameter -> parameter.name.equals(string))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unknown parameter: " + string));
   }

@@ -1,8 +1,8 @@
 package me.roundaround.armorstands.client.gui.widget;
 
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
-import me.roundaround.armorstands.network.packet.c2s.AdjustPosePacket;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -25,13 +25,8 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   private Optional<Long> lastScroll = Optional.empty();
 
   public AdjustPoseSliderWidget(
-      int x,
-      int y,
-      int width,
-      int height,
-      PosePart part,
-      EulerAngleParameter parameter,
-      ArmorStandEntity armorStand) {
+      int x, int y, int width, int height, PosePart part, EulerAngleParameter parameter, ArmorStandEntity armorStand
+  ) {
     super(x, y, width, height, Text.empty(), 0);
 
     this.part = part;
@@ -59,8 +54,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandAngle = this.parameter.get(this.part.get(this.armorStand));
-    if (this.lastAngle.isPresent() &&
-        Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
       return;
     }
 
@@ -102,8 +96,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable("armorstands.adjustPose.label",
-        String.format("%.2f", getAngle())));
+    setMessage(Text.translatable("armorstands.adjustPose.label", String.format("%.2f", getAngle())));
   }
 
   @Override
@@ -120,7 +113,8 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
+  ) {
     if (isMouseOver(mouseX, mouseY)) {
       setAngle(getAngle() + (float) verticalAmount);
       applyValue();
@@ -176,6 +170,6 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     // Cancel any pending scroll updates
     this.lastScroll = Optional.empty();
 
-    AdjustPosePacket.sendToServer(this.part, this.parameter, getAngle());
+    ClientNetworking.sendAdjustPosePacket(this.part, this.parameter, getAngle());
   }
 }

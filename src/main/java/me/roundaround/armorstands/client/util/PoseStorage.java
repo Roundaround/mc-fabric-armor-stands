@@ -1,5 +1,14 @@
 package me.roundaround.armorstands.client.util;
 
+import com.google.common.io.Files;
+import com.google.gson.*;
+import me.roundaround.armorstands.ArmorStandsMod;
+import me.roundaround.armorstands.util.Pose;
+import me.roundaround.armorstands.util.SavedPose;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.util.JsonHelper;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,24 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import me.roundaround.armorstands.util.Pose;
-import me.roundaround.armorstands.util.SavedPose;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.util.JsonHelper;
-
 public class PoseStorage {
   private static final File FILE = FabricLoader.getInstance().getGameDir().resolve("armorstandsposes.json").toFile();
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-  private static HashMap<UUID, SavedPose> map = new HashMap<>();
+  private static final HashMap<UUID, SavedPose> map = new HashMap<>();
 
   public static void add(String name, ArmorStandEntity armorStand) {
     add(name, new Pose(armorStand));
@@ -39,7 +34,7 @@ public class PoseStorage {
       save();
     } catch (IOException e) {
       map.remove(uuid);
-      e.printStackTrace();
+      ArmorStandsMod.LOGGER.error(e);
     }
   }
 
@@ -52,7 +47,7 @@ public class PoseStorage {
       map.put(uuid, new SavedPose(name, savedPose.toPose()));
       save();
     } catch (IOException e) {
-      e.printStackTrace();
+      ArmorStandsMod.LOGGER.error(e);
     }
   }
 
@@ -61,7 +56,7 @@ public class PoseStorage {
       map.remove(uuid);
       save();
     } catch (IOException e) {
-      e.printStackTrace();
+      ArmorStandsMod.LOGGER.error(e);
     }
   }
 
@@ -69,7 +64,7 @@ public class PoseStorage {
     try {
       load();
     } catch (IOException e) {
-      e.printStackTrace();
+      ArmorStandsMod.LOGGER.error(e);
     }
   }
 

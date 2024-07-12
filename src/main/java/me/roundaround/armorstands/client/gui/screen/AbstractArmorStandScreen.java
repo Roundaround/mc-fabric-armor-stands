@@ -9,16 +9,13 @@ import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
-import me.roundaround.armorstands.network.packet.c2s.PingPacket;
-import me.roundaround.armorstands.network.packet.c2s.RequestScreenPacket;
-import me.roundaround.armorstands.network.packet.c2s.UndoPacket;
-import me.roundaround.armorstands.network.packet.c2s.UtilityActionPacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.HasArmorStand;
 import net.minecraft.client.gui.DrawContext;
@@ -37,12 +34,14 @@ import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
-public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler>
-    implements HasArmorStand, HasMessageRenderer, PassesEventsThrough {
-  protected static final Identifier SELECTION_TEXTURE =
-      new Identifier(ArmorStandsMod.MOD_ID, "textures/gui/selection_frame.png");
+public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasArmorStand,
+    HasMessageRenderer,
+    PassesEventsThrough {
+  protected static final Identifier SELECTION_TEXTURE = new Identifier(
+      ArmorStandsMod.MOD_ID, "textures/gui/selection_frame.png");
 
   protected static final int SCREEN_EDGE_PAD = 4;
   protected static final int BETWEEN_PAD = 2;
@@ -93,11 +92,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean shouldPause() {
-    return false;
-  }
-
-  @Override
   public void init() {
     initStart();
 
@@ -112,11 +106,13 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   protected void handledScreenTick() {
+    assert this.client != null;
+
     // Block any inputs bound to shift so that this screen gets exclusive use
-    Arrays.stream(this.client.options.allKeys).filter((key) -> {
-      return key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) ||
-          key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0);
-    }).map((key) -> (KeyBindingAccessor) key).forEach(KeyBindingAccessor::invokeReset);
+    Arrays.stream(this.client.options.allKeys)
+        .filter((key) -> key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) || key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0))
+        .map((key) -> (KeyBindingAccessor) key)
+        .forEach(KeyBindingAccessor::invokeReset);
 
     ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
 
@@ -125,12 +121,13 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    assert this.client != null;
+
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext,
-        this.client.getCameraEntity());
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext, this.client.getCameraEntity());
 
     // Render labels before all other widgets so they are rendered on bottom
     for (LabelWidget label : this.labels) {
@@ -182,7 +179,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public boolean mouseDragged(
-      double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+      double mouseX, double mouseY, int button, double deltaX, double deltaY
+  ) {
     if (this.cursorLocked) {
       return false;
     }
@@ -218,7 +216,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
+  ) {
     if (this.cursorLocked) {
       return false;
     }
@@ -245,6 +244,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    assert this.client != null;
+
     // Allow jump to pass through without pressing buttons
     if (this.client.options.jumpKey.matchesKey(keyCode, scanCode)) {
       return false;
@@ -285,21 +286,21 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
           break;
         }
         playClickSound();
-        UndoPacket.sendToServer(Screen.hasShiftDown());
+        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
-        UtilityActionPacket.sendToServer(UtilityAction.COPY);
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
         playClickSound();
-        UtilityActionPacket.sendToServer(UtilityAction.PASTE);
+        ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
 
@@ -327,8 +328,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-    if (this.passEvents &&
-        (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
+    if (this.passEvents && (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
       unlockCursor();
       return true;
     }
@@ -337,8 +337,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   public boolean shouldHighlight(Entity entity) {
-    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed() &&
-        entity == this.armorStand;
+    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed() && entity == this.armorStand;
   }
 
   public boolean isCursorLocked() {
@@ -347,7 +346,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void sendPing() {
     this.lastPing = System.currentTimeMillis();
-    PingPacket.sendToServer(this.client.player);
+    ClientNetworking.sendPingPacket(Objects.requireNonNull(this.client).player);
   }
 
   public void onPong() {
@@ -385,37 +384,23 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     }
 
     addDrawableChild(new HelpButtonWidget(SCREEN_EDGE_PAD, SCREEN_EDGE_PAD));
-    addDrawableChild(new IconButtonWidget(SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD,
-        SCREEN_EDGE_PAD,
-        14,
+    addDrawableChild(new IconButtonWidget(SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD, SCREEN_EDGE_PAD, 14,
         Text.translatable("armorstands.utility.copy"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.COPY);
-        }));
-    addDrawableChild(new IconButtonWidget(
-        SCREEN_EDGE_PAD + 2 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
-        SCREEN_EDGE_PAD,
-        15,
-        Text.translatable("armorstands.utility.paste"),
-        (button) -> {
-          UtilityActionPacket.sendToServer(UtilityAction.PASTE);
-        }));
-    addDrawableChild(new IconButtonWidget(
-        SCREEN_EDGE_PAD + 3 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
-        SCREEN_EDGE_PAD,
-        17,
-        Text.translatable("armorstands.utility.undo"),
-        (button) -> {
-          UndoPacket.sendToServer(false);
-        }));
-    addDrawableChild(new IconButtonWidget(
-        SCREEN_EDGE_PAD + 4 * (IconButtonWidget.WIDTH + BETWEEN_PAD),
-        SCREEN_EDGE_PAD,
-        18,
-        Text.translatable("armorstands.utility.redo"),
-        (button) -> {
-          UndoPacket.sendToServer(true);
-        }));
+        (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY)
+    ));
+    addDrawableChild(
+        new IconButtonWidget(SCREEN_EDGE_PAD + 2 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 15,
+            Text.translatable("armorstands.utility.paste"),
+            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE)
+        ));
+    addDrawableChild(
+        new IconButtonWidget(SCREEN_EDGE_PAD + 3 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 17,
+            Text.translatable("armorstands.utility.undo"), (button) -> ClientNetworking.sendUndoPacket(false)
+        ));
+    addDrawableChild(
+        new IconButtonWidget(SCREEN_EDGE_PAD + 4 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 18,
+            Text.translatable("armorstands.utility.redo"), (button) -> ClientNetworking.sendUndoPacket(true)
+        ));
   }
 
   protected void initLeft() {
@@ -424,8 +409,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected void initNavigationButtons() {
     ScreenType[] screenTypes = ScreenType.values();
-    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH +
-        (screenTypes.length - 1) * NAV_BUTTON_SPACING;
+    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH + (screenTypes.length - 1) * NAV_BUTTON_SPACING;
 
     int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
     int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
@@ -464,52 +448,45 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawTexture(SELECTION_TEXTURE,
-        this.activeButton.getX() - 2,
-        this.activeButton.getY() - 2,
-        0,
-        0,
-        24,
-        24,
-        24,
-        24);
+    drawContext.drawTexture(SELECTION_TEXTURE, this.activeButton.getX() - 2, this.activeButton.getY() - 2, 0, 0, 24, 24,
+        24, 24
+    );
     matrixStack.pop();
   }
 
   protected void playClickSound() {
-    this.client.getSoundManager()
+    Objects.requireNonNull(this.client)
+        .getSoundManager()
         .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
   }
 
   protected void lockCursor() {
+    assert this.client != null;
+
     this.cursorLocked = true;
     int x = this.client.getWindow().getWidth() / 2;
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(),
-        InputUtil.GLFW_CURSOR_DISABLED,
-        x,
-        y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
   }
 
   protected void unlockCursor() {
+    assert this.client != null;
+
     this.cursorLocked = false;
     int x = this.client.getWindow().getWidth() / 2;
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(),
-        InputUtil.GLFW_CURSOR_NORMAL,
-        x,
-        y);
+    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
   }
 
   protected void goToPreviousScreen() {
-    RequestScreenPacket.sendToServer(this.armorStand, getScreenType().previous());
+    ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().previous());
   }
 
   protected void goToNextScreen() {
-    RequestScreenPacket.sendToServer(this.armorStand, getScreenType().next());
+    ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().next());
   }
 }

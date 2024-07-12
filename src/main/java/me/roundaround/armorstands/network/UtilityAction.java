@@ -1,19 +1,18 @@
 package me.roundaround.armorstands.network;
 
-import java.util.Arrays;
-
+import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
+import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Clipboard;
-import me.roundaround.armorstands.util.actions.ArmorStandAction;
-import me.roundaround.armorstands.util.actions.HoldingAction;
-import me.roundaround.armorstands.util.actions.PrepareAction;
-import me.roundaround.armorstands.util.actions.SnapToGroundAction;
-import me.roundaround.armorstands.util.actions.ToolRackAction;
+import me.roundaround.armorstands.util.actions.*;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.Arrays;
 
 public enum UtilityAction {
   COPY("copy"),
@@ -38,15 +37,22 @@ public enum UtilityAction {
   FACE_WITH("face_with"),
   UNKNOWN("unknown");
 
+  public static final PacketCodec<ByteBuf, UtilityAction> PACKET_CODEC = PacketCodec.tuple(
+      PacketCodecs.STRING, UtilityAction::getId, UtilityAction::fromString);
+
   private final String id;
 
-  private UtilityAction(String id) {
+  UtilityAction(String id) {
     this.id = id;
   }
 
   @Override
   public String toString() {
     return id;
+  }
+
+  public String getId() {
+    return this.id;
   }
 
   public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
@@ -65,7 +71,7 @@ public enum UtilityAction {
       case TOOL_RACK:
         ToolRackAction action = ToolRackAction.create(armorStand);
         if (action == null) {
-          MessagePacket.sendToClient(player, "armorstands.utility.toolRack.noHook", 0xFF0000);
+          ServerNetworking.sendMessagePacket(player, "armorstands.utility.toolRack.noHook", 0xFF0000);
         } else {
           editor.applyAction(action);
         }
@@ -115,22 +121,13 @@ public enum UtilityAction {
   }
 
   public UtilityAction forSmall(boolean small) {
-    switch (this) {
-      case UPRIGHT_ITEM:
-      case UPRIGHT_ITEM_SMALL:
-        return small ? UPRIGHT_ITEM_SMALL : UPRIGHT_ITEM;
-      case FLAT_ITEM:
-      case FLAT_ITEM_SMALL:
-        return small ? FLAT_ITEM_SMALL : FLAT_ITEM;
-      case BLOCK:
-      case BLOCK_SMALL:
-        return small ? BLOCK_SMALL : BLOCK;
-      case TOOL:
-      case TOOL_SMALL:
-        return small ? TOOL_SMALL : TOOL;
-      default:
-        return this;
-    }
+    return switch (this) {
+      case UPRIGHT_ITEM, UPRIGHT_ITEM_SMALL -> small ? UPRIGHT_ITEM_SMALL : UPRIGHT_ITEM;
+      case FLAT_ITEM, FLAT_ITEM_SMALL -> small ? FLAT_ITEM_SMALL : FLAT_ITEM;
+      case BLOCK, BLOCK_SMALL -> small ? BLOCK_SMALL : BLOCK;
+      case TOOL, TOOL_SMALL -> small ? TOOL_SMALL : TOOL;
+      default -> this;
+    };
   }
 
   public static UtilityAction fromString(String value) {

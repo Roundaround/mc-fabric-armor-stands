@@ -6,7 +6,7 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.network.packet.s2c.ClientUpdatePacket;
+import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.HasArmorStand;
 import me.roundaround.armorstands.util.HasArmorStandEditor;
@@ -16,7 +16,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
@@ -26,24 +28,20 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 
-public class ArmorStandScreenHandler extends ScreenHandler
-    implements HasArmorStand, HasArmorStandEditor {
-  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT =
-      new Identifier("item/empty_slot_sword");
+public class ArmorStandScreenHandler extends ScreenHandler implements HasArmorStand, HasArmorStandEditor {
+  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = new Identifier("item/empty_slot_sword");
 
-  private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] {
-      PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE,
-      PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
-      PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE,
-      PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE
+  private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[]{
+      PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
+      PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE
   };
-  private static final Identifier[] EMPTY_HAND_SLOT_TEXTURES = new Identifier[] {
+  private static final Identifier[] EMPTY_HAND_SLOT_TEXTURES = new Identifier[]{
       EMPTY_MAINHAND_ARMOR_SLOT, PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT
   };
-  private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[] {
+  private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[]{
       EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
   };
-  private static final EquipmentSlot[] HAND_SLOT_ORDER = new EquipmentSlot[] {
+  private static final EquipmentSlot[] HAND_SLOT_ORDER = new EquipmentSlot[]{
       EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND
   };
 
@@ -55,10 +53,8 @@ public class ArmorStandScreenHandler extends ScreenHandler
   private final ArrayList<Pair<Slot, EquipmentSlot>> armorSlots = new ArrayList<>();
 
   public ArmorStandScreenHandler(
-      int syncId,
-      PlayerInventory playerInventory,
-      ArmorStandEntity armorStand,
-      ScreenType screenType) {
+      int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand, ScreenType screenType
+  ) {
     super(ArmorStandsMod.ARMOR_STAND_SCREEN_HANDLER_TYPE, syncId);
 
     this.playerInventory = playerInventory;
@@ -81,11 +77,12 @@ public class ArmorStandScreenHandler extends ScreenHandler
   }
 
   public ArmorStandScreenHandler(
-      int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-    this(syncId,
-        playerInventory,
-        (ArmorStandEntity) playerInventory.player.getWorld().getEntityById(buf.readInt()),
-        ScreenType.fromId(buf.readString()));
+      int syncId, PlayerInventory playerInventory, Data data
+  ) {
+    this(syncId, playerInventory,
+        (ArmorStandEntity) playerInventory.player.getWorld().getEntityById(data.armorStandId()),
+        ScreenType.fromId(data.screenTypeId())
+    );
   }
 
   private void initSlots() {
@@ -172,7 +169,8 @@ public class ArmorStandScreenHandler extends ScreenHandler
         @Override
         public Pair<Identifier, Identifier> getBackgroundSprite() {
           return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]);
+              EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]
+          );
         }
       });
 
@@ -205,8 +203,7 @@ public class ArmorStandScreenHandler extends ScreenHandler
   @Override
   public void sendContentUpdates() {
     if (this.playerInventory.player instanceof ServerPlayerEntity) {
-      ClientUpdatePacket.sendToClient((ServerPlayerEntity) this.playerInventory.player,
-          this.armorStand);
+      ServerNetworking.sendClientUpdatePacket((ServerPlayerEntity) this.playerInventory.player, this.armorStand);
     }
 
     super.sendContentUpdates();
@@ -224,8 +221,7 @@ public class ArmorStandScreenHandler extends ScreenHandler
     }
 
     Slot slot = this.slots.get(index);
-
-    if (slot == null || !slot.hasStack()) {
+    if (!slot.hasStack()) {
       return ItemStack.EMPTY;
     }
 
@@ -241,8 +237,7 @@ public class ArmorStandScreenHandler extends ScreenHandler
     ItemStack originalStack = stack.copy();
 
     if (index < PlayerInventory.MAIN_SIZE) {
-      if (!tryTransferArmor(stack) && !tryTransferToMainHand(stack) &&
-          !tryTransferToOffHand(stack)) {
+      if (!tryTransferArmor(stack) && !tryTransferToMainHand(stack) && !tryTransferToOffHand(stack)) {
         return ItemStack.EMPTY;
       }
     } else {
@@ -289,11 +284,10 @@ public class ArmorStandScreenHandler extends ScreenHandler
   }
 
   public static boolean isSlotDisabled(ArmorStandEntity armorStand, EquipmentSlot slot) {
-    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() &
-        1 << slot.getArmorStandSlotId()) != 0;
+    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
   }
 
-  public static class Factory implements ExtendedScreenHandlerFactory {
+  public static class Factory implements ExtendedScreenHandlerFactory<Data> {
     private final ScreenType screenType;
     private final ArmorStandEntity armorStand;
 
@@ -313,14 +307,20 @@ public class ArmorStandScreenHandler extends ScreenHandler
 
     @Override
     public ScreenHandler createMenu(
-        int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        int syncId, PlayerInventory playerInventory, PlayerEntity player
+    ) {
       return new ArmorStandScreenHandler(syncId, playerInventory, this.armorStand, this.screenType);
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-      buf.writeInt(this.armorStand.getId());
-      buf.writeString(this.screenType.getId());
+    public Data getScreenOpeningData(ServerPlayerEntity player) {
+      return new Data(this.armorStand.getId(), this.screenType.getName());
     }
+  }
+
+  public record Data(int armorStandId, String screenTypeId) {
+    public static final PacketCodec<RegistryByteBuf, Data> PACKET_CODEC = PacketCodec.tuple(PacketCodecs.INTEGER,
+        Data::armorStandId, PacketCodecs.STRING, Data::screenTypeId, Data::new
+    );
   }
 }

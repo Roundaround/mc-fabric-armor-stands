@@ -1,6 +1,6 @@
 package me.roundaround.armorstands.client.gui.widget;
 
-import me.roundaround.armorstands.network.packet.c2s.AdjustPosPacket;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -15,17 +15,11 @@ public class MoveButtonWidget extends ButtonWidget {
   private MoveUnits units = MoveUnits.PIXELS;
 
   public MoveButtonWidget(
-      int x,
-      int y,
-      int width,
-      int height,
-      Direction direction,
-      int amount,
-      MoveMode mode,
-      MoveUnits units) {
+      int x, int y, int width, int height, Direction direction, int amount, MoveMode mode, MoveUnits units
+  ) {
     super(x, y, width, height, getText(amount, units), (rawButton) -> {
       MoveButtonWidget button = (MoveButtonWidget) rawButton;
-      AdjustPosPacket.sendToServer(button.direction, button.amount, button.mode, button.units);
+      ClientNetworking.sendAdjustPosPacket(button.direction, button.amount, button.mode, button.units);
     }, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
     this.direction = direction;

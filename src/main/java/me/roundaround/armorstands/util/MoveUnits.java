@@ -1,62 +1,68 @@
 package me.roundaround.armorstands.util;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
+
+import java.util.function.IntFunction;
 
 public enum MoveUnits {
-  PIXELS("pixels"),
-  BLOCKS("blocks");
+  PIXELS(0, "pixels"), BLOCKS(1, "blocks");
 
-  private final String id;
+  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      MoveUnits::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final PacketCodec<ByteBuf, MoveUnits> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, MoveUnits::getId);
 
-  private MoveUnits(String id) {
+  private final int id;
+  private final String name;
+
+  MoveUnits(int id, String name) {
     this.id = id;
+    this.name = name;
   }
 
-  public String getId() {
+  public int getId() {
     return this.id;
   }
 
+  public String getName() {
+    return this.name;
+  }
+
   public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.units." + this.id);
+    return Text.translatable("armorstands.move.units." + this.name);
   }
 
   public Text getButtonText(int amount) {
-    return Text.translatable("armorstands.move." + this.id + "." + amount);
+    return Text.translatable("armorstands.move." + this.name + "." + amount);
   }
 
   public double getAmount(int amount) {
-    switch (this) {
-      case PIXELS:
-        return getPixelAmount(amount);
-      case BLOCKS:
-        return getBlockAmount(amount);
-    }
-
-    return 0;
+    return switch (this) {
+      case PIXELS -> getPixelAmount(amount);
+      case BLOCKS -> getBlockAmount(amount);
+    };
   }
 
   private static double getPixelAmount(int amount) {
     // 1, 3, and 8 pixels
-    switch (amount) {
-      case 2:
-        return 0.1875;
-      case 3:
-        return 0.5;
-      default:
-        return 0.0625;
-    }
+    return switch (amount) {
+      case 2 -> 0.1875;
+      case 3 -> 0.5;
+      default -> 0.0625;
+    };
   }
 
   private static double getBlockAmount(int amount) {
     // 1/4, 1/3, and 1 block
-    switch (amount) {
-      case 2:
-        return 1d / 3d;
-      case 3:
-        return 1;
-      default:
-        return 0.25;
-    }
+    return switch (amount) {
+      case 2 -> 1d / 3d;
+      case 3 -> 1;
+      default -> 0.25;
+    };
   }
 
   public static Text getOptionLabelText() {
@@ -65,7 +71,7 @@ public enum MoveUnits {
 
   public static MoveUnits fromId(String id) {
     for (MoveUnits units : MoveUnits.values()) {
-      if (units.getId().equals(id)) {
+      if (units.getName().equals(id)) {
         return units;
       }
     }

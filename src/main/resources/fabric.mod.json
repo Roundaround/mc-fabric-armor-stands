@@ -16,9 +16,6 @@
   "icon": "assets/armorstands/icon.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": [
-      "me.roundaround.armorstands.ArmorStandsPreLaunch"
-    ],
     "client": [
       "me.roundaround.armorstands.client.ArmorStandsClientMod"
     ],
@@ -30,9 +27,8 @@
     "armorstands.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13.3",
+    "fabricloader": ">=0.15.11",
     "fabric-api": "*",
-    "minecraft": "1.20.*",
-    "java": ">=17"
+    "minecraft": "1.20.*"
   }
 }

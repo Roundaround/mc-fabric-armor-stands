@@ -1,76 +1,72 @@
 package me.roundaround.armorstands.network;
 
-import java.util.Arrays;
-
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.EulerAngle;
 
+import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.IntFunction;
+
 public enum PosePart {
-  HEAD("head"),
-  BODY("body"),
-  RIGHT_ARM("rightArm"),
-  LEFT_ARM("leftArm"),
-  RIGHT_LEG("rightLeg"),
-  LEFT_LEG("leftLeg");
+  HEAD(0, "head"),
+  BODY(1, "body"),
+  RIGHT_ARM(2, "rightArm"),
+  LEFT_ARM(3, "leftArm"),
+  RIGHT_LEG(4, "rightLeg"),
+  LEFT_LEG(5, "leftLeg");
 
-  private final String id;
+  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      PosePart::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final PacketCodec<ByteBuf, PosePart> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, PosePart::getId);
 
-  private PosePart(String id) {
+  private final int id;
+  private final String name;
+
+  PosePart(int id, String name) {
     this.id = id;
+    this.name = name;
   }
 
   @Override
   public String toString() {
-    return id;
+    return name;
+  }
+
+  public int getId() {
+    return this.id;
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.part." + id);
+    return Text.translatable("armorstands.part." + name);
   }
 
   public EulerAngle get(ArmorStandEntity armorStand) {
-    switch (this) {
-      case HEAD:
-        return armorStand.getHeadRotation();
-      case BODY:
-        return armorStand.getBodyRotation();
-      case RIGHT_ARM:
-        return armorStand.getRightArmRotation();
-      case LEFT_ARM:
-        return armorStand.getLeftArmRotation();
-      case RIGHT_LEG:
-        return armorStand.getRightLegRotation();
-      case LEFT_LEG:
-        return armorStand.getLeftLegRotation();
-      default:
-        throw new IllegalArgumentException("Unknown part: " + this);
-    }
+    return switch (this) {
+      case HEAD -> armorStand.getHeadRotation();
+      case BODY -> armorStand.getBodyRotation();
+      case RIGHT_ARM -> armorStand.getRightArmRotation();
+      case LEFT_ARM -> armorStand.getLeftArmRotation();
+      case RIGHT_LEG -> armorStand.getRightLegRotation();
+      case LEFT_LEG -> armorStand.getLeftLegRotation();
+    };
   }
 
   public void set(ArmorStandEntity armorStand, EulerAngle angle) {
-    switch (this) {
-      case HEAD:
-        armorStand.setHeadRotation(angle);
-        break;
-      case BODY:
-        armorStand.setBodyRotation(angle);
-        break;
-      case RIGHT_ARM:
-        armorStand.setRightArmRotation(angle);
-        break;
-      case LEFT_ARM:
-        armorStand.setLeftArmRotation(angle);
-        break;
-      case RIGHT_LEG:
-        armorStand.setRightLegRotation(angle);
-        break;
-      case LEFT_LEG:
-        armorStand.setLeftLegRotation(angle);
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown part: " + this);
-    }
+    Consumer<EulerAngle> consumer = switch (this) {
+      case HEAD -> armorStand::setHeadRotation;
+      case BODY -> armorStand::setBodyRotation;
+      case RIGHT_ARM -> armorStand::setRightArmRotation;
+      case LEFT_ARM -> armorStand::setLeftArmRotation;
+      case RIGHT_LEG -> armorStand::setRightLegRotation;
+      case LEFT_LEG -> armorStand::setLeftLegRotation;
+    };
+    consumer.accept(angle);
   }
 
   public void set(ArmorStandEntity armorStand, EulerAngleParameter parameter, float value) {
@@ -79,7 +75,7 @@ public enum PosePart {
 
   public static PosePart fromString(String value) {
     return Arrays.stream(PosePart.values())
-        .filter((flag) -> flag.id.equals(value))
+        .filter((flag) -> flag.name.equals(value))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unknown part: " + value));
   }

@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
-import me.roundaround.armorstands.network.packet.c2s.SetYawPacket;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -26,12 +26,8 @@ public class RotateSliderWidget extends SliderWidget {
   private boolean pendingDragPing = false;
 
   public RotateSliderWidget(
-      AbstractArmorStandScreen parent,
-      int x,
-      int y,
-      int width,
-      int height,
-      ArmorStandEntity armorStand) {
+      AbstractArmorStandScreen parent, int x, int y, int width, int height, ArmorStandEntity armorStand
+  ) {
     super(x, y, width, height, Text.empty(), 0);
 
     this.parent = parent;
@@ -52,8 +48,7 @@ public class RotateSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandAngle = this.armorStand.getYaw();
-    if (this.lastAngle.isPresent() &&
-        Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
       return;
     }
 
@@ -131,7 +126,8 @@ public class RotateSliderWidget extends SliderWidget {
 
   @Override
   public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
+  ) {
     if (isMouseOver(mouseX, mouseY)) {
       setAngle(getAngle() + (float) verticalAmount);
       applyValue();
@@ -193,6 +189,6 @@ public class RotateSliderWidget extends SliderWidget {
     // Cancel any pending scroll updates
     this.lastScroll = Optional.empty();
 
-    SetYawPacket.sendToServer(getAngle());
+    ClientNetworking.sendSetYawPacket(getAngle());
   }
 }

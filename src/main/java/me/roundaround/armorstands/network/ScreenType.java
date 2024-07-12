@@ -1,35 +1,49 @@
 package me.roundaround.armorstands.network;
 
-import java.util.Arrays;
-
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
+
+import java.util.Arrays;
+import java.util.function.IntFunction;
 
 public enum ScreenType {
-  UTILITIES("utilities", 0),
-  MOVE("move", 1),
-  ROTATE("rotate", 2),
-  POSE("pose", 3),
-  PRESETS("presets", 4),
-  INVENTORY("inventory", 5);
+  UTILITIES(0, "utilities"),
+  MOVE(1, "move"),
+  ROTATE(2, "rotate"),
+  POSE(3, "pose"),
+  PRESETS(4, "presets"),
+  INVENTORY(5, "inventory");
 
-  private String id;
-  private int uIndex;
+  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      ScreenType::getId, values(), ValueLists.OutOfBoundsHandling.ZERO);
+  public static final PacketCodec<ByteBuf, ScreenType> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, ScreenType::getId);
 
-  private ScreenType(String id, int uIndex) {
+  private final int id;
+  private final String name;
+
+  ScreenType(int id, String name) {
     this.id = id;
-    this.uIndex = uIndex;
+    this.name = name;
   }
 
-  public String getId() {
-    return id;
+  public int getId() {
+    return this.id;
+  }
+
+  public String getName() {
+    return this.name;
   }
 
   public int getUIndex() {
-    return uIndex;
+    return this.id;
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.screen." + id);
+    return Text.translatable("armorstands.screen." + name);
   }
 
   public boolean usesInventory() {
@@ -53,9 +67,6 @@ public enum ScreenType {
   }
 
   public static ScreenType fromId(String id) {
-    return Arrays.stream(values())
-        .filter(type -> type.getId().equals(id))
-        .findFirst()
-        .orElse(null);
+    return Arrays.stream(values()).filter(type -> type.getName().equals(id)).findFirst().orElse(null);
   }
 }

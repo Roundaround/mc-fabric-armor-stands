@@ -1,21 +1,22 @@
 package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.network.packet.c2s.RequestScreenPacket;
 
 public class NavigationButtonWidget extends IconButtonWidget {
   private final ScreenType screenType;
   private final boolean clickable;
 
   public NavigationButtonWidget(
-      AbstractArmorStandScreen parent, int x, int y, ScreenType screenType) {
+      AbstractArmorStandScreen parent, int x, int y, ScreenType screenType
+  ) {
     super(x, y, screenType.getUIndex(), screenType.getDisplayName(), (button) -> {
       if (parent.getScreenType() == screenType) {
         return;
       }
 
-      RequestScreenPacket.sendToServer(parent.getArmorStand(), screenType);
+      ClientNetworking.sendRequestScreenPacket(parent.getArmorStand(), screenType);
     });
 
     this.screenType = screenType;

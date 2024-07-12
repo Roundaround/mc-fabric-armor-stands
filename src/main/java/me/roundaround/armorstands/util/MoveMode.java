@@ -1,25 +1,42 @@
 package me.roundaround.armorstands.util;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.Direction;
 
-public enum MoveMode {
-  RELATIVE("relative", false, false),
-  LOCAL_TO_STAND("stand", true, false),
-  LOCAL_TO_PLAYER("player", true, true);
+import java.util.function.IntFunction;
 
-  private final String id;
+public enum MoveMode {
+  RELATIVE(0, "relative", false, false),
+  LOCAL_TO_STAND(1, "stand", true, false),
+  LOCAL_TO_PLAYER(2, "player", true, true);
+
+  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      MoveMode::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final PacketCodec<ByteBuf, MoveMode> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, MoveMode::getId);
+
+  private final int id;
+  private final String name;
   private final boolean local;
   private final boolean player;
 
-  private MoveMode(String id, boolean local, boolean player) {
+  MoveMode(int id, String name, boolean local, boolean player) {
     this.id = id;
+    this.name = name;
     this.local = local;
     this.player = player;
   }
 
-  public String getId() {
+  public int getId() {
     return this.id;
+  }
+
+  public String getName() {
+    return this.name;
   }
 
   public boolean isLocal() {
@@ -31,19 +48,15 @@ public enum MoveMode {
   }
 
   public MoveUnits getDefaultUnits() {
-    switch (this) {
-      case RELATIVE:
-        return MoveUnits.PIXELS;
-      case LOCAL_TO_STAND:
-      case LOCAL_TO_PLAYER:
-        return MoveUnits.BLOCKS;
-    }
+    return switch (this) {
+      case RELATIVE -> MoveUnits.PIXELS;
+      case LOCAL_TO_STAND, LOCAL_TO_PLAYER -> MoveUnits.BLOCKS;
+    };
 
-    return MoveUnits.PIXELS;
   }
 
   public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.mode." + this.id);
+    return Text.translatable("armorstands.move.mode." + this.name);
   }
 
   public Text getDirectionText(Direction direction) {
@@ -60,7 +73,7 @@ public enum MoveMode {
 
   public static MoveMode fromId(String id) {
     for (MoveMode mode : MoveMode.values()) {
-      if (mode.getId().equals(id)) {
+      if (mode.getName().equals(id)) {
         return mode;
       }
     }

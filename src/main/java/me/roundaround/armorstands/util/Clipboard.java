@@ -1,21 +1,21 @@
 package me.roundaround.armorstands.util;
 
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-
-import me.roundaround.armorstands.network.packet.s2c.MessagePacket;
+import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.actions.ClipboardPasteAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Clipboard {
   private static final HashMap<UUID, Entry> entries = new HashMap<>();
 
   public static void copy(ServerPlayerEntity player, ArmorStandEntity armorStand) {
     entries.put(player.getUuid(), Entry.everything(armorStand));
-    MessagePacket.sendToClient(player, "armorstands.message.copy");
+    ServerNetworking.sendMessagePacket(player, "armorstands.message.copy");
   }
 
   public static boolean paste(ServerPlayerEntity player, ArmorStandEditor editor) {
@@ -24,7 +24,7 @@ public class Clipboard {
     }
 
     editor.applyAction(ClipboardPasteAction.create(entries.get(player.getUuid())));
-    MessagePacket.sendToClient(player, "armorstands.message.paste");
+    ServerNetworking.sendMessagePacket(player, "armorstands.message.paste");
     return true;
   }
 

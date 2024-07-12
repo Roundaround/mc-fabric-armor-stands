@@ -4,10 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.LabelWidget;
+import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.network.packet.c2s.SetPosePacket;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.client.gui.DrawContext;
@@ -67,96 +67,85 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     IconButtonWidget headButton = new IconButtonWidget(
         offset + SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL -
-            PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        6,
-        PosePart.HEAD.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.HEAD);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        this.height - SCREEN_EDGE_PAD - 3 * IconButtonWidget.HEIGHT - 2 * PART_PAD_VERTICAL - PART_PAD_VERTICAL -
+            BUTTON_HEIGHT, 6, PosePart.HEAD.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.HEAD);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     headButton.active = false;
     this.activePosePartButton = headButton;
     addDrawableChild(headButton);
 
     IconButtonWidget rightArmButton = new IconButtonWidget(offset + SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
-            PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        8,
-        PosePart.RIGHT_ARM.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.RIGHT_ARM);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - PART_PAD_VERTICAL -
+            BUTTON_HEIGHT, 8, PosePart.RIGHT_ARM.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.RIGHT_ARM);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     addDrawableChild(rightArmButton);
 
     IconButtonWidget bodyButton = new IconButtonWidget(
         offset + SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
-            PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        7,
-        PosePart.BODY.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.BODY);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - PART_PAD_VERTICAL -
+            BUTTON_HEIGHT, 7, PosePart.BODY.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.BODY);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     addDrawableChild(bodyButton);
 
     IconButtonWidget leftArmButton = new IconButtonWidget(
         offset + SCREEN_EDGE_PAD + 2 * IconButtonWidget.WIDTH + 2 * PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL -
-            PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        9,
-        PosePart.LEFT_ARM.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.LEFT_ARM);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        this.height - SCREEN_EDGE_PAD - 2 * IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - PART_PAD_VERTICAL -
+            BUTTON_HEIGHT, 9, PosePart.LEFT_ARM.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.LEFT_ARM);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     addDrawableChild(leftArmButton);
 
     IconButtonWidget rightLegButton = new IconButtonWidget(
         offset + SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2,
-        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        11,
-        PosePart.RIGHT_LEG.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.RIGHT_LEG);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT, 11,
+        PosePart.RIGHT_LEG.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.RIGHT_LEG);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     addDrawableChild(rightLegButton);
 
     IconButtonWidget leftLegButton = new IconButtonWidget(
-        offset + SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2 +
-            IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL,
-        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT,
-        10,
-        PosePart.LEFT_LEG.getDisplayName(),
-        (button) -> {
-          setActivePosePart(PosePart.LEFT_LEG);
-          this.activePosePartButton.active = true;
-          this.activePosePartButton = (IconButtonWidget) button;
-          this.activePosePartButton.active = false;
-        });
+        offset + SCREEN_EDGE_PAD + (IconButtonWidget.WIDTH + PART_PAD_HORIZONTAL) / 2 + IconButtonWidget.WIDTH +
+            PART_PAD_HORIZONTAL,
+        this.height - SCREEN_EDGE_PAD - IconButtonWidget.HEIGHT - PART_PAD_VERTICAL - BUTTON_HEIGHT, 10,
+        PosePart.LEFT_LEG.getDisplayName(), (button) -> {
+      setActivePosePart(PosePart.LEFT_LEG);
+      this.activePosePartButton.active = true;
+      this.activePosePartButton = (IconButtonWidget) button;
+      this.activePosePartButton.active = false;
+    }
+    );
     addDrawableChild(leftLegButton);
 
-    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"),
-            (button) -> {
-              SetPosePacket.sendToServer(new Pose(this.armorStand).mirror());
+    addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), (button) -> {
+          ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
 
-              this.pitchSlider.refresh();
-              this.yawSlider.refresh();
-              this.rollSlider.refresh();
-            })
+          this.pitchSlider.refresh();
+          this.yawSlider.refresh();
+          this.rollSlider.refresh();
+        })
         .size(CONTROL_WIDTH, BUTTON_HEIGHT)
         .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
         .build());
@@ -171,26 +160,21 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .values(SliderRange.values())
         .omitKeyText()
         .build(this.width - SCREEN_EDGE_PAD - CONTROL_WIDTH,
-            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT -
-                3 * BETWEEN_PAD - 3 * ROW_PAD - 2 * LabelWidget.HEIGHT_WITH_PADDING,
-            CONTROL_WIDTH,
-            BUTTON_HEIGHT,
-            Text.translatable("armorstands.pose.range"),
-            (button, value) -> {
+            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD - 3 * ROW_PAD -
+                2 * LabelWidget.HEIGHT_WITH_PADDING, CONTROL_WIDTH, BUTTON_HEIGHT,
+            Text.translatable("armorstands.pose.range"), (button, value) -> {
               this.pitchSlider.setRange(value.getMin(), value.getMax());
               this.yawSlider.setRange(value.getMin(), value.getMax());
               this.rollSlider.setRange(value.getMin(), value.getMax());
-            }));
+            }
+        ));
 
-    this.posePartLabel = addLabel(LabelWidget.builder(Text.translatable("armorstands.pose.editing",
-                this.posePart.getDisplayName().getString()),
+    this.posePartLabel = addLabel(
+        LabelWidget.builder(Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()),
             this.width - SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT - 4 * BETWEEN_PAD -
-                3 * ROW_PAD - 2 * LabelWidget.HEIGHT_WITH_PADDING)
-        .shiftForPadding()
-        .alignedBottom()
-        .justifiedRight()
-        .build());
+            this.height - SCREEN_EDGE_PAD - 3 * SLIDER_HEIGHT - 3 * BUTTON_HEIGHT - 4 * BETWEEN_PAD - 3 * ROW_PAD -
+                2 * LabelWidget.HEIGHT_WITH_PADDING
+        ).shiftForPadding().alignedBottom().justifiedRight().build());
 
     this.pitchSlider = addAdjustSlider(EulerAngleParameter.PITCH, 2);
     this.yawSlider = addAdjustSlider(EulerAngleParameter.YAW, 1);
@@ -200,16 +184,12 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private AdjustPoseSliderWidget addAdjustSlider(EulerAngleParameter parameter, int index) {
     int refRight = this.width - SCREEN_EDGE_PAD;
     int refLeft = refRight - CONTROL_WIDTH;
-    int refY = this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT -
-        index * (SLIDER_HEIGHT + BUTTON_HEIGHT + BETWEEN_PAD + ROW_PAD);
+    int refY =
+        this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT - index * (SLIDER_HEIGHT + BUTTON_HEIGHT + BETWEEN_PAD + ROW_PAD);
 
-    AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(refLeft,
-        refY,
-        CONTROL_WIDTH,
-        SLIDER_HEIGHT,
-        this.posePart,
-        parameter,
-        this.armorStand);
+    AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(refLeft, refY, CONTROL_WIDTH, SLIDER_HEIGHT,
+        this.posePart, parameter, this.armorStand
+    );
 
     addLabel(LabelWidget.builder(parameter.getDisplayName(), refLeft, refY - BETWEEN_PAD)
         .alignedBottom()
@@ -238,17 +218,15 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
   @Override
   public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-    if (this.pitchSlider != null &&
-        this.pitchSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
+      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
+  ) {
+    if (this.pitchSlider != null && this.pitchSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
-    if (this.yawSlider != null &&
-        this.yawSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
+    if (this.yawSlider != null && this.yawSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
-    if (this.rollSlider != null &&
-        this.rollSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
+    if (this.rollSlider != null && this.rollSlider.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
       return true;
     }
     return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
@@ -278,15 +256,9 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     MatrixStack matrixStack = drawContext.getMatrices();
     matrixStack.push();
     matrixStack.translate(0, 0, 100);
-    drawContext.drawTexture(SELECTION_TEXTURE,
-        this.activePosePartButton.getX() - 2,
-        this.activePosePartButton.getY() - 2,
-        0,
-        0,
-        24,
-        24,
-        24,
-        24);
+    drawContext.drawTexture(SELECTION_TEXTURE, this.activePosePartButton.getX() - 2,
+        this.activePosePartButton.getY() - 2, 0, 0, 24, 24, 24, 24
+    );
     matrixStack.pop();
   }
 
@@ -295,14 +267,12 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.pitchSlider.setPart(part);
     this.yawSlider.setPart(part);
     this.rollSlider.setPart(part);
-    this.posePartLabel.setText(Text.translatable("armorstands.pose.editing",
-        this.posePart.getDisplayName().getString()));
+    this.posePartLabel.setText(
+        Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName().getString()));
   }
 
   private static enum SliderRange {
-    FULL(-180, 180),
-    HALF(-90, 90),
-    TIGHT(-35, 35);
+    FULL(-180, 180), HALF(-90, 90), TIGHT(-35, 35);
 
     private final int min;
     private final int max;

@@ -1,45 +1,61 @@
 package me.roundaround.armorstands.network;
 
-import java.util.Arrays;
-import java.util.List;
-
+import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.util.actions.MoveAction;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
+import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.IntFunction;
+
 public enum ArmorStandFlag {
-  HIDE_BASE_PLATE("base", true),
-  SHOW_ARMS("arms", false),
-  SMALL("small", false),
-  NO_GRAVITY("gravity", true),
-  INVISIBLE("visible", false),
-  NAME("name", false),
-  INVULNERABLE("invulnerable", false),
-  LOCK_INVENTORY("inventory", false),
-  UNKNOWN("unknown", false);
+  UNKNOWN(0, "unknown", false),
+  HIDE_BASE_PLATE(1, "base", true),
+  SHOW_ARMS(2, "arms", false),
+  SMALL(3, "small", false),
+  NO_GRAVITY(4, "gravity", true),
+  INVISIBLE(5, "visible", false),
+  NAME(6, "name", false),
+  INVULNERABLE(7, "invulnerable", false),
+  LOCK_INVENTORY(8, "inventory", false);
+
+  public static final IntFunction<ArmorStandFlag> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
+      ArmorStandFlag::getId, values(), ValueLists.OutOfBoundsHandling.ZERO);
+  public static final PacketCodec<ByteBuf, ArmorStandFlag> PACKET_CODEC = PacketCodecs.indexed(
+      ID_TO_VALUE_FUNCTION, ArmorStandFlag::getId);
 
   // Magic number from Vanilla Tweaks armor stand data pack. ¯\_(ツ)_/¯
   private static final int ALL_SLOTS_DISABLED = 4144959;
 
-  private final String id;
+  private final int id;
+  private final String name;
   private final boolean invertControl;
 
-  private ArmorStandFlag(String id, boolean invertControl) {
+  ArmorStandFlag(int id, String name, boolean invertControl) {
     this.id = id;
+    this.name = name;
     this.invertControl = invertControl;
   }
 
   @Override
   public String toString() {
+    return this.name;
+  }
+
+  public int getId() {
     return this.id;
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.flags." + this.id);
+    return Text.translatable("armorstands.flags." + this.name);
   }
 
   public boolean invertControl() {
@@ -49,26 +65,17 @@ public enum ArmorStandFlag {
   public boolean getValue(ArmorStandEntity armorStand) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
-    switch (this) {
-      case HIDE_BASE_PLATE:
-        return armorStand.shouldHideBasePlate();
-      case SHOW_ARMS:
-        return armorStand.shouldShowArms();
-      case SMALL:
-        return armorStand.isSmall();
-      case NO_GRAVITY:
-        return armorStand.hasNoGravity();
-      case INVISIBLE:
-        return armorStand.isInvisible();
-      case NAME:
-        return armorStand.isCustomNameVisible();
-      case INVULNERABLE:
-        return armorStand.isInvulnerable();
-      case LOCK_INVENTORY:
-        return accessor.getDisabledSlots() == ALL_SLOTS_DISABLED;
-      default:
-        return false;
-    }
+    return switch (this) {
+      case HIDE_BASE_PLATE -> armorStand.shouldHideBasePlate();
+      case SHOW_ARMS -> armorStand.shouldShowArms();
+      case SMALL -> armorStand.isSmall();
+      case NO_GRAVITY -> armorStand.hasNoGravity();
+      case INVISIBLE -> armorStand.isInvisible();
+      case NAME -> armorStand.isCustomNameVisible();
+      case INVULNERABLE -> armorStand.isInvulnerable();
+      case LOCK_INVENTORY -> accessor.getDisabledSlots() == ALL_SLOTS_DISABLED;
+      default -> false;
+    };
   }
 
   public void setValue(ArmorStandEntity armorStand, boolean value) {
@@ -115,7 +122,7 @@ public enum ArmorStandFlag {
 
   public static ArmorStandFlag fromString(String value) {
     return Arrays.stream(ArmorStandFlag.values())
-        .filter((flag) -> flag.id.equals(value))
+        .filter((flag) -> flag.name.equals(value))
         .findFirst()
         .orElseGet(() -> {
           ArmorStandsMod.LOGGER.warn("Unknown flag id '{}'. Returning UNKNOWN.", value);
@@ -124,9 +131,6 @@ public enum ArmorStandFlag {
   }
 
   public static List<ArmorStandFlag> getFlags() {
-    return Arrays.asList(values())
-        .stream()
-        .filter((flag) -> flag != UNKNOWN)
-        .toList();
+    return Arrays.stream(values()).filter((flag) -> flag != UNKNOWN).toList();
   }
 }
