@@ -8,8 +8,6 @@ import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
-import me.roundaround.armorstands.util.HasArmorStand;
-import me.roundaround.armorstands.util.HasArmorStandEditor;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -28,7 +26,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 
-public class ArmorStandScreenHandler extends ScreenHandler implements HasArmorStand, HasArmorStandEditor {
+public class ArmorStandScreenHandler extends ScreenHandler {
   private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = new Identifier("item/empty_slot_sword");
 
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[]{
@@ -186,12 +184,10 @@ public class ArmorStandScreenHandler extends ScreenHandler implements HasArmorSt
     return this.screenType;
   }
 
-  @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
   }
 
-  @Override
   public ArmorStandEditor getEditor() {
     return this.editor;
   }

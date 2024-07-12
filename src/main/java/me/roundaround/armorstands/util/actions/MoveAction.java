@@ -1,13 +1,13 @@
 package me.roundaround.armorstands.util.actions;
 
-import java.util.Optional;
-
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Optional;
 
 public class MoveAction implements ArmorStandAction {
   private final Vec3d argument;
@@ -74,15 +74,9 @@ public class MoveAction implements ArmorStandAction {
 
     Vec3d position = switch (moveType) {
       case ABSOLUTE -> argument;
-      case RELATIVE -> {
-        yield originalPosition.get().add(argument);
-      }
-      case LOCAL -> {
-        yield originalPosition.get().add(ArmorStandHelper.localToRelative(
-          localToPlayer ? player : armorStand,
-          argument
-        ));
-      }
+      case RELATIVE -> originalPosition.get().add(argument);
+      case LOCAL ->
+          originalPosition.get().add(ArmorStandHelper.localToRelative(localToPlayer ? player : armorStand, argument));
     };
 
     if (roundToPixel) {
@@ -121,14 +115,12 @@ public class MoveAction implements ArmorStandAction {
     armorStand.setPosition(new Vec3d(x, y, z));
   }
 
-  public static enum MoveType {
-    ABSOLUTE("absolute"),
-    RELATIVE("relative"),
-    LOCAL("local");
+  public enum MoveType {
+    ABSOLUTE("absolute"), RELATIVE("relative"), LOCAL("local");
 
     private final String id;
 
-    private MoveType(String id) {
+    MoveType(String id) {
       this.id = id;
     }
 

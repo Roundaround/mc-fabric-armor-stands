@@ -3,7 +3,6 @@ package me.roundaround.armorstands.server.network;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
-import me.roundaround.armorstands.util.HasArmorStandEditor;
 import me.roundaround.armorstands.util.LastUsedScreen;
 import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -57,7 +56,7 @@ public final class ServerNetworking {
   private static void handleAdjustPose(Networking.AdjustPoseC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -69,7 +68,7 @@ public final class ServerNetworking {
   private static void handleAdjustPos(Networking.AdjustPosC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -85,7 +84,7 @@ public final class ServerNetworking {
   private static void handleAdjustYaw(Networking.AdjustYawC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -123,7 +122,7 @@ public final class ServerNetworking {
     context.player().server.execute(() -> {
       ServerPlayerEntity player = context.player();
       ScreenHandler currentScreenHandler = player.currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -137,7 +136,7 @@ public final class ServerNetworking {
   private static void handleSetPose(Networking.SetPoseC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -151,7 +150,7 @@ public final class ServerNetworking {
   private static void handleSetPosePreset(Networking.SetPosePresetC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -163,7 +162,7 @@ public final class ServerNetworking {
   private static void handleSetYaw(Networking.SetYawC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -176,7 +175,7 @@ public final class ServerNetworking {
     context.player().server.execute(() -> {
       ServerPlayerEntity player = context.player();
       ScreenHandler currentScreenHandler = player.currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 
@@ -197,7 +196,7 @@ public final class ServerNetworking {
     context.player().server.execute(() -> {
       ServerPlayerEntity player = context.player();
       ScreenHandler currentScreenHandler = player.currentScreenHandler;
-      if (!(currentScreenHandler instanceof HasArmorStandEditor screenHandler)) {
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
 

@@ -7,6 +7,7 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -21,7 +22,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int DIRECTION_BUTTON_WIDTH = 70;
   private static final int MINI_BUTTON_WIDTH = 24;
   private static final int MINI_BUTTON_HEIGHT = 16;
-  private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * BETWEEN_PAD;
+  private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * (GuiUtil.PADDING / 2);
   private static final int SLIDER_HEIGHT = 16;
 
   private LabelWidget playerFacingLabel;
@@ -50,50 +51,50 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   }
 
   private void initCurrentStatus() {
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.player"), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.player"), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
 
-    this.playerFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(this.client.player), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING
+    this.playerFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(this.client.player), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + 2 * LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
 
-    this.playerRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(this.client.player), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING
+    this.playerRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(this.client.player), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + 3 * LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
 
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.stand"), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.current.stand"), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + 5 * LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
 
-    this.standFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(this.armorStand), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING
+    this.standFacingLabel = addLabel(LabelWidget.builder(getCurrentFacingText(this.armorStand), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + 6 * LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
 
-    this.standRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(this.armorStand), SCREEN_EDGE_PAD,
-        SCREEN_EDGE_PAD + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING
+    this.standRotationLabel = addLabel(LabelWidget.builder(getCurrentRotationText(this.armorStand), GuiUtil.PADDING,
+        GuiUtil.PADDING + IconButtonWidget.HEIGHT + 7 * LabelWidget.HEIGHT_WITH_PADDING
     ).alignedTop().justifiedLeft().shiftForPadding().build());
   }
 
   private void initSnapButtons() {
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.snap"), SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 4 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.snap"), GuiUtil.PADDING,
+        this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 4 * (GuiUtil.PADDING / 2) - LabelWidget.HEIGHT_WITH_PADDING
     ).shiftForPadding().justifiedLeft().alignedBottom().build());
 
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.snap." + Direction.SOUTH.getName()),
             (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.SOUTH.asRotation()))
         )
         .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING
+        .position(GuiUtil.PADDING,
+            this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 3 * (GuiUtil.PADDING / 2) - LabelWidget.HEIGHT_WITH_PADDING
         )
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.snap." + Direction.NORTH.getName()),
             (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.NORTH.asRotation()))
         )
         .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING
+        .position(GuiUtil.PADDING + DIRECTION_BUTTON_WIDTH + (GuiUtil.PADDING / 2),
+            this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 3 * (GuiUtil.PADDING / 2) - LabelWidget.HEIGHT_WITH_PADDING
         )
         .build());
 
@@ -101,41 +102,41 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
             (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.EAST.asRotation()))
         )
         .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - 2 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING
+        .position(GuiUtil.PADDING,
+            this.height - GuiUtil.PADDING - 2 * BUTTON_HEIGHT - 2 * (GuiUtil.PADDING / 2) - LabelWidget.HEIGHT_WITH_PADDING
         )
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.snap." + Direction.WEST.getName()),
             (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.WEST.asRotation()))
         )
         .size(DIRECTION_BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + DIRECTION_BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - 2 * BETWEEN_PAD - LabelWidget.HEIGHT_WITH_PADDING
+        .position(GuiUtil.PADDING + DIRECTION_BUTTON_WIDTH + (GuiUtil.PADDING / 2),
+            this.height - GuiUtil.PADDING - 2 * BUTTON_HEIGHT - 2 * (GuiUtil.PADDING / 2) - LabelWidget.HEIGHT_WITH_PADDING
         )
         .build());
   }
 
   private void initFaceButtons() {
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.face"), SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT - BETWEEN_PAD
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.rotate.face"), GuiUtil.PADDING,
+        this.height - GuiUtil.PADDING - BUTTON_HEIGHT - (GuiUtil.PADDING / 2)
     ).shiftForPadding().justifiedLeft().alignedBottom().build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.toward"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD)
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(GuiUtil.PADDING, this.height - GuiUtil.PADDING - BUTTON_HEIGHT)
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.away"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY)
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(GuiUtil.PADDING + BUTTON_WIDTH + (GuiUtil.PADDING / 2), this.height - GuiUtil.PADDING - BUTTON_HEIGHT)
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.with"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH)
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + 2 * (BUTTON_WIDTH + BETWEEN_PAD), this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(GuiUtil.PADDING + 2 * (BUTTON_WIDTH + (GuiUtil.PADDING / 2)), this.height - GuiUtil.PADDING - BUTTON_HEIGHT)
         .build());
   }
 
@@ -146,18 +147,18 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     addRowOfButtons(RotateDirection.CLOCKWISE, 1);
     addRowOfButtons(RotateDirection.COUNTERCLOCKWISE, 0);
 
-    this.rotateSlider = addDrawableChild(new RotateSliderWidget(this, this.width - SCREEN_EDGE_PAD - SLIDER_WIDTH,
-        this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT, this.armorStand
+    this.rotateSlider = addDrawableChild(new RotateSliderWidget(this, this.width - GuiUtil.PADDING - SLIDER_WIDTH,
+        this.height - GuiUtil.PADDING - SLIDER_HEIGHT, SLIDER_WIDTH, SLIDER_HEIGHT, this.armorStand
     ));
   }
 
   private void addRowOfButtons(RotateDirection direction, int index) {
-    int refX = this.width - SCREEN_EDGE_PAD - MINI_BUTTON_WIDTH;
-    int refY = this.height - SCREEN_EDGE_PAD - SLIDER_HEIGHT - 2 * BETWEEN_PAD - MINI_BUTTON_HEIGHT -
-        index * (2 * BETWEEN_PAD + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
+    int refX = this.width - GuiUtil.PADDING - MINI_BUTTON_WIDTH;
+    int refY = this.height - GuiUtil.PADDING - SLIDER_HEIGHT - 2 * (GuiUtil.PADDING / 2) - MINI_BUTTON_HEIGHT -
+        index * (2 * (GuiUtil.PADDING / 2) + MINI_BUTTON_HEIGHT + LabelWidget.HEIGHT_WITH_PADDING);
     String modifier = direction.equals(RotateDirection.CLOCKWISE) ? "+" : "-";
 
-    addLabel(LabelWidget.builder(direction.getLabel(), this.width - SCREEN_EDGE_PAD, refY - BETWEEN_PAD)
+    addLabel(LabelWidget.builder(direction.getLabel(), this.width - GuiUtil.PADDING, refY - (GuiUtil.PADDING / 2))
         .justifiedRight()
         .alignedBottom()
         .shiftForPadding()
@@ -166,19 +167,19 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset())
         )
         .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
-        .position(refX - 3 * (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .position(refX - 3 * ((GuiUtil.PADDING / 2) + MINI_BUTTON_WIDTH), refY)
         .build());
     addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "5"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 5)
         )
         .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
-        .position(refX - 2 * (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .position(refX - 2 * ((GuiUtil.PADDING / 2) + MINI_BUTTON_WIDTH), refY)
         .build());
     addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "15"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 15)
         )
         .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
-        .position(refX - (BETWEEN_PAD + MINI_BUTTON_WIDTH), refY)
+        .position(refX - ((GuiUtil.PADDING / 2) + MINI_BUTTON_WIDTH), refY)
         .build());
     addDrawableChild(ButtonWidget.builder(Text.literal(modifier + "45"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 45)

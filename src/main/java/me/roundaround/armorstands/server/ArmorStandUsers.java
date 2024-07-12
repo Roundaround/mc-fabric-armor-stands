@@ -1,13 +1,13 @@
 package me.roundaround.armorstands.server;
 
-import java.io.File;
-
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+
+import java.io.File;
 
 public class ArmorStandUsers {
   private static final File FILE = new File("armorstandsusers.json");
@@ -19,15 +19,16 @@ public class ArmorStandUsers {
     return WHITELIST.isAllowed(player.getGameProfile());
   }
 
-  public static boolean canEditArmorStands(PlayerEntity player) {
-    if (!(player instanceof ServerPlayerEntity)) {
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+  public static boolean canEditArmorStands(PlayerEntity playerEntity) {
+    if (!(playerEntity instanceof ServerPlayerEntity player)) {
       return false;
     }
 
-    MinecraftServer server = ((ServerPlayerEntity) player).getServer();
-    if (server.isDedicated()) {
-      ServerPropertiesHandler propertiesHandler = ((MinecraftDedicatedServer) server).getProperties();
-      if (!((ServerPropertiesWithArmorStands) propertiesHandler).getEnforceArmorStandPermissions()) {
+    MinecraftServer server = player.getServer();
+    if (server instanceof MinecraftDedicatedServer dedicatedServer) {
+      ServerPropertiesHandler propertiesHandler = dedicatedServer.getProperties();
+      if (!propertiesHandler.getEnforceArmorStandPermissions()) {
         return true;
       }
     }
@@ -36,7 +37,7 @@ public class ArmorStandUsers {
       return true;
     }
 
-    return isExplicitlyListed((ServerPlayerEntity) player);
+    return isExplicitlyListed(player);
   }
 
   public static String[] getNames() {

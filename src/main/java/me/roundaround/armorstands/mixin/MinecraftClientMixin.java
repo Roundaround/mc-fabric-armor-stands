@@ -17,7 +17,7 @@ import net.minecraft.entity.Entity;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
   @Shadow
-  private Screen currentScreen;
+  public Screen currentScreen;
 
   @Inject(method = "hasOutline", at = @At(value = "HEAD"), cancellable = true)
   private void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> info) {

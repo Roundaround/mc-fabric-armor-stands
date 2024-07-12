@@ -193,6 +193,7 @@
   "armorstands.action.pose": "",
   "armorstands.action.prepare": "",
   "armorstands.action.rotate": "",
+  "armorstands.action.scale": "",
   "armorstands.action.snapToGround": "",
   "armorstands.action.toolRack": ""
 }

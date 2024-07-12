@@ -7,6 +7,7 @@ import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -45,22 +46,22 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   protected void initLeft() {
     super.initLeft();
 
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.utility.setup"), SCREEN_EDGE_PAD,
-        this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 3 * BETWEEN_PAD
+    addLabel(LabelWidget.builder(Text.translatable("armorstands.utility.setup"), GuiUtil.PADDING,
+        this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 3 * (GuiUtil.PADDING / 2)
     ).alignedBottom().justifiedLeft().shiftForPadding().build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.prepare"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PREPARE)
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD)
+        .position(GuiUtil.PADDING, this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 2 * (GuiUtil.PADDING / 2))
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.prepare.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.toolRack"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.TOOL_RACK)
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 3 * BUTTON_HEIGHT - 2 * BETWEEN_PAD
+        .position(GuiUtil.PADDING + BUTTON_WIDTH + (GuiUtil.PADDING / 2),
+            this.height - GuiUtil.PADDING - 3 * BUTTON_HEIGHT - 2 * (GuiUtil.PADDING / 2)
         )
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.toolRack.tooltip")))
         .build());
@@ -69,7 +70,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
                 UtilityAction.UPRIGHT_ITEM.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD)
+        .position(GuiUtil.PADDING, this.height - GuiUtil.PADDING - 2 * BUTTON_HEIGHT - (GuiUtil.PADDING / 2))
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.uprightItem.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.flatItem"),
@@ -77,8 +78,8 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
                 UtilityAction.FLAT_ITEM.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD,
-            this.height - SCREEN_EDGE_PAD - 2 * BUTTON_HEIGHT - BETWEEN_PAD
+        .position(GuiUtil.PADDING + BUTTON_WIDTH + (GuiUtil.PADDING / 2),
+            this.height - GuiUtil.PADDING - 2 * BUTTON_HEIGHT - (GuiUtil.PADDING / 2)
         )
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.flatItem.tooltip")))
         .build());
@@ -87,7 +88,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
                 UtilityAction.BLOCK.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(GuiUtil.PADDING, this.height - GuiUtil.PADDING - BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.block.tooltip")))
         .build());
     addDrawableChild(ButtonWidget.builder(Text.translatable("armorstands.utility.tool"),
@@ -95,7 +96,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
                 UtilityAction.TOOL.forSmall(ArmorStandFlag.SMALL.getValue(armorStand)))
         )
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-        .position(SCREEN_EDGE_PAD + BUTTON_WIDTH + BETWEEN_PAD, this.height - SCREEN_EDGE_PAD - BUTTON_HEIGHT)
+        .position(GuiUtil.PADDING + BUTTON_WIDTH + (GuiUtil.PADDING / 2), this.height - GuiUtil.PADDING - BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.utility.tool.tooltip")))
         .build());
   }
@@ -133,8 +134,8 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   }
 
   private void addFlagToggleWidget(ArmorStandFlag flag, int index) {
-    int xPos = this.width - SCREEN_EDGE_PAD;
-    int yPos = this.height - (index + 1) * (SCREEN_EDGE_PAD + FlagToggleWidget.WIDGET_HEIGHT);
+    int xPos = this.width - GuiUtil.PADDING;
+    int yPos = this.height - (index + 1) * (GuiUtil.PADDING + FlagToggleWidget.WIDGET_HEIGHT);
 
     FlagToggleWidget widget = new FlagToggleWidget(this.textRenderer, flag, this.currentValues.get(flag), xPos, yPos);
 

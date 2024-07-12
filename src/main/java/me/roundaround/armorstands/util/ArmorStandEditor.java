@@ -1,18 +1,9 @@
 package me.roundaround.armorstands.util;
 
-import java.util.HashMap;
-import java.util.Stack;
-import java.util.UUID;
-
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
-import me.roundaround.armorstands.util.actions.AdjustPoseAction;
-import me.roundaround.armorstands.util.actions.ArmorStandAction;
-import me.roundaround.armorstands.util.actions.FlagAction;
-import me.roundaround.armorstands.util.actions.MoveAction;
-import me.roundaround.armorstands.util.actions.PoseAction;
-import me.roundaround.armorstands.util.actions.RotateAction;
+import me.roundaround.armorstands.util.actions.*;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Pair;
@@ -20,8 +11,12 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.HashMap;
+import java.util.Stack;
+import java.util.UUID;
+
 public class ArmorStandEditor {
-  private static HashMap<UUID, Pair<UUID, ArmorStandEditor>> editors = new HashMap<>();
+  private static final HashMap<UUID, Pair<UUID, ArmorStandEditor>> editors = new HashMap<>();
 
   private final ServerPlayerEntity player;
   private final ArmorStandEntity armorStand;
@@ -123,6 +118,14 @@ public class ArmorStandEditor {
     applyAction(RotateAction.absolute(rotation));
   }
 
+  public void scale(float scale) {
+    applyAction(ScaleAction.relative(scale));
+  }
+
+  public void setScale(float scale) {
+    applyAction(ScaleAction.absolute(scale));
+  }
+
   public void toggleFlag(ArmorStandFlag flag) {
     applyAction(FlagAction.toggle(flag));
   }
@@ -136,12 +139,8 @@ public class ArmorStandEditor {
   }
 
   public void setPose(
-      EulerAngle head,
-      EulerAngle body,
-      EulerAngle rightArm,
-      EulerAngle leftArm,
-      EulerAngle rightLeg,
-      EulerAngle leftLeg) {
+      EulerAngle head, EulerAngle body, EulerAngle rightArm, EulerAngle leftArm, EulerAngle rightLeg, EulerAngle leftLeg
+  ) {
     setPose(new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg));
   }
 

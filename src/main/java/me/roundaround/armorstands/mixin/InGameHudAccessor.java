@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(InGameHud.class)
 public interface InGameHudAccessor {
   @Invoker("updateVignetteDarkness")
-  public void invokeUpdateVignetteDarkness(Entity entity);
+  void invokeUpdateVignetteDarkness(Entity entity);
 
   @Invoker("renderVignetteOverlay")
-  public void invokeRenderVignetteOverlay(DrawContext context, Entity entity);
+  void invokeRenderVignetteOverlay(DrawContext context, Entity entity);
 }

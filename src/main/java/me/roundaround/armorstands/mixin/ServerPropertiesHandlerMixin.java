@@ -1,15 +1,18 @@
 package me.roundaround.armorstands.mixin;
 
-import me.roundaround.armorstands.server.ServerPropertiesWithArmorStands;
+import me.roundaround.armorstands.server.EnforceArmorStandPermissions;
 import net.minecraft.server.dedicated.AbstractPropertiesHandler;
 import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Properties;
 
 @Mixin(ServerPropertiesHandler.class)
+@SuppressWarnings("AddedMixinMembersNamePattern")
 public abstract class ServerPropertiesHandlerMixin extends AbstractPropertiesHandler<ServerPropertiesHandler> implements
-    ServerPropertiesWithArmorStands {
+    EnforceArmorStandPermissions {
+  @Unique
   public final boolean enforceArmorStandPermissions = this.parseBoolean("enforce-armor-stand-permissions", true);
 
   public ServerPropertiesHandlerMixin(Properties properties) {

@@ -35,6 +35,7 @@ public class ToolRackAction extends ComboAction {
     actions.add(RotateAction.absolute(armorStand.getWorld()
         .getBlockState(hookPos)
         .get(TripwireHookBlock.FACING).asRotation()));
+    actions.add(ScaleAction.absolute(1f));
     actions.add(MoveAction.absolute(
         hookPos.getX() + 0.5,
         hookPos.getY() - 1,

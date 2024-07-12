@@ -4,10 +4,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.MessageRenderer.HasMessageRenderer;
 import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
 import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.LabelWidget;
 import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
@@ -17,7 +15,7 @@ import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.util.HasArmorStand;
+import me.roundaround.roundalib.client.gui.GuiUtil;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
@@ -37,20 +35,16 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements HasArmorStand,
-    HasMessageRenderer,
+public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements
     PassesEventsThrough {
   protected static final Identifier SELECTION_TEXTURE = new Identifier(
       ArmorStandsMod.MOD_ID, "textures/gui/selection_frame.png");
 
-  protected static final int SCREEN_EDGE_PAD = 4;
-  protected static final int BETWEEN_PAD = 2;
   protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
   protected static final int NAV_BUTTON_SPACING = 0;
 
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
-  protected final ArrayList<LabelWidget> labels = new ArrayList<>();
   protected final ArrayList<NavigationButtonWidget> navigationButtons = new ArrayList<>();
 
   protected NavigationButtonWidget activeButton;
@@ -71,17 +65,10 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public abstract ScreenType getScreenType();
 
-  protected LabelWidget addLabel(LabelWidget label) {
-    this.labels.add(label);
-    return label;
-  }
-
-  @Override
   public ArmorStandEntity getArmorStand() {
     return this.armorStand;
   }
 
-  @Override
   public MessageRenderer getMessageRenderer() {
     return this.messageRenderer;
   }
@@ -128,11 +115,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext, this.client.getCameraEntity());
-
-    // Render labels before all other widgets so they are rendered on bottom
-    for (LabelWidget label : this.labels) {
-      label.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
-    }
 
     super.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
 
@@ -374,7 +356,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   protected void initStart() {
-    this.labels.clear();
     this.navigationButtons.clear();
   }
 
@@ -383,23 +364,24 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return;
     }
 
-    addDrawableChild(new HelpButtonWidget(SCREEN_EDGE_PAD, SCREEN_EDGE_PAD));
-    addDrawableChild(new IconButtonWidget(SCREEN_EDGE_PAD + IconButtonWidget.WIDTH + BETWEEN_PAD, SCREEN_EDGE_PAD, 14,
-        Text.translatable("armorstands.utility.copy"),
-        (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY)
-    ));
+    addDrawableChild(new HelpButtonWidget(GuiUtil.PADDING, GuiUtil.PADDING));
     addDrawableChild(
-        new IconButtonWidget(SCREEN_EDGE_PAD + 2 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 15,
-            Text.translatable("armorstands.utility.paste"),
+        new IconButtonWidget(GuiUtil.PADDING + IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2), GuiUtil.PADDING, 14,
+            Text.translatable("armorstands.utility.copy"),
+            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY)
+        ));
+    addDrawableChild(
+        new IconButtonWidget(GuiUtil.PADDING + 2 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
+            15, Text.translatable("armorstands.utility.paste"),
             (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE)
         ));
     addDrawableChild(
-        new IconButtonWidget(SCREEN_EDGE_PAD + 3 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 17,
-            Text.translatable("armorstands.utility.undo"), (button) -> ClientNetworking.sendUndoPacket(false)
+        new IconButtonWidget(GuiUtil.PADDING + 3 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
+            17, Text.translatable("armorstands.utility.undo"), (button) -> ClientNetworking.sendUndoPacket(false)
         ));
     addDrawableChild(
-        new IconButtonWidget(SCREEN_EDGE_PAD + 4 * (IconButtonWidget.WIDTH + BETWEEN_PAD), SCREEN_EDGE_PAD, 18,
-            Text.translatable("armorstands.utility.redo"), (button) -> ClientNetworking.sendUndoPacket(true)
+        new IconButtonWidget(GuiUtil.PADDING + 4 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
+            18, Text.translatable("armorstands.utility.redo"), (button) -> ClientNetworking.sendUndoPacket(true)
         ));
   }
 

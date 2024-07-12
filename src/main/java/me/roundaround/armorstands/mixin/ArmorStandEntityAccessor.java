@@ -11,23 +11,23 @@ import net.minecraft.util.collection.DefaultedList;
 @Mixin(ArmorStandEntity.class)
 public interface ArmorStandEntityAccessor {
   @Invoker("setSmall")
-  public void invokeSetSmall(boolean small);
+  void invokeSetSmall(boolean small);
 
   @Invoker("setShowArms")
-  public void invokeSetShowArms(boolean showArms);
+  void invokeSetShowArms(boolean showArms);
 
   @Invoker("setHideBasePlate")
-  public void invokeSetHideBasePlate(boolean hideBasePlate);
+  void invokeSetHideBasePlate(boolean hideBasePlate);
 
   @Accessor("heldItems")
-  public DefaultedList<ItemStack> getHeldItems();
+  DefaultedList<ItemStack> getHeldItems();
 
   @Accessor("armorItems")
-  public DefaultedList<ItemStack> getArmorItems();
+  DefaultedList<ItemStack> getArmorItems();
 
   @Accessor("disabledSlots")
-  public int getDisabledSlots();
+  int getDisabledSlots();
 
   @Accessor("disabledSlots")
-  public void setDisabledSlots(int disabledSlots);
+  void setDisabledSlots(int disabledSlots);
 }
