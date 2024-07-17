@@ -25,9 +25,9 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   private Optional<Long> lastScroll = Optional.empty();
 
   public AdjustPoseSliderWidget(
-      int x, int y, int width, int height, PosePart part, EulerAngleParameter parameter, ArmorStandEntity armorStand
+      int width, int height, PosePart part, EulerAngleParameter parameter, ArmorStandEntity armorStand
   ) {
-    super(x, y, width, height, Text.empty(), 0);
+    super(0, 0, width, height, Text.empty(), 0);
 
     this.part = part;
     this.parameter = parameter;

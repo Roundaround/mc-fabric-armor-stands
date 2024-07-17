@@ -1,6 +1,9 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
+import me.roundaround.roundalib.asset.icon.BuiltinIcon;
+import me.roundaround.roundalib.asset.icon.CustomIcon;
+import me.roundaround.roundalib.asset.icon.Icon;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
@@ -10,12 +13,12 @@ import java.util.Arrays;
 import java.util.function.IntFunction;
 
 public enum ScreenType {
-  UTILITIES(0, "utilities"),
-  MOVE(1, "move"),
-  ROTATE(2, "rotate"),
-  POSE(3, "pose"),
-  PRESETS(4, "presets"),
-  INVENTORY(5, "inventory");
+  UTILITIES(0, "utilities", new CustomIcon("flag", 20)),
+  MOVE(1, "move", BuiltinIcon.MOVE_18),
+  ROTATE(2, "rotate", BuiltinIcon.ROTATE_18),
+  POSE(3, "pose", BuiltinIcon.SLIDERS_18),
+  PRESETS(4, "presets", new CustomIcon("pose", 20)),
+  INVENTORY(5, "inventory", new CustomIcon("inventory", 20));
 
   public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
       ScreenType::getId, values(), ValueLists.OutOfBoundsHandling.ZERO);
@@ -24,10 +27,12 @@ public enum ScreenType {
 
   private final int id;
   private final String name;
+  private final Icon icon;
 
-  ScreenType(int id, String name) {
+  ScreenType(int id, String name, Icon icon) {
     this.id = id;
     this.name = name;
+    this.icon = icon;
   }
 
   public int getId() {
@@ -38,8 +43,8 @@ public enum ScreenType {
     return this.name;
   }
 
-  public int getUIndex() {
-    return this.id;
+  public Icon getIcon() {
+    return this.icon;
   }
 
   public Text getDisplayName() {

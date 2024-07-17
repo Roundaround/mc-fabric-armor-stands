@@ -38,24 +38,23 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     return ScreenType.INVENTORY;
   }
 
-  @Override
-  protected void initRight() {
-    this.showArmsToggle = addDrawableChild(new FlagToggleWidget(this.textRenderer, ArmorStandFlag.SHOW_ARMS,
-        ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand), this.width - GuiUtil.PADDING,
-        this.height - GuiUtil.PADDING - 2 * FlagToggleWidget.WIDGET_HEIGHT - (GuiUtil.PADDING / 2)
-    ));
-    this.lockInventoryToggle = addDrawableChild(new FlagToggleWidget(this.textRenderer, ArmorStandFlag.LOCK_INVENTORY,
-        ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand), this.width - GuiUtil.PADDING,
-        this.height - GuiUtil.PADDING - FlagToggleWidget.WIDGET_HEIGHT
-    ));
+  protected void populateLayout() {
+//    this.showArmsToggle = this.layout.bottomRight.add(new FlagToggleWidget(this.textRenderer, ArmorStandFlag.SHOW_ARMS,
+//        ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand), this.width - GuiUtil.PADDING,
+//        this.height - GuiUtil.PADDING - 2 * FlagToggleWidget.WIDGET_HEIGHT - (GuiUtil.PADDING / 2)
+//    ));
+//    this.lockInventoryToggle = this.layout.bottomRight.add(new FlagToggleWidget(this.textRenderer, ArmorStandFlag.LOCK_INVENTORY,
+//        ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand), this.width - GuiUtil.PADDING,
+//        this.height - GuiUtil.PADDING - FlagToggleWidget.WIDGET_HEIGHT
+//    ));
   }
 
   @Override
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand));
-    this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
+//    this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand));
+//    this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
   }
 
   @Override

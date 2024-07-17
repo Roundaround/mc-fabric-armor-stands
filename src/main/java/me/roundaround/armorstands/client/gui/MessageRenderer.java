@@ -1,12 +1,11 @@
 package me.roundaround.armorstands.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -77,7 +76,7 @@ public class MessageRenderer {
       TextRenderer textRenderer = client.textRenderer;
       int width = textRenderer.getWidth(text);
       int x = (screen.width - width) / 2;
-      int y = screen.height - NavigationButtonWidget.HEIGHT - 1 - 6 - textRenderer.fontHeight;
+      int y = screen.height - ButtonWidget.DEFAULT_HEIGHT - 1 - 6 - textRenderer.fontHeight;
       float opacity = MathHelper.clamp(timeRemaining / 10f, 0f, 1f);
 
       int backgroundAlpha = client.options.getTextBackgroundColor(0) >> 24 & 0xFF;

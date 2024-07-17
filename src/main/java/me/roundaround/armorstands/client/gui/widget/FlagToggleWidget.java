@@ -29,7 +29,7 @@ public class FlagToggleWidget extends PressableWidget {
   public FlagToggleWidget(
       TextRenderer textRenderer, ArmorStandFlag flag, boolean initialValue, int x, int y
   ) {
-    super(x, y, 100, WIDGET_HEIGHT, flag.getDisplayName());
+    super(0, 0, 100, WIDGET_HEIGHT, flag.getDisplayName());
     this.flag = flag;
     this.inverted = flag.invertControl();
 

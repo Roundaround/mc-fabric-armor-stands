@@ -4,9 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.widget.HelpButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.IconButtonWidget;
-import me.roundaround.armorstands.client.gui.widget.NavigationButtonWidget;
+import me.roundaround.armorstands.client.gui.widget.ArmorStandLayoutWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
@@ -15,14 +13,18 @@ import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.roundalib.asset.icon.BuiltinIcon;
+import me.roundaround.roundalib.asset.icon.CustomIcon;
+import me.roundaround.roundalib.client.gui.layout.IntRect;
+import me.roundaround.roundalib.client.gui.widget.DrawableWidget;
+import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
@@ -30,24 +32,21 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements
     PassesEventsThrough {
-  protected static final Identifier SELECTION_TEXTURE = new Identifier(
-      ArmorStandsMod.MOD_ID, "textures/gui/selection_frame.png");
+  protected static final Identifier SELECTION_TEXTURE = new Identifier(ArmorStandsMod.MOD_ID, "selection");
+  protected static final CustomIcon COPY_ICON = new CustomIcon("copy", 20);
+  protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
 
-  protected static final int NAV_BUTTON_BOTTOM_PADDING = 1;
-  protected static final int NAV_BUTTON_SPACING = 0;
-
+  protected final ArmorStandLayoutWidget layout = new ArmorStandLayoutWidget(this);
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
-  protected final ArrayList<NavigationButtonWidget> navigationButtons = new ArrayList<>();
 
-  protected NavigationButtonWidget activeButton;
+  protected IconButtonWidget activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
   protected boolean passEvents = true;
@@ -80,15 +79,96 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   @Override
   public void init() {
-    initStart();
+    this.populateLayout();
+    this.collectChildren();
+    this.initTabNavigation();
+  }
 
-    super.init();
+  protected void populateLayout() {
+    this.initUtilityButtons();
+    this.initNavigationButtons();
+  }
 
-    initLeft();
-    initNavigationButtons();
-    initRight();
+  protected void initUtilityButtons() {
+    if (!this.supportsUndoRedo) {
+      return;
+    }
 
-    initEnd();
+    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
+        .large()
+        .messageAndTooltip(this.buildHelpTooltipText())
+        .build());
+    this.layout.topLeft.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
+        .large()
+        .messageAndTooltip(Text.translatable("armorstands.utility.copy"))
+        .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
+        .build());
+    this.layout.topLeft.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
+        .large()
+        .messageAndTooltip(Text.translatable("armorstands.utility.paste"))
+        .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
+        .build());
+    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
+        .large()
+        .messageAndTooltip(Text.translatable("armorstands.utility.undo"))
+        .onPress((button) -> ClientNetworking.sendUndoPacket(false))
+        .build());
+    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
+        .large()
+        .messageAndTooltip(Text.translatable("armorstands.utility.redo"))
+        .onPress((button) -> ClientNetworking.sendUndoPacket(true))
+        .build());
+  }
+
+  private Text buildHelpTooltipText() {
+    String alt = Text.translatable("armorstands.help.alt").getString();
+    String inventory = Objects.requireNonNull(this.client).options.inventoryKey.getBoundKeyLocalizedText().getString();
+    String left = InputUtil.fromKeyCode(GLFW.GLFW_KEY_LEFT, 0).getLocalizedText().getString();
+    String right = InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT, 0).getLocalizedText().getString();
+    String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding.getBoundKeyLocalizedText().getString();
+    String control = Text.translatable("armorstands.help." + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
+        .getString();
+    String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0).getLocalizedText().getString();
+    String shift = Text.translatable("armorstands.help.shift").getString();
+    String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
+    String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
+
+    return Text.translatable("armorstands.help", alt, inventory, left, right, highlight, control, z, control, shift, z,
+        control, c, control, v
+    );
+  }
+
+  protected void initNavigationButtons() {
+    for (ScreenType screenType : ScreenType.values()) {
+      IconButtonWidget navButton = IconButtonWidget.builder(screenType.getIcon(), ArmorStandsMod.MOD_ID)
+          .onPress((button) -> ClientNetworking.sendRequestScreenPacket(this.getArmorStand(), screenType))
+          .build();
+      if (this.getScreenType() == screenType) {
+        navButton.active = false;
+      }
+      this.layout.navRow.add(navButton);
+    }
+  }
+
+  protected void collectChildren() {
+    this.layout.forEachChild(this::addDrawableChild);
+    this.addDrawableChild(new DrawableWidget() {
+      @Override
+      protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        IconButtonWidget activeButton = AbstractArmorStandScreen.this.activeButton;
+        if (activeButton == null) {
+          return;
+        }
+
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        context.drawGuiTexture(SELECTION_TEXTURE, activeButton.getX() - 2, activeButton.getY() - 2, 24, 24);
+      }
+    });
+  }
+
+  @Override
+  protected void initTabNavigation() {
+    this.layout.refreshPositions();
   }
 
   @Override
@@ -117,8 +197,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext, this.client.getCameraEntity());
 
     super.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
-
-    renderActivePageButtonHighlight(drawContext);
 
     this.messageRenderer.render(drawContext);
   }
@@ -197,22 +275,20 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
-  ) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (this.cursorLocked) {
       return false;
     }
-    for (NavigationButtonWidget button : this.navigationButtons) {
-      if (button.isMouseOverIgnoreState(mouseX, mouseY)) {
-        if (verticalAmount > 0) {
-          goToPreviousScreen();
-        } else {
-          goToNextScreen();
-        }
-        return true;
+
+    if (IntRect.fromWidget(this.layout.navRow).contains(mouseX, mouseY)) {
+      if (verticalAmount > 0) {
+        goToPreviousScreen();
+      } else {
+        goToNextScreen();
       }
+      return true;
     }
+
     return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
   }
 
@@ -286,17 +362,13 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         return true;
     }
 
-    for (int i = 0; i < this.navigationButtons.size(); i++) {
-      NavigationButtonWidget button = this.navigationButtons.get(i);
-      ScreenType screenType = button.getScreenType();
-
+    for (ScreenType screenType : ScreenType.values()) {
       if (screenType == this.getScreenType()) {
         continue;
       }
-
-      if (this.client.options.hotbarKeys[i].matchesKey(keyCode, scanCode)) {
+      if (this.client.options.hotbarKeys[screenType.getId()].matchesKey(keyCode, scanCode)) {
         playClickSound();
-        button.onPress();
+        ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
       }
     }
@@ -353,87 +425,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void updateDisabledSlotsOnClient(int disabledSlots) {
     ((ArmorStandEntityAccessor) this.armorStand).setDisabledSlots(disabledSlots);
-  }
-
-  protected void initStart() {
-    this.navigationButtons.clear();
-  }
-
-  protected void initUtilityButtons() {
-    if (!this.supportsUndoRedo) {
-      return;
-    }
-
-    addDrawableChild(new HelpButtonWidget(GuiUtil.PADDING, GuiUtil.PADDING));
-    addDrawableChild(
-        new IconButtonWidget(GuiUtil.PADDING + IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2), GuiUtil.PADDING, 14,
-            Text.translatable("armorstands.utility.copy"),
-            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY)
-        ));
-    addDrawableChild(
-        new IconButtonWidget(GuiUtil.PADDING + 2 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
-            15, Text.translatable("armorstands.utility.paste"),
-            (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE)
-        ));
-    addDrawableChild(
-        new IconButtonWidget(GuiUtil.PADDING + 3 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
-            17, Text.translatable("armorstands.utility.undo"), (button) -> ClientNetworking.sendUndoPacket(false)
-        ));
-    addDrawableChild(
-        new IconButtonWidget(GuiUtil.PADDING + 4 * (IconButtonWidget.WIDTH + (GuiUtil.PADDING / 2)), GuiUtil.PADDING,
-            18, Text.translatable("armorstands.utility.redo"), (button) -> ClientNetworking.sendUndoPacket(true)
-        ));
-  }
-
-  protected void initLeft() {
-    initUtilityButtons();
-  }
-
-  protected void initNavigationButtons() {
-    ScreenType[] screenTypes = ScreenType.values();
-    int totalWidth = screenTypes.length * NavigationButtonWidget.WIDTH + (screenTypes.length - 1) * NAV_BUTTON_SPACING;
-
-    int x = (width - totalWidth) / 2 - 2 * NAV_BUTTON_SPACING;
-    int y = height - NAV_BUTTON_BOTTOM_PADDING - NavigationButtonWidget.HEIGHT;
-
-    for (ScreenType screenType : screenTypes) {
-      NavigationButtonWidget button = new NavigationButtonWidget(this, x, y, screenType);
-
-      if (getScreenType() == screenType) {
-        this.activeButton = button;
-        addDrawable(button);
-      } else {
-        addDrawableChild(button);
-      }
-
-      x += NAV_BUTTON_SPACING + NavigationButtonWidget.WIDTH;
-
-      this.navigationButtons.add(button);
-    }
-  }
-
-  protected void initRight() {
-  }
-
-  protected void initEnd() {
-  }
-
-  protected void renderActivePageButtonHighlight(DrawContext drawContext) {
-    if (this.activeButton == null) {
-      return;
-    }
-
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-    RenderSystem.enableBlend();
-    RenderSystem.defaultBlendFunc();
-
-    MatrixStack matrixStack = drawContext.getMatrices();
-    matrixStack.push();
-    matrixStack.translate(0, 0, 100);
-    drawContext.drawTexture(SELECTION_TEXTURE, this.activeButton.getX() - 2, this.activeButton.getY() - 2, 0, 0, 24, 24,
-        24, 24
-    );
-    matrixStack.pop();
   }
 
   protected void playClickSound() {

@@ -41,152 +41,157 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     return ScreenType.PRESETS;
   }
 
-  @Override
-  protected void initStart() {
-    super.initStart();
-
-    this.presetButtons.clear();
-  }
-
-  @Override
-  protected void initRight() {
-    super.initRight();
-
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.presets.source.label"), this.width - GuiUtil.PADDING,
-        this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT - (BUTTONS_PER_PAGE + 3) * (GuiUtil.PADDING / 2) -
-            IconButtonWidget.HEIGHT - CONTROL_HEIGHT - LabelWidget.HEIGHT_WITH_PADDING - 3 * (GuiUtil.PADDING / 2)
-    ).alignedBottom().justifiedRight().shiftForPadding().build());
-    addDrawableChild(CyclingButtonWidget.builder(Source::getDisplayName)
-        .values(Source.getSources())
-        .initially(Source.ALL)
-        .omitKeyText()
-        .build(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
-            this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT -
-                (BUTTONS_PER_PAGE + 2) * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT - CONTROL_HEIGHT -
-                LabelWidget.HEIGHT_WITH_PADDING - 3 * (GuiUtil.PADDING / 2), CONTROL_WIDTH, CONTROL_HEIGHT,
-            Text.translatable("armorstands.presets.source.label"), (button, source) -> {
-              filter(source);
-            }
-        ));
-
-    addLabel(LabelWidget.builder(Text.translatable("armorstands.presets.category.label"), this.width - GuiUtil.PADDING,
-        this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT - (BUTTONS_PER_PAGE + 3) * (GuiUtil.PADDING / 2) -
-            IconButtonWidget.HEIGHT
-    ).alignedBottom().justifiedRight().shiftForPadding().build());
-    addDrawableChild(CyclingButtonWidget.builder(Category::getDisplayName)
-        .values(Category.getCategories())
-        .initially(Category.ALL)
-        .omitKeyText()
-        .build(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
-            this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT -
-                (BUTTONS_PER_PAGE + 2) * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT, CONTROL_WIDTH, CONTROL_HEIGHT,
-            Text.translatable("armorstands.presets.category.label"), (button, category) -> {
-              filter(category);
-            }
-        ));
-
-    for (int i = BUTTONS_PER_PAGE; i > 0; i--) {
-      this.presetButtons.add(addDrawableChild(new PresetPoseButtonWidget(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
-          this.height - GuiUtil.PADDING - i * CONTROL_HEIGHT - i * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT, CONTROL_WIDTH,
-          CONTROL_HEIGHT
-      )));
-    }
-
-    this.prevPageButton = addDrawableChild(new IconButtonWidget(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
-        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT, 12, Text.translatable("armorstands.presets.previous"),
-        (button) -> previousPage()
-    ));
-    this.nextPageButton = addDrawableChild(new IconButtonWidget(this.width - GuiUtil.PADDING - IconButtonWidget.WIDTH,
-        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT, 13, Text.translatable("armorstands.presets.next"),
-        (button) -> nextPage()
-    ));
-
-    int maxPage =
-        MathHelper.ceil(PosePreset.getPresets(this.source, this.category).size() / (float) BUTTONS_PER_PAGE) - 1;
-    this.pageLabel = addLabel(
-        LabelWidget.builder(Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1),
-            this.width - GuiUtil.PADDING - CONTROL_WIDTH / 2,
-            this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT / 2
-        ).alignedMiddle().justifiedCenter().build());
-  }
-
-  @Override
-  protected void initEnd() {
-    updateFilters();
-  }
-
-  @Override
-  public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
-  ) {
-    if (isMouseOverList(mouseX, mouseY)) {
-      if (verticalAmount < 0) {
-        nextPage();
-      } else {
-        previousPage();
-      }
-      return true;
-    }
-    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-  }
-
-  private void filter(Source source) {
-    this.source = source;
-    updateFilters();
-  }
-
-  private void filter(Category category) {
-    this.category = category;
-    updateFilters();
-  }
-
-  private void updateFilters() {
-    this.matchingPresets = PosePreset.getPresets(this.source, this.category);
-    setPage(0);
-  }
-
-  private void setPage(int page) {
-    int maxPage = Math.max(0, MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1);
-
-    this.page = page;
-    List<PosePreset> presets = this.matchingPresets.subList(page * BUTTONS_PER_PAGE,
-        Math.min((page + 1) * BUTTONS_PER_PAGE, this.matchingPresets.size())
-    );
-
-    for (int i = 0; i < BUTTONS_PER_PAGE; i++) {
-      if (i < presets.size()) {
-        this.presetButtons.get(i).setPose(presets.get(i));
-        this.presetButtons.get(i).visible = true;
-      } else {
-        this.presetButtons.get(i).visible = false;
-      }
-    }
-
-    if (this.presetButtons.contains(getFocused())) {
-      setFocused(this.presetButtons.get(0));
-    }
-
-    this.prevPageButton.active = this.page > 0;
-    this.nextPageButton.active = this.page < maxPage;
-    this.pageLabel.setText(Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1));
-  }
-
-  private void nextPage() {
-    int maxPage = MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1;
-    if (this.page < maxPage) {
-      setPage(this.page + 1);
-    }
-  }
-
-  private void previousPage() {
-    if (this.page > 0) {
-      setPage(this.page - 1);
-    }
-  }
-
-  private boolean isMouseOverList(double mouseX, double mouseY) {
-    return mouseX >= this.width - GuiUtil.PADDING - CONTROL_WIDTH && mouseX < this.width - GuiUtil.PADDING && mouseY >=
-        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT - BUTTONS_PER_PAGE * CONTROL_HEIGHT -
-            (BUTTONS_PER_PAGE + 1) * (GuiUtil.PADDING / 2) && mouseY < this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT;
-  }
+//  @Override
+//  protected void initStart() {
+//    super.initStart();
+//
+//    this.presetButtons.clear();
+//  }
+//
+//  @Override
+//  protected void initRight() {
+//    super.initRight();
+//
+//    //    addLabel(LabelWidget.builder(Text.translatable("armorstands.presets.source.label"), this.width - GuiUtil
+//    //    .PADDING,
+//    //        this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT - (BUTTONS_PER_PAGE + 3) *
+//    //        (GuiUtil.PADDING / 2) -
+//    //            IconButtonWidget.HEIGHT - CONTROL_HEIGHT - LabelWidget.HEIGHT_WITH_PADDING - 3 * (GuiUtil.PADDING / 2)
+//    //    ).alignedBottom().justifiedRight().shiftForPadding().build());
+//    addDrawableChild(CyclingButtonWidget.builder(Source::getDisplayName)
+//        .values(Source.getSources())
+//        .initially(Source.ALL)
+//        .omitKeyText()
+//        .build(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
+//            this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT -
+//                (BUTTONS_PER_PAGE + 2) * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT - CONTROL_HEIGHT -
+//                LabelWidget.HEIGHT_WITH_PADDING - 3 * (GuiUtil.PADDING / 2), CONTROL_WIDTH, CONTROL_HEIGHT,
+//            Text.translatable("armorstands.presets.source.label"), (button, source) -> {
+//              filter(source);
+//            }
+//        ));
+//
+//    //    addLabel(LabelWidget.builder(Text.translatable("armorstands.presets.category.label"), this.width - GuiUtil
+//    //    .PADDING,
+//    //        this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT - (BUTTONS_PER_PAGE + 3) *
+//    //        (GuiUtil.PADDING / 2) -
+//    //            IconButtonWidget.HEIGHT
+//    //    ).alignedBottom().justifiedRight().shiftForPadding().build());
+//    addDrawableChild(CyclingButtonWidget.builder(Category::getDisplayName)
+//        .values(Category.getCategories())
+//        .initially(Category.ALL)
+//        .omitKeyText()
+//        .build(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
+//            this.height - GuiUtil.PADDING - (BUTTONS_PER_PAGE + 2) * CONTROL_HEIGHT -
+//                (BUTTONS_PER_PAGE + 2) * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT, CONTROL_WIDTH, CONTROL_HEIGHT,
+//            Text.translatable("armorstands.presets.category.label"), (button, category) -> {
+//              filter(category);
+//            }
+//        ));
+//
+//    for (int i = BUTTONS_PER_PAGE; i > 0; i--) {
+//      this.presetButtons.add(addDrawableChild(new PresetPoseButtonWidget(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
+//          this.height - GuiUtil.PADDING - i * CONTROL_HEIGHT - i * (GuiUtil.PADDING / 2) - IconButtonWidget.HEIGHT,
+//          CONTROL_WIDTH, CONTROL_HEIGHT
+//      )));
+//    }
+//
+//    this.prevPageButton = addDrawableChild(new IconButtonWidget(this.width - GuiUtil.PADDING - CONTROL_WIDTH,
+//        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT, 12, Text.translatable("armorstands.presets.previous"),
+//        (button) -> previousPage()
+//    ));
+//    this.nextPageButton = addDrawableChild(new IconButtonWidget(this.width - GuiUtil.PADDING - IconButtonWidget.WIDTH,
+//        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT, 13, Text.translatable("armorstands.presets.next"),
+//        (button) -> nextPage()
+//    ));
+//
+//    int maxPage =
+//        MathHelper.ceil(PosePreset.getPresets(this.source, this.category).size() / (float) BUTTONS_PER_PAGE) - 1;
+//    //    this.pageLabel = addLabel(
+//    //        LabelWidget.builder(Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1),
+//    //            this.width - GuiUtil.PADDING - CONTROL_WIDTH / 2,
+//    //            this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT / 2
+//    //        ).alignedMiddle().justifiedCenter().build());
+//  }
+//
+//  @Override
+//  protected void initEnd() {
+//    updateFilters();
+//  }
+//
+//  @Override
+//  public boolean mouseScrolled(
+//      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
+//  ) {
+//    if (isMouseOverList(mouseX, mouseY)) {
+//      if (verticalAmount < 0) {
+//        nextPage();
+//      } else {
+//        previousPage();
+//      }
+//      return true;
+//    }
+//    return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+//  }
+//
+//  private void filter(Source source) {
+//    this.source = source;
+//    updateFilters();
+//  }
+//
+//  private void filter(Category category) {
+//    this.category = category;
+//    updateFilters();
+//  }
+//
+//  private void updateFilters() {
+//    this.matchingPresets = PosePreset.getPresets(this.source, this.category);
+//    setPage(0);
+//  }
+//
+//  private void setPage(int page) {
+//    int maxPage = Math.max(0, MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1);
+//
+//    this.page = page;
+//    List<PosePreset> presets = this.matchingPresets.subList(page * BUTTONS_PER_PAGE,
+//        Math.min((page + 1) * BUTTONS_PER_PAGE, this.matchingPresets.size())
+//    );
+//
+//    for (int i = 0; i < BUTTONS_PER_PAGE; i++) {
+//      if (i < presets.size()) {
+//        this.presetButtons.get(i).setPose(presets.get(i));
+//        this.presetButtons.get(i).visible = true;
+//      } else {
+//        this.presetButtons.get(i).visible = false;
+//      }
+//    }
+//
+//    if (this.presetButtons.contains(getFocused())) {
+//      setFocused(this.presetButtons.get(0));
+//    }
+//
+//    this.prevPageButton.active = this.page > 0;
+//    this.nextPageButton.active = this.page < maxPage;
+//    //    this.pageLabel.setText(Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1));
+//  }
+//
+//  private void nextPage() {
+//    int maxPage = MathHelper.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1;
+//    if (this.page < maxPage) {
+//      setPage(this.page + 1);
+//    }
+//  }
+//
+//  private void previousPage() {
+//    if (this.page > 0) {
+//      setPage(this.page - 1);
+//    }
+//  }
+//
+//  private boolean isMouseOverList(double mouseX, double mouseY) {
+//    return mouseX >= this.width - GuiUtil.PADDING - CONTROL_WIDTH && mouseX < this.width - GuiUtil.PADDING && mouseY >=
+//        this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT - BUTTONS_PER_PAGE * CONTROL_HEIGHT -
+//            (BUTTONS_PER_PAGE + 1) * (GuiUtil.PADDING / 2) &&
+//        mouseY < this.height - GuiUtil.PADDING - IconButtonWidget.HEIGHT;
+//  }
 }
