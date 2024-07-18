@@ -25,11 +25,27 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
 
     this.screen = screen;
 
-    this.topLeft = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2).alignLeft().alignTop();
-    this.bottomLeft = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2).alignLeft().alignBottom();
-    this.navRow = LinearLayoutWidget.horizontal().alignCenterX().alignBottom();
-    this.topRight = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2).alignRight().alignTop();
-    this.bottomRight = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2).alignRight().alignBottom();
+    this.topLeft = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .alignSelfTop()
+        .alignSelfLeft()
+        .defaultOffAxisContentAlignStart();
+    this.bottomLeft = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .alignSelfBottom()
+        .alignSelfLeft()
+        .defaultOffAxisContentAlignStart();
+    this.navRow = LinearLayoutWidget.horizontal().alignSelfBottom().alignSelfCenterX().spacing(GuiUtil.PADDING / 2);
+    this.topRight = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .alignSelfTop()
+        .alignSelfRight()
+        .defaultOffAxisContentAlignStart();
+    this.bottomRight = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .alignSelfBottom()
+        .alignSelfRight()
+        .defaultOffAxisContentAlignEnd();
   }
 
   @Override

@@ -58,14 +58,14 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-    renderBackground(drawContext, mouseX, mouseY, delta);
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    renderBackground(context, mouseX, mouseY, delta);
 
     this.mouseX = mouseX;
     this.mouseY = mouseY;
-    super.render(drawContext, mouseX, mouseY, delta);
+    super.render(context, mouseX, mouseY, delta);
 
-    drawMouseoverTooltip(drawContext, mouseX, mouseY);
+    drawMouseoverTooltip(context, mouseX, mouseY);
   }
 
   @Override

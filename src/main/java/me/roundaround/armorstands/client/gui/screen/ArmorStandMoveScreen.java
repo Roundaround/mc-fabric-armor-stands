@@ -57,9 +57,11 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
 
   private void initSnapButtons() {
     this.layout.bottomLeft.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap")).build());
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap")).build(),
+        (adder) -> adder.margin(adder.getWidget().getBgSpacing())
+    );
 
-    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().alignLeft().spacing(GuiUtil.PADDING);
+    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     firstRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.standing"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
@@ -68,7 +70,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     this.layout.bottomLeft.add(firstRow);
 
-    LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().alignLeft().spacing(GuiUtil.PADDING);
+    LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     secondRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.corner"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
@@ -82,11 +84,11 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   }
 
   private void initLabels() {
-    LinearLayoutWidget labels = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING).alignTop().alignRight();
+    LinearLayoutWidget labels = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING).defaultOffAxisContentAlignEnd();
     this.playerLabel = labels.add(
-        LabelWidget.builder(this.textRenderer, this.getPlayerLines()).justifiedRight().lineSpacing(1).build());
+        LabelWidget.builder(this.textRenderer, this.getPlayerLines()).alignRight().lineSpacing(1).build());
     this.standLabel = labels.add(
-        LabelWidget.builder(this.textRenderer, this.getArmorStandLines()).justifiedRight().lineSpacing(1).build());
+        LabelWidget.builder(this.textRenderer, this.getArmorStandLines()).alignRight().lineSpacing(1).build());
     this.layout.topRight.add(labels);
   }
 
@@ -119,7 +121,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST
     };
     for (Direction direction : directions) {
-      LinearLayoutWidget row = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING).alignRight().alignCenterY();
+      LinearLayoutWidget row = LinearLayoutWidget.horizontal()
+          .spacing(GuiUtil.PADDING)
+          .mainAxisContentAlignEnd()
+          .defaultOffAxisContentAlignCenter();
 
       LabelWidget label = LabelWidget.builder(this.textRenderer, this.mode.getDirectionText(direction)).build();
       this.directionLabels.put(direction, label);

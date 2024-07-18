@@ -12,11 +12,9 @@ import me.roundaround.armorstands.util.Pose;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.Spacing;
-import me.roundaround.roundalib.client.gui.widget.DrawableWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
 import me.roundaround.roundalib.client.gui.widget.layout.LinearLayoutWidget;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -67,19 +65,16 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void collectChildren() {
-    super.collectChildren();
-    this.addDrawableChild(new DrawableWidget() {
-      @Override
-      protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        ButtonWidget activeButton = ArmorStandPoseScreen.this.activePosePartButton;
-        if (activeButton == null) {
-          return;
-        }
-
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        context.drawGuiTexture(SELECTION_TEXTURE, activeButton.getX() - 2, activeButton.getY() - 2, 24, 24);
+  protected void collectElements() {
+    super.collectElements();
+    this.addDrawable((context, mouseX, mouseY, delta) -> {
+      if (this.activePosePartButton == null) {
+        return;
       }
+
+      RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+      context.drawGuiTexture(
+          SELECTION_TEXTURE, this.activePosePartButton.getX() - 2, this.activePosePartButton.getY() - 2, 24, 24);
     });
   }
 
@@ -92,31 +87,49 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   private void initPartPicker() {
-    this.layout.bottomLeft.alignCenterX().spacing(2 * GuiUtil.PADDING);
+    this.layout.bottomLeft.defaultOffAxisContentAlignCenter().spacing(2 * GuiUtil.PADDING);
 
     IconButtonWidget headButton = this.layout.bottomLeft.add(IconButtonWidget.builder(HEAD_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.HEAD.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.HEAD))
         .build());
     headButton.active = false;
     this.activePosePartButton = headButton;
 
-    LinearLayoutWidget torsoRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING).alignCenterX();
+    LinearLayoutWidget torsoRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING);
     torsoRow.add(IconButtonWidget.builder(RIGHT_ARM_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.RIGHT_ARM.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.RIGHT_ARM))
         .build());
     torsoRow.add(IconButtonWidget.builder(BODY_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.BODY.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.BODY))
         .build());
     torsoRow.add(IconButtonWidget.builder(LEFT_ARM_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.LEFT_ARM.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.LEFT_ARM))
         .build());
     this.layout.bottomLeft.add(torsoRow);
 
-    LinearLayoutWidget feetRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING).alignCenterX();
+    LinearLayoutWidget feetRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING);
     feetRow.add(IconButtonWidget.builder(RIGHT_LEG_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.RIGHT_LEG.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.RIGHT_LEG))
         .build());
     feetRow.add(IconButtonWidget.builder(LEFT_LEG_ICON, ArmorStandsMod.MOD_ID)
+        .vanillaSize()
+        .disableIconDim()
+        .messageAndTooltip(PosePart.LEFT_LEG.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.LEFT_LEG))
         .build());
     this.layout.bottomLeft.add(feetRow);
@@ -157,9 +170,10 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(
         CONTROL_WIDTH, SLIDER_HEIGHT, this.posePart, parameter, this.armorStand);
 
-    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().alignBottom().spacing(GuiUtil.PADDING);
-    firstRow.add(
-        LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).justifiedLeft().alignedBottom().build(),
+    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
+        .defaultOffAxisContentAlignEnd()
+        .spacing(GuiUtil.PADDING);
+    firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).build(),
         (parent, self) -> {
           self.setWidth(CONTROL_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
         }

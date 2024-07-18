@@ -15,9 +15,10 @@ import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
+import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.IntRect;
-import me.roundaround.roundalib.client.gui.widget.DrawableWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
+import me.roundaround.roundalib.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -80,7 +81,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   @Override
   public void init() {
     this.populateLayout();
-    this.collectChildren();
+    this.collectElements();
     this.initTabNavigation();
   }
 
@@ -94,30 +95,32 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return;
     }
 
-    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
+    LinearLayoutWidget utilitiesRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING);
+    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
         .large()
         .messageAndTooltip(this.buildHelpTooltipText())
         .build());
-    this.layout.topLeft.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
+    utilitiesRow.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
         .large()
         .messageAndTooltip(Text.translatable("armorstands.utility.copy"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
         .build());
-    this.layout.topLeft.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
+    utilitiesRow.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
         .large()
         .messageAndTooltip(Text.translatable("armorstands.utility.paste"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
         .build());
-    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
+    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
         .large()
         .messageAndTooltip(Text.translatable("armorstands.utility.undo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(false))
         .build());
-    this.layout.topLeft.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
+    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
         .large()
         .messageAndTooltip(Text.translatable("armorstands.utility.redo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(true))
         .build());
+    this.layout.topLeft.add(utilitiesRow);
   }
 
   private Text buildHelpTooltipText() {
@@ -141,28 +144,28 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected void initNavigationButtons() {
     for (ScreenType screenType : ScreenType.values()) {
       IconButtonWidget navButton = IconButtonWidget.builder(screenType.getIcon(), ArmorStandsMod.MOD_ID)
+          .vanillaSize()
+          .disableIconDim()
+          .messageAndTooltip(screenType.getDisplayName())
           .onPress((button) -> ClientNetworking.sendRequestScreenPacket(this.getArmorStand(), screenType))
           .build();
       if (this.getScreenType() == screenType) {
         navButton.active = false;
+        this.activeButton = navButton;
       }
       this.layout.navRow.add(navButton);
     }
   }
 
-  protected void collectChildren() {
+  protected void collectElements() {
     this.layout.forEachChild(this::addDrawableChild);
-    this.addDrawableChild(new DrawableWidget() {
-      @Override
-      protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        IconButtonWidget activeButton = AbstractArmorStandScreen.this.activeButton;
-        if (activeButton == null) {
-          return;
-        }
-
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-        context.drawGuiTexture(SELECTION_TEXTURE, activeButton.getX() - 2, activeButton.getY() - 2, 24, 24);
+    this.addDrawable((context, mouseX, mouseY, delta) -> {
+      if (this.activeButton == null) {
+        return;
       }
+
+      RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+      context.drawGuiTexture(SELECTION_TEXTURE, this.activeButton.getX() - 2, this.activeButton.getY() - 2, 24, 24);
     });
   }
 
@@ -183,22 +186,22 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
 
-    messageRenderer.tick();
+    this.messageRenderer.tick();
   }
 
   @Override
-  public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
     assert this.client != null;
 
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
     RenderSystem.enableBlend();
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(drawContext, this.client.getCameraEntity());
+    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(context, this.client.getCameraEntity());
 
-    super.render(drawContext, adjustedMouseX, adjustedMouseY, delta);
+    super.render(context, adjustedMouseX, adjustedMouseY, delta);
 
-    this.messageRenderer.render(drawContext);
+    this.messageRenderer.render(context);
   }
 
   @Override
