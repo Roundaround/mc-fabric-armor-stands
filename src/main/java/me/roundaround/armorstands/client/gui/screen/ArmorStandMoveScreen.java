@@ -18,7 +18,6 @@ import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private static final int MINI_BUTTON_WIDTH = 28;
@@ -29,8 +28,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private final HashMap<Direction, LabelWidget> directionLabels = new HashMap<>();
   private final ArrayList<MoveButtonRef> moveButtons = new ArrayList<>();
 
-  private LabelWidget playerLabel;
-  private LabelWidget standLabel;
+  private LabelWidget playerPosLabel;
+  private LabelWidget playerBlockLabel;
+  private LabelWidget standPosLabel;
+  private LabelWidget standBlockLabel;
   private LabelWidget facingLabel;
   private CyclingButtonWidget<MoveUnits> unitsButton;
   private MoveMode mode = MoveMode.RELATIVE;
@@ -57,27 +58,30 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
 
   private void initSnapButtons() {
     this.layout.bottomLeft.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap")).build(),
-        (adder) -> adder.margin(adder.getWidget().getBgSpacing())
-    );
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap")).build());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    firstRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.standing"),
+    firstRow.add(ButtonWidget.builder(
+        Text.translatable("armorstands.move.snap.standing"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    firstRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.sitting"),
+    firstRow.add(ButtonWidget.builder(
+        Text.translatable("armorstands.move.snap.sitting"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     this.layout.bottomLeft.add(firstRow);
 
     LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    secondRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.corner"),
+    secondRow.add(ButtonWidget.builder(
+        Text.translatable("armorstands.move.snap.corner"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    secondRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.center"),
+    secondRow.add(ButtonWidget.builder(
+        Text.translatable("armorstands.move.snap.center"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    secondRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.player"),
+    secondRow.add(ButtonWidget.builder(
+        Text.translatable("armorstands.move.snap.player"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     this.layout.bottomLeft.add(secondRow);
@@ -85,10 +89,25 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
 
   private void initLabels() {
     LinearLayoutWidget labels = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING).defaultOffAxisContentAlignEnd();
-    this.playerLabel = labels.add(
-        LabelWidget.builder(this.textRenderer, this.getPlayerLines()).alignRight().lineSpacing(1).build());
-    this.standLabel = labels.add(
-        LabelWidget.builder(this.textRenderer, this.getArmorStandLines()).alignRight().lineSpacing(1).build());
+
+    LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignEnd();
+    player.add(
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player")).alignRight().build());
+    this.playerPosLabel = player.add(
+        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.client.player)).alignRight().build());
+    this.playerBlockLabel = player.add(
+        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.client.player)).alignRight().build());
+    labels.add(player);
+
+    LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignEnd();
+    stand.add(
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand")).alignRight().build());
+    this.standPosLabel = stand.add(
+        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.armorStand)).alignRight().build());
+    this.standBlockLabel = stand.add(
+        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.armorStand)).alignRight().build());
+    labels.add(stand);
+
     this.layout.topRight.add(labels);
   }
 
@@ -142,23 +161,13 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.playerLabel.setText(this.getPlayerLines());
-    this.standLabel.setText(this.getArmorStandLines());
+    this.playerPosLabel.setText(this.getCurrentPosText(this.client.player));
+    this.playerBlockLabel.setText(this.getCurrentBlockPosText(this.client.player));
+    this.standPosLabel.setText(this.getCurrentPosText(this.armorStand));
+    this.standBlockLabel.setText(this.getCurrentBlockPosText(this.armorStand));
 
     this.facingLabel.setText(
         getCurrentFacingText(this.mode.equals(MoveMode.LOCAL_TO_STAND) ? this.armorStand : this.client.player));
-  }
-
-  private List<Text> getPlayerLines() {
-    return List.of(Text.translatable("armorstands.current.player"), this.getCurrentPosText(this.client.player),
-        this.getCurrentBlockPosText(this.client.player)
-    );
-  }
-
-  private List<Text> getArmorStandLines() {
-    return List.of(Text.translatable("armorstands.current.stand"), this.getCurrentPosText(this.armorStand),
-        this.getCurrentBlockPosText(this.armorStand)
-    );
   }
 
   private Text getCurrentPosText(Entity entity) {
