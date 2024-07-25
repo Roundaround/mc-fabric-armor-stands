@@ -11,10 +11,10 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.Spacing;
+import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
-import me.roundaround.roundalib.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -173,11 +173,9 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .defaultOffAxisContentAlignEnd()
         .spacing(GuiUtil.PADDING);
-    firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).build(),
-        (parent, self) -> {
-          self.setWidth(CONTROL_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
-        }
-    );
+    firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).build(), (parent, self) -> {
+      self.setWidth(CONTROL_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
+    });
     firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> slider.decrement())
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.subtract")))
@@ -234,6 +232,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     }
     this.activePosePartButton = button;
     this.activePosePartButton.active = false;
+
+    this.layout.refreshPositions();
   }
 
   private enum SliderRange {

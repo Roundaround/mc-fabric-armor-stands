@@ -1,8 +1,8 @@
-package me.roundaround.armorstands.client.gui.widget;
+package me.roundaround.armorstands.client.gui.screen;
 
 import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.widget.layout.LinearLayoutWidget;
-import me.roundaround.roundalib.client.gui.widget.layout.SizableLayoutWidget;
+import me.roundaround.roundalib.client.gui.layout.SizableLayoutWidget;
+import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -35,7 +35,7 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
         .alignSelfBottom()
         .alignSelfLeft()
         .defaultOffAxisContentAlignStart();
-    this.navRow = LinearLayoutWidget.horizontal().alignSelfBottom().alignSelfCenterX().spacing(GuiUtil.PADDING / 2);
+    this.navRow = LinearLayoutWidget.horizontal().alignSelfBottom().alignSelfCenterX();
     this.topRight = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING / 2)
         .alignSelfTop()

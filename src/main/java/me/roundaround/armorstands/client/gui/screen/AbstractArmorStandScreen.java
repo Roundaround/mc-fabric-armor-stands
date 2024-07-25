@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.widget.ArmorStandLayoutWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
@@ -16,19 +15,17 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.IntRect;
+import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.roundalib.client.gui.util.IntRect;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.roundalib.client.gui.widget.layout.LinearLayoutWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
@@ -95,28 +92,28 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return;
     }
 
-    LinearLayoutWidget utilitiesRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING);
+    LinearLayoutWidget utilitiesRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
-        .large()
+        .vanillaSize()
         .messageAndTooltip(this.buildHelpTooltipText())
         .build());
     utilitiesRow.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
-        .large()
+        .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.copy"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
         .build());
     utilitiesRow.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
-        .large()
+        .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.paste"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
         .build());
     utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
-        .large()
+        .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.undo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(false))
         .build());
     utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
-        .large()
+        .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.redo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(true))
         .build());
@@ -332,35 +329,35 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         if (!Screen.hasControlDown()) {
           break;
         }
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
         if (!Screen.hasControlDown()) {
           break;
         }
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         goToNextScreen();
         return true;
       case GLFW.GLFW_KEY_Z:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
         return true;
       case GLFW.GLFW_KEY_C:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
@@ -370,7 +367,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         continue;
       }
       if (this.client.options.hotbarKeys[screenType.getId()].matchesKey(keyCode, scanCode)) {
-        playClickSound();
+        GuiUtil.playClickSound(this.client);
         ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
       }
@@ -430,10 +427,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     ((ArmorStandEntityAccessor) this.armorStand).setDisabledSlots(disabledSlots);
   }
 
-  protected void playClickSound() {
-    Objects.requireNonNull(this.client)
-        .getSoundManager()
-        .play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1f));
+  protected int getSideColumnWidth() {
+    return (this.width - this.layout.navRow.getWidth()) / 2 - GuiUtil.PADDING;
   }
 
   protected void lockCursor() {
