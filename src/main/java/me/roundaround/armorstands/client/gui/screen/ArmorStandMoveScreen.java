@@ -9,6 +9,7 @@ import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -63,8 +64,6 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   }
 
   private void initTopLeft() {
-    this.layout.topLeft.spacing(4 * GuiUtil.PADDING);
-
     LinearLayoutWidget labels = LinearLayoutWidget.vertical()
         .spacing(3 * GuiUtil.PADDING)
         .defaultOffAxisContentAlignStart();
@@ -85,7 +84,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.armorStand)).build());
     labels.add(stand);
 
-    this.layout.topLeft.add(labels);
+    this.layout.topLeft.add(labels, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));
   }
 
   private void initBottomLeft() {
