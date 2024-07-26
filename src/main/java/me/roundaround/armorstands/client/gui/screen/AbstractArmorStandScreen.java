@@ -16,7 +16,6 @@ import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
-import me.roundaround.roundalib.client.gui.util.IntRect;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -44,6 +43,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
 
+  protected LinearLayoutWidget navRow;
   protected IconButtonWidget activeButton;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
@@ -139,6 +139,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   protected void initNavigationButtons() {
+    this.navRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
+
     for (ScreenType screenType : ScreenType.values()) {
       IconButtonWidget navButton = IconButtonWidget.builder(screenType.getIcon(), ArmorStandsMod.MOD_ID)
           .vanillaSize()
@@ -150,8 +152,10 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         navButton.active = false;
         this.activeButton = navButton;
       }
-      this.layout.navRow.add(navButton);
+      this.navRow.add(navButton);
     }
+
+    this.layout.topRight.add(this.navRow);
   }
 
   protected void collectElements() {
@@ -269,9 +273,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     }
 
     setDragging(false);
-    return hoveredElement(mouseX, mouseY).filter((element) -> {
-      return element.mouseReleased(mouseX, mouseY, button);
-    }).isPresent();
+    return hoveredElement(mouseX, mouseY).filter((element) -> element.mouseReleased(mouseX, mouseY, button))
+        .isPresent();
   }
 
   @Override
@@ -280,7 +283,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return false;
     }
 
-    if (IntRect.fromWidget(this.layout.navRow).contains(mouseX, mouseY)) {
+    if (this.navRow.getBounds().contains(mouseX, mouseY)) {
       if (verticalAmount > 0) {
         goToPreviousScreen();
       } else {
@@ -425,10 +428,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void updateDisabledSlotsOnClient(int disabledSlots) {
     ((ArmorStandEntityAccessor) this.armorStand).setDisabledSlots(disabledSlots);
-  }
-
-  protected int getSideColumnWidth() {
-    return (this.width - this.layout.navRow.getWidth()) / 2 - GuiUtil.PADDING;
   }
 
   protected void lockCursor() {

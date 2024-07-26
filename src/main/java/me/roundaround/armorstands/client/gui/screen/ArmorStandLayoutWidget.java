@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 public class ArmorStandLayoutWidget extends SizableLayoutWidget {
   public final LinearLayoutWidget topLeft;
   public final LinearLayoutWidget bottomLeft;
-  public final LinearLayoutWidget navRow;
   public final LinearLayoutWidget topRight;
   public final LinearLayoutWidget bottomRight;
 
@@ -35,7 +34,6 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
         .alignSelfBottom()
         .alignSelfLeft()
         .defaultOffAxisContentAlignStart();
-    this.navRow = LinearLayoutWidget.horizontal().alignSelfBottom().alignSelfCenterX();
     this.topRight = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING / 2)
         .alignSelfTop()
@@ -52,7 +50,6 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
   public void forEachElement(Consumer<Widget> consumer) {
     this.topLeft.forEachElement(consumer);
     this.bottomLeft.forEachElement(consumer);
-    this.navRow.forEachElement(consumer);
     this.topRight.forEachElement(consumer);
     this.bottomRight.forEachElement(consumer);
   }
@@ -61,13 +58,11 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
   public void refreshPositions() {
     this.topLeft.setPosition(GuiUtil.PADDING, GuiUtil.PADDING);
     this.bottomLeft.setPosition(GuiUtil.PADDING, this.screen.height - GuiUtil.PADDING);
-    this.navRow.setPosition(this.screen.width / 2, this.screen.height - 1);
     this.topRight.setPosition(this.screen.width - GuiUtil.PADDING, GuiUtil.PADDING);
     this.bottomRight.setPosition(this.screen.width - GuiUtil.PADDING, this.screen.height - GuiUtil.PADDING);
 
     this.topLeft.refreshPositions();
     this.bottomLeft.refreshPositions();
-    this.navRow.refreshPositions();
     this.topRight.refreshPositions();
     this.bottomRight.refreshPositions();
   }

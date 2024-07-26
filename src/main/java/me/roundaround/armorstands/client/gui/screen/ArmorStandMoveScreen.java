@@ -122,18 +122,18 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.layout.bottomRight.defaultOffAxisContentAlignEnd();
 
     this.layout.bottomRight.add(CyclingButtonWidget.builder(MoveMode::getOptionValueText)
-        .values(MoveMode.values())
-        .initially(this.mode)
-        .build(MoveMode.getOptionLabelText(), this::onMoveModeChange), (parent, self) -> {
-      self.setDimensions(Math.min(ButtonWidget.DEFAULT_WIDTH, this.getSideColumnWidth()), BUTTON_HEIGHT);
-    });
+            .values(MoveMode.values())
+            .initially(this.mode)
+            .build(MoveMode.getOptionLabelText(), this::onMoveModeChange),
+        (parent, self) -> self.setDimensions(ButtonWidget.DEFAULT_WIDTH, BUTTON_HEIGHT)
+    );
 
     this.unitsButton = this.layout.bottomRight.add(CyclingButtonWidget.builder(MoveUnits::getOptionValueText)
-        .values(MoveUnits.values())
-        .initially(this.units)
-        .build(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange), (parent, self) -> {
-      self.setDimensions(Math.min(ButtonWidget.DEFAULT_WIDTH, this.getSideColumnWidth()), BUTTON_HEIGHT);
-    });
+            .values(MoveUnits.values())
+            .initially(this.units)
+            .build(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange),
+        (parent, self) -> self.setDimensions(ButtonWidget.DEFAULT_WIDTH, BUTTON_HEIGHT)
+    );
 
     this.layout.bottomRight.add(FillerWidget.ofHeight(GuiUtil.PADDING));
 
