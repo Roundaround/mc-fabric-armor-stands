@@ -5,6 +5,7 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
@@ -132,10 +133,12 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   }
 
   private void initBottomRight() {
-    this.layout.bottomRight.spacing(3 * GuiUtil.PADDING);
+    this.layout.bottomRight.spacing(2 * GuiUtil.PADDING);
 
     initRotateRow(RotateDirection.CLOCKWISE);
     initRotateRow(RotateDirection.COUNTERCLOCKWISE);
+
+    this.layout.bottomRight.add(FillerWidget.ofHeight(2 * GuiUtil.PADDING));
 
     this.rotateSlider = this.layout.bottomRight.add(
         new RotateSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));

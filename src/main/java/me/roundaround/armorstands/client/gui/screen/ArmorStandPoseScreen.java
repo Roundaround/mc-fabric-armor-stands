@@ -22,10 +22,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
-  private static final int CONTROL_WIDTH = 100;
-  private static final int SLIDER_HEIGHT = 16;
-  private static final int BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 16;
+  private static final int BUTTON_HEIGHT = 16;
+  private static final int SLIDER_WIDTH = 100;
   protected static final CustomIcon HEAD_ICON = new CustomIcon("head", 20);
   protected static final CustomIcon BODY_ICON = new CustomIcon("body", 20);
   protected static final CustomIcon RIGHT_ARM_ICON = new CustomIcon("rightarm", 20);
@@ -82,11 +81,11 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   protected void populateLayout() {
     super.populateLayout();
 
-    this.initPartPicker();
-    this.initCore();
+    this.initBottomLeft();
+    this.initBottomRight();
   }
 
-  private void initPartPicker() {
+  private void initBottomLeft() {
     this.layout.bottomLeft.defaultOffAxisContentAlignCenter().spacing(2 * GuiUtil.PADDING);
 
     IconButtonWidget headButton = this.layout.bottomLeft.add(IconButtonWidget.builder(HEAD_ICON, ArmorStandsMod.MOD_ID)
@@ -140,15 +139,21 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
       this.pitchSlider.refresh();
       this.yawSlider.refresh();
       this.rollSlider.refresh();
-    }).size(CONTROL_WIDTH, BUTTON_HEIGHT).build());
+    }).size(SLIDER_WIDTH, BUTTON_HEIGHT).build());
   }
 
-  private void initCore() {
-    this.posePartLabel = this.layout.bottomRight.add(LabelWidget.builder(this.textRenderer,
+  private void initBottomRight() {
+    this.layout.bottomRight.spacing(3 * GuiUtil.PADDING);
+
+    LinearLayoutWidget block = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .defaultOffAxisContentAlignEnd();
+
+    this.posePartLabel = block.add(LabelWidget.builder(this.textRenderer,
         Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName())
     ).build());
 
-    this.layout.bottomRight.add(CyclingButtonWidget.builder(SliderRange::getDisplayName)
+    block.add(CyclingButtonWidget.builder(SliderRange::getDisplayName)
         .initially(SliderRange.FULL)
         .values(SliderRange.values())
         .omitKeyText()
@@ -157,9 +162,11 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
           this.yawSlider.setRange(value.getMin(), value.getMax());
           this.rollSlider.setRange(value.getMin(), value.getMax());
         }), (adder) -> {
-      adder.layoutHook((parent, self) -> self.setDimensions(CONTROL_WIDTH, BUTTON_HEIGHT));
+      adder.layoutHook((parent, self) -> self.setDimensions(SLIDER_WIDTH, BUTTON_HEIGHT));
       adder.margin(Spacing.of(0, 0, 2 * GuiUtil.PADDING, 0));
     });
+
+    this.layout.bottomRight.add(block);
 
     this.pitchSlider = addAdjustSlider(EulerAngleParameter.PITCH);
     this.yawSlider = addAdjustSlider(EulerAngleParameter.YAW);
@@ -167,14 +174,16 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   private AdjustPoseSliderWidget addAdjustSlider(EulerAngleParameter parameter) {
+    LinearLayoutWidget block = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
+
     AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(
-        CONTROL_WIDTH, SLIDER_HEIGHT, this.posePart, parameter, this.armorStand);
+        SLIDER_WIDTH, BUTTON_HEIGHT, this.posePart, parameter, this.armorStand);
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .defaultOffAxisContentAlignEnd()
         .spacing(GuiUtil.PADDING);
     firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).build(), (parent, self) -> {
-      self.setWidth(CONTROL_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
+      self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
     });
     firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> slider.decrement())
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -188,9 +197,10 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.zero")))
         .build());
-    this.layout.bottomRight.add(firstRow, (adder) -> adder.margin(Spacing.of(GuiUtil.PADDING, 0, 0, 0)));
 
-    this.layout.bottomRight.add(slider);
+    block.add(firstRow);
+    block.add(slider);
+    this.layout.bottomRight.add(block);
 
     return slider;
   }
