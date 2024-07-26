@@ -11,9 +11,9 @@ public class PresetPoseButtonWidget extends ButtonWidget {
   private PosePreset pose = PosePreset.DEFAULT;
 
   public PresetPoseButtonWidget(
-      int x, int y, int width, int height
+      int width, int height
   ) {
-    super(x, y, width, height, Text.empty(),
+    super(0, 0, width, height, Text.empty(),
         (button) -> ClientNetworking.sendSetPosePresetPacket(((PresetPoseButtonWidget) button).getPose()),
         ButtonWidget.DEFAULT_NARRATION_SUPPLIER
     );

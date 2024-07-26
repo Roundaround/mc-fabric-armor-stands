@@ -283,7 +283,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return false;
     }
 
-    if (this.navRow.getBounds().contains(mouseX, mouseY)) {
+    if (this.navRow != null && this.navRow.getBounds().contains(mouseX, mouseY)) {
       if (verticalAmount > 0) {
         goToPreviousScreen();
       } else {
