@@ -26,9 +26,9 @@ public class RotateSliderWidget extends SliderWidget {
   private boolean pendingDragPing = false;
 
   public RotateSliderWidget(
-      AbstractArmorStandScreen parent, int x, int y, int width, int height, ArmorStandEntity armorStand
+      AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand
   ) {
-    super(x, y, width, height, Text.empty(), 0);
+    super(0, 0, width, height, Text.empty(), 0);
 
     this.parent = parent;
     this.armorStand = armorStand;
