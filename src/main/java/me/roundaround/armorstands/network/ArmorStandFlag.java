@@ -81,6 +81,8 @@ public enum ArmorStandFlag {
   public void setValue(ArmorStandEntity armorStand, boolean value) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
+    ArmorStandsMod.LOGGER.info("Setting flag '{}': {}", this.name(), value);
+
     switch (this) {
       case HIDE_BASE_PLATE:
         accessor.invokeSetHideBasePlate(value);
@@ -94,8 +96,7 @@ public enum ArmorStandFlag {
       case NO_GRAVITY:
         if (!value) {
           Vec3d pos = armorStand.getPos();
-          double blockY = (double) armorStand.getBlockY();
-          boolean atBlockPos = Math.abs(pos.y - blockY) < MathHelper.EPSILON;
+          boolean atBlockPos = Math.abs(pos.y - armorStand.getBlockY()) < MathHelper.EPSILON;
           if (atBlockPos) {
             MoveAction.setPosition(armorStand, pos.x, pos.y + 0.001, pos.z);
           }
