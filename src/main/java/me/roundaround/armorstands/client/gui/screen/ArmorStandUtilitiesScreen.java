@@ -22,7 +22,6 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private static final int TOGGLE_WIDTH = 60;
 
   private final HashMap<ArmorStandFlag, Observable<Boolean>> values = new HashMap<>();
-  private final HashMap<ArmorStandFlag, Observable.Observer<Boolean>> observers = new HashMap<>();
 
   public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler) {
     super(handler, ScreenType.UTILITIES.getDisplayName());
@@ -103,14 +102,13 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
 
   private ToggleWidget createToggleWidget(ArmorStandFlag flag) {
     ToggleWidget widget = ToggleWidget.yesNoBuilder(this.textRenderer, (value) -> flag.getDisplayName())
-        .initially(this.values.get(flag).get() ^ flag.invertControl())
-        .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !toggle.getValue()))
+        .initially(this.values.get(flag).get())
+        .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !this.values.get(flag).get()))
         .matchTooltipToLabel()
         .setDimensions(TOGGLE_WIDTH, BUTTON_HEIGHT)
         .build();
-    Observable.Observer<Boolean> observer = (value) -> widget.setValue(value ^ flag.invertControl());
-    this.observers.put(flag, observer);
-    this.values.get(flag).subscribe(observer);
+    this.values.get(flag)
+        .subscribe(widget::setValue, Observable.SubscribeOptions.builder().withHardReference().build());
     return widget;
   }
 
