@@ -3,13 +3,12 @@ package me.roundaround.armorstands.network;
 import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
-import me.roundaround.armorstands.util.actions.MoveAction;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
 import net.minecraft.util.function.ValueLists;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Arrays;
@@ -92,14 +91,16 @@ public enum ArmorStandFlag {
         accessor.invokeSetSmall(value);
         break;
       case NO_GRAVITY:
+        armorStand.setNoGravity(value);
+
+        Vec3d vel = armorStand.getVelocity();
+        armorStand.setVelocity(vel.x, 0, vel.z);
+
         if (!value) {
           Vec3d pos = armorStand.getPos();
-          boolean atBlockPos = Math.abs(pos.y - armorStand.getBlockY()) < MathHelper.EPSILON;
-          if (atBlockPos) {
-            MoveAction.setPosition(armorStand, pos.x, pos.y + 0.001, pos.z);
-          }
+          armorStand.refreshPositionAndAngles(pos.x, pos.y + 0.1, pos.z, armorStand.getYaw(), armorStand.getPitch());
+          armorStand.move(MovementType.SELF, new Vec3d(0, -0.09, 0));
         }
-        armorStand.setNoGravity(value);
         break;
       case INVISIBLE:
         armorStand.setInvisible(value);
