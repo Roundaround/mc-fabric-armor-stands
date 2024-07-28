@@ -105,7 +105,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .initially(this.values.get(flag).get() ^ flag.invertControl())
         .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !this.values.get(flag).get()))
         .matchTooltipToLabel()
-        .setDimensions(TOGGLE_WIDTH, BUTTON_HEIGHT)
+        .setHeight(BUTTON_HEIGHT)
         .build();
     this.values.get(flag).subscribe(
         (value) -> widget.setValue(value ^ flag.invertControl()),
