@@ -81,8 +81,6 @@ public enum ArmorStandFlag {
   public void setValue(ArmorStandEntity armorStand, boolean value) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
-    ArmorStandsMod.LOGGER.info("Setting flag '{}': {}", this.name(), value);
-
     switch (this) {
       case HIDE_BASE_PLATE:
         accessor.invokeSetHideBasePlate(value);
