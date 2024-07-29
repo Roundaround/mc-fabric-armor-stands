@@ -38,12 +38,6 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void close() {
-    subscriptions.forEach(Observable.Subscription::unsubscribe);
-    super.close();
-  }
-
-  @Override
   protected void populateLayout() {
     super.populateLayout();
 
@@ -125,5 +119,11 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
     ArmorStandFlag.getFlags().forEach((flag) -> this.values.get(flag).set(flag.getValue(this.getArmorStand())));
+  }
+
+  @Override
+  public void close() {
+    this.subscriptions.forEach(Observable.Subscription::unsubscribe);
+    super.close();
   }
 }
