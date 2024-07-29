@@ -97,9 +97,10 @@ public enum ArmorStandFlag {
         armorStand.setVelocity(vel.x, 0, vel.z);
 
         if (!value) {
+          armorStand.noClip = false;
           Vec3d pos = armorStand.getPos();
-          armorStand.refreshPositionAndAngles(pos.x, pos.y + 0.1, pos.z, armorStand.getYaw(), armorStand.getPitch());
-          armorStand.move(MovementType.SELF, new Vec3d(0, -0.09, 0));
+          armorStand.refreshPositionAndAngles(pos.x, pos.y + 0.01, pos.z, armorStand.getYaw(), armorStand.getPitch());
+          armorStand.move(MovementType.SELF, new Vec3d(0, -0.009, 0));
         }
         break;
       case INVISIBLE:
