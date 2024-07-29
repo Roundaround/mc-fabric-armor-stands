@@ -14,14 +14,15 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 60;
   private static final int BUTTON_HEIGHT = 16;
-  private static final int TOGGLE_WIDTH = 60;
 
   private final HashMap<ArmorStandFlag, Observable<Boolean>> values = new HashMap<>();
+  private final ArrayList<Observable.Subscription> subscriptions = new ArrayList<>();
 
   public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler) {
     super(handler, ScreenType.UTILITIES.getDisplayName());
@@ -34,6 +35,12 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   @Override
   public ScreenType getScreenType() {
     return ScreenType.UTILITIES;
+  }
+
+  @Override
+  public void close() {
+    subscriptions.forEach(Observable.Subscription::unsubscribe);
+    super.close();
   }
 
   @Override
@@ -107,10 +114,10 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .matchTooltipToLabel()
         .setHeight(BUTTON_HEIGHT)
         .build();
-    this.values.get(flag).subscribe(
+    this.subscriptions.add(this.values.get(flag).subscribe(
         (value) -> widget.setValue(value ^ flag.invertControl()),
         Observable.SubscribeOptions.builder().withHardReference().build()
-    );
+    ));
     return widget;
   }
 
