@@ -188,7 +188,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.unitsButton.setValue(this.units);
     this.prevFacing = this.getCurrentFacing();
     this.facingLabel.setText(getFacingText(this.prevFacing));
-    this.moveButtons.forEach((moveButton) -> moveButton.setUnits(this.units));
+    this.moveButtons.forEach((moveButton) -> {
+      moveButton.setMode(this.mode);
+      moveButton.setUnits(this.units);
+    });
 
     this.directionLabels.forEach((direction, label) -> label.setText(this.mode.getDirectionText(direction)));
     this.layout.bottomRight.refreshPositions();
@@ -234,8 +237,8 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     private final ButtonWidget button;
     private final Direction direction;
     private final int amount;
-    private final MoveMode mode;
 
+    private MoveMode mode;
     private MoveUnits units;
 
     public MoveButtonRef(Direction direction, int amount, MoveMode mode, MoveUnits units) {
@@ -256,6 +259,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     public void setUnits(MoveUnits units) {
       this.units = units;
       this.button.setMessage(this.units.getButtonText(this.amount));
+    }
+
+    public void setMode(MoveMode mode) {
+      this.mode = mode;
     }
 
     private Text getMessage() {

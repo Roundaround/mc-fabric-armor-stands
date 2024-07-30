@@ -70,16 +70,16 @@ public class MoveAction implements ArmorStandAction {
 
   @Override
   public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    originalPosition = Optional.of(armorStand.getPos());
+    this.originalPosition = Optional.of(armorStand.getPos());
 
-    Vec3d position = switch (moveType) {
-      case ABSOLUTE -> argument;
-      case RELATIVE -> originalPosition.get().add(argument);
-      case LOCAL ->
-          originalPosition.get().add(ArmorStandHelper.localToRelative(localToPlayer ? player : armorStand, argument));
+    Vec3d position = switch (this.moveType) {
+      case ABSOLUTE -> this.argument;
+      case RELATIVE -> this.originalPosition.get().add(this.argument);
+      case LOCAL -> this.originalPosition.get()
+          .add(ArmorStandHelper.localToRelative(this.localToPlayer ? player : armorStand, this.argument));
     };
 
-    if (roundToPixel) {
+    if (this.roundToPixel) {
       double x = Math.round(position.x * 16) / 16.0;
       double y = Math.round(position.y * 16) / 16.0;
       double z = Math.round(position.z * 16) / 16.0;
@@ -91,11 +91,11 @@ public class MoveAction implements ArmorStandAction {
 
   @Override
   public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
-    if (originalPosition.isEmpty()) {
+    if (this.originalPosition.isEmpty()) {
       return;
     }
 
-    setPosition(armorStand, originalPosition.get());
+    setPosition(armorStand, this.originalPosition.get());
   }
 
   public static void setPosition(ArmorStandEntity armorStand, Vec3d position) {

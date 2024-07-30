@@ -4,12 +4,15 @@ import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.LastUsedScreen;
+import me.roundaround.armorstands.util.MoveMode;
+import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Direction;
 
 import java.util.function.Supplier;
 
@@ -73,11 +76,14 @@ public final class ServerNetworking {
       }
 
       ArmorStandEditor editor = screenHandler.getEditor();
-      editor.applyAction(payload.mode().isLocal() ?
-          AdjustPosAction.local(payload.direction(), payload.amount(), payload.units(),
-              payload.mode().isLocalToPlayer()
-          ) :
-          AdjustPosAction.relative(payload.direction(), payload.amount(), payload.units()));
+      MoveMode mode = payload.mode();
+      Direction direction = payload.direction();
+      int amount = payload.amount();
+      MoveUnits units = payload.units();
+
+      editor.applyAction(mode.isLocal() ?
+          AdjustPosAction.local(direction, amount, units, mode.isLocalToPlayer()) :
+          AdjustPosAction.relative(direction, amount, units));
     });
   }
 
