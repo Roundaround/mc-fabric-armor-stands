@@ -60,21 +60,20 @@ public final class Networking {
     PayloadTypeRegistry.playC2S().register(UtilityActionC2S.ID, UtilityActionC2S.CODEC);
   }
 
-  public record ClientUpdateS2C(double x, double y, double z, byte yaw, byte pitch, boolean invulnerable,
+  public record ClientUpdateS2C(double x, double y, double z, float yaw, float pitch, boolean invulnerable,
                                 int disabledSlots) implements CustomPayload {
     public static final CustomPayload.Id<ClientUpdateS2C> ID = new CustomPayload.Id<>(CLIENT_UPDATE_S2C);
     public static final PacketCodec<RegistryByteBuf, ClientUpdateS2C> CODEC = PacketCodec.of(
         ClientUpdateS2C::write, ClientUpdateS2C::new);
 
     public ClientUpdateS2C(ArmorStandEntity armorStand) {
-      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), (byte) (armorStand.getYaw() * 256 / 360),
-          (byte) (armorStand.getPitch() * 256 / 360), armorStand.isInvulnerable(),
-          ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
+      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), armorStand.getYaw(), armorStand.getPitch(),
+          armorStand.isInvulnerable(), ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
       );
     }
 
     private ClientUpdateS2C(PacketByteBuf buf) {
-      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readByte(), buf.readByte(), buf.readBoolean(),
+      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readBoolean(),
           buf.readInt()
       );
     }
@@ -83,8 +82,8 @@ public final class Networking {
       buf.writeDouble(this.x);
       buf.writeDouble(this.y);
       buf.writeDouble(this.z);
-      buf.writeByte(this.yaw);
-      buf.writeByte(this.pitch);
+      buf.writeFloat(this.yaw);
+      buf.writeFloat(this.pitch);
       buf.writeBoolean(this.invulnerable);
       buf.writeInt(this.disabledSlots);
     }
@@ -92,14 +91,6 @@ public final class Networking {
     @Override
     public Id<ClientUpdateS2C> getId() {
       return ID;
-    }
-
-    public float yawFloat() {
-      return this.yaw() * 360f / 256f;
-    }
-
-    public float pitchFloat() {
-      return this.pitch() * 360f / 256f;
     }
   }
 

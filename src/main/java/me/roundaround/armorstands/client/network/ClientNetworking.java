@@ -82,8 +82,8 @@ public final class ClientNetworking {
       }
 
       screen.updatePosOnClient(payload.x(), payload.y(), payload.z());
-      screen.updateYawOnClient(MathHelper.wrapDegrees(payload.yawFloat()));
-      screen.updatePitchOnClient(MathHelper.wrapDegrees(payload.pitchFloat()));
+      screen.updateYawOnClient(MathHelper.wrapDegrees(payload.yaw()));
+      screen.updatePitchOnClient(MathHelper.wrapDegrees(payload.pitch()));
       screen.updateInvulnerableOnClient(payload.invulnerable());
       screen.updateDisabledSlotsOnClient(payload.disabledSlots());
     });
