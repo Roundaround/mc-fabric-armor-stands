@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import me.roundaround.armorstands.client.gui.widget.RotateSliderWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ScreenType;
+import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.FillerWidget;
@@ -119,13 +120,13 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     LinearLayoutWidget buttonRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     buttonRow.add(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.toward"),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.SOUTH.asRotation()))
+        (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     buttonRow.add(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.away"),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.NORTH.asRotation()))
+        (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     buttonRow.add(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.with"),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.EAST.asRotation()))
+        (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     faces.add(buttonRow);
 
