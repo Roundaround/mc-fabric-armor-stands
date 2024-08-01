@@ -132,9 +132,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   private Text buildHelpTooltipText() {
     String alt = Text.translatable("armorstands.help.alt").getString();
-    String inventory = Objects.requireNonNull(this.client).options.inventoryKey.getBoundKeyLocalizedText().getString();
-    String left = InputUtil.fromKeyCode(GLFW.GLFW_KEY_LEFT, 0).getLocalizedText().getString();
-    String right = InputUtil.fromKeyCode(GLFW.GLFW_KEY_RIGHT, 0).getLocalizedText().getString();
+    String inventory = this.getClient().options.inventoryKey.getBoundKeyLocalizedText().getString();
+    String esc = InputUtil.fromKeyCode(GLFW.GLFW_KEY_ESCAPE, 0).getLocalizedText().getString();
     String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding.getBoundKeyLocalizedText().getString();
     String control = Text.translatable("armorstands.help." + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
         .getString();
@@ -143,8 +142,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
     String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
 
-    return Text.translatable("armorstands.help", alt, inventory, left, right, highlight, control, z, control, shift, z,
-        control, c, control, v
+    return Text.translatable("armorstands.help", alt, inventory, esc, ScreenType.values().length, highlight, control, z,
+        control, shift, z, control, c, control, v
     );
   }
 
