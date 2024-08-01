@@ -7,7 +7,6 @@ import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
 import me.roundaround.armorstands.mixin.InGameHudAccessor;
-import me.roundaround.armorstands.mixin.KeyBindingAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
@@ -31,7 +30,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -138,12 +136,12 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     String control = Text.translatable("armorstands.help." + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
         .getString();
     String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0).getLocalizedText().getString();
-    String shift = Text.translatable("armorstands.help.shift").getString();
+    String y = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Y, 0).getLocalizedText().getString();
     String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
     String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
 
     return Text.translatable("armorstands.help", alt, inventory, esc, ScreenType.values().length, highlight, control, z,
-        control, shift, z, control, c, control, v
+        control, y, control, c, control, v
     );
   }
 
@@ -187,12 +185,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   @Override
   protected void handledScreenTick() {
     assert this.client != null;
-
-    // Block any inputs bound to shift so that this screen gets exclusive use
-    Arrays.stream(this.client.options.allKeys)
-        .filter((key) -> key.matchesKey(GLFW.GLFW_KEY_LEFT_SHIFT, 0) || key.matchesKey(GLFW.GLFW_KEY_RIGHT_SHIFT, 0))
-        .map((key) -> (KeyBindingAccessor) key)
-        .forEach(KeyBindingAccessor::invokeReset);
 
     ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
 
@@ -356,7 +348,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
           break;
         }
         GuiUtil.playClickSound(this.client);
-        ClientNetworking.sendUndoPacket(Screen.hasShiftDown());
+        ClientNetworking.sendUndoPacket(false);
+        return true;
+      case GLFW.GLFW_KEY_Y:
+        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
+          break;
+        }
+        GuiUtil.playClickSound(this.client);
+        ClientNetworking.sendUndoPacket(true);
         return true;
       case GLFW.GLFW_KEY_C:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
