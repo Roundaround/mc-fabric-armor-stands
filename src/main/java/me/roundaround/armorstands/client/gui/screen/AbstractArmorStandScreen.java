@@ -43,6 +43,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected static final CustomIcon COPY_ICON = new CustomIcon("copy", 20);
   protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
   protected static final int BACKGROUND_COLOR = GuiUtil.genColorInt(0f, 0f, 0f, 0.7f);
+  protected static final int ELEMENT_HEIGHT = 16;
 
   protected final ArmorStandLayoutWidget layout = new ArmorStandLayoutWidget(this);
   protected final ArmorStandEntity armorStand;

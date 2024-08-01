@@ -10,6 +10,7 @@ import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
+import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.FillerWidget;
@@ -24,8 +25,6 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 
 public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
-  private static final int BUTTON_WIDTH = 16;
-  private static final int BUTTON_HEIGHT = 16;
   private static final int SLIDER_WIDTH = 100;
   protected static final CustomIcon HEAD_ICON = new CustomIcon("head", 20);
   protected static final CustomIcon BODY_ICON = new CustomIcon("body", 20);
@@ -156,7 +155,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     this.layout.bottomLeft.add(
         ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
-            .size(SLIDER_WIDTH, BUTTON_HEIGHT)
+            .size(SLIDER_WIDTH, ELEMENT_HEIGHT)
             .build());
     this.layout.bottomLeft.add(FillerWidget.ofHeight(6 * GuiUtil.PADDING));
 
@@ -167,22 +166,26 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     firstRow.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale"))
         .bgColor(BACKGROUND_COLOR)
-        .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing())));
-    firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.scaleSlider.decrement())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing())));
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.MINUS_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> this.scaleSlider.decrement())
         .tooltip(Tooltip.of(Text.translatable("armorstands.scale.subtract")))
         .build());
-    firstRow.add(ButtonWidget.builder(Text.literal("+"), (button) -> this.scaleSlider.increment())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.PLUS_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> this.scaleSlider.increment())
         .tooltip(Tooltip.of(Text.translatable("armorstands.scale.add")))
         .build());
-    firstRow.add(ButtonWidget.builder(Text.literal("1"), (button) -> this.scaleSlider.setToOne())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.ROTATE_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> this.scaleSlider.setToOne())
         .tooltip(Tooltip.of(Text.translatable("armorstands.scale.zero")))
         .build());
 
     scaleSection.add(firstRow);
-    this.scaleSlider = scaleSection.add(new ScaleSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.getArmorStand()));
+    this.scaleSlider = scaleSection.add(
+        new ScaleSliderWidget(this, SLIDER_WIDTH, ELEMENT_HEIGHT, this.getArmorStand()));
     this.layout.bottomLeft.add(scaleSection);
   }
 
@@ -211,7 +214,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
           this.yawSlider.setRange(value.getMin(), value.getMax());
           this.rollSlider.setRange(value.getMin(), value.getMax());
         }), (adder) -> {
-      adder.layoutHook((parent, self) -> self.setDimensions(SLIDER_WIDTH, BUTTON_HEIGHT));
+      adder.layoutHook((parent, self) -> self.setDimensions(SLIDER_WIDTH, ELEMENT_HEIGHT));
       adder.margin(Spacing.of(0, 0, 2 * GuiUtil.PADDING, 0));
     });
 
@@ -226,24 +229,27 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget block = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
 
     AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(
-        SLIDER_WIDTH, BUTTON_HEIGHT, this.posePart, parameter, this.getArmorStand());
+        SLIDER_WIDTH, ELEMENT_HEIGHT, this.posePart, parameter, this.getArmorStand());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .defaultOffAxisContentAlignEnd()
         .spacing(GuiUtil.PADDING);
     firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).bgColor(BACKGROUND_COLOR).build(),
-        (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()))
+        (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing()))
     );
-    firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> slider.decrement())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.MINUS_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> slider.decrement())
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.subtract")))
         .build());
-    firstRow.add(ButtonWidget.builder(Text.literal("+"), (button) -> slider.increment())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.PLUS_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> slider.increment())
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.add")))
         .build());
-    firstRow.add(ButtonWidget.builder(Text.literal("0"), (button) -> slider.zero())
-        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+    firstRow.add(IconButtonWidget.builder(BuiltinIcon.ROTATE_13, ArmorStandsMod.MOD_ID)
+        .dimensions(ELEMENT_HEIGHT)
+        .onPress((button) -> slider.zero())
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.zero")))
         .build());
 
