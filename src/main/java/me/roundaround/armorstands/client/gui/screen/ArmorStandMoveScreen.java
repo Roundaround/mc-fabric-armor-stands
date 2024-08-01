@@ -25,9 +25,9 @@ import java.util.Objects;
 
 public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private static final int MINI_BUTTON_WIDTH = 28;
-  private static final int MINI_BUTTON_HEIGHT = 16;
   private static final int BUTTON_WIDTH = 46;
   private static final int BUTTON_HEIGHT = 16;
+  private static final int LARGE_BUTTON_WIDTH = 118;
   private static final List<Direction> DIRECTIONS = List.of(
       Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
 
@@ -71,9 +71,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
     player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player")).build());
     this.playerPosLabel = player.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.client.player)).build());
+        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.getPlayer())).build());
     this.playerBlockLabel = player.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.client.player)).build());
+        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.getPlayer())).build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
@@ -125,17 +125,17 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
             .values(MoveMode.values())
             .initially(this.mode)
             .build(MoveMode.getOptionLabelText(), this::onMoveModeChange),
-        (parent, self) -> self.setDimensions(ButtonWidget.DEFAULT_WIDTH, BUTTON_HEIGHT)
+        (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );
 
     this.unitsButton = this.layout.bottomRight.add(CyclingButtonWidget.builder(MoveUnits::getOptionValueText)
             .values(MoveUnits.values())
             .initially(this.units)
             .build(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange),
-        (parent, self) -> self.setDimensions(ButtonWidget.DEFAULT_WIDTH, BUTTON_HEIGHT)
+        (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );
 
-    this.layout.bottomRight.add(FillerWidget.ofHeight(GuiUtil.PADDING));
+    this.layout.bottomRight.add(FillerWidget.ofHeight(2 * GuiUtil.PADDING));
 
     this.facingLabel = this.layout.bottomRight.add(
         LabelWidget.builder(this.textRenderer, getFacingText(this.getCurrentFacing())).build());
@@ -169,8 +169,8 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.playerPosLabel.setText(this.getCurrentPosText(this.client.player));
-    this.playerBlockLabel.setText(this.getCurrentBlockPosText(this.client.player));
+    this.playerPosLabel.setText(this.getCurrentPosText(this.getPlayer()));
+    this.playerBlockLabel.setText(this.getCurrentBlockPosText(this.getPlayer()));
     this.standPosLabel.setText(this.getCurrentPosText(this.armorStand));
     this.standBlockLabel.setText(this.getCurrentBlockPosText(this.armorStand));
 
@@ -248,7 +248,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
       this.units = units;
 
       this.button = ButtonWidget.builder(this.getMessage(), this::onPress)
-          .size(MINI_BUTTON_WIDTH, MINI_BUTTON_HEIGHT)
+          .size(MINI_BUTTON_WIDTH, BUTTON_HEIGHT)
           .build();
     }
 
