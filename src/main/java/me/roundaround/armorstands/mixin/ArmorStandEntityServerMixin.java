@@ -28,7 +28,7 @@ public abstract class ArmorStandEntityServerMixin {
       return;
     }
 
-    if (!ArmorStandUsers.canEditArmorStands(player) || player.isSneaking()) {
+    if (!ArmorStandUsers.canEditArmorStands(player) || !player.isSneaking()) {
       return;
     }
 
