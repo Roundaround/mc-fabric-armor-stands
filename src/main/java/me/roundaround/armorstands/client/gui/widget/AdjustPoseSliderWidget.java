@@ -10,7 +10,6 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.Optional;
 
@@ -96,7 +95,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable("armorstands.adjustPose.label", String.format("%.2f", getAngle())));
+    setMessage(Text.translatable("armorstands.angle", String.format("%.2f", getAngle())));
   }
 
   @Override
@@ -123,19 +122,6 @@ public class AdjustPoseSliderWidget extends SliderWidget {
     }
 
     return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-  }
-
-  @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-    if (keyCode == GLFW.GLFW_KEY_LEFT) {
-      decrement();
-      return true;
-    } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
-      increment();
-      return true;
-    }
-
-    return super.keyPressed(keyCode, scanCode, modifiers);
   }
 
   @Override

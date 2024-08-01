@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import me.roundaround.armorstands.client.gui.widget.RotateSliderWidget;
+import me.roundaround.armorstands.client.gui.widget.ScaleSliderWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
@@ -10,6 +11,7 @@ import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -23,12 +25,14 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_HEIGHT = 16;
   private static final int DIRECTION_BUTTON_WIDTH = 70;
   private static final int MINI_BUTTON_WIDTH = 24;
+  private static final int TINY_BUTTON_WIDTH = 16;
   private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * (GuiUtil.PADDING / 2);
 
   private LabelWidget playerFacingLabel;
   private LabelWidget playerRotationLabel;
   private LabelWidget standFacingLabel;
   private LabelWidget standRotationLabel;
+  private ScaleSliderWidget scaleSlider;
   private RotateSliderWidget rotateSlider;
 
   public ArmorStandRotateScreen(ArmorStandScreenHandler handler) {
@@ -47,6 +51,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     this.initTopLeft();
     this.initBottomLeft();
+    this.initTopRight();
     this.initBottomRight();
   }
 
@@ -61,11 +66,11 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     ).build());
     this.playerFacingLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            this.getCurrentFacingText(this.client.player)
+            this.getCurrentFacingText(this.getPlayer())
         ).build());
     this.playerRotationLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            this.getCurrentRotationText(this.client.player)
+            this.getCurrentRotationText(this.getPlayer())
         ).build());
     labels.add(player);
 
@@ -83,6 +88,37 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     labels.add(stand);
 
     this.layout.topLeft.add(labels, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));
+  }
+
+  private void initTopRight() {
+    LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
+
+    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
+        .spacing(GuiUtil.PADDING / 2)
+        .defaultOffAxisContentAlignEnd();
+
+    firstRow.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale")).build(), (parent, self) -> {
+      self.setWidth(SLIDER_WIDTH - 3 * (TINY_BUTTON_WIDTH + parent.getSpacing()));
+    });
+    firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.scaleSlider.decrement())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.subtract")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("+"), (button) -> this.scaleSlider.increment())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.add")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("1"), (button) -> this.scaleSlider.setToOne())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.zero")))
+        .build());
+
+    scaleSection.add(firstRow);
+
+    this.scaleSlider = scaleSection.add(new ScaleSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+
+    this.layout.topRight.add(
+        scaleSection, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));
   }
 
   private void initBottomLeft() {
@@ -187,11 +223,25 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.playerFacingLabel.setText(getCurrentFacingText(this.client.player));
-    this.playerRotationLabel.setText(getCurrentRotationText(this.client.player));
+    this.playerFacingLabel.setText(getCurrentFacingText(this.getPlayer()));
+    this.playerRotationLabel.setText(getCurrentRotationText(this.getPlayer()));
     this.standFacingLabel.setText(getCurrentFacingText(this.armorStand));
     this.standRotationLabel.setText(getCurrentRotationText(this.armorStand));
+    this.scaleSlider.tick();
     this.rotateSlider.tick();
+  }
+
+  @Override
+  public void updateScaleOnClient(float scale) {
+    if (this.scaleSlider != null && this.scaleSlider.isPending(this)) {
+      return;
+    }
+
+    super.updateScaleOnClient(scale);
+
+    if (this.scaleSlider != null) {
+      this.scaleSlider.setScale(scale);
+    }
   }
 
   @Override
@@ -211,6 +261,9 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   public void onPong() {
     super.onPong();
 
+    if (this.scaleSlider != null) {
+      this.scaleSlider.onPong();
+    }
     if (this.rotateSlider != null) {
       this.rotateSlider.onPong();
     }
@@ -261,10 +314,6 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     public String getModifier() {
       return this.offset > 0 ? "+" : "-";
-    }
-
-    public RotateDirection getOpposite() {
-      return this == CLOCKWISE ? COUNTERCLOCKWISE : CLOCKWISE;
     }
   }
 }

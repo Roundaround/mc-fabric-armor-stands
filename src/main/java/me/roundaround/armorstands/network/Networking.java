@@ -36,6 +36,7 @@ public final class Networking {
   public static final Identifier SET_FLAG_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_flag_c2s");
   public static final Identifier SET_POSE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_pose_c2s");
   public static final Identifier SET_POSE_PRESET_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_pose_preset_c2s");
+  public static final Identifier SET_SCALE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_scale_c2s");
   public static final Identifier SET_YAW_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_yaw_c2s");
   public static final Identifier UNDO_C2S = new Identifier(ArmorStandsMod.MOD_ID, "undo_c2s");
   public static final Identifier UTILITY_ACTION_C2S = new Identifier(ArmorStandsMod.MOD_ID, "utility_action_c2s");
@@ -55,26 +56,27 @@ public final class Networking {
     PayloadTypeRegistry.playC2S().register(SetFlagC2S.ID, SetFlagC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SetPoseC2S.ID, SetPoseC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SetPosePresetC2S.ID, SetPosePresetC2S.CODEC);
+    PayloadTypeRegistry.playC2S().register(SetScaleC2S.ID, SetScaleC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(SetYawC2S.ID, SetYawC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(UndoC2S.ID, UndoC2S.CODEC);
     PayloadTypeRegistry.playC2S().register(UtilityActionC2S.ID, UtilityActionC2S.CODEC);
   }
 
-  public record ClientUpdateS2C(double x, double y, double z, float yaw, float pitch, boolean invulnerable,
+  public record ClientUpdateS2C(double x, double y, double z, float scale, float yaw, float pitch, boolean invulnerable,
                                 int disabledSlots) implements CustomPayload {
     public static final CustomPayload.Id<ClientUpdateS2C> ID = new CustomPayload.Id<>(CLIENT_UPDATE_S2C);
     public static final PacketCodec<RegistryByteBuf, ClientUpdateS2C> CODEC = PacketCodec.of(
         ClientUpdateS2C::write, ClientUpdateS2C::new);
 
     public ClientUpdateS2C(ArmorStandEntity armorStand) {
-      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), armorStand.getYaw(), armorStand.getPitch(),
-          armorStand.isInvulnerable(), ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
+      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), armorStand.getScale(), armorStand.getYaw(),
+          armorStand.getPitch(), armorStand.isInvulnerable(), ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
       );
     }
 
     private ClientUpdateS2C(PacketByteBuf buf) {
-      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readBoolean(),
-          buf.readInt()
+      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
+          buf.readBoolean(), buf.readInt()
       );
     }
 
@@ -82,6 +84,7 @@ public final class Networking {
       buf.writeDouble(this.x);
       buf.writeDouble(this.y);
       buf.writeDouble(this.z);
+      buf.writeFloat(this.scale);
       buf.writeFloat(this.yaw);
       buf.writeFloat(this.pitch);
       buf.writeBoolean(this.invulnerable);
@@ -245,6 +248,17 @@ public final class Networking {
 
     @Override
     public Id<SetPosePresetC2S> getId() {
+      return ID;
+    }
+  }
+
+  public record SetScaleC2S(float scale) implements CustomPayload {
+    public static final CustomPayload.Id<SetScaleC2S> ID = new CustomPayload.Id<>(SET_SCALE_C2S);
+    public static final PacketCodec<RegistryByteBuf, SetScaleC2S> CODEC = PacketCodec.tuple(
+        PacketCodecs.FLOAT, SetScaleC2S::scale, SetScaleC2S::new);
+
+    @Override
+    public Id<SetScaleC2S> getId() {
       return ID;
     }
   }

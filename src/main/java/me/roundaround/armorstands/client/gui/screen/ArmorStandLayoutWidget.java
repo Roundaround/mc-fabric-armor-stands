@@ -38,7 +38,7 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
         .spacing(GuiUtil.PADDING / 2)
         .alignSelfTop()
         .alignSelfRight()
-        .defaultOffAxisContentAlignStart();
+        .defaultOffAxisContentAlignEnd();
     this.bottomRight = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING / 2)
         .alignSelfBottom()

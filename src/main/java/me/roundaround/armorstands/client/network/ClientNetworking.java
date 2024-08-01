@@ -54,6 +54,10 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.SetPosePresetC2S(pose));
   }
 
+  public static void sendSetScalePacket(float scale) {
+    ClientPlayNetworking.send(new Networking.SetScaleC2S(scale));
+  }
+
   public static void sendSetYawPacket(float angle) {
     ClientPlayNetworking.send(new Networking.SetYawC2S(angle));
   }
@@ -82,6 +86,7 @@ public final class ClientNetworking {
       }
 
       screen.updatePosOnClient(payload.x(), payload.y(), payload.z());
+      screen.updateScaleOnClient(payload.scale());
       screen.updateYawOnClient(MathHelper.wrapDegrees(payload.yaw()));
       screen.updatePitchOnClient(MathHelper.wrapDegrees(payload.pitch()));
       screen.updateInvulnerableOnClient(payload.invulnerable());

@@ -51,6 +51,7 @@ public final class ServerNetworking {
     ServerPlayNetworking.registerGlobalReceiver(Networking.SetFlagC2S.ID, ServerNetworking::handleSetFlag);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SetPoseC2S.ID, ServerNetworking::handleSetPose);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SetPosePresetC2S.ID, ServerNetworking::handleSetPosePreset);
+    ServerPlayNetworking.registerGlobalReceiver(Networking.SetScaleC2S.ID, ServerNetworking::handleSetScale);
     ServerPlayNetworking.registerGlobalReceiver(Networking.SetYawC2S.ID, ServerNetworking::handleSetYaw);
     ServerPlayNetworking.registerGlobalReceiver(Networking.UndoC2S.ID, ServerNetworking::handleUndo);
     ServerPlayNetworking.registerGlobalReceiver(Networking.UtilityActionC2S.ID, ServerNetworking::handleUtilityAction);
@@ -162,6 +163,18 @@ public final class ServerNetworking {
 
       ArmorStandEditor editor = screenHandler.getEditor();
       editor.setPose(payload.pose().toPose());
+    });
+  }
+
+  private static void handleSetScale(Networking.SetScaleC2S payload, ServerPlayNetworking.Context context) {
+    context.player().server.execute(() -> {
+      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
+        return;
+      }
+
+      ArmorStandEditor editor = screenHandler.getEditor();
+      editor.setScale(payload.scale());
     });
   }
 

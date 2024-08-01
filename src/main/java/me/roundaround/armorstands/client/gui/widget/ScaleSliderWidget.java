@@ -2,6 +2,7 @@ package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.network.ClientNetworking;
+import me.roundaround.armorstands.util.actions.ScaleAction;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -13,18 +14,21 @@ import net.minecraft.util.math.MathHelper;
 
 import java.util.Optional;
 
-public class RotateSliderWidget extends SliderWidget {
+public class ScaleSliderWidget extends SliderWidget {
+  private static final float MIN = 0.01f;
+  private static final float MAX = 10f;
+  private static final float SPLIT_SCALE = 2f;
+  private static final double SPLIT_VALUE = 0.5;
+
   private final AbstractArmorStandScreen parent;
   private final ArmorStandEntity armorStand;
 
-  private Optional<Float> lastAngle = Optional.empty();
-  private int min = -180;
-  private int max = 180;
+  private Optional<Float> lastScale = Optional.empty();
   private Optional<Long> lastScroll = Optional.empty();
   private boolean isDragging = false;
   private boolean pendingDragPing = false;
 
-  public RotateSliderWidget(
+  public ScaleSliderWidget(
       AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand
   ) {
     super(0, 0, width, height, Text.empty(), 0);
@@ -39,50 +43,44 @@ public class RotateSliderWidget extends SliderWidget {
     return isDragging() || this.lastScroll.isPresent();
   }
 
-  public void setRange(int min, int max) {
-    this.min = min;
-    this.max = max;
-    refresh();
-  }
-
   public void refresh() {
-    float armorStandAngle = this.armorStand.getYaw();
-    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    float armorStandScale = this.armorStand.getScale();
+    if (this.lastScale.isPresent() && Math.abs(armorStandScale - this.lastScale.get()) < MathHelper.EPSILON) {
       return;
     }
 
-    this.lastAngle = Optional.of(armorStandAngle);
-    setAngle(armorStandAngle);
+    this.lastScale = Optional.of(armorStandScale);
+    this.setScale(armorStandScale);
   }
 
-  public void zero() {
-    setAngle(0);
-    persistValue();
+  public void setToOne() {
+    this.setScale(1);
+    this.persistValue();
   }
 
   public void increment() {
-    double up = Math.ceil(getAngle());
-    if (up - getAngle() < MathHelper.EPSILON) {
-      up += 1;
+    float nextTick = nextTickUp(this.getScale());
+    if (nextTick - this.getScale() < MathHelper.EPSILON) {
+      nextTick += stepAmount(nextTick, true);
     }
-    setAngle((float) up);
-    persistValue();
+    this.setScale(nextTick);
+    this.persistValue();
   }
 
   public void decrement() {
-    double down = Math.floor(getAngle());
-    if (getAngle() - down < MathHelper.EPSILON) {
-      down -= 1;
+    float nextTick = nextTickDown(this.getScale());
+    if (this.getScale() - nextTick < MathHelper.EPSILON) {
+      nextTick -= stepAmount(nextTick, false);
     }
-    setAngle((float) down);
-    persistValue();
+    this.setScale(nextTick);
+    this.persistValue();
   }
 
   public void tick() {
     this.lastScroll.ifPresent(lastScroll -> {
       if (System.currentTimeMillis() - lastScroll > 500) {
         this.lastScroll = Optional.empty();
-        persistValue();
+        this.persistValue();
       }
     });
   }
@@ -97,12 +95,12 @@ public class RotateSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable("armorstands.angle", String.format("%.2f", getAngle())));
+    this.setMessage(Text.of(String.format("%.2f", this.getScale())));
   }
 
   @Override
   protected void applyValue() {
-    this.armorStand.setYaw(getAngle());
+    ScaleAction.setScale(this.armorStand, this.getScale());
   }
 
   @Override
@@ -120,16 +118,20 @@ public class RotateSliderWidget extends SliderWidget {
     this.pendingDragPing = true;
     this.parent.sendPing();
 
-    persistValue();
+    this.persistValue();
   }
 
   @Override
   public boolean mouseScrolled(
       double mouseX, double mouseY, double horizontalAmount, double verticalAmount
   ) {
-    if (isMouseOver(mouseX, mouseY)) {
-      setAngle(getAngle() + (float) verticalAmount);
-      applyValue();
+    if (this.isMouseOver(mouseX, mouseY)) {
+      if (verticalAmount > 0) {
+        this.increment();
+      } else {
+        this.decrement();
+      }
+      this.applyValue();
       this.lastScroll = Optional.of(System.currentTimeMillis());
       return true;
     }
@@ -148,12 +150,12 @@ public class RotateSliderWidget extends SliderWidget {
     soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
   }
 
-  private float getAngle() {
-    return valueToAngle(this.value, this.min, this.max);
+  private float getScale() {
+    return valueToScale(this.value);
   }
 
-  public void setAngle(float value) {
-    setValue(angleToValue(value, this.min, this.max));
+  public void setScale(float scale) {
+    this.setValue(scaleToValue(scale));
   }
 
   private void setValue(double value) {
@@ -161,20 +163,42 @@ public class RotateSliderWidget extends SliderWidget {
     updateMessage();
   }
 
-  private static double angleToValue(float value, int min, int max) {
-    // Map angle (min-max) to value (0-1)
-    return (value - min) / (max - min);
+  private static float nextTickUp(float from) {
+    float stepAmount = stepAmount(from, true);
+    return (float) (Math.ceil(from / stepAmount) * stepAmount);
   }
 
-  private static float valueToAngle(double value, int min, int max) {
-    // Map value (0-1) to angle (min-max)
-    return (float) (value * (max - min) + min);
+  private static float nextTickDown(float from) {
+    float stepAmount = stepAmount(from, false);
+    return (float) (Math.floor(from / stepAmount) * stepAmount);
+  }
+
+  private static float stepAmount(float from, boolean up) {
+    return from < SPLIT_SCALE || (!up && Math.abs(from - SPLIT_SCALE) < MathHelper.EPSILON) ? 0.1f : 0.5f;
+  }
+
+  private static double scaleToValue(float scale) {
+    if (scale < SPLIT_SCALE) {
+      // Map [MIN, SPLIT_SCALE] to [0, SPLIT_VALUE]
+      return (scale - MIN) / (SPLIT_SCALE - MIN) * SPLIT_VALUE;
+    }
+    // Map [SPLIT_SCALE, MAX] to [SPLIT_VALUE, 1]
+    return SPLIT_VALUE + (scale - SPLIT_SCALE) / (MAX - SPLIT_SCALE) * (1 - SPLIT_VALUE);
+  }
+
+  private static float valueToScale(double value) {
+    if (value < SPLIT_VALUE) {
+      // Map [0, SPLIT_VALUE] to [MIN, SPLIT_SCALE]
+      return (float) (MIN + (value / SPLIT_VALUE) * (SPLIT_SCALE - MIN));
+    }
+    // Map [SPLIT_VALUE, 1] to [SPLIT_SCALE, MAX]
+    return (float) (SPLIT_SCALE + ((value - SPLIT_VALUE) / (1 - SPLIT_VALUE)) * (MAX - SPLIT_SCALE));
   }
 
   private void persistValue() {
     // Cancel any pending scroll updates
     this.lastScroll = Optional.empty();
 
-    ClientNetworking.sendSetYawPacket(getAngle());
+    ClientNetworking.sendSetScalePacket(getScale());
   }
 }

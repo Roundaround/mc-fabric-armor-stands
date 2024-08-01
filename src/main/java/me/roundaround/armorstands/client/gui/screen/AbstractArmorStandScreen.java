@@ -12,6 +12,7 @@ import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import me.roundaround.armorstands.util.actions.ScaleAction;
 import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -22,6 +23,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -80,6 +82,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     this.populateLayout();
     this.collectElements();
     this.initTabNavigation();
+  }
+
+  protected MinecraftClient getClient() {
+    return Objects.requireNonNull(this.client);
+  }
+
+  protected ClientPlayerEntity getPlayer() {
+    return this.getClient().player;
   }
 
   protected void populateLayout() {
@@ -412,6 +422,10 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void updatePosOnClient(double x, double y, double z) {
     this.armorStand.setPos(x, y, z);
+  }
+
+  public void updateScaleOnClient(float scale) {
+    ScaleAction.setScale(this.armorStand, scale);
   }
 
   public void updateYawOnClient(float yaw) {
