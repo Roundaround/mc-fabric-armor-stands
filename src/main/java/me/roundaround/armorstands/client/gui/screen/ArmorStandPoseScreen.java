@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.screen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
+import me.roundaround.armorstands.client.gui.widget.ScaleSliderWidget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
@@ -11,6 +12,7 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
+import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
@@ -33,6 +35,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   protected static final CustomIcon LEFT_LEG_ICON = new CustomIcon("leftleg", 20);
 
   private PosePart posePart = PosePart.HEAD;
+
+  private ScaleSliderWidget scaleSlider;
   private ButtonWidget activePosePartButton;
   private LabelWidget posePartLabelLeft;
   private LabelWidget posePartLabelRight;
@@ -87,7 +91,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   private void initBottomLeft() {
-    this.layout.bottomLeft.defaultOffAxisContentAlignCenter().spacing(3 * GuiUtil.PADDING);
+    this.layout.bottomLeft.defaultOffAxisContentAlignCenter();
 
     LinearLayoutWidget partPicker = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING)
@@ -147,14 +151,40 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     partPicker.add(feetRow);
 
     this.layout.bottomLeft.add(partPicker);
+    this.layout.bottomLeft.add(FillerWidget.ofHeight(3 * GuiUtil.PADDING));
 
-    this.layout.bottomLeft.add(ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), (button) -> {
-      ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
+    this.layout.bottomLeft.add(
+        ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
+            .size(SLIDER_WIDTH, BUTTON_HEIGHT)
+            .build());
+    this.layout.bottomLeft.add(FillerWidget.ofHeight(6 * GuiUtil.PADDING));
 
-      this.pitchSlider.refresh();
-      this.yawSlider.refresh();
-      this.rollSlider.refresh();
-    }).size(SLIDER_WIDTH, BUTTON_HEIGHT).build());
+    LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
+
+    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
+        .spacing(GuiUtil.PADDING / 2)
+        .defaultOffAxisContentAlignEnd();
+
+    firstRow.add(
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale")).build(), (parent, self) -> {
+          self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
+        });
+    firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.scaleSlider.decrement())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.subtract")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("+"), (button) -> this.scaleSlider.increment())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.add")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("1"), (button) -> this.scaleSlider.setToOne())
+        .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.zero")))
+        .build());
+
+    scaleSection.add(firstRow);
+    this.scaleSlider = scaleSection.add(new ScaleSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+    this.layout.bottomLeft.add(scaleSection);
   }
 
   private void initBottomRight() {
@@ -244,9 +274,32 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   protected void handledScreenTick() {
     super.handledScreenTick();
 
+    this.scaleSlider.tick();
     this.pitchSlider.tick();
     this.yawSlider.tick();
     this.rollSlider.tick();
+  }
+
+  @Override
+  public void updateScaleOnClient(float scale) {
+    if (this.scaleSlider != null && this.scaleSlider.isPending(this)) {
+      return;
+    }
+
+    super.updateScaleOnClient(scale);
+
+    if (this.scaleSlider != null) {
+      this.scaleSlider.setScale(scale);
+    }
+  }
+
+  @Override
+  public void onPong() {
+    super.onPong();
+
+    if (this.scaleSlider != null) {
+      this.scaleSlider.onPong();
+    }
   }
 
   private void setActivePosePart(ButtonWidget button, PosePart part) {
@@ -264,6 +317,14 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.activePosePartButton.active = false;
 
     this.layout.refreshPositions();
+  }
+
+  private void handleMirrorPose(ButtonWidget button) {
+    ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
+
+    this.pitchSlider.refresh();
+    this.yawSlider.refresh();
+    this.rollSlider.refresh();
   }
 
   private enum SliderRange {
