@@ -10,6 +10,7 @@ import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
@@ -23,6 +24,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_HEIGHT = 16;
   private static final int DIRECTION_BUTTON_WIDTH = 70;
   private static final int MINI_BUTTON_WIDTH = 24;
+  private static final int TINY_BUTTON_WIDTH = 16;
   private static final int SLIDER_WIDTH = 4 * MINI_BUTTON_WIDTH + 3 * (GuiUtil.PADDING / 2);
 
   private LabelWidget playerFacingLabel;
@@ -141,8 +143,31 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     this.layout.bottomRight.add(FillerWidget.ofHeight(2 * GuiUtil.PADDING));
 
-    this.rotateSlider = this.layout.bottomRight.add(
-        new RotateSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+    LinearLayoutWidget rotateSection = LinearLayoutWidget.vertical()
+        .spacing(GuiUtil.PADDING / 2)
+        .defaultOffAxisContentAlignEnd();
+    LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
+
+    firstRow.add(
+        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate")).build(), (parent, self) -> {
+          self.setWidth(SLIDER_WIDTH - 3 * (TINY_BUTTON_WIDTH + parent.getSpacing()));
+        });
+    firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.rotateSlider.decrement())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.subtract")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("+"), (button) -> this.rotateSlider.increment())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.add")))
+        .build());
+    firstRow.add(ButtonWidget.builder(Text.literal("0"), (button) -> this.rotateSlider.zero())
+        .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
+        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.zero")))
+        .build());
+
+    rotateSection.add(firstRow);
+    this.rotateSlider = rotateSection.add(new RotateSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+    this.layout.bottomRight.add(rotateSection);
   }
 
   private void initRotateRow(RotateDirection direction) {

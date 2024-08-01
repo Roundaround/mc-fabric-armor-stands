@@ -160,7 +160,6 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.layout.bottomLeft.add(FillerWidget.ofHeight(6 * GuiUtil.PADDING));
 
     LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
-
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignEnd();
