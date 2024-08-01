@@ -28,8 +28,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -471,5 +475,39 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected void goToNextScreen() {
     ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().next());
+  }
+
+  protected static Text getCurrentPosText(Entity entity) {
+    String xStr = String.format("%.2f", entity.getX());
+    String yStr = String.format("%.2f", entity.getY());
+    String zStr = String.format("%.2f", entity.getZ());
+    return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
+  }
+
+  protected static Text getCurrentBlockPosText(Entity entity) {
+    BlockPos pos = entity.getBlockPos();
+    return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
+  }
+
+  protected static Text getCurrentRotationText(Entity entity) {
+    float currentRotation = entity.getYaw();
+    return Text.translatable("armorstands.current.rotation",
+        String.format(Locale.ROOT, "%.1f", MathHelper.wrapDegrees(currentRotation))
+    );
+  }
+
+  protected static Text getCurrentFacingText(Entity entity) {
+    return getFacingText(Direction.fromRotation(entity.getYaw()));
+  }
+
+  protected static Text getFacingText(Direction facing) {
+    String towardsI18n = switch (facing) {
+      case NORTH -> "negZ";
+      case SOUTH -> "posZ";
+      case WEST -> "negX";
+      default -> "posX";
+    };
+    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
+    return Text.translatable("armorstands.current.facing", facing.toString(), towards.getString());
   }
 }

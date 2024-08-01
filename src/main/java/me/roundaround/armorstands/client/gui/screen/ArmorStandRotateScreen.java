@@ -12,12 +12,9 @@ import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.LabelWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-
-import java.util.Locale;
 
 public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 46;
@@ -63,11 +60,11 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     ).bgColor(BACKGROUND_COLOR).build());
     this.playerFacingLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            this.getCurrentFacingText(this.getPlayer())
+            getCurrentFacingText(this.getPlayer())
         ).bgColor(BACKGROUND_COLOR).build());
     this.playerRotationLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            this.getCurrentRotationText(this.getPlayer())
+            getCurrentRotationText(this.getPlayer())
         ).bgColor(BACKGROUND_COLOR).build());
     labels.add(player);
 
@@ -76,11 +73,11 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         Text.translatable("armorstands.current.stand")
     ).bgColor(BACKGROUND_COLOR).build());
     this.standFacingLabel = stand.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-        this.getCurrentFacingText(this.armorStand)
+        getCurrentFacingText(this.getArmorStand())
     ).bgColor(BACKGROUND_COLOR).build());
     this.standRotationLabel = stand.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            this.getCurrentRotationText(this.armorStand)
+            getCurrentRotationText(this.getArmorStand())
         ).bgColor(BACKGROUND_COLOR).build());
     labels.add(stand);
 
@@ -169,7 +166,8 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .build());
 
     rotateSection.add(firstRow);
-    this.rotateSlider = rotateSection.add(new RotateSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+    this.rotateSlider = rotateSection.add(
+        new RotateSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.getArmorStand()));
     this.layout.bottomRight.add(rotateSection);
   }
 
@@ -217,8 +215,8 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     this.playerFacingLabel.setText(getCurrentFacingText(this.getPlayer()));
     this.playerRotationLabel.setText(getCurrentRotationText(this.getPlayer()));
-    this.standFacingLabel.setText(getCurrentFacingText(this.armorStand));
-    this.standRotationLabel.setText(getCurrentRotationText(this.armorStand));
+    this.standFacingLabel.setText(getCurrentFacingText(this.getArmorStand()));
+    this.standRotationLabel.setText(getCurrentRotationText(this.getArmorStand()));
     this.rotateSlider.tick();
   }
 
@@ -242,26 +240,6 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     if (this.rotateSlider != null) {
       this.rotateSlider.onPong();
     }
-  }
-
-  private Text getCurrentFacingText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    Direction currentFacing = Direction.fromRotation(currentRotation);
-    String towardsI18n = switch (currentFacing) {
-      case NORTH -> "negZ";
-      case SOUTH -> "posZ";
-      case WEST -> "negX";
-      default -> "posX";
-    };
-    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
-    return Text.translatable("armorstands.current.facing", currentFacing.toString(), towards.getString());
-  }
-
-  private Text getCurrentRotationText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    return Text.translatable("armorstands.current.rotation",
-        String.format(Locale.ROOT, "%.1f", MathHelper.wrapDegrees(currentRotation))
-    );
   }
 
   public enum RotateDirection {

@@ -59,7 +59,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   private boolean getFlagValue(ArmorStandFlag flag) {
-    return flag.getValue(this.armorStand);
+    return flag.getValue(this.getArmorStand());
   }
 
   @Override
@@ -93,7 +93,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     }
 
     InventoryScreen.drawEntity(context, this.x + 62, this.y + 8, this.x + 114, this.y + 78, 30, 0.0625f,
-        this.prevMouseX, this.prevMouseY, this.armorStand
+        this.prevMouseX, this.prevMouseY, this.getArmorStand()
     );
   }
 
@@ -101,7 +101,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.armorStand));
-    this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.armorStand));
+    this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.getArmorStand()));
+    this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.getArmorStand()));
   }
 }

@@ -15,13 +15,11 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private static final int MINI_BUTTON_WIDTH = 28;
@@ -72,24 +70,22 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.playerPosLabel = player.add(LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.getPlayer()))
+    this.playerPosLabel = player.add(
+        LabelWidget.builder(this.textRenderer, getCurrentPosText(this.getPlayer())).bgColor(BACKGROUND_COLOR).build());
+    this.playerBlockLabel = player.add(LabelWidget.builder(this.textRenderer, getCurrentBlockPosText(this.getPlayer()))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.playerBlockLabel = player.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.getPlayer()))
-            .bgColor(BACKGROUND_COLOR)
-            .build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
     stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.standPosLabel = stand.add(LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.armorStand))
+    this.standPosLabel = stand.add(LabelWidget.builder(this.textRenderer, getCurrentPosText(this.getArmorStand()))
         .bgColor(BACKGROUND_COLOR)
         .build());
     this.standBlockLabel = stand.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.armorStand))
+        LabelWidget.builder(this.textRenderer, getCurrentBlockPosText(this.getArmorStand()))
             .bgColor(BACKGROUND_COLOR)
             .build());
     labels.add(stand);
@@ -185,10 +181,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   public void handledScreenTick() {
     super.handledScreenTick();
 
-    this.playerPosLabel.setText(this.getCurrentPosText(this.getPlayer()));
-    this.playerBlockLabel.setText(this.getCurrentBlockPosText(this.getPlayer()));
-    this.standPosLabel.setText(this.getCurrentPosText(this.armorStand));
-    this.standBlockLabel.setText(this.getCurrentBlockPosText(this.armorStand));
+    this.playerPosLabel.setText(getCurrentPosText(this.getPlayer()));
+    this.playerBlockLabel.setText(getCurrentBlockPosText(this.getPlayer()));
+    this.standPosLabel.setText(getCurrentPosText(this.getArmorStand()));
+    this.standBlockLabel.setText(getCurrentBlockPosText(this.getArmorStand()));
 
     Direction currentFacing = this.getCurrentFacing();
     if (!currentFacing.equals(this.prevFacing)) {
@@ -219,34 +215,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.moveButtons.forEach((moveButton) -> moveButton.setUnits(this.units));
   }
 
-  private Text getCurrentPosText(Entity entity) {
-    String xStr = String.format("%.2f", entity.getX());
-    String yStr = String.format("%.2f", entity.getY());
-    String zStr = String.format("%.2f", entity.getZ());
-    return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
-  }
-
-  private Text getCurrentBlockPosText(Entity entity) {
-    BlockPos pos = entity.getBlockPos();
-    return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
-  }
-
   private Direction getCurrentFacing() {
-    Entity entity = this.mode.equals(MoveMode.LOCAL_TO_STAND) ?
-        this.armorStand :
-        Objects.requireNonNull(this.client).player;
-    return Direction.fromRotation(Objects.requireNonNull(entity).getYaw());
-  }
-
-  private static Text getFacingText(Direction facing) {
-    String towardsI18n = switch (facing) {
-      case NORTH -> "negZ";
-      case SOUTH -> "posZ";
-      case WEST -> "negX";
-      default -> "posX";
-    };
-    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
-    return Text.translatable("armorstands.current.facing", facing.toString(), towards.getString());
+    Entity entity = this.mode.equals(MoveMode.LOCAL_TO_STAND) ? this.getArmorStand() : this.getPlayer();
+    return Direction.fromRotation(entity.getYaw());
   }
 
   private static class MoveButtonRef {

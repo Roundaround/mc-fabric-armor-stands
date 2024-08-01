@@ -54,7 +54,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
       return;
     }
 
-    if (armorStand.getId() != this.armorStand.getId() || part != this.posePart) {
+    if (armorStand.getId() != this.getArmorStand().getId() || part != this.posePart) {
       return;
     }
 
@@ -182,7 +182,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .build());
 
     scaleSection.add(firstRow);
-    this.scaleSlider = scaleSection.add(new ScaleSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.armorStand));
+    this.scaleSlider = scaleSection.add(new ScaleSliderWidget(this, SLIDER_WIDTH, BUTTON_HEIGHT, this.getArmorStand()));
     this.layout.bottomLeft.add(scaleSection);
   }
 
@@ -226,7 +226,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget block = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
 
     AdjustPoseSliderWidget slider = new AdjustPoseSliderWidget(
-        SLIDER_WIDTH, BUTTON_HEIGHT, this.posePart, parameter, this.armorStand);
+        SLIDER_WIDTH, BUTTON_HEIGHT, this.posePart, parameter, this.getArmorStand());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .defaultOffAxisContentAlignEnd()
@@ -320,7 +320,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   private void handleMirrorPose(ButtonWidget button) {
-    ClientNetworking.sendSetPosePacket(new Pose(this.armorStand).mirror());
+    ClientNetworking.sendSetPosePacket(new Pose(this.getArmorStand()).mirror());
 
     this.pitchSlider.refresh();
     this.yawSlider.refresh();
