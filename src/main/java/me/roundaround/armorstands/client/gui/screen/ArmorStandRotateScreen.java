@@ -60,28 +60,28 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
     player.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
         Text.translatable("armorstands.current.player")
-    ).build());
+    ).bgColor(BACKGROUND_COLOR).build());
     this.playerFacingLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
             this.getCurrentFacingText(this.getPlayer())
-        ).build());
+        ).bgColor(BACKGROUND_COLOR).build());
     this.playerRotationLabel = player.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
             this.getCurrentRotationText(this.getPlayer())
-        ).build());
+        ).bgColor(BACKGROUND_COLOR).build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
     stand.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
         Text.translatable("armorstands.current.stand")
-    ).build());
+    ).bgColor(BACKGROUND_COLOR).build());
     this.standFacingLabel = stand.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
         this.getCurrentFacingText(this.armorStand)
-    ).build());
+    ).bgColor(BACKGROUND_COLOR).build());
     this.standRotationLabel = stand.add(
         me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
             this.getCurrentRotationText(this.armorStand)
-        ).build());
+        ).bgColor(BACKGROUND_COLOR).build());
     labels.add(stand);
 
     this.layout.topLeft.add(labels, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));
@@ -92,7 +92,9 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.snap")).build());
+    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.snap"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     firstRow.add(ButtonWidget.builder(Text.translatable("armorstands.rotate.snap." + Direction.SOUTH.getName()),
@@ -118,7 +120,9 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    faces.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.face")).build());
+    faces.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.face"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
 
     LinearLayoutWidget buttonRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     buttonRow.add(ButtonWidget.builder(Text.translatable("armorstands.rotate.face.toward"),
@@ -148,10 +152,9 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignEnd();
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
 
-    firstRow.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate")).build(), (parent, self) -> {
-          self.setWidth(SLIDER_WIDTH - 3 * (TINY_BUTTON_WIDTH + parent.getSpacing()));
-        });
+    firstRow.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate"))
+        .bgColor(BACKGROUND_COLOR)
+        .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (TINY_BUTTON_WIDTH + parent.getSpacing())));
     firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.rotateSlider.decrement())
         .size(TINY_BUTTON_WIDTH, BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.subtract")))
@@ -175,7 +178,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignEnd();
 
-    block.add(LabelWidget.builder(this.textRenderer, direction.getLabel()).build());
+    block.add(LabelWidget.builder(this.textRenderer, direction.getLabel()).bgColor(BACKGROUND_COLOR).build());
 
     LinearLayoutWidget row = LinearLayoutWidget.horizontal()
         .spacing(GuiUtil.PADDING / 2)

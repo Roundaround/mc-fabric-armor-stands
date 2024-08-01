@@ -64,7 +64,9 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget first = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
-    first.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.source.label")).build());
+    first.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.source.label"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     first.add(CyclingButtonWidget.builder(Source::getDisplayName)
         .values(Source.getSources())
         .initially(Source.ALL)
@@ -77,7 +79,9 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget second = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
-    second.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.category.label")).build());
+    second.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.category.label"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     second.add(CyclingButtonWidget.builder(Category::getDisplayName)
         .values(Category.getCategories())
         .initially(Category.ALL)
@@ -110,6 +114,7 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
             Text.translatable("armorstands.presets.page", this.page + 1, maxPage + 1)
         )
         .alignTextCenterX()
+        .bgColor(BACKGROUND_COLOR)
         .build(), (parent, self) -> self.setWidth(CONTROL_WIDTH - 2 * IconButtonWidget.SIZE_V - GuiUtil.PADDING));
 
     this.nextPageButton = pagination.add(IconButtonWidget.builder(BuiltinIcon.NEXT_18, ArmorStandsMod.MOD_ID)

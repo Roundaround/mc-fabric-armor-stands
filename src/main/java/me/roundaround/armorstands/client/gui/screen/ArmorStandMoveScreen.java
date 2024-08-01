@@ -69,19 +69,29 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignStart();
 
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player")).build());
-    this.playerPosLabel = player.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.getPlayer())).build());
+    player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
+    this.playerPosLabel = player.add(LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.getPlayer()))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     this.playerBlockLabel = player.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.getPlayer())).build());
+        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.getPlayer()))
+            .bgColor(BACKGROUND_COLOR)
+            .build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand")).build());
-    this.standPosLabel = stand.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.armorStand)).build());
+    stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
+    this.standPosLabel = stand.add(LabelWidget.builder(this.textRenderer, this.getCurrentPosText(this.armorStand))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     this.standBlockLabel = stand.add(
-        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.armorStand)).build());
+        LabelWidget.builder(this.textRenderer, this.getCurrentBlockPosText(this.armorStand))
+            .bgColor(BACKGROUND_COLOR)
+            .build());
     labels.add(stand);
 
     this.layout.topLeft.add(labels, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));
@@ -92,7 +102,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap")).build());
+    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     firstRow.add(ButtonWidget.builder(Text.translatable("armorstands.move.snap.standing"),
@@ -138,7 +150,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.layout.bottomRight.add(FillerWidget.ofHeight(2 * GuiUtil.PADDING));
 
     this.facingLabel = this.layout.bottomRight.add(
-        LabelWidget.builder(this.textRenderer, getFacingText(this.getCurrentFacing())).build());
+        LabelWidget.builder(this.textRenderer, getFacingText(this.getCurrentFacing()))
+            .bgColor(BACKGROUND_COLOR)
+            .build());
 
     DIRECTIONS.forEach(this::initDirectionRow);
   }
@@ -148,7 +162,9 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignCenter();
 
-    LabelWidget label = LabelWidget.builder(this.textRenderer, this.mode.getDirectionText(direction)).build();
+    LabelWidget label = LabelWidget.builder(this.textRenderer, this.mode.getDirectionText(direction))
+        .bgColor(BACKGROUND_COLOR)
+        .build();
     this.directionLabels.put(direction, label);
     row.add(label);
 

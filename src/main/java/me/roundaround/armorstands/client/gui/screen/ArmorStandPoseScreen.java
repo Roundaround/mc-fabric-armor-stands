@@ -103,6 +103,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .width(SLIDER_WIDTH)
         .overflowBehavior(LabelWidget.OverflowBehavior.SCROLL)
         .alignTextCenterX()
+        .bgColor(BACKGROUND_COLOR)
         .build());
 
     IconButtonWidget headButton = partPicker.add(IconButtonWidget.builder(HEAD_ICON, ArmorStandsMod.MOD_ID)
@@ -164,10 +165,9 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignEnd();
 
-    firstRow.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale")).build(), (parent, self) -> {
-          self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
-        });
+    firstRow.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale"))
+        .bgColor(BACKGROUND_COLOR)
+        .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing())));
     firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> this.scaleSlider.decrement())
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.scale.subtract")))
@@ -199,6 +199,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .width(SLIDER_WIDTH)
         .overflowBehavior(LabelWidget.OverflowBehavior.SCROLL)
         .alignTextRight()
+        .bgColor(BACKGROUND_COLOR)
         .build());
 
     block.add(CyclingButtonWidget.builder(SliderRange::getDisplayName)
@@ -230,9 +231,9 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
         .defaultOffAxisContentAlignEnd()
         .spacing(GuiUtil.PADDING);
-    firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).build(), (parent, self) -> {
-      self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()));
-    });
+    firstRow.add(LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).bgColor(BACKGROUND_COLOR).build(),
+        (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (BUTTON_WIDTH + parent.getSpacing()))
+    );
     firstRow.add(ButtonWidget.builder(Text.literal("-"), (button) -> slider.decrement())
         .size(BUTTON_WIDTH, BUTTON_HEIGHT)
         .tooltip(Tooltip.of(Text.translatable("armorstands.pose.subtract")))
