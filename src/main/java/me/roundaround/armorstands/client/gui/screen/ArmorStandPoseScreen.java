@@ -287,19 +287,6 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void updateScaleOnClient(float scale) {
-    if (this.scaleSlider != null && this.scaleSlider.isPending(this)) {
-      return;
-    }
-
-    super.updateScaleOnClient(scale);
-
-    if (this.scaleSlider != null) {
-      this.scaleSlider.setScale(scale);
-    }
-  }
-
-  @Override
   public void onPong() {
     super.onPong();
 

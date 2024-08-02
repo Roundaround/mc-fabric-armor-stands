@@ -11,7 +11,6 @@ import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.util.actions.ScaleAction;
 import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
@@ -426,10 +425,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void updatePosOnClient(double x, double y, double z) {
     this.armorStand.setPos(x, y, z);
-  }
-
-  public void updateScaleOnClient(float scale) {
-    ScaleAction.setScale(this.armorStand, scale);
   }
 
   public void updateYawOnClient(float yaw) {

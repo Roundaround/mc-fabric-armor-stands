@@ -86,7 +86,6 @@ public final class ClientNetworking {
       }
 
       screen.updatePosOnClient(payload.x(), payload.y(), payload.z());
-      screen.updateScaleOnClient(payload.scale());
       screen.updateYawOnClient(MathHelper.wrapDegrees(payload.yaw()));
       screen.updatePitchOnClient(MathHelper.wrapDegrees(payload.pitch()));
       screen.updateInvulnerableOnClient(payload.invulnerable());

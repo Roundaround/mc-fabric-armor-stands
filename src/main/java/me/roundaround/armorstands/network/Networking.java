@@ -62,21 +62,21 @@ public final class Networking {
     PayloadTypeRegistry.playC2S().register(UtilityActionC2S.ID, UtilityActionC2S.CODEC);
   }
 
-  public record ClientUpdateS2C(double x, double y, double z, float scale, float yaw, float pitch, boolean invulnerable,
+  public record ClientUpdateS2C(double x, double y, double z, float yaw, float pitch, boolean invulnerable,
                                 int disabledSlots) implements CustomPayload {
     public static final CustomPayload.Id<ClientUpdateS2C> ID = new CustomPayload.Id<>(CLIENT_UPDATE_S2C);
     public static final PacketCodec<RegistryByteBuf, ClientUpdateS2C> CODEC = PacketCodec.of(
         ClientUpdateS2C::write, ClientUpdateS2C::new);
 
     public ClientUpdateS2C(ArmorStandEntity armorStand) {
-      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), armorStand.getScale(), armorStand.getYaw(),
-          armorStand.getPitch(), armorStand.isInvulnerable(), ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
+      this(armorStand.getX(), armorStand.getY(), armorStand.getZ(), armorStand.getYaw(), armorStand.getPitch(),
+          armorStand.isInvulnerable(), ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
       );
     }
 
     private ClientUpdateS2C(PacketByteBuf buf) {
-      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(),
-          buf.readBoolean(), buf.readInt()
+      this(buf.readDouble(), buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readBoolean(),
+          buf.readInt()
       );
     }
 
@@ -84,7 +84,6 @@ public final class Networking {
       buf.writeDouble(this.x);
       buf.writeDouble(this.y);
       buf.writeDouble(this.z);
-      buf.writeFloat(this.scale);
       buf.writeFloat(this.yaw);
       buf.writeFloat(this.pitch);
       buf.writeBoolean(this.invulnerable);
