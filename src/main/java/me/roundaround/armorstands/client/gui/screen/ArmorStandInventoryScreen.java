@@ -53,8 +53,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
         .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !this.getFlagValue(flag)))
         .matchTooltipToLabel()
         .setHeight(TOGGLE_HEIGHT)
-        .withDisplayLabelConfig((builder) -> builder.bgColor(BACKGROUND_COLOR))
-        .withValueLabelConfig((builder) -> builder.bgColor(BACKGROUND_COLOR))
+        .labelBgColor(BACKGROUND_COLOR)
         .build();
   }
 

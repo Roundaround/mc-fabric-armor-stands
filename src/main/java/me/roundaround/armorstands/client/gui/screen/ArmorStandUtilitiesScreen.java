@@ -108,8 +108,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !this.values.get(flag).get()))
         .matchTooltipToLabel()
         .setHeight(BUTTON_HEIGHT)
-        .withDisplayLabelConfig((builder) -> builder.bgColor(BACKGROUND_COLOR))
-        .withValueLabelConfig((builder) -> builder.bgColor(BACKGROUND_COLOR))
+        .labelBgColor(BACKGROUND_COLOR)
         .build();
     this.subscriptions.add(this.values.get(flag).subscribe(
         (value) -> widget.setValue(value ^ flag.invertControl()),
