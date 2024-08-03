@@ -17,6 +17,7 @@ import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -42,6 +43,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
   protected static final int BACKGROUND_COLOR = GuiUtil.genColorInt(0f, 0f, 0f, 0.7f);
   protected static final int ELEMENT_HEIGHT = 16;
+  protected static final int HL_WIDTH = 100;
 
   protected final ArmorStandLayoutWidget layout = new ArmorStandLayoutWidget(this);
   protected final ArmorStandEntity armorStand;
@@ -49,7 +51,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected LinearLayoutWidget navRow;
   protected IconButtonWidget activePageButton;
-  protected FrameWidget activePageFrame;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
   protected boolean passEvents = true;
@@ -169,14 +170,9 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     this.layout.topRight.add(this.navRow);
 
-    this.activePageFrame = this.layout.nonPositioned.add(new FrameWidget(), (parent, self) -> {
-      if (this.activePageButton == null) {
-        self.visible = false;
-        return;
-      }
-      self.frame(this.activePageButton);
-      self.visible = true;
-    });
+    if (this.activePageButton != null) {
+      this.layout.nonPositioned.add(new FrameWidget(this.activePageButton));
+    }
   }
 
   protected void collectElements() {
@@ -472,6 +468,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected void goToNextScreen() {
     ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().next());
+  }
+
+  protected static HorizontalLineWidget createHorizontalLine() {
+    return createHorizontalLine(2 * GuiUtil.PADDING);
+  }
+
+  protected static HorizontalLineWidget createHorizontalLine(int margin) {
+    return new HorizontalLineWidget(HL_WIDTH).margin(margin);
   }
 
   protected static Text getCurrentPosText(Entity entity) {

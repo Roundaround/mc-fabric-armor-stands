@@ -16,7 +16,6 @@ import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
-import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -80,7 +79,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   private void initBottomLeft() {
-    this.layout.bottomLeft.defaultOffAxisContentAlignCenter().spacing(2 * GuiUtil.PADDING);
+    this.layout.bottomLeft.defaultOffAxisContentAlignCenter();
 
     LinearLayoutWidget partPicker = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING)
@@ -95,14 +94,13 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .bgColor(BACKGROUND_COLOR)
         .build());
 
-    IconButtonWidget headButton = partPicker.add(IconButtonWidget.builder(HEAD_ICON, ArmorStandsMod.MOD_ID)
+    this.activePosePartButton = partPicker.add(IconButtonWidget.builder(HEAD_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.HEAD.getDisplayName())
         .onPress((button) -> setActivePosePart(button, PosePart.HEAD))
         .build());
-    headButton.active = false;
-    this.activePosePartButton = headButton;
+    this.activePosePartButton.active = false;
 
     LinearLayoutWidget torsoRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING);
     torsoRow.add(IconButtonWidget.builder(RIGHT_ARM_ICON, ArmorStandsMod.MOD_ID)
@@ -142,14 +140,14 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     this.layout.bottomLeft.add(partPicker);
 
-    this.layout.bottomLeft.add(new HorizontalLineWidget(SLIDER_WIDTH));
+    this.layout.bottomLeft.add(createHorizontalLine());
 
     this.layout.bottomLeft.add(
         ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
             .size(SLIDER_WIDTH, ELEMENT_HEIGHT)
             .build());
 
-    this.layout.bottomLeft.add(new HorizontalLineWidget(SLIDER_WIDTH));
+    this.layout.bottomLeft.add(createHorizontalLine());
 
     LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()

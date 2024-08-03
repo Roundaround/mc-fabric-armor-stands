@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.LayoutCollectionWidget;
+import me.roundaround.roundalib.client.gui.layout.NonPositioningLayoutWidget;
 import me.roundaround.roundalib.client.gui.layout.SizableLayoutWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import net.fabricmc.api.EnvType;
@@ -17,7 +17,7 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
   public final LinearLayoutWidget bottomLeft;
   public final LinearLayoutWidget topRight;
   public final LinearLayoutWidget bottomRight;
-  public final LayoutCollectionWidget nonPositioned;
+  public final NonPositioningLayoutWidget nonPositioned;
 
   private final Screen screen;
 
@@ -46,7 +46,7 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
         .alignSelfBottom()
         .alignSelfRight()
         .defaultOffAxisContentAlignEnd();
-    this.nonPositioned = LayoutCollectionWidget.create();
+    this.nonPositioned = new NonPositioningLayoutWidget();
   }
 
   @Override
