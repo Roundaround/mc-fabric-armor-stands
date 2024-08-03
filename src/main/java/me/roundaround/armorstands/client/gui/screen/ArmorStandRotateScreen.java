@@ -82,7 +82,10 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
             .build());
     labels.add(stand);
 
-    this.layout.topLeft.add(createHorizontalLine(3 * GuiUtil.PADDING));
+    this.layout.topLeft.add(
+        new HorizontalLineWidget(this.utilRow.getWidth() - 2 * GuiUtil.PADDING).margin(3 * GuiUtil.PADDING),
+        (configurator) -> configurator.margin(Spacing.of(0, 0, 0, GuiUtil.PADDING))
+    );
     this.layout.topLeft.add(labels);
   }
 

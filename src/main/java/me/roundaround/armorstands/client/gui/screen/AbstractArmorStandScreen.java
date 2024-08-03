@@ -17,7 +17,6 @@ import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
-import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -43,12 +42,12 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
   protected static final int BACKGROUND_COLOR = GuiUtil.genColorInt(0f, 0f, 0f, 0.7f);
   protected static final int ELEMENT_HEIGHT = 16;
-  protected static final int HL_WIDTH = 100;
 
   protected final ArmorStandLayoutWidget layout = new ArmorStandLayoutWidget(this);
   protected final ArmorStandEntity armorStand;
   protected final MessageRenderer messageRenderer;
 
+  protected LinearLayoutWidget utilRow;
   protected LinearLayoutWidget navRow;
   protected IconButtonWidget activePageButton;
   protected boolean supportsUndoRedo = false;
@@ -106,32 +105,32 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return;
     }
 
-    LinearLayoutWidget utilitiesRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
+    this.utilRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
+    this.utilRow.add(IconButtonWidget.builder(BuiltinIcon.HELP_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(this.buildHelpTooltipText())
         .build());
-    utilitiesRow.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
+    this.utilRow.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.copy"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
         .build());
-    utilitiesRow.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
+    this.utilRow.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.paste"))
         .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
         .build());
-    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
+    this.utilRow.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.undo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(false))
         .build());
-    utilitiesRow.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
+    this.utilRow.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Text.translatable("armorstands.utility.redo"))
         .onPress((button) -> ClientNetworking.sendUndoPacket(true))
         .build());
-    this.layout.topLeft.add(utilitiesRow);
+    this.layout.topLeft.add(this.utilRow);
   }
 
   private Text buildHelpTooltipText() {
@@ -468,14 +467,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected void goToNextScreen() {
     ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().next());
-  }
-
-  protected static HorizontalLineWidget createHorizontalLine() {
-    return createHorizontalLine(2 * GuiUtil.PADDING);
-  }
-
-  protected static HorizontalLineWidget createHorizontalLine(int margin) {
-    return new HorizontalLineWidget(HL_WIDTH).margin(margin);
   }
 
   protected static Text getCurrentPosText(Entity entity) {

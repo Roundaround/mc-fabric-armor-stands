@@ -9,6 +9,7 @@ import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -90,7 +91,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
             .build());
     labels.add(stand);
 
-    this.layout.topLeft.add(createHorizontalLine(3 * GuiUtil.PADDING));
+    this.layout.topLeft.add(
+        new HorizontalLineWidget(this.utilRow.getWidth() - 2 * GuiUtil.PADDING).margin(3 * GuiUtil.PADDING),
+        (configurator) -> configurator.margin(Spacing.of(0, 0, 0, GuiUtil.PADDING))
+    );
     this.layout.topLeft.add(labels);
   }
 

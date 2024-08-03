@@ -16,6 +16,7 @@ import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -140,14 +141,16 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     this.layout.bottomLeft.add(partPicker);
 
-    this.layout.bottomLeft.add(createHorizontalLine());
+    this.layout.bottomLeft.add(
+        new HorizontalLineWidget(SLIDER_WIDTH - 2 * GuiUtil.PADDING).margin(2 * GuiUtil.PADDING));
 
     this.layout.bottomLeft.add(
         ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
             .size(SLIDER_WIDTH, ELEMENT_HEIGHT)
             .build());
 
-    this.layout.bottomLeft.add(createHorizontalLine());
+    this.layout.bottomLeft.add(
+        new HorizontalLineWidget(SLIDER_WIDTH - 2 * GuiUtil.PADDING).margin(2 * GuiUtil.PADDING));
 
     LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
