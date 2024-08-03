@@ -1,5 +1,7 @@
 package me.roundaround.armorstands.server;
 
+import me.roundaround.armorstands.network.Networking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Whitelist;
@@ -22,6 +24,10 @@ public class ArmorStandUsers {
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public static boolean canEditArmorStands(PlayerEntity playerEntity) {
     if (!(playerEntity instanceof ServerPlayerEntity player)) {
+      return false;
+    }
+
+    if (!ServerPlayNetworking.canSend(player, Networking.PongS2C.ID)) {
       return false;
     }
 
