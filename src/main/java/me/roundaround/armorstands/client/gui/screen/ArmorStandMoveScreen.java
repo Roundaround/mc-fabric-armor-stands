@@ -10,7 +10,7 @@ import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
-import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.entity.Entity;

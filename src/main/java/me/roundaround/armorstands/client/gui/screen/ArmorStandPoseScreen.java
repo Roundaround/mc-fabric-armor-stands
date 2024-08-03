@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.gui.widget.AdjustPoseSliderWidget;
 import me.roundaround.armorstands.client.gui.widget.ScaleSliderWidget;
@@ -13,11 +12,12 @@ import me.roundaround.armorstands.util.Pose;
 import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
@@ -37,6 +37,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
   private ScaleSliderWidget scaleSlider;
   private ButtonWidget activePosePartButton;
+  private FrameWidget activePosePartFrame;
   private LabelWidget posePartLabelLeft;
   private LabelWidget posePartLabelRight;
   private AdjustPoseSliderWidget pitchSlider;
@@ -68,29 +69,18 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void collectElements() {
-    super.collectElements();
-    this.addDrawable((context, mouseX, mouseY, delta) -> {
-      if (this.activePosePartButton == null) {
-        return;
-      }
-
-      RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-      context.drawGuiTexture(
-          SELECTION_TEXTURE, this.activePosePartButton.getX() - 2, this.activePosePartButton.getY() - 2, 24, 24);
-    });
-  }
-
-  @Override
   protected void populateLayout() {
     super.populateLayout();
 
     this.initBottomLeft();
     this.initBottomRight();
+
+    this.activePosePartFrame = this.layout.nonPositioned.add(
+        new FrameWidget(), (parent, self) -> self.frame(this.activePosePartButton));
   }
 
   private void initBottomLeft() {
-    this.layout.bottomLeft.defaultOffAxisContentAlignCenter();
+    this.layout.bottomLeft.defaultOffAxisContentAlignCenter().spacing(2 * GuiUtil.PADDING);
 
     LinearLayoutWidget partPicker = LinearLayoutWidget.vertical()
         .spacing(GuiUtil.PADDING)
@@ -151,13 +141,15 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     partPicker.add(feetRow);
 
     this.layout.bottomLeft.add(partPicker);
-    this.layout.bottomLeft.add(FillerWidget.ofHeight(3 * GuiUtil.PADDING));
+
+    this.layout.bottomLeft.add(new HorizontalLineWidget(SLIDER_WIDTH));
 
     this.layout.bottomLeft.add(
         ButtonWidget.builder(Text.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
             .size(SLIDER_WIDTH, ELEMENT_HEIGHT)
             .build());
-    this.layout.bottomLeft.add(FillerWidget.ofHeight(6 * GuiUtil.PADDING));
+
+    this.layout.bottomLeft.add(new HorizontalLineWidget(SLIDER_WIDTH));
 
     LinearLayoutWidget scaleSection = LinearLayoutWidget.vertical().spacing(GuiUtil.PADDING / 2);
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal()
@@ -308,6 +300,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     }
     this.activePosePartButton = button;
     this.activePosePartButton.active = false;
+
+    this.activePosePartFrame.frame(this.activePosePartButton);
 
     this.layout.refreshPositions();
   }

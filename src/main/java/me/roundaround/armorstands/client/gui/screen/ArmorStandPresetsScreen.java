@@ -11,7 +11,7 @@ import me.roundaround.roundalib.asset.icon.BuiltinIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;

@@ -12,7 +12,7 @@ import me.roundaround.roundalib.client.gui.layout.FillerWidget;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.util.Spacing;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.roundalib.client.gui.widget.LabelWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -56,30 +56,29 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignStart();
 
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    player.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-        Text.translatable("armorstands.current.player")
-    ).bgColor(BACKGROUND_COLOR).build());
-    this.playerFacingLabel = player.add(
-        me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            getCurrentFacingText(this.getPlayer())
-        ).bgColor(BACKGROUND_COLOR).build());
+    player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
+    this.playerFacingLabel = player.add(LabelWidget.builder(this.textRenderer, getCurrentFacingText(this.getPlayer()))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     this.playerRotationLabel = player.add(
-        me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            getCurrentRotationText(this.getPlayer())
-        ).bgColor(BACKGROUND_COLOR).build());
+        LabelWidget.builder(this.textRenderer, getCurrentRotationText(this.getPlayer()))
+            .bgColor(BACKGROUND_COLOR)
+            .build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    stand.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-        Text.translatable("armorstands.current.stand")
-    ).bgColor(BACKGROUND_COLOR).build());
-    this.standFacingLabel = stand.add(me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-        getCurrentFacingText(this.getArmorStand())
-    ).bgColor(BACKGROUND_COLOR).build());
+    stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand"))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
+    this.standFacingLabel = stand.add(LabelWidget.builder(this.textRenderer, getCurrentFacingText(this.getArmorStand()))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     this.standRotationLabel = stand.add(
-        me.roundaround.roundalib.client.gui.widget.LabelWidget.builder(this.textRenderer,
-            getCurrentRotationText(this.getArmorStand())
-        ).bgColor(BACKGROUND_COLOR).build());
+        LabelWidget.builder(this.textRenderer, getCurrentRotationText(this.getArmorStand()))
+            .bgColor(BACKGROUND_COLOR)
+            .build());
     labels.add(stand);
 
     this.layout.topLeft.add(labels, (configurator) -> configurator.margin(Spacing.of(4 * GuiUtil.PADDING, 0, 0, 0)));

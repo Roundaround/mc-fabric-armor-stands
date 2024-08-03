@@ -16,6 +16,7 @@ import me.roundaround.roundalib.asset.icon.CustomIcon;
 import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -26,7 +27,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -38,7 +38,6 @@ import java.util.Optional;
 
 public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements
     PassesEventsThrough {
-  protected static final Identifier SELECTION_TEXTURE = new Identifier(ArmorStandsMod.MOD_ID, "selection");
   protected static final CustomIcon COPY_ICON = new CustomIcon("copy", 20);
   protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
   protected static final int BACKGROUND_COLOR = GuiUtil.genColorInt(0f, 0f, 0f, 0.7f);
@@ -49,7 +48,8 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected final MessageRenderer messageRenderer;
 
   protected LinearLayoutWidget navRow;
-  protected IconButtonWidget activeButton;
+  protected IconButtonWidget activePageButton;
+  protected FrameWidget activePageFrame;
   protected boolean supportsUndoRedo = false;
   protected boolean utilizesInventory = false;
   protected boolean passEvents = true;
@@ -162,24 +162,25 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
           .build();
       if (this.getScreenType() == screenType) {
         navButton.active = false;
-        this.activeButton = navButton;
+        this.activePageButton = navButton;
       }
       this.navRow.add(navButton);
     }
 
     this.layout.topRight.add(this.navRow);
+
+    this.activePageFrame = this.layout.nonPositioned.add(new FrameWidget(), (parent, self) -> {
+      if (this.activePageButton == null) {
+        self.visible = false;
+        return;
+      }
+      self.frame(this.activePageButton);
+      self.visible = true;
+    });
   }
 
   protected void collectElements() {
     this.layout.forEachChild(this::addDrawableChild);
-    this.addDrawable((context, mouseX, mouseY, delta) -> {
-      if (this.activeButton == null) {
-        return;
-      }
-
-      RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-      context.drawGuiTexture(SELECTION_TEXTURE, this.activeButton.getX() - 2, this.activeButton.getY() - 2, 24, 24);
-    });
   }
 
   @Override
@@ -338,42 +339,42 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         if (!Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
         if (!Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         goToNextScreen();
         return true;
       case GLFW.GLFW_KEY_Z:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(false);
         return true;
       case GLFW.GLFW_KEY_Y:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(true);
         return true;
       case GLFW.GLFW_KEY_C:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
         if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
           break;
         }
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE);
         return true;
     }
@@ -383,7 +384,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         continue;
       }
       if (this.client.options.hotbarKeys[screenType.getId()].matchesKey(keyCode, scanCode)) {
-        GuiUtil.playClickSound(this.client);
+        GuiUtil.playClickSound();
         ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
       }
