@@ -12,6 +12,7 @@ import me.roundaround.roundalib.client.gui.GuiUtil;
 import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
 import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.roundalib.client.gui.widget.drawable.LabelWidget;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.CyclingButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -173,7 +174,8 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
       }
     }
 
-    if (!this.presetButtons.contains(this.getFocused())) {
+    Element focused = this.getFocused();
+    if (focused instanceof PresetPoseButtonWidget && !this.presetButtons.contains(focused)) {
       this.setFocused(this.presetButtons.getFirst());
     }
 
