@@ -19,6 +19,9 @@
     "client": [
       "me.roundaround.armorstands.client.ArmorStandsClientMod"
     ],
+    "server": [
+      "me.roundaround.armorstands.server.ArmorStandsServerMod"
+    ],
     "main": [
       "me.roundaround.armorstands.ArmorStandsMod"
     ]

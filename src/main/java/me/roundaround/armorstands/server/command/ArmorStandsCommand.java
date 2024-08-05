@@ -38,7 +38,7 @@ public class ArmorStandsCommand {
               PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
               Stream<String> playerNames = playerManager.getPlayerList()
                   .stream()
-                  .filter((player) -> !ArmorStandUsers.isExplicitlyListed(player))
+                  .filter((player) -> !ArmorStandUsers.isInAllowlist(player))
                   .map((player) -> player.getGameProfile().getName());
               return CommandSource.suggestMatching(playerNames, builder);
             })

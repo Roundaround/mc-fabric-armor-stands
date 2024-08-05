@@ -1,6 +1,7 @@
 package me.roundaround.armorstands.server;
 
 import me.roundaround.armorstands.network.Networking;
+import me.roundaround.armorstands.server.config.ServerSideConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -17,12 +18,17 @@ public class ArmorStandUsers {
   public static final int PERMISSION_LEVEL = 2;
   public static final Whitelist WHITELIST = new Whitelist(FILE);
 
-  public static boolean isExplicitlyListed(ServerPlayerEntity player) {
+  public static boolean isInAllowlist(ServerPlayerEntity player) {
     return WHITELIST.isAllowed(player.getGameProfile());
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public static boolean canEditArmorStands(PlayerEntity playerEntity) {
+    MinecraftServer server = playerEntity.getServer();
+    if (!(server instanceof MinecraftDedicatedServer)) {
+      return true;
+    }
+
     if (!(playerEntity instanceof ServerPlayerEntity player)) {
       return false;
     }
@@ -31,19 +37,16 @@ public class ArmorStandUsers {
       return false;
     }
 
-    MinecraftServer server = player.getServer();
-    if (server instanceof MinecraftDedicatedServer dedicatedServer) {
-      ServerPropertiesHandler propertiesHandler = dedicatedServer.getProperties();
-      if (!propertiesHandler.getEnforceArmorStandPermissions()) {
-        return true;
-      }
-    }
-
-    if (player.hasPermissionLevel(PERMISSION_LEVEL) || server.isSingleplayer()) {
+    ServerSideConfig config = ServerSideConfig.getInstance();
+    if (!config.enforcePermissions.getValue()) {
       return true;
     }
 
-    return isExplicitlyListed(player);
+    if (config.opsHavePermissions.getValue() && player.hasPermissionLevel(PERMISSION_LEVEL)) {
+      return true;
+    }
+
+    return config.allowedUsers.getValue().contains(player.getGameProfile().getId().toString());
   }
 
   public static String[] getNames() {
