@@ -1,25 +1,36 @@
 package me.roundaround.armorstands.server;
 
+import com.mojang.authlib.GameProfile;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
+import me.roundaround.roundalib.config.option.StringListConfigOption;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Whitelist;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ArmorStandUsers {
-  private static final File FILE = new File("armorstandsusers.json");
+  private ArmorStandUsers() {
+  }
+
+  private static final File LEGACY_FILE = new File("armorstandsusers.json");
 
   public static final int PERMISSION_LEVEL = 2;
-  public static final Whitelist WHITELIST = new Whitelist(FILE);
 
-  public static boolean isInAllowlist(ServerPlayerEntity player) {
-    return WHITELIST.isAllowed(player.getGameProfile());
+  public static Optional<Boolean> getLegacyPermissionsEnforced(MinecraftDedicatedServer server) {
+    // TODO: Read server.properties and look for "enforce-armor-stand-permissions"
+    return Optional.empty();
+  }
+
+  public static List<String> getLegacyUserList() {
+    // TODO: Read LEGACY_FILE (json file; array of GameProfile objects)
+    return List.of();
   }
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
@@ -46,10 +57,39 @@ public class ArmorStandUsers {
       return true;
     }
 
-    return config.allowedUsers.getValue().contains(player.getGameProfile().getId().toString());
+    return contains(player.getGameProfile());
   }
 
-  public static String[] getNames() {
-    return WHITELIST.getNames();
+  public static boolean contains(GameProfile profile) {
+    return ServerSideConfig.getInstance().allowedUsers.getValue().contains(profile.getId().toString());
+  }
+
+  public static void add(GameProfile profile) {
+    StringListConfigOption allowedUsers = ServerSideConfig.getInstance().allowedUsers;
+    String toAdd = profile.getId().toString();
+    if (allowedUsers.getValue().stream().noneMatch((uuid) -> uuid.equalsIgnoreCase(toAdd))) {
+      allowedUsers.add(toAdd);
+    }
+  }
+
+  public static void remove(GameProfile profile) {
+    ServerSideConfig.getInstance().allowedUsers.remove(profile.getId().toString());
+  }
+
+  public static void reload() {
+    ServerSideConfig.getInstance().syncWithStore();
+  }
+
+  public static List<String> getNamesAndUuids() {
+    List<String> uuids = ServerSideConfig.getInstance().allowedUsers.getValue();
+    List<String> names = new ArrayList<>();
+    for (String uuid : uuids) {
+      String name = ""; // TODO: Get from usercache.json or whatever MC class
+      if (name != null) {
+        names.add(name);
+      }
+    }
+    uuids.addAll(names);
+    return uuids;
   }
 }

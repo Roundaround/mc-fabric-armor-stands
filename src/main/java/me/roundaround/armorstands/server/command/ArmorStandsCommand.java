@@ -10,8 +10,6 @@ import me.roundaround.armorstands.server.ArmorStandUsers;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.server.Whitelist;
-import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -38,7 +36,7 @@ public class ArmorStandsCommand {
               PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
               Stream<String> playerNames = playerManager.getPlayerList()
                   .stream()
-                  .filter((player) -> !ArmorStandUsers.isInAllowlist(player))
+                  .filter((player) -> !ArmorStandUsers.contains(player.getGameProfile()))
                   .map((player) -> player.getGameProfile().getName());
               return CommandSource.suggestMatching(playerNames, builder);
             })
@@ -48,9 +46,7 @@ public class ArmorStandsCommand {
 
     LiteralArgumentBuilder<ServerCommandSource> removeSub = CommandManager.literal("remove")
         .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
-            .suggests((context, builder) -> {
-              return CommandSource.suggestMatching(ArmorStandUsers.getNames(), builder);
-            })
+            .suggests((context, builder) -> CommandSource.suggestMatching(ArmorStandUsers.getNamesAndUuids(), builder))
             .executes((context) -> executeRemove(context.getSource(),
                 GameProfileArgumentType.getProfileArgument(context, "targets")
             )));
@@ -65,16 +61,14 @@ public class ArmorStandsCommand {
 
   private static int executeAdd(ServerCommandSource source, Collection<GameProfile> targets)
       throws CommandSyntaxException {
-    Whitelist whitelist = ArmorStandUsers.WHITELIST;
     int added = 0;
 
     for (GameProfile profile : targets) {
-      if (whitelist.isAllowed(profile)) {
+      if (ArmorStandUsers.contains(profile)) {
         continue;
       }
 
-      WhitelistEntry entry = new WhitelistEntry(profile);
-      whitelist.add(entry);
+      ArmorStandUsers.add(profile);
       source.sendFeedback(() -> Text.translatable("armorstands.commands.add.success", profile.getName()), true);
       added++;
     }
@@ -88,16 +82,14 @@ public class ArmorStandsCommand {
 
   private static int executeRemove(ServerCommandSource source, Collection<GameProfile> targets)
       throws CommandSyntaxException {
-    Whitelist whitelist = ArmorStandUsers.WHITELIST;
     int removed = 0;
 
     for (GameProfile profile : targets) {
-      if (!whitelist.isAllowed(profile)) {
+      if (!ArmorStandUsers.contains(profile)) {
         continue;
       }
 
-      WhitelistEntry entry = new WhitelistEntry(profile);
-      whitelist.remove(entry);
+      ArmorStandUsers.remove(profile);
       source.sendFeedback(() -> Text.translatable("armorstands.commands.remove.success", profile.getName()), true);
       removed++;
     }
@@ -111,7 +103,7 @@ public class ArmorStandsCommand {
 
   private static int executeReload(ServerCommandSource source) throws CommandSyntaxException {
     try {
-      ArmorStandUsers.WHITELIST.load();
+      ArmorStandUsers.reload();
     } catch (Exception exception) {
       ArmorStandsMod.LOGGER.warn("Failed to reload armor stand users: ", exception);
       throw RELOAD_FAILED_EXCEPTION.create();

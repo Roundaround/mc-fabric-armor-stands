@@ -2,7 +2,6 @@ package me.roundaround.armorstands;
 
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.command.ArmorStandsCommand;
 import me.roundaround.armorstands.server.network.ServerNetworking;
 import net.fabricmc.api.ModInitializer;
@@ -34,12 +33,6 @@ public final class ArmorStandsMod implements ModInitializer {
     CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
       if (environment.dedicated) {
         ArmorStandsCommand.register(dispatcher);
-
-        try {
-          ArmorStandUsers.WHITELIST.load();
-        } catch (Exception exception) {
-          LOGGER.warn("Failed to load armor stand users: ", exception);
-        }
       }
     });
   }
