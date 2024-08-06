@@ -7,13 +7,13 @@ import me.roundaround.roundalib.config.option.StringListConfigOption;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ArmorStandUsers {
   private ArmorStandUsers() {
@@ -80,16 +80,16 @@ public class ArmorStandUsers {
     ServerSideConfig.getInstance().syncWithStore();
   }
 
-  public static List<String> getNamesAndUuids() {
+  public static Collection<String> getNamesAndUuids(MinecraftServer server) {
     List<String> uuids = ServerSideConfig.getInstance().allowedUsers.getValue();
-    List<String> names = new ArrayList<>();
-    for (String uuid : uuids) {
-      String name = ""; // TODO: Get from usercache.json or whatever MC class
-      if (name != null) {
-        names.add(name);
-      }
-    }
-    uuids.addAll(names);
-    return uuids;
+    List<String> values = new ArrayList<>(uuids);
+    PlayerManager playerManager = server.getPlayerManager();
+    values.addAll(uuids.stream()
+        .map(playerManager::getPlayer)
+        .filter(Objects::nonNull)
+        .map(PlayerEntity::getGameProfile)
+        .map(GameProfile::getName)
+        .collect(Collectors.toSet()));
+    return values;
   }
 }
