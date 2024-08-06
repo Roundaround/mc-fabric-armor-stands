@@ -4,12 +4,12 @@
   "package": "me.roundaround.armorstands.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractPropertiesHandlerAccessor",
     "ArmorStandEntityAccessor",
     "ArmorStandEntityServerMixin",
     "NameTagItemMixin",
     "ServerConfigEntryAccessor",
-    "ServerPlayerEntityMixin",
-    "ServerPropertiesHandlerMixin"
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "ArmorStandEntityClientMixin",

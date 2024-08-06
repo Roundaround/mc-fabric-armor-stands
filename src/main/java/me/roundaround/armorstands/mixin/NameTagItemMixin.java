@@ -22,9 +22,13 @@ public abstract class NameTagItemMixin {
   )
   )
   public void useOnEntity(
-      ItemStack stack, PlayerEntity player, LivingEntity entity, Hand hand, CallbackInfoReturnable<ActionResult> info
+      ItemStack stack,
+      PlayerEntity playerEntity,
+      LivingEntity entity,
+      Hand hand,
+      CallbackInfoReturnable<ActionResult> info
   ) {
-    if (!(player instanceof ServerPlayerEntity) || !ArmorStandUsers.canEditArmorStands(player)) {
+    if (!(playerEntity instanceof ServerPlayerEntity player) || !ArmorStandUsers.canEditArmorStands(player)) {
       return;
     }
 

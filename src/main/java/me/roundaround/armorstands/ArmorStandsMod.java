@@ -1,5 +1,6 @@
 package me.roundaround.armorstands;
 
+import me.roundaround.armorstands.client.ClientSideConfig;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.server.command.ArmorStandsCommand;
@@ -25,6 +26,8 @@ public final class ArmorStandsMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
+    ClientSideConfig.getInstance().init();
+
     Networking.registerS2CPayloads();
     Networking.registerC2SPayloads();
 

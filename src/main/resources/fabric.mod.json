@@ -24,18 +24,14 @@
     ],
     "main": [
       "me.roundaround.armorstands.ArmorStandsMod"
+    ],
+    "modmenu": [
+      "me.roundaround.armorstands.compat.modmenu.ModMenuImpl"
     ]
   },
   "mixins": [
     "armorstands.mixins.json"
   ],
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_3806": [
-        "me/roundaround/armorstands/server/EnforceArmorStandPermissions"
-      ]
-    }
-  },
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric-api": "*",

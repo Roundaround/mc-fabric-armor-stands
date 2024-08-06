@@ -1,8 +1,10 @@
 package me.roundaround.armorstands.server;
 
 import com.mojang.authlib.GameProfile;
+import me.roundaround.armorstands.client.ClientSideConfig;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
+import me.roundaround.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.roundalib.config.option.StringListConfigOption;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,37 +13,23 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ArmorStandUsers {
   private ArmorStandUsers() {
   }
 
-  private static final File LEGACY_FILE = new File("armorstandsusers.json");
-
   public static final int PERMISSION_LEVEL = 2;
 
-  public static Optional<Boolean> getLegacyPermissionsEnforced(MinecraftDedicatedServer server) {
-    // TODO: Read server.properties and look for "enforce-armor-stand-permissions"
-    return Optional.empty();
-  }
-
-  public static List<String> getLegacyUserList() {
-    // TODO: Read LEGACY_FILE (json file; array of GameProfile objects)
-    return List.of();
-  }
-
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  public static boolean canEditArmorStands(PlayerEntity playerEntity) {
-    MinecraftServer server = playerEntity.getServer();
+  public static boolean canEditArmorStands(ServerPlayerEntity player) {
+    MinecraftServer server = player.getServer();
     if (!(server instanceof MinecraftDedicatedServer)) {
       return true;
-    }
-
-    if (!(playerEntity instanceof ServerPlayerEntity player)) {
-      return false;
     }
 
     if (!ServerPlayNetworking.canSend(player, Networking.PongS2C.ID)) {
@@ -58,6 +46,14 @@ public class ArmorStandUsers {
     }
 
     return contains(player.getGameProfile());
+  }
+
+  public static boolean doesSneakStateMatchConfig(ServerPlayerEntity player) {
+    MinecraftServer server = player.getServer();
+    BooleanConfigOption configOption = (server != null && server.isDedicated()) ?
+        ServerSideConfig.getInstance().requireSneakingToEdit :
+        ClientSideConfig.getInstance().requireSneakingToEdit;
+    return player.isSneaking() == configOption.getValue();
   }
 
   public static boolean contains(GameProfile profile) {
