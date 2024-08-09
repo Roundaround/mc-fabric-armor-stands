@@ -1,8 +1,9 @@
 package me.roundaround.armorstands.client.network;
 
 import me.roundaround.armorstands.client.gui.MessageRenderer;
-import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
+import me.roundaround.armorstands.client.gui.screen.*;
 import me.roundaround.armorstands.network.*;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.screen.Screen;
@@ -75,6 +76,7 @@ public final class ClientNetworking {
   public static void registerReceivers() {
     ClientPlayNetworking.registerGlobalReceiver(Networking.ClientUpdateS2C.ID, ClientNetworking::handleClientUpdate);
     ClientPlayNetworking.registerGlobalReceiver(Networking.MessageS2C.ID, ClientNetworking::handleMessage);
+    ClientPlayNetworking.registerGlobalReceiver(Networking.OpenScreenS2C.ID, ClientNetworking::handleOpenScreen);
     ClientPlayNetworking.registerGlobalReceiver(Networking.PongS2C.ID, ClientNetworking::handlePong);
   }
 
@@ -105,6 +107,28 @@ public final class ClientNetworking {
           payload.translatable() ? Text.translatable(payload.message()) : Text.literal(payload.message()),
           payload.styled() ? payload.color() : MessageRenderer.BASE_COLOR
       );
+    });
+  }
+
+  private static void handleOpenScreen(Networking.OpenScreenS2C payload, ClientPlayNetworking.Context context) {
+    context.client().execute(() -> {
+      ClientPlayerEntity player = context.player();
+      if (!(player.getWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
+        return;
+      }
+
+      ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(payload.syncId(), player.getInventory(),
+          armorStand, payload.screenType()
+      );
+      player.currentScreenHandler = screenHandler;
+      context.client().setScreen(switch (screenHandler.getScreenType()) {
+        case UTILITIES -> new ArmorStandUtilitiesScreen(screenHandler);
+        case MOVE -> new ArmorStandMoveScreen(screenHandler);
+        case ROTATE -> new ArmorStandRotateScreen(screenHandler);
+        case POSE -> new ArmorStandPoseScreen(screenHandler);
+        case PRESETS -> new ArmorStandPresetsScreen(screenHandler);
+        case INVENTORY -> new ArmorStandInventoryScreen(screenHandler);
+      });
     });
   }
 

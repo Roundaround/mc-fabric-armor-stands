@@ -1,10 +1,8 @@
 package me.roundaround.armorstands.server;
 
 import com.mojang.authlib.GameProfile;
-import me.roundaround.armorstands.client.ClientSideConfig;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
-import me.roundaround.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.roundalib.config.option.StringListConfigOption;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
@@ -46,14 +44,6 @@ public class ArmorStandUsers {
     }
 
     return contains(player.getGameProfile());
-  }
-
-  public static boolean doesSneakStateMatchConfig(ServerPlayerEntity player) {
-    MinecraftServer server = player.getServer();
-    BooleanConfigOption configOption = (server != null && server.isDedicated()) ?
-        ServerSideConfig.getInstance().requireSneakingToEdit :
-        ClientSideConfig.getInstance().requireSneakingToEdit;
-    return player.isSneaking() == configOption.getValue();
   }
 
   public static boolean contains(GameProfile profile) {

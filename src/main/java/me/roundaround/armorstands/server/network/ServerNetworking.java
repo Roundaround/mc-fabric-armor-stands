@@ -1,14 +1,13 @@
 package me.roundaround.armorstands.server.network;
 
 import me.roundaround.armorstands.network.Networking;
+import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.ArmorStandEditor;
-import me.roundaround.armorstands.util.LastUsedScreen;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,6 +34,14 @@ public final class ServerNetworking {
   public static void sendMessagePacket(ServerPlayerEntity player, String message, int color) {
     if (ServerPlayNetworking.canSend(player, Networking.MessageS2C.ID)) {
       ServerPlayNetworking.send(player, new Networking.MessageS2C(message, color));
+    }
+  }
+
+  public static void sendOpenScreenPacket(
+      ServerPlayerEntity player, int syncId, ArmorStandEntity armorStand, ScreenType screenType
+  ) {
+    if (ServerPlayNetworking.canSend(player, Networking.OpenScreenS2C.ID)) {
+      ServerPlayNetworking.send(player, new Networking.OpenScreenS2C(syncId, armorStand.getId(), screenType));
     }
   }
 
@@ -109,19 +116,11 @@ public final class ServerNetworking {
   private static void handleRequestScreen(Networking.RequestScreenC2S payload, ServerPlayNetworking.Context context) {
     context.player().server.execute(() -> {
       ServerPlayerEntity player = context.player();
-      Entity entity = player.getServerWorld().getEntityById(payload.armorStandId());
-      if (!(entity instanceof ArmorStandEntity armorStand)) {
+      if (!(player.getServerWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
         return;
       }
 
-      if (player.currentScreenHandler instanceof ArmorStandScreenHandler) {
-        // Bypass the normal screen closing logic, as we don't want to send a
-        // close packet to the client.
-        player.onHandledScreenClosed();
-      }
-
-      LastUsedScreen.set(player, armorStand, payload.screenType());
-      player.openHandledScreen(ArmorStandScreenHandler.Factory.create(payload.screenType(), armorStand));
+      player.openArmorStandScreen(armorStand, payload.screenType());
     });
   }
 

@@ -26,6 +26,7 @@ public final class Networking {
 
   public static final Identifier CLIENT_UPDATE_S2C = new Identifier(ArmorStandsMod.MOD_ID, "client_update_s2c");
   public static final Identifier MESSAGE_S2C = new Identifier(ArmorStandsMod.MOD_ID, "message_s2c");
+  public static final Identifier OPEN_SCREEN_S2C = new Identifier(ArmorStandsMod.MOD_ID, "open_screen_s2c");
   public static final Identifier PONG_S2C = new Identifier(ArmorStandsMod.MOD_ID, "pong_s2c");
 
   public static final Identifier ADJUST_POSE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "adjust_pose_c2s");
@@ -44,6 +45,7 @@ public final class Networking {
   public static void registerS2CPayloads() {
     PayloadTypeRegistry.playS2C().register(ClientUpdateS2C.ID, ClientUpdateS2C.CODEC);
     PayloadTypeRegistry.playS2C().register(MessageS2C.ID, MessageS2C.CODEC);
+    PayloadTypeRegistry.playS2C().register(OpenScreenS2C.ID, OpenScreenS2C.CODEC);
     PayloadTypeRegistry.playS2C().register(PongS2C.ID, PongS2C.CODEC);
   }
 
@@ -121,6 +123,19 @@ public final class Networking {
 
     @Override
     public Id<MessageS2C> getId() {
+      return ID;
+    }
+  }
+
+  public record OpenScreenS2C(int syncId, int armorStandId, ScreenType screenType) implements CustomPayload {
+    public static final CustomPayload.Id<OpenScreenS2C> ID = new CustomPayload.Id<>(OPEN_SCREEN_S2C);
+    public static final PacketCodec<RegistryByteBuf, OpenScreenS2C> CODEC = PacketCodec.tuple(PacketCodecs.INTEGER,
+        OpenScreenS2C::syncId, PacketCodecs.INTEGER, OpenScreenS2C::armorStandId, ScreenType.PACKET_CODEC,
+        OpenScreenS2C::screenType, OpenScreenS2C::new
+    );
+
+    @Override
+    public Id<OpenScreenS2C> getId() {
       return ID;
     }
   }

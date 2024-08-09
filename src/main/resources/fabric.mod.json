@@ -32,6 +32,13 @@
   "mixins": [
     "armorstands.mixins.json"
   ],
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_3222": [
+        "me/roundaround/armorstands/server/network/ArmorStandScreenHandlerAccess"
+      ]
+    }
+  },
   "depends": {
     "fabricloader": ">=0.15.11",
     "fabric-api": "*",
