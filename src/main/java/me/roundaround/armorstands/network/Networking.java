@@ -24,23 +24,23 @@ public final class Networking {
   private Networking() {
   }
 
-  public static final Identifier CLIENT_UPDATE_S2C = new Identifier(ArmorStandsMod.MOD_ID, "client_update_s2c");
-  public static final Identifier MESSAGE_S2C = new Identifier(ArmorStandsMod.MOD_ID, "message_s2c");
-  public static final Identifier OPEN_SCREEN_S2C = new Identifier(ArmorStandsMod.MOD_ID, "open_screen_s2c");
-  public static final Identifier PONG_S2C = new Identifier(ArmorStandsMod.MOD_ID, "pong_s2c");
+  public static final Identifier CLIENT_UPDATE_S2C = Identifier.of(ArmorStandsMod.MOD_ID, "client_update_s2c");
+  public static final Identifier MESSAGE_S2C = Identifier.of(ArmorStandsMod.MOD_ID, "message_s2c");
+  public static final Identifier OPEN_SCREEN_S2C = Identifier.of(ArmorStandsMod.MOD_ID, "open_screen_s2c");
+  public static final Identifier PONG_S2C = Identifier.of(ArmorStandsMod.MOD_ID, "pong_s2c");
 
-  public static final Identifier ADJUST_POSE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "adjust_pose_c2s");
-  public static final Identifier ADJUST_POS_C2S = new Identifier(ArmorStandsMod.MOD_ID, "adjust_pos_c2s");
-  public static final Identifier ADJUST_YAW_C2S = new Identifier(ArmorStandsMod.MOD_ID, "adjust_yaw_c2s");
-  public static final Identifier PING_C2S = new Identifier(ArmorStandsMod.MOD_ID, "ping_c2s");
-  public static final Identifier REQUEST_SCREEN_C2S = new Identifier(ArmorStandsMod.MOD_ID, "request_screen_c2s");
-  public static final Identifier SET_FLAG_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_flag_c2s");
-  public static final Identifier SET_POSE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_pose_c2s");
-  public static final Identifier SET_POSE_PRESET_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_pose_preset_c2s");
-  public static final Identifier SET_SCALE_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_scale_c2s");
-  public static final Identifier SET_YAW_C2S = new Identifier(ArmorStandsMod.MOD_ID, "set_yaw_c2s");
-  public static final Identifier UNDO_C2S = new Identifier(ArmorStandsMod.MOD_ID, "undo_c2s");
-  public static final Identifier UTILITY_ACTION_C2S = new Identifier(ArmorStandsMod.MOD_ID, "utility_action_c2s");
+  public static final Identifier ADJUST_POSE_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "adjust_pose_c2s");
+  public static final Identifier ADJUST_POS_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "adjust_pos_c2s");
+  public static final Identifier ADJUST_YAW_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "adjust_yaw_c2s");
+  public static final Identifier PING_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "ping_c2s");
+  public static final Identifier REQUEST_SCREEN_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "request_screen_c2s");
+  public static final Identifier SET_FLAG_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "set_flag_c2s");
+  public static final Identifier SET_POSE_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "set_pose_c2s");
+  public static final Identifier SET_POSE_PRESET_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "set_pose_preset_c2s");
+  public static final Identifier SET_SCALE_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "set_scale_c2s");
+  public static final Identifier SET_YAW_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "set_yaw_c2s");
+  public static final Identifier UNDO_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "undo_c2s");
+  public static final Identifier UTILITY_ACTION_C2S = Identifier.of(ArmorStandsMod.MOD_ID, "utility_action_c2s");
 
   public static void registerS2CPayloads() {
     PayloadTypeRegistry.playS2C().register(ClientUpdateS2C.ID, ClientUpdateS2C.CODEC);

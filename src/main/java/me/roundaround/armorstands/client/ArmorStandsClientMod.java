@@ -27,7 +27,7 @@ public class ArmorStandsClientMod implements ClientModInitializer {
     FabricLoader.getInstance()
         .getModContainer(ArmorStandsMod.MOD_ID)
         .ifPresent((container) -> ResourceManagerHelper.registerBuiltinResourcePack(
-            new Identifier(ArmorStandsMod.MOD_ID, "armorstands-dark-ui"), container,
+            Identifier.of(ArmorStandsMod.MOD_ID, "armorstands-dark-ui"), container,
             Text.literal("Armor Stands Dark UI"), ResourcePackActivationType.NORMAL
         ));
   }

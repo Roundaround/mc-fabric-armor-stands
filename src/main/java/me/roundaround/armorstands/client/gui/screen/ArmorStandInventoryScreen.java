@@ -19,7 +19,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final int TOGGLE_HEIGHT = 16;
-  private static final Identifier CUSTOM_TEXTURE = new Identifier(
+  private static final Identifier CUSTOM_TEXTURE = Identifier.of(
       ArmorStandsMod.MOD_ID, "textures/gui/container/inventory.png");
 
   private float prevMouseX;
