@@ -1,7 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.network.ClientNetworking;
@@ -11,6 +10,7 @@ import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.roundalib.client.gui.widget.ToggleWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
@@ -62,10 +62,10 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void initTabNavigation() {
+  protected void refreshWidgetPositions() {
     this.x = (this.width - BACKGROUND_WIDTH) / 2;
     this.y = (this.height - BACKGROUND_HEIGHT) / 2;
-    super.initTabNavigation();
+    super.refreshWidgetPositions();
   }
 
   @Override
@@ -78,9 +78,9 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-    RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-
-    context.drawTexture(CUSTOM_TEXTURE, this.x, this.y, 0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+    context.drawTexture(RenderLayer::getGuiTextured, CUSTOM_TEXTURE, this.x, this.y, 0, 0, BACKGROUND_WIDTH,
+        BACKGROUND_HEIGHT, 256, 256
+    );
 
     ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {

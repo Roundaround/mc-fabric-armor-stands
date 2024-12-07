@@ -265,6 +265,6 @@ public class ArmorStandScreenHandler extends ScreenHandler {
   }
 
   public static boolean isSlotDisabled(ArmorStandEntity armorStand, EquipmentSlot slot) {
-    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getArmorStandSlotId()) != 0;
+    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getEntitySlotId()) != 0;
   }
 }

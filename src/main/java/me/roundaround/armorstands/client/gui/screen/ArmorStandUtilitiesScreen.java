@@ -110,10 +110,8 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .setHeight(BUTTON_HEIGHT)
         .labelBgColor(BACKGROUND_COLOR)
         .build();
-    this.subscriptions.add(this.values.get(flag).subscribe(
-        (value) -> widget.setValue(value ^ flag.invertControl()),
-        Observable.SubscribeOptions.builder().withHardReference().build()
-    ));
+    this.subscriptions.add(this.values.get(flag)
+        .subscribe((value) -> widget.setValue(value ^ flag.invertControl()), Observable.SubscribeOptions.create()));
     return widget;
   }
 

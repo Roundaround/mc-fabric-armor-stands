@@ -74,7 +74,7 @@ public class ScaleAction implements ArmorStandAction {
       }
     }
 
-    EntityAttributeInstance attribute = armorStand.getAttributes().getCustomInstance(EntityAttributes.GENERIC_SCALE);
+    EntityAttributeInstance attribute = armorStand.getAttributes().getCustomInstance(EntityAttributes.SCALE);
     if (attribute != null) {
       attribute.setBaseValue(target);
     }
