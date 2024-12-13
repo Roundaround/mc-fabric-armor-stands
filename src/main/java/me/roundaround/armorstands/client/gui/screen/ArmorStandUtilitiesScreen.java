@@ -112,7 +112,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .build();
     this.subscriptions.add(this.values.get(flag).subscribe(
         (value) -> widget.setValue(value ^ flag.invertControl()),
-        Observable.SubscribeOptions.builder().withHardReference().build()
+        Observable.SubscribeOptions.create()
     ));
     return widget;
   }
