@@ -26,35 +26,40 @@ public enum ArmorStandFlag {
   INVULNERABLE(7, "invulnerable", false),
   LOCK_INVENTORY(8, "inventory", false);
 
-  public static final IntFunction<ArmorStandFlag> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
-      ArmorStandFlag::getId, values(), ValueLists.OutOfBoundsHandling.ZERO);
+  public static final IntFunction<ArmorStandFlag> ID_TO_VALUE_FUNCTION =
+      ValueLists.createIndexToValueFunction(ArmorStandFlag::getIndex,
+      values(),
+      ValueLists.OutOfBoundsHandling.ZERO
+  );
   public static final PacketCodec<ByteBuf, ArmorStandFlag> PACKET_CODEC = PacketCodecs.indexed(
-      ID_TO_VALUE_FUNCTION, ArmorStandFlag::getId);
+      ID_TO_VALUE_FUNCTION,
+      ArmorStandFlag::getIndex
+  );
 
   // Magic number from Vanilla Tweaks armor stand data pack. ¯\_(ツ)_/¯
   private static final int ALL_SLOTS_DISABLED = 4144959;
 
-  private final int id;
-  private final String name;
+  private final int index;
+  private final String id;
   private final boolean invertControl;
 
-  ArmorStandFlag(int id, String name, boolean invertControl) {
+  ArmorStandFlag(int index, String id, boolean invertControl) {
+    this.index = index;
     this.id = id;
-    this.name = name;
     this.invertControl = invertControl;
   }
 
   @Override
   public String toString() {
-    return this.name;
-  }
-
-  public int getId() {
     return this.id;
   }
 
+  public int getIndex() {
+    return this.index;
+  }
+
   public Text getDisplayName() {
-    return Text.translatable("armorstands.flags." + this.name);
+    return Text.translatable("armorstands.flags." + this.id);
   }
 
   public boolean invertControl() {
@@ -122,13 +127,10 @@ public enum ArmorStandFlag {
   }
 
   public static ArmorStandFlag fromString(String value) {
-    return Arrays.stream(ArmorStandFlag.values())
-        .filter((flag) -> flag.name.equals(value))
-        .findFirst()
-        .orElseGet(() -> {
-          ArmorStandsMod.LOGGER.warn("Unknown flag id '{}'. Returning UNKNOWN.", value);
-          return UNKNOWN;
-        });
+    return Arrays.stream(ArmorStandFlag.values()).filter((flag) -> flag.id.equals(value)).findFirst().orElseGet(() -> {
+      ArmorStandsMod.LOGGER.warn("Unknown flag id '{}'. Returning UNKNOWN.", value);
+      return UNKNOWN;
+    });
   }
 
   public static List<ArmorStandFlag> getFlags() {

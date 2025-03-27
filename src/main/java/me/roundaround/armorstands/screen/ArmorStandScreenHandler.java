@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.mixin.LivingEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
@@ -21,14 +22,14 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 
 public class ArmorStandScreenHandler extends ScreenHandler {
-  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = Identifier.ofVanilla("item/empty_slot_sword");
+  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = Identifier.ofVanilla("container/slot/sword");
 
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[]{
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
       PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE
   };
   private static final Identifier[] EMPTY_HAND_SLOT_TEXTURES = new Identifier[]{
-      EMPTY_MAINHAND_ARMOR_SLOT, PlayerScreenHandler.EMPTY_OFFHAND_ARMOR_SLOT
+      EMPTY_MAINHAND_ARMOR_SLOT, PlayerScreenHandler.EMPTY_OFF_HAND_SLOT_TEXTURE
   };
   private static final EquipmentSlot[] EQUIPMENT_SLOT_ORDER = new EquipmentSlot[]{
       EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
@@ -45,7 +46,10 @@ public class ArmorStandScreenHandler extends ScreenHandler {
   private final ArrayList<Pair<Slot, EquipmentSlot>> armorSlots = new ArrayList<>();
 
   public ArmorStandScreenHandler(
-      int syncId, PlayerInventory playerInventory, ArmorStandEntity armorStand, ScreenType screenType
+      int syncId,
+      PlayerInventory playerInventory,
+      ArmorStandEntity armorStand,
+      ScreenType screenType
   ) {
     super(null, syncId);
 
@@ -53,10 +57,10 @@ public class ArmorStandScreenHandler extends ScreenHandler {
     this.armorStand = armorStand;
     this.screenType = screenType;
 
-    this.inventory = new ArmorStandInventory(armorStand);
+    this.inventory = new ArmorStandInventory(armorStand, ((LivingEntityAccessor) armorStand).getEquipment());
 
-    if (playerInventory.player instanceof ServerPlayerEntity) {
-      this.editor = ArmorStandEditor.get((ServerPlayerEntity) playerInventory.player, armorStand);
+    if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+      this.editor = ArmorStandEditor.get(serverPlayer, armorStand);
     } else {
       this.editor = null;
     }
@@ -90,8 +94,8 @@ public class ArmorStandScreenHandler extends ScreenHandler {
         }
 
         @Override
-        public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, EMPTY_HAND_SLOT_TEXTURES[index]);
+        public Identifier getBackgroundSprite() {
+          return EMPTY_HAND_SLOT_TEXTURES[index];
         }
 
         @Override
@@ -150,10 +154,8 @@ public class ArmorStandScreenHandler extends ScreenHandler {
         }
 
         @Override
-        public Pair<Identifier, Identifier> getBackgroundSprite() {
-          return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE,
-              EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()]
-          );
+        public Identifier getBackgroundSprite() {
+          return EMPTY_ARMOR_SLOT_TEXTURES[equipmentSlot.getEntitySlotId()];
         }
       });
 

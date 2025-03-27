@@ -4,12 +4,12 @@ import com.mojang.authlib.GameProfile;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.AbstractPropertiesHandlerAccessor;
 import me.roundaround.armorstands.mixin.ServerConfigEntryAccessor;
-import me.roundaround.roundalib.config.ConfigPath;
-import me.roundaround.roundalib.config.manage.ModConfigImpl;
-import me.roundaround.roundalib.config.manage.store.WorldScopedFileStore;
-import me.roundaround.roundalib.config.option.BooleanConfigOption;
-import me.roundaround.roundalib.config.option.StringListConfigOption;
-import me.roundaround.roundalib.nightconfig.core.Config;
+import me.roundaround.armorstands.roundalib.config.ConfigPath;
+import me.roundaround.armorstands.roundalib.config.manage.ModConfigImpl;
+import me.roundaround.armorstands.roundalib.config.manage.store.WorldScopedFileStore;
+import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
+import me.roundaround.armorstands.roundalib.nightconfig.core.Config;
 import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -31,7 +31,7 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
     if (instance == null || instance.server == null) {
       throw new RuntimeException(
           "Armor Stands mod server-side config not initialized properly! This is a bug with the mod. Please report it" +
-              " to the mod's author.");
+          " to the mod's author.");
     }
     return instance;
   }
@@ -66,21 +66,20 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
 
   @Override
   protected void registerOptions() {
-    this.requireSneakingToEdit = this.buildRegistration(
-        BooleanConfigOption.yesNoBuilder(ConfigPath.of("requireSneakingToEdit"))
-            .setDefaultValue(false)
-            .setComment("Require users to sneak to use the mod.")
-            .build()).serverOnly().commit();
-    this.enforcePermissions = this.buildRegistration(
-        BooleanConfigOption.yesNoBuilder(ConfigPath.of("enforcePermissions"))
-            .setDefaultValue(true)
-            .setComment("Only allow permitted users to use the mod.")
-            .build()).serverOnly().commit();
-    this.opsHavePermissions = this.buildRegistration(
-        BooleanConfigOption.yesNoBuilder(ConfigPath.of("opsHavePermissions"))
-            .setDefaultValue(true)
-            .setComment("Whether server OPs are always permitted to use the mod.")
-            .build()).serverOnly().commit();
+    this.requireSneakingToEdit = this.buildRegistration(BooleanConfigOption.yesNoBuilder(ConfigPath.of(
+            "requireSneakingToEdit")).setDefaultValue(false).setComment("Require users to sneak to use the mod.").build())
+        .serverOnly()
+        .commit();
+    this.enforcePermissions = this.buildRegistration(BooleanConfigOption.yesNoBuilder(ConfigPath.of(
+        "enforcePermissions"))
+        .setDefaultValue(true)
+        .setComment("Only allow permitted users to use the mod.")
+        .build()).serverOnly().commit();
+    this.opsHavePermissions = this.buildRegistration(BooleanConfigOption.yesNoBuilder(ConfigPath.of(
+        "opsHavePermissions"))
+        .setDefaultValue(true)
+        .setComment("Whether server OPs are always permitted to use the mod.")
+        .build()).serverOnly().commit();
     this.allowedUsers = this.buildRegistration(StringListConfigOption.builder(ConfigPath.of("allowedUsers"))
         .setComment("List of users by their UUID permitted to use the mod.")
         .build()).serverOnly().commit();
@@ -106,7 +105,9 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
     if (config.contains(allowedUsersPath)) {
       if (Files.isReadable(Paths.get(LEGACY_USERS_FILE))) {
         ArmorStandsMod.LOGGER.warn(
-            "Users listed in config file, but legacy {} file still exists. Consider removing it.", LEGACY_USERS_FILE);
+            "Users listed in config file, but legacy {} file still exists. Consider removing it.",
+            LEGACY_USERS_FILE
+        );
       }
     } else {
       config.set(allowedUsersPath, getLegacyAllowlist());
@@ -154,7 +155,10 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       legacyAllowlist.load();
     } catch (IOException e) {
       ArmorStandsMod.LOGGER.warn(
-          "Failed to parse legacy {} file during automatic config migration. Skipping.", LEGACY_USERS_FILE, e);
+          "Failed to parse legacy {} file during automatic config migration. Skipping.",
+          LEGACY_USERS_FILE,
+          e
+      );
       return List.of();
     }
 
@@ -162,7 +166,10 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       Files.delete(path);
     } catch (IOException e) {
       ArmorStandsMod.LOGGER.warn(
-          "Failed to remove legacy {} file during automatic config migration.", LEGACY_USERS_FILE, e);
+          "Failed to remove legacy {} file during automatic config migration.",
+          LEGACY_USERS_FILE,
+          e
+      );
     }
 
     return legacyAllowlist.values().stream().map(this::extractUuid).toList();

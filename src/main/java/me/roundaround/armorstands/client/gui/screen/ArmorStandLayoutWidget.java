@@ -1,9 +1,9 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.NonPositioningLayoutWidget;
-import me.roundaround.roundalib.client.gui.layout.SizableLayoutWidget;
-import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.layout.NonPositioningLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.layout.SizableLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;

@@ -1,9 +1,9 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
-import me.roundaround.roundalib.asset.icon.BuiltinIcon;
-import me.roundaround.roundalib.asset.icon.CustomIcon;
-import me.roundaround.roundalib.asset.icon.Icon;
+import me.roundaround.armorstands.roundalib.client.gui.icon.BuiltinIcon;
+import me.roundaround.armorstands.roundalib.client.gui.icon.CustomIcon;
+import me.roundaround.armorstands.roundalib.client.gui.icon.Icon;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.text.Text;
@@ -20,27 +20,32 @@ public enum ScreenType {
   PRESETS(4, "presets", new CustomIcon("pose", 20)),
   INVENTORY(5, "inventory", new CustomIcon("inventory", 20));
 
-  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
-      ScreenType::getId, values(), ValueLists.OutOfBoundsHandling.ZERO);
+  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+      ScreenType::getIndex,
+      values(),
+      ValueLists.OutOfBoundsHandling.ZERO
+  );
   public static final PacketCodec<ByteBuf, ScreenType> PACKET_CODEC = PacketCodecs.indexed(
-      ID_TO_VALUE_FUNCTION, ScreenType::getId);
+      ID_TO_VALUE_FUNCTION,
+      ScreenType::getIndex
+  );
 
-  private final int id;
-  private final String name;
+  private final int index;
+  private final String id;
   private final Icon icon;
 
-  ScreenType(int id, String name, Icon icon) {
+  ScreenType(int index, String id, Icon icon) {
+    this.index = index;
     this.id = id;
-    this.name = name;
     this.icon = icon;
   }
 
-  public int getId() {
-    return this.id;
+  public int getIndex() {
+    return this.index;
   }
 
-  public String getName() {
-    return this.name;
+  public String getId() {
+    return this.id;
   }
 
   public Icon getIcon() {
@@ -48,7 +53,7 @@ public enum ScreenType {
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.screen." + name);
+    return Text.translatable("armorstands.screen." + id);
   }
 
   public boolean usesInventory() {
@@ -72,6 +77,6 @@ public enum ScreenType {
   }
 
   public static ScreenType fromId(String id) {
-    return Arrays.stream(values()).filter(type -> type.getName().equals(id)).findFirst().orElse(null);
+    return Arrays.stream(values()).filter(type -> type.getId().equals(id)).findFirst().orElse(null);
   }
 }

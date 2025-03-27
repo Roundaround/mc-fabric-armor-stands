@@ -1,110 +1,88 @@
 package me.roundaround.armorstands.entity;
 
-import java.util.List;
-
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import net.minecraft.entity.EntityEquipment;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+
+import java.util.Map;
 
 public class ArmorStandInventory implements Inventory {
+  public static final Int2ObjectMap<EquipmentSlot> EQUIPMENT_SLOTS = new Int2ObjectArrayMap<>(Map.of(
+      EquipmentSlot.MAINHAND.getEntitySlotId(),
+      EquipmentSlot.MAINHAND,
+      EquipmentSlot.OFFHAND.getEntitySlotId(),
+      EquipmentSlot.OFFHAND,
+      EquipmentSlot.FEET.getOffsetEntitySlotId(2),
+      EquipmentSlot.FEET,
+      EquipmentSlot.LEGS.getOffsetEntitySlotId(2),
+      EquipmentSlot.LEGS,
+      EquipmentSlot.CHEST.getOffsetEntitySlotId(2),
+      EquipmentSlot.CHEST,
+      EquipmentSlot.HEAD.getOffsetEntitySlotId(2),
+      EquipmentSlot.HEAD
+  ));
+
   public final ArmorStandEntity armorStand;
 
-  private final DefaultedList<ItemStack> heldItems;
-  private final DefaultedList<ItemStack> armorItems;
-  private final List<DefaultedList<ItemStack>> fullInventory;
+  private final EntityEquipment equipment;
 
-  public ArmorStandInventory(ArmorStandEntity armorStand) {
+  public ArmorStandInventory(ArmorStandEntity armorStand, EntityEquipment equipment) {
     this.armorStand = armorStand;
-
-    if (this.armorStand == null) {
-      this.heldItems = DefaultedList.ofSize(2, ItemStack.EMPTY);
-      this.armorItems = DefaultedList.ofSize(4, ItemStack.EMPTY);
-    } else {
-      this.heldItems = ((ArmorStandEntityAccessor) armorStand).getHeldItems();
-      this.armorItems = ((ArmorStandEntityAccessor) armorStand).getArmorItems();
-    }
-
-    this.fullInventory = List.of(heldItems, armorItems);
+    this.equipment = equipment;
   }
 
   @Override
   public int size() {
-    return this.heldItems.size() + this.armorItems.size();
+    return EQUIPMENT_SLOTS.size();
   }
 
   @Override
   public void clear() {
-    this.fullInventory.forEach(DefaultedList::clear);
+    this.equipment.clear();
   }
 
   @Override
   public boolean isEmpty() {
-    return this.fullInventory
-        .stream()
-        .allMatch((items) -> items.stream().allMatch(ItemStack::isEmpty));
+    for (EquipmentSlot equipmentSlot : EQUIPMENT_SLOTS.values()) {
+      if (!this.equipment.get(equipmentSlot).isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
   public ItemStack getStack(int slot) {
-    for (DefaultedList<ItemStack> items : this.fullInventory) {
-      if (slot < 0) {
-        return ItemStack.EMPTY;
-      } else if (slot >= items.size()) {
-        slot -= items.size();
-      } else {
-        return items.get(slot);
-      }
-    }
-
-    return ItemStack.EMPTY;
+    EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
+    return equipmentSlot != null ? this.equipment.get(equipmentSlot) : ItemStack.EMPTY;
   }
 
   @Override
   public void setStack(int slot, ItemStack stack) {
-    for (DefaultedList<ItemStack> items : this.fullInventory) {
-      if (slot < 0) {
-        return;
-      } else if (slot >= items.size()) {
-        slot -= items.size();
-      } else {
-        items.set(slot, stack);
-        return;
-      }
+    EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
+    if (equipmentSlot != null) {
+      this.equipment.put(equipmentSlot, stack);
     }
   }
 
   @Override
   public ItemStack removeStack(int slot) {
-    for (DefaultedList<ItemStack> items : fullInventory) {
-      if (slot < 0) {
-        return ItemStack.EMPTY;
-      } else if (slot >= items.size()) {
-        slot -= items.size();
-      } else {
-        ItemStack stack = items.get(slot);
-        items.set(slot, ItemStack.EMPTY);
-        return stack;
-      }
-    }
-
-    return ItemStack.EMPTY;
+    EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
+    return equipmentSlot != null ? this.equipment.put(equipmentSlot, ItemStack.EMPTY) : ItemStack.EMPTY;
   }
 
   @Override
   public ItemStack removeStack(int slot, int amount) {
-    for (DefaultedList<ItemStack> items : this.fullInventory) {
-      if (slot < 0) {
-        return ItemStack.EMPTY;
-      } else if (slot >= items.size()) {
-        slot -= items.size();
-      } else if (items.get(slot).isEmpty()) {
-        return ItemStack.EMPTY;
-      } else {
-        return Inventories.splitStack(items, slot, amount);
+    EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
+    if (equipmentSlot != null) {
+      ItemStack itemStack = this.equipment.get(equipmentSlot);
+      if (!itemStack.isEmpty()) {
+        return itemStack.split(amount);
       }
     }
 

@@ -204,5 +204,6 @@
   "armorstands.action.rotate": "",
   "armorstands.action.scale": "",
   "armorstands.action.snapToGround": "",
-  "armorstands.action.toolRack": ""
+  "armorstands.action.toolRack": "",
+  "armorstands.resource.darkui": "Armor Stands Dark UI"
 }

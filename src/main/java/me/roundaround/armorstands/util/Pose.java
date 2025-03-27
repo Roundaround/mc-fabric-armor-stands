@@ -1,10 +1,10 @@
 package me.roundaround.armorstands.util;
 
-import java.util.Optional;
-
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.EulerAngle;
+
+import java.util.Optional;
 
 public class Pose implements ArmorStandApplyable {
   private final Optional<EulerAngle> optionalHead;
@@ -21,7 +21,8 @@ public class Pose implements ArmorStandApplyable {
         armorStand.getRightArmRotation(),
         armorStand.getLeftArmRotation(),
         armorStand.getRightLegRotation(),
-        armorStand.getLeftLegRotation());
+        armorStand.getLeftLegRotation()
+    );
   }
 
   public Pose(
@@ -30,14 +31,16 @@ public class Pose implements ArmorStandApplyable {
       EulerAngle rightArm,
       EulerAngle leftArm,
       EulerAngle rightLeg,
-      EulerAngle leftLeg) {
+      EulerAngle leftLeg
+  ) {
     this(
         Optional.of(head),
         Optional.of(body),
         Optional.of(rightArm),
         Optional.of(leftArm),
         Optional.of(rightLeg),
-        Optional.of(leftLeg));
+        Optional.of(leftLeg)
+    );
   }
 
   public Pose(
@@ -46,7 +49,8 @@ public class Pose implements ArmorStandApplyable {
       Optional<EulerAngle> optionalRightArm,
       Optional<EulerAngle> optionalLeftArm,
       Optional<EulerAngle> optionalRightLeg,
-      Optional<EulerAngle> optionalLeftLeg) {
+      Optional<EulerAngle> optionalLeftLeg
+  ) {
     this.optionalHead = optionalHead;
     this.optionalBody = optionalBody;
     this.optionalRightArm = optionalRightArm;
@@ -57,12 +61,12 @@ public class Pose implements ArmorStandApplyable {
 
   @Override
   public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    optionalHead.ifPresent((head) -> armorStand.setHeadRotation(head));
-    optionalBody.ifPresent((body) -> armorStand.setBodyRotation(body));
-    optionalRightArm.ifPresent((rightArm) -> armorStand.setRightArmRotation(rightArm));
-    optionalLeftArm.ifPresent((leftArm) -> armorStand.setLeftArmRotation(leftArm));
-    optionalRightLeg.ifPresent((rightLeg) -> armorStand.setRightLegRotation(rightLeg));
-    optionalLeftLeg.ifPresent((leftLeg) -> armorStand.setLeftLegRotation(leftLeg));
+    optionalHead.ifPresent(armorStand::setHeadRotation);
+    optionalBody.ifPresent(armorStand::setBodyRotation);
+    optionalRightArm.ifPresent(armorStand::setRightArmRotation);
+    optionalLeftArm.ifPresent(armorStand::setLeftArmRotation);
+    optionalRightLeg.ifPresent(armorStand::setRightLegRotation);
+    optionalLeftLeg.ifPresent(armorStand::setLeftLegRotation);
   }
 
   public EulerAngle getHead() {
@@ -91,30 +95,13 @@ public class Pose implements ArmorStandApplyable {
 
   public Pose mirror() {
     return new Pose(
-        optionalHead.map((head) -> new EulerAngle(
-            head.getPitch(),
-            -head.getYaw(),
-            -head.getRoll())),
-        optionalBody.map((body) -> new EulerAngle(
-            body.getPitch(),
-            -body.getYaw(),
-            -body.getRoll())),
-        optionalLeftArm.map((leftArm) -> new EulerAngle(
-            leftArm.getPitch(),
-            -leftArm.getYaw(),
-            -leftArm.getRoll())),
-        optionalRightArm.map((rightArm) -> new EulerAngle(
-            rightArm.getPitch(),
-            -rightArm.getYaw(),
-            -rightArm.getRoll())),
-        optionalLeftLeg.map((leftLeg) -> new EulerAngle(
-            leftLeg.getPitch(),
-            -leftLeg.getYaw(),
-            -leftLeg.getRoll())),
-        optionalRightLeg.map((rightLeg) -> new EulerAngle(
-            rightLeg.getPitch(),
-            -rightLeg.getYaw(),
-            -rightLeg.getRoll())));
+        optionalHead.map((head) -> new EulerAngle(head.pitch(), -head.yaw(), -head.roll())),
+        optionalBody.map((body) -> new EulerAngle(body.pitch(), -body.yaw(), -body.roll())),
+        optionalLeftArm.map((leftArm) -> new EulerAngle(leftArm.pitch(), -leftArm.yaw(), -leftArm.roll())),
+        optionalRightArm.map((rightArm) -> new EulerAngle(rightArm.pitch(), -rightArm.yaw(), -rightArm.roll())),
+        optionalLeftLeg.map((leftLeg) -> new EulerAngle(leftLeg.pitch(), -leftLeg.yaw(), -leftLeg.roll())),
+        optionalRightLeg.map((rightLeg) -> new EulerAngle(rightLeg.pitch(), -rightLeg.yaw(), -rightLeg.roll()))
+    );
   }
 
   @FunctionalInterface

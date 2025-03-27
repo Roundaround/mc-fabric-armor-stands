@@ -2,8 +2,8 @@ package me.roundaround.armorstands.server;
 
 import com.mojang.authlib.GameProfile;
 import me.roundaround.armorstands.network.Networking;
+import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
-import me.roundaround.roundalib.config.option.StringListConfigOption;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;

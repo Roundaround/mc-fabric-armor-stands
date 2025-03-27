@@ -1,8 +1,5 @@
 package me.roundaround.armorstands.util.actions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.Pose;
 import net.minecraft.block.BlockState;
@@ -12,6 +9,9 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.EulerAngle;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class ToolRackAction extends ComboAction {
   private ToolRackAction(Collection<ArmorStandAction> actions) {
@@ -34,12 +34,10 @@ public class ToolRackAction extends ComboAction {
     actions.add(FlagAction.set(ArmorStandFlag.SMALL, false));
     actions.add(RotateAction.absolute(armorStand.getWorld()
         .getBlockState(hookPos)
-        .get(TripwireHookBlock.FACING).asRotation()));
+        .get(TripwireHookBlock.FACING)
+        .getPositiveHorizontalDegrees()));
     actions.add(ScaleAction.absolute(1f));
-    actions.add(MoveAction.absolute(
-        hookPos.getX() + 0.5,
-        hookPos.getY() - 1,
-        hookPos.getZ() + 0.5));
+    actions.add(MoveAction.absolute(hookPos.getX() + 0.5, hookPos.getY() - 1, hookPos.getZ() + 0.5));
     actions.add(MoveAction.local(-0.17, 0.24, -0.05));
     actions.add(PoseAction.fromPose(new Pose(
         new EulerAngle(0f, 0.001f, 0f),
@@ -47,7 +45,8 @@ public class ToolRackAction extends ComboAction {
         new EulerAngle(-100f, 90f, 180f),
         new EulerAngle(0f, 0f, 0f),
         new EulerAngle(0f, 0f, 0f),
-        new EulerAngle(0f, 0f, 0f))));
+        new EulerAngle(0f, 0f, 0f)
+    )));
 
     return new ToolRackAction(actions);
   }

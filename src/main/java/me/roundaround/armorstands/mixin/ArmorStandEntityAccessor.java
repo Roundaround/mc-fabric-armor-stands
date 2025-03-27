@@ -1,12 +1,9 @@
 package me.roundaround.armorstands.mixin;
 
+import net.minecraft.entity.decoration.ArmorStandEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
-
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 
 @Mixin(ArmorStandEntity.class)
 public interface ArmorStandEntityAccessor {
@@ -18,12 +15,6 @@ public interface ArmorStandEntityAccessor {
 
   @Invoker("setHideBasePlate")
   void invokeSetHideBasePlate(boolean hideBasePlate);
-
-  @Accessor("heldItems")
-  DefaultedList<ItemStack> getHeldItems();
-
-  @Accessor("armorItems")
-  DefaultedList<ItemStack> getArmorItems();
 
   @Accessor("disabledSlots")
   int getDisabledSlots();

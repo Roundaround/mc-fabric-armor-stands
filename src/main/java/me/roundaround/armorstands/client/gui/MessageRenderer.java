@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -84,11 +83,8 @@ public class MessageRenderer {
       int backgroundColor = (int) (opacity * backgroundAlpha) << 24 & 0xFF000000;
       int textColor = this.baseTextColor + ((int) (opacity * 255) << 24);
 
-      RenderSystem.enableBlend();
-      RenderSystem.defaultBlendFunc();
       context.fill(x - 2, y - 2, x + width + 2, y + textRenderer.fontHeight + 2, backgroundColor);
       context.drawTextWithShadow(textRenderer, text, x, y, textColor);
-      RenderSystem.disableBlend();
     }
 
     public boolean isExpired() {

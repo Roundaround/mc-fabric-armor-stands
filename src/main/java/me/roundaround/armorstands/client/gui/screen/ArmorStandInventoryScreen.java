@@ -7,7 +7,7 @@ import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.roundalib.client.gui.widget.ToggleWidget;
+import me.roundaround.armorstands.roundalib.client.gui.widget.ToggleWidget;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.RenderLayer;

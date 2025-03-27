@@ -2,7 +2,6 @@ package me.roundaround.armorstands.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import me.roundaround.armorstands.util.Pose.PoseSupplier;
 import net.minecraft.util.math.EulerAngle;
 
@@ -22,7 +21,8 @@ public class SavedPose implements PoseSupplier {
       EulerAngle rightArm,
       EulerAngle leftArm,
       EulerAngle rightLeg,
-      EulerAngle leftLeg) {
+      EulerAngle leftLeg
+  ) {
     this.name = name;
     this.head = head;
     this.body = body;
@@ -40,7 +40,8 @@ public class SavedPose implements PoseSupplier {
         pose.getRightArm(),
         pose.getLeftArm(),
         pose.getRightLeg(),
-        pose.getLeftLeg());
+        pose.getLeftLeg()
+    );
   }
 
   @Override
@@ -112,9 +113,9 @@ public class SavedPose implements PoseSupplier {
 
   private static JsonArray eulerAngleToJson(EulerAngle angle) {
     JsonArray json = new JsonArray();
-    json.add(angle.getPitch());
-    json.add(angle.getYaw());
-    json.add(angle.getRoll());
+    json.add(angle.pitch());
+    json.add(angle.yaw());
+    json.add(angle.roll());
 
     return json;
   }

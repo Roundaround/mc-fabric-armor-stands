@@ -14,29 +14,34 @@ public enum MoveMode {
   LOCAL_TO_STAND(1, "stand", true, false),
   LOCAL_TO_PLAYER(2, "player", true, true);
 
-  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
-      MoveMode::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+      MoveMode::getIndex,
+      values(),
+      ValueLists.OutOfBoundsHandling.CLAMP
+  );
   public static final PacketCodec<ByteBuf, MoveMode> PACKET_CODEC = PacketCodecs.indexed(
-      ID_TO_VALUE_FUNCTION, MoveMode::getId);
+      ID_TO_VALUE_FUNCTION,
+      MoveMode::getIndex
+  );
 
-  private final int id;
-  private final String name;
+  private final int index;
+  private final String id;
   private final boolean local;
   private final boolean player;
 
-  MoveMode(int id, String name, boolean local, boolean player) {
+  MoveMode(int index, String id, boolean local, boolean player) {
+    this.index = index;
     this.id = id;
-    this.name = name;
     this.local = local;
     this.player = player;
   }
 
-  public int getId() {
-    return this.id;
+  public int getIndex() {
+    return this.index;
   }
 
-  public String getName() {
-    return this.name;
+  public String getId() {
+    return this.id;
   }
 
   public boolean isLocal() {
@@ -56,14 +61,14 @@ public enum MoveMode {
   }
 
   public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.mode." + this.name);
+    return Text.translatable("armorstands.move.mode." + this.id);
   }
 
   public Text getDirectionText(Direction direction) {
     if (this.equals(RELATIVE)) {
-      return Text.translatable("armorstands.move." + direction.getName());
+      return Text.translatable("armorstands.move." + direction.getId());
     } else {
-      return Text.translatable("armorstands.move.local." + direction.getName());
+      return Text.translatable("armorstands.move.local." + direction.getId());
     }
   }
 
@@ -73,7 +78,7 @@ public enum MoveMode {
 
   public static MoveMode fromId(String id) {
     for (MoveMode mode : MoveMode.values()) {
-      if (mode.getName().equals(id)) {
+      if (mode.getId().equals(id)) {
         return mode;
       }
     }

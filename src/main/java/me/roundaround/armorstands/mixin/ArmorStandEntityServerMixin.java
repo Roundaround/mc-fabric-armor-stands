@@ -5,7 +5,7 @@ import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import me.roundaround.armorstands.util.LastUsedScreen;
-import me.roundaround.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;

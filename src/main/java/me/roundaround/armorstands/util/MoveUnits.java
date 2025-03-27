@@ -11,33 +11,38 @@ import java.util.function.IntFunction;
 public enum MoveUnits {
   PIXELS(0, "pixels"), BLOCKS(1, "blocks");
 
-  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
-      MoveUnits::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+      MoveUnits::getIndex,
+      values(),
+      ValueLists.OutOfBoundsHandling.CLAMP
+  );
   public static final PacketCodec<ByteBuf, MoveUnits> PACKET_CODEC = PacketCodecs.indexed(
-      ID_TO_VALUE_FUNCTION, MoveUnits::getId);
+      ID_TO_VALUE_FUNCTION,
+      MoveUnits::getIndex
+  );
 
-  private final int id;
-  private final String name;
+  private final int index;
+  private final String id;
 
-  MoveUnits(int id, String name) {
+  MoveUnits(int index, String id) {
+    this.index = index;
     this.id = id;
-    this.name = name;
   }
 
-  public int getId() {
+  public int getIndex() {
+    return this.index;
+  }
+
+  public String getId() {
     return this.id;
   }
 
-  public String getName() {
-    return this.name;
-  }
-
   public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.units." + this.name);
+    return Text.translatable("armorstands.move.units." + this.id);
   }
 
   public Text getButtonText(int amount) {
-    return Text.translatable("armorstands.move." + this.name + "." + amount);
+    return Text.translatable("armorstands.move." + this.id + "." + amount);
   }
 
   public double getAmount(int amount) {
@@ -71,7 +76,7 @@ public enum MoveUnits {
 
   public static MoveUnits fromId(String id) {
     for (MoveUnits units : MoveUnits.values()) {
-      if (units.getName().equals(id)) {
+      if (units.getId().equals(id)) {
         return units;
       }
     }

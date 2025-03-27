@@ -20,30 +20,35 @@ public enum PosePart {
   RIGHT_LEG(4, "rightLeg"),
   LEFT_LEG(5, "leftLeg");
 
-  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
-      PosePart::getId, values(), ValueLists.OutOfBoundsHandling.CLAMP);
+  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+      PosePart::getIndex,
+      values(),
+      ValueLists.OutOfBoundsHandling.CLAMP
+  );
   public static final PacketCodec<ByteBuf, PosePart> PACKET_CODEC = PacketCodecs.indexed(
-      ID_TO_VALUE_FUNCTION, PosePart::getId);
+      ID_TO_VALUE_FUNCTION,
+      PosePart::getIndex
+  );
 
-  private final int id;
-  private final String name;
+  private final int index;
+  private final String id;
 
-  PosePart(int id, String name) {
+  PosePart(int index, String id) {
+    this.index = index;
     this.id = id;
-    this.name = name;
   }
 
   @Override
   public String toString() {
-    return name;
+    return id;
   }
 
-  public int getId() {
-    return this.id;
+  public int getIndex() {
+    return this.index;
   }
 
   public Text getDisplayName() {
-    return Text.translatable("armorstands.part." + name);
+    return Text.translatable("armorstands.part." + id);
   }
 
   public EulerAngle get(ArmorStandEntity armorStand) {
@@ -75,7 +80,7 @@ public enum PosePart {
 
   public static PosePart fromString(String value) {
     return Arrays.stream(PosePart.values())
-        .filter((flag) -> flag.name.equals(value))
+        .filter((flag) -> flag.id.equals(value))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException("Unknown part: " + value));
   }

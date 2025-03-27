@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "armorstands",
+  "id": "${modId}",
   "version": "${version}",
   "name": "Armor Stands",
-  "description": "Place, pose, and dress armor stands with an easy-to-use UI.\n${library}",
+  "description": "Place, pose, and dress armor stands with an easy-to-use UI.",
   "authors": [
     "Roundaround"
   ],
@@ -13,34 +13,11 @@
     "issues": "https://github.com/Roundaround/mc-fabric-armor-stands/issues"
   },
   "license": "MIT",
-  "icon": "assets/armorstands/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "client": [
-      "me.roundaround.armorstands.client.ArmorStandsClientMod"
-    ],
-    "server": [
-      "me.roundaround.armorstands.server.ArmorStandsServerMod"
-    ],
-    "main": [
-      "me.roundaround.armorstands.ArmorStandsMod"
-    ],
-    "modmenu": [
-      "me.roundaround.armorstands.compat.modmenu.ModMenuImpl"
-    ]
-  },
-  "mixins": [
-    "armorstands.mixins.json"
-  ],
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_3222": [
         "me/roundaround/armorstands/server/network/ArmorStandScreenHandlerAccess"
       ]
     }
-  },
-  "depends": {
-    "fabric-api": "*",
-    "minecraft": "1.21.*"
   }
 }

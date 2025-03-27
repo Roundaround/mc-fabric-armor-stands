@@ -1,6 +1,5 @@
 package me.roundaround.armorstands.client.gui.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
@@ -10,13 +9,13 @@ import me.roundaround.armorstands.mixin.InGameHudAccessor;
 import me.roundaround.armorstands.mixin.MouseAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
+import me.roundaround.armorstands.roundalib.client.gui.icon.BuiltinIcon;
+import me.roundaround.armorstands.roundalib.client.gui.icon.CustomIcon;
+import me.roundaround.armorstands.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.armorstands.roundalib.client.gui.widget.IconButtonWidget;
+import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.FrameWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.roundalib.asset.icon.BuiltinIcon;
-import me.roundaround.roundalib.asset.icon.CustomIcon;
-import me.roundaround.roundalib.client.gui.GuiUtil;
-import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
-import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -145,8 +144,21 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
     String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
 
-    return Text.translatable("armorstands.help", alt, inventory, esc, ScreenType.values().length, highlight, control, z,
-        control, y, control, c, control, v
+    return Text.translatable(
+        "armorstands.help",
+        alt,
+        inventory,
+        esc,
+        ScreenType.values().length,
+        highlight,
+        control,
+        z,
+        control,
+        y,
+        control,
+        c,
+        control,
+        v
     );
   }
 
@@ -199,7 +211,6 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
-    RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(context, this.client.getCameraEntity());
 
     super.render(context, adjustedMouseX, adjustedMouseY, delta);
@@ -244,9 +255,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseDragged(
-      double mouseX, double mouseY, int button, double deltaX, double deltaY
-  ) {
+  public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
     if (this.cursorLocked) {
       return false;
     }
@@ -378,7 +387,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       if (screenType == this.getScreenType()) {
         continue;
       }
-      if (this.client.options.hotbarKeys[screenType.getId()].matchesKey(keyCode, scanCode)) {
+      if (this.client.options.hotbarKeys[screenType.getIndex()].matchesKey(keyCode, scanCode)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
@@ -483,13 +492,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   protected static Text getCurrentRotationText(Entity entity) {
     float currentRotation = entity.getYaw();
-    return Text.translatable("armorstands.current.rotation",
+    return Text.translatable(
+        "armorstands.current.rotation",
         String.format(Locale.ROOT, "%.1f", MathHelper.wrapDegrees(currentRotation))
     );
   }
 
   protected static Text getCurrentFacingText(Entity entity) {
-    return getFacingText(Direction.fromRotation(entity.getYaw()));
+    return getFacingText(Direction.fromHorizontalDegrees(entity.getYaw()));
   }
 
   protected static Text getFacingText(Direction facing) {
