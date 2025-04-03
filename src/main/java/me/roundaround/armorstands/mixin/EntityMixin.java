@@ -1,8 +1,7 @@
 package me.roundaround.armorstands.mixin;
 
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import me.roundaround.gradle.api.annotation.MixinEnv;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-@Environment(value = EnvType.CLIENT)
+@MixinEnv(MixinEnv.CLIENT)
 public abstract class EntityMixin {
   @Inject(method = "updateTrackedPositionAndAngles", at = @At(value = "HEAD"), cancellable = true)
   public void updateTrackedPositionAndAngles(Vec3d pos, float yaw, float pitch, CallbackInfo info) {
