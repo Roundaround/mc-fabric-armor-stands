@@ -70,7 +70,7 @@ public enum ArmorStandFlag {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
     return switch (this) {
-      case HIDE_BASE_PLATE -> !armorStand.shouldShowBasePlate();
+      case HIDE_BASE_PLATE -> armorStand.shouldHideBasePlate();
       case SHOW_ARMS -> armorStand.shouldShowArms();
       case SMALL -> armorStand.isSmall();
       case NO_GRAVITY -> armorStand.hasNoGravity();
