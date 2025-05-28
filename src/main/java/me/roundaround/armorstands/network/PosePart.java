@@ -20,7 +20,7 @@ public enum PosePart {
   RIGHT_LEG(4, "rightLeg"),
   LEFT_LEG(5, "leftLeg");
 
-  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
       PosePart::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.CLAMP

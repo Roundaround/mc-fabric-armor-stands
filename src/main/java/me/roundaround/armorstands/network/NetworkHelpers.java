@@ -9,8 +9,8 @@ public class NetworkHelpers {
   }
 
   public static void writeEulerAngle(PacketByteBuf buf, EulerAngle eulerAngle) {
-    buf.writeFloat(eulerAngle.pitch());
-    buf.writeFloat(eulerAngle.yaw());
-    buf.writeFloat(eulerAngle.roll());
+    buf.writeFloat(eulerAngle.getPitch());
+    buf.writeFloat(eulerAngle.getYaw());
+    buf.writeFloat(eulerAngle.getRoll());
   }
 }

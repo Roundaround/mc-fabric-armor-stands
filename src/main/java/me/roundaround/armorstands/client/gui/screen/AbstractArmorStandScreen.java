@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
@@ -211,6 +212,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int adjustedMouseX = cursorLocked ? -1 : mouseX;
     int adjustedMouseY = cursorLocked ? -1 : mouseY;
 
+    RenderSystem.enableBlend();
     ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(context, this.client.getCameraEntity());
 
     super.render(context, adjustedMouseX, adjustedMouseY, delta);
@@ -499,7 +501,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   protected static Text getCurrentFacingText(Entity entity) {
-    return getFacingText(Direction.fromHorizontalDegrees(entity.getYaw()));
+    return getFacingText(Direction.fromRotation(entity.getYaw()));
   }
 
   protected static Text getFacingText(Direction facing) {

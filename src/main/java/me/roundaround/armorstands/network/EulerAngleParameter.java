@@ -7,14 +7,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.EulerAngle;
 
-import java.util.Arrays;
 import java.util.function.IntFunction;
 
 public enum EulerAngleParameter {
   PITCH(0, "pitch"), YAW(1, "yaw"), ROLL(2, "roll");
 
   public static final IntFunction<EulerAngleParameter> ID_TO_VALUE_FUNCTION =
-      ValueLists.createIndexToValueFunction(EulerAngleParameter::getIndex,
+      ValueLists.createIdToValueFunction(EulerAngleParameter::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.CLAMP
   );
@@ -46,24 +45,17 @@ public enum EulerAngleParameter {
 
   public float get(EulerAngle angle) {
     return switch (this) {
-      case PITCH -> angle.pitch();
-      case YAW -> angle.yaw();
-      case ROLL -> angle.roll();
+      case PITCH -> angle.getPitch();
+      case YAW -> angle.getYaw();
+      case ROLL -> angle.getRoll();
     };
   }
 
   public EulerAngle set(EulerAngle angle, float value) {
     return switch (this) {
-      case PITCH -> new EulerAngle(value, angle.yaw(), angle.roll());
-      case YAW -> new EulerAngle(angle.pitch(), value, angle.roll());
-      case ROLL -> new EulerAngle(angle.pitch(), angle.yaw(), value);
+      case PITCH -> new EulerAngle(value, angle.getYaw(), angle.getRoll());
+      case YAW -> new EulerAngle(angle.getPitch(), value, angle.getRoll());
+      case ROLL -> new EulerAngle(angle.getPitch(), angle.getYaw(), value);
     };
-  }
-
-  public static EulerAngleParameter fromString(String string) {
-    return Arrays.stream(values())
-        .filter(parameter -> parameter.id.equals(string))
-        .findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("Unknown parameter: " + string));
   }
 }

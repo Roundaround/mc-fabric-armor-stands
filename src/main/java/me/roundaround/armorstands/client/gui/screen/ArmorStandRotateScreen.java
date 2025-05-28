@@ -102,22 +102,22 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     firstRow.add(ButtonWidget.builder(
         Text.translatable("armorstands.rotate.snap." + Direction.SOUTH.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.SOUTH.getPositiveHorizontalDegrees()))
+        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.SOUTH.asRotation()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     firstRow.add(ButtonWidget.builder(
         Text.translatable("armorstands.rotate.snap." + Direction.NORTH.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.NORTH.getPositiveHorizontalDegrees()))
+        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.NORTH.asRotation()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     snaps.add(firstRow);
 
     LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
     secondRow.add(ButtonWidget.builder(
         Text.translatable("armorstands.rotate.snap." + Direction.EAST.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.EAST.getPositiveHorizontalDegrees()))
+        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.EAST.asRotation()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     secondRow.add(ButtonWidget.builder(
         Text.translatable("armorstands.rotate.snap." + Direction.WEST.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.WEST.getPositiveHorizontalDegrees()))
+        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.WEST.asRotation()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     snaps.add(secondRow);
 

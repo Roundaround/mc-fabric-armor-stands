@@ -113,9 +113,9 @@ public class SavedPose implements PoseSupplier {
 
   private static JsonArray eulerAngleToJson(EulerAngle angle) {
     JsonArray json = new JsonArray();
-    json.add(angle.pitch());
-    json.add(angle.yaw());
-    json.add(angle.roll());
+    json.add(angle.getPitch());
+    json.add(angle.getYaw());
+    json.add(angle.getRoll());
 
     return json;
   }

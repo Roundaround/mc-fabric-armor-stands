@@ -11,7 +11,7 @@ import java.util.function.IntFunction;
 public enum MoveUnits {
   PIXELS(0, "pixels"), BLOCKS(1, "blocks");
 
-  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
       MoveUnits::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.CLAMP
