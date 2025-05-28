@@ -1,6 +1,10 @@
 {
   "armorstands.config.title": "Armor Stands Config",
   "armorstands.requireSneakingToEdit.label": "Open edit GUI only when sneaking\n§oApplies only to single player",
+  "armorstands.nameRenderDistance.label": "How far away armor stand names should be visible",
+  "armorstands.nameRenderDistance.value": "%s Block(s)",
+  "armorstands.nameRenderDistance.value.default": "Default",
+  "armorstands.directOnlyNameRender.label": "Only render armor stand names when targeting them",
   "armorstands.help": "Unlike with most other screens, you can freely move around and jump like normal.\n\nShortcuts:\n  • %s :  Free look\n  • %s/%s :  Close screen\n  • 1-%s :  Change screen\n  • %s :  Highlight armor stand\n  • %s+%s :  Undo\n  • %s+%s :  Redo\n  • %s+%s :  Copy\n  • %s+%s :  Paste",
   "armorstands.help.alt": "Alt",
   "armorstands.help.ctrl": "Ctrl",
