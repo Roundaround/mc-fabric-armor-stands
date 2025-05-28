@@ -21,7 +21,10 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 
 public class ArmorStandScreenHandler extends ScreenHandler {
-  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = Identifier.ofVanilla("item/empty_slot_sword");
+  private static final Identifier EMPTY_MAINHAND_ARMOR_SLOT = Identifier.of(
+      Identifier.DEFAULT_NAMESPACE,
+      "item/empty_slot_sword"
+  );
 
   private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[]{
       PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
@@ -149,7 +152,7 @@ public class ArmorStandScreenHandler extends ScreenHandler {
               isSlotDisabled(armorStand, equipmentSlot)) {
             return false;
           }
-          return equipmentSlot == armorStand.getPreferredEquipmentSlot(stack);
+          return equipmentSlot == ArmorStandEntity.getPreferredEquipmentSlot(stack);
         }
 
         @Override
@@ -241,7 +244,7 @@ public class ArmorStandScreenHandler extends ScreenHandler {
   }
 
   private boolean tryTransferArmor(ItemStack stack) {
-    EquipmentSlot equipmentSlot = this.armorStand.getPreferredEquipmentSlot(stack);
+    EquipmentSlot equipmentSlot = ArmorStandEntity.getPreferredEquipmentSlot(stack);
     if (isSlotDisabled(this.armorStand, equipmentSlot)) {
       return false;
     }
