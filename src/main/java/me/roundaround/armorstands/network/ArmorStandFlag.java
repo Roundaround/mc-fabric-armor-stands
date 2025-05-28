@@ -27,7 +27,7 @@ public enum ArmorStandFlag {
   LOCK_INVENTORY(8, "inventory", false);
 
   public static final IntFunction<ArmorStandFlag> ID_TO_VALUE_FUNCTION =
-      ValueLists.createIndexToValueFunction(ArmorStandFlag::getIndex,
+      ValueLists.createIdToValueFunction(ArmorStandFlag::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.ZERO
   );

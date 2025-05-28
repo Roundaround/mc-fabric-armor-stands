@@ -237,7 +237,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
 
   private Direction getCurrentFacing() {
     Entity entity = this.mode.equals(MoveMode.LOCAL_TO_STAND) ? this.getArmorStand() : this.getPlayer();
-    return Direction.fromHorizontalDegrees(entity.getYaw());
+    return Direction.fromRotation(entity.getYaw());
   }
 
   private static class MoveButtonRef {

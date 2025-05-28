@@ -14,7 +14,7 @@ public enum MoveMode {
   LOCAL_TO_STAND(1, "stand", true, false),
   LOCAL_TO_PLAYER(2, "player", true, true);
 
-  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
       MoveMode::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.CLAMP
@@ -66,9 +66,9 @@ public enum MoveMode {
 
   public Text getDirectionText(Direction direction) {
     if (this.equals(RELATIVE)) {
-      return Text.translatable("armorstands.move." + direction.getId());
+      return Text.translatable("armorstands.move." + direction.getName());
     } else {
-      return Text.translatable("armorstands.move.local." + direction.getId());
+      return Text.translatable("armorstands.move.local." + direction.getName());
     }
   }
 

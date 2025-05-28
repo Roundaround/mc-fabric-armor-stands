@@ -20,7 +20,7 @@ public enum ScreenType {
   PRESETS(4, "presets", new CustomIcon("pose", 20)),
   INVENTORY(5, "inventory", new CustomIcon("inventory", 20));
 
-  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIdToValueFunction(
       ScreenType::getIndex,
       values(),
       ValueLists.OutOfBoundsHandling.ZERO

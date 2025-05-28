@@ -120,11 +120,11 @@ public final class Networking {
   public record MessageS2C(boolean translatable, String message, boolean styled, int color) implements CustomPayload {
     public static final CustomPayload.Id<MessageS2C> ID = new CustomPayload.Id<>(MESSAGE_S2C);
     public static final PacketCodec<RegistryByteBuf, MessageS2C> CODEC = PacketCodec.tuple(
-        PacketCodecs.BOOLEAN,
+        PacketCodecs.BOOL,
         MessageS2C::translatable,
         PacketCodecs.STRING,
         MessageS2C::message,
-        PacketCodecs.BOOLEAN,
+        PacketCodecs.BOOL,
         MessageS2C::styled,
         PacketCodecs.INTEGER,
         MessageS2C::color,
@@ -272,7 +272,7 @@ public final class Networking {
     public static final PacketCodec<RegistryByteBuf, SetFlagC2S> CODEC = PacketCodec.tuple(
         ArmorStandFlag.PACKET_CODEC,
         SetFlagC2S::flag,
-        PacketCodecs.BOOLEAN,
+        PacketCodecs.BOOL,
         SetFlagC2S::value,
         SetFlagC2S::new
     );
@@ -377,7 +377,7 @@ public final class Networking {
   public record UndoC2S(boolean redo) implements CustomPayload {
     public static final CustomPayload.Id<UndoC2S> ID = new CustomPayload.Id<>(UNDO_C2S);
     public static final PacketCodec<RegistryByteBuf, UndoC2S> CODEC = PacketCodec.tuple(
-        PacketCodecs.BOOLEAN,
+        PacketCodecs.BOOL,
         UndoC2S::redo,
         UndoC2S::new
     );
