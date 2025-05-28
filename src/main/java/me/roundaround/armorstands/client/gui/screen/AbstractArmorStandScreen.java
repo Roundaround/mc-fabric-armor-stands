@@ -84,7 +84,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   public void init() {
     this.populateLayout();
     this.collectElements();
-    this.refreshWidgetPositions();
+    this.initTabNavigation();
   }
 
   protected MinecraftClient getClient() {
@@ -192,7 +192,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  protected void refreshWidgetPositions() {
+  protected void initTabNavigation() {
     this.layout.refreshPositions();
   }
 
