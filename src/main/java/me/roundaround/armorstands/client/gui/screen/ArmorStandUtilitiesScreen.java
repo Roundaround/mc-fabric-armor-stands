@@ -1,35 +1,36 @@
 package me.roundaround.armorstands.client.gui.screen;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
-import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
 import me.roundaround.armorstands.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
 import me.roundaround.armorstands.roundalib.client.gui.widget.ToggleWidget;
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.LabelWidget;
-import me.roundaround.armorstands.roundalib.util.Observable;
+import me.roundaround.armorstands.roundalib.observable.Subscription;
+import me.roundaround.armorstands.roundalib.observable.Subject;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 60;
   private static final int BUTTON_HEIGHT = 16;
 
-  private final HashMap<ArmorStandFlag, Observable<Boolean>> values = new HashMap<>();
-  private final ArrayList<Observable.Subscription> subscriptions = new ArrayList<>();
+  private final HashMap<ArmorStandFlag, Subject<Boolean>> values = new HashMap<>();
+  private final ArrayList<Subscription> subscriptions = new ArrayList<>();
 
   public ArmorStandUtilitiesScreen(ArmorStandScreenHandler handler) {
     super(handler, ScreenType.UTILITIES.getDisplayName());
     this.supportsUndoRedo = true;
 
     ArmorStandFlag.getFlags()
-        .forEach((flag) -> this.values.put(flag, Observable.of(flag.getValue(this.getArmorStand()))));
+        .forEach((flag) -> this.values.put(flag, Subject.of(flag.getValue(this.getArmorStand()))));
   }
 
   @Override
@@ -111,7 +112,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
         .labelBgColor(BACKGROUND_COLOR)
         .build();
     this.subscriptions.add(this.values.get(flag)
-        .subscribe((value) -> widget.setValue(value ^ flag.invertControl()), Observable.SubscribeOptions.create()));
+        .subscribe((value) -> widget.setValue(value ^ flag.invertControl())));
     return widget;
   }
 
@@ -123,7 +124,7 @@ public class ArmorStandUtilitiesScreen extends AbstractArmorStandScreen {
 
   @Override
   public void close() {
-    this.subscriptions.forEach(Observable.Subscription::unsubscribe);
+    this.subscriptions.forEach(Subscription::close);
     super.close();
   }
 }

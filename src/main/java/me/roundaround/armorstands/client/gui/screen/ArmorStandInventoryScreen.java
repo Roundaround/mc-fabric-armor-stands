@@ -2,15 +2,16 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
+
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.roundalib.client.gui.widget.ToggleWidget;
+import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
@@ -78,9 +79,17 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
 
   @Override
   protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-    context.drawTexture(RenderLayer::getGuiTextured, CUSTOM_TEXTURE, this.x, this.y, 0, 0, BACKGROUND_WIDTH,
-        BACKGROUND_HEIGHT, 256, 256
-    );
+    context.drawTexture(
+        RenderPipelines.GUI_TEXTURED,
+        CUSTOM_TEXTURE,
+        this.x,
+        this.y,
+        0,
+        0,
+        BACKGROUND_WIDTH,
+        BACKGROUND_HEIGHT,
+        256,
+        256);
 
     ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
@@ -92,8 +101,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
     }
 
     InventoryScreen.drawEntity(context, this.x + 62, this.y + 8, this.x + 114, this.y + 78, 30, 0.0625f,
-        this.prevMouseX, this.prevMouseY, this.getArmorStand()
-    );
+        this.prevMouseX, this.prevMouseY, this.getArmorStand());
   }
 
   @Override
