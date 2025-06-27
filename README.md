@@ -1,4 +1,4 @@
-![Armor Stands](https://github.com/Roundaround/mc-fabric-armor-stands/blob/main/assets/title-round-1.png)
+![Armor Stands](https://github.com/Roundaround/mc-fabric-armor-stands/raw/main/assets/title-round-1.png)
 
 ![](https://img.shields.io/badge/Loader-Fabric-313e51?style=for-the-badge)
 ![](https://img.shields.io/badge/MC-1.20%20|%201.19--1.19.4-313e51?style=for-the-badge)
