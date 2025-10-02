@@ -38,7 +38,7 @@ public class MoveToGroundAction implements ArmorStandAction {
     Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.sitting);
 
     if (maybeGround.isPresent()) {
-      originalPosition = Optional.of(new Vec3d(armorStand.getX(), armorStand.getY(), armorStand.getZ()));
+      originalPosition = Optional.of(armorStand.armorstands$getPos());
       MoveAction.setPosition(armorStand, maybeGround.get());
     }
   }

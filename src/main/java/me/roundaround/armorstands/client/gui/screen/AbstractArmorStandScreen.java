@@ -28,12 +28,15 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
@@ -136,32 +139,51 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   private Text buildHelpTooltipText() {
-    String alt = Text.translatable("armorstands.help.alt").getString();
-    String inventory = this.getClient().options.inventoryKey.getBoundKeyLocalizedText().getString();
-    String esc = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_ESCAPE).getLocalizedText().getString();
-    String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding.getBoundKeyLocalizedText().getString();
     String control = Text.translatable("armorstands.help." + (SystemKeycodes.IS_MAC_OS ? "cmd" : "ctrl")).getString();
-    String z = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Z).getLocalizedText().getString();
-    String y = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Y).getLocalizedText().getString();
-    String c = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_C).getLocalizedText().getString();
-    String v = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_V).getLocalizedText().getString();
 
-    return Text.translatable(
-        "armorstands.help",
-        alt,
-        inventory,
-        esc,
-        ScreenType.values().length,
-        highlight,
+    ArrayList<Text> lines = new ArrayList<>();
+    lines.add(Text.translatable("armorstands.help.main").append(ScreenTexts.LINE_BREAK));
+    lines.add(Text.translatable("armorstands.help.shortcuts"));
+    lines.add(Text.translatable("armorstands.help.look", Text.translatable("armorstands.help.alt")));
+    lines.add(Text.translatable(
+        "armorstands.help.close",
+        this.getStyledBoundText(this.getClient().options.inventoryKey),
+        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_ESCAPE).getLocalizedText()
+    ));
+    lines.add(Text.translatable("armorstands.help.change", ScreenType.values().length));
+    lines.add(Text.translatable(
+        "armorstands.help.highlight",
+        this.getStyledBoundText(ArmorStandsClientMod.highlightArmorStandKeyBinding)
+    ));
+    lines.add(Text.translatable(
+        "armorstands.help.undo",
         control,
-        z,
+        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Z).getLocalizedText()
+    ));
+    lines.add(Text.translatable(
+        "armorstands.help.redo",
         control,
-        y,
+        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Y).getLocalizedText()
+    ));
+    lines.add(Text.translatable(
+        "armorstands.help.copy",
         control,
-        c,
+        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_C).getLocalizedText()
+    ));
+    lines.add(Text.translatable(
+        "armorstands.help.paste",
         control,
-        v
-    );
+        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_V).getLocalizedText()
+    ));
+    return ScreenTexts.joinLines(lines);
+  }
+
+  private Text getStyledBoundText(KeyBinding binding) {
+    Text base = binding.getBoundKeyLocalizedText();
+    if (binding.isUnbound()) {
+      return Text.literal("(").append(base).append(")").formatted(Formatting.ITALIC, Formatting.GRAY);
+    }
+    return base;
   }
 
   protected void initNavigationButtons() {
@@ -205,10 +227,10 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     this.messageRenderer.tick();
 
-    if (this.shouldPassEvents()) {
-      // TODO: Is there a better way than updating all?
-      KeyBinding.updatePressedStates();
-    }
+    //    if (this.shouldPassEvents()) {
+    //      // TODO: Is there a better way than updating all?
+    //      KeyBinding.updatePressedStates();
+    //    }
   }
 
   @Override

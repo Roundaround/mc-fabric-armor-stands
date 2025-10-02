@@ -16,7 +16,10 @@
   "custom": {
     "loom:injected_interfaces": {
       "net/minecraft/class_3222": [
-        "me/roundaround/armorstands/server/network/ArmorStandScreenHandlerAccess"
+        "me/roundaround/armorstands/interfaces/ArmorStandScreenHandlerAccess"
+      ],
+      "net/minecraft/class_1297": [
+        "me/roundaround/armorstands/interfaces/EntityPosition"
       ]
     }
   }

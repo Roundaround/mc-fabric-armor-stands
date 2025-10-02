@@ -1,9 +1,9 @@
-package me.roundaround.armorstands.server.network;
+package me.roundaround.armorstands.interfaces;
 
 import me.roundaround.armorstands.network.ScreenType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 
 public interface ArmorStandScreenHandlerAccess {
-  default void openArmorStandScreen(ArmorStandEntity armorStand, ScreenType screenType) {
+  default void armorstands$openScreen(ArmorStandEntity armorStand, ScreenType screenType) {
   }
 }

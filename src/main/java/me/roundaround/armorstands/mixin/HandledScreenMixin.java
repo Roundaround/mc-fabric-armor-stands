@@ -17,9 +17,8 @@ public abstract class HandledScreenMixin extends Screen {
 
   @Inject(method = "keyPressed", at = @At(value = "HEAD"), cancellable = true)
   public void keyPressed(KeyInput input, CallbackInfoReturnable<Boolean> info) {
-    // TODO: Remove
-//    if (this instanceof PassesEventsThrough passesEventsThrough && passesEventsThrough.shouldPassEvents()) {
-//      info.setReturnValue(super.keyPressed(input));
-//    }
+    if (this instanceof PassesEventsThrough passScreen && passScreen.shouldPassEvents()) {
+      info.setReturnValue(super.keyPressed(input));
+    }
   }
 }

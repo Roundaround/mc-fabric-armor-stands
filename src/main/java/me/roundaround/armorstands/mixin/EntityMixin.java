@@ -1,5 +1,6 @@
 package me.roundaround.armorstands.mixin;
 
+import me.roundaround.armorstands.interfaces.EntityPosition;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.gradle.api.annotation.MixinEnv;
 import net.minecraft.client.MinecraftClient;
@@ -9,6 +10,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,8 +20,21 @@ import java.util.Optional;
 
 @Mixin(Entity.class)
 @MixinEnv(MixinEnv.CLIENT)
-public abstract class EntityMixin {
-  @Inject(method = "updateTrackedPositionAndAngles(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V", at = @At(value = "HEAD"), cancellable = true)
+public abstract class EntityMixin implements EntityPosition {
+  @Shadow
+  private Vec3d pos;
+
+  @Override
+  public Vec3d armorstands$getPos() {
+    // Copy so we don't accidentally modify the coords individually inside the pos object
+    return new Vec3d(this.pos.x, this.pos.y, this.pos.z);
+  }
+
+  @Inject(
+      method = "updateTrackedPositionAndAngles(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V",
+      at = @At(value = "HEAD"),
+      cancellable = true
+  )
   public void updateTrackedPositionAndAngles(
       Optional<Vec3d> pos,
       Optional<Float> yaw,

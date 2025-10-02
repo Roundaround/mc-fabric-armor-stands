@@ -44,7 +44,7 @@ public abstract class ArmorStandEntityServerMixin {
 
     ArmorStandEntity self = (ArmorStandEntity) (Object) this;
     ScreenType screenType = LastUsedScreen.getOrDefault(player, self, ScreenType.UTILITIES);
-    player.openArmorStandScreen(self, screenType);
+    player.armorstands$openScreen(self, screenType);
     info.setReturnValue(ActionResult.PASS);
   }
 

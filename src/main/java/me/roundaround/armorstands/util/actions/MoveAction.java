@@ -70,7 +70,7 @@ public class MoveAction implements ArmorStandAction {
 
   @Override
   public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    this.originalPosition = Optional.of(new Vec3d(armorStand.getX(), armorStand.getY(), armorStand.getZ()));
+    this.originalPosition = Optional.of(armorStand.armorstands$getPos());
 
     Vec3d position = switch (this.moveType) {
       case ABSOLUTE -> this.argument;

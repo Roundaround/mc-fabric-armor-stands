@@ -21,8 +21,8 @@ public abstract class MouseMixin {
 
   @Inject(method = "isCursorLocked", at = @At(value = "HEAD"), cancellable = true)
   public void isCursorLocked(CallbackInfoReturnable<Boolean> info) {
-    if (client.currentScreen instanceof AbstractArmorStandScreen) {
-      info.setReturnValue(((AbstractArmorStandScreen) client.currentScreen).isCursorLocked());
+    if (client.currentScreen instanceof AbstractArmorStandScreen standScreen) {
+      info.setReturnValue(standScreen.isCursorLocked());
     }
   }
 
@@ -34,6 +34,6 @@ public abstract class MouseMixin {
   )
   )
   private Screen modifyCurrentScreen(Screen screen) {
-    return screen instanceof PassesEventsThrough && ((PassesEventsThrough) screen).shouldPassEvents() ? null : screen;
+    return screen instanceof PassesEventsThrough passScreen && passScreen.shouldPassEvents() ? null : screen;
   }
 }

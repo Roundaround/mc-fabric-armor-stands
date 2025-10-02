@@ -2,7 +2,7 @@ package me.roundaround.armorstands.mixin;
 
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import me.roundaround.armorstands.server.network.ArmorStandScreenHandlerAccess;
+import me.roundaround.armorstands.interfaces.ArmorStandScreenHandlerAccess;
 import me.roundaround.armorstands.server.network.ServerNetworking;
 import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.Clipboard;
@@ -37,8 +37,7 @@ public abstract class ServerPlayerEntityMixin implements ArmorStandScreenHandler
   }
 
   @Override
-  @SuppressWarnings("AddedMixinMembersNamePattern")
-  public void openArmorStandScreen(ArmorStandEntity armorStand, ScreenType screenType) {
+  public void armorstands$openScreen(ArmorStandEntity armorStand, ScreenType screenType) {
     ServerPlayerEntity self = (ServerPlayerEntity) (Object) this;
 
     if (self.currentScreenHandler instanceof ArmorStandScreenHandler) {

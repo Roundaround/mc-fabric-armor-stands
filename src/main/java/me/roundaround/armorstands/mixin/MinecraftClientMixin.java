@@ -22,11 +22,11 @@ public abstract class MinecraftClientMixin {
 
   @Inject(method = "hasOutline", at = @At(value = "HEAD"), cancellable = true)
   private void hasOutline(Entity entity, CallbackInfoReturnable<Boolean> info) {
-    if (!(currentScreen instanceof AbstractArmorStandScreen)) {
+    if (!(currentScreen instanceof AbstractArmorStandScreen standScreen)) {
       return;
     }
 
-    info.setReturnValue(((AbstractArmorStandScreen) currentScreen).shouldHighlight(entity));
+    info.setReturnValue(standScreen.shouldHighlight(entity));
   }
 
   @ModifyExpressionValue(
@@ -42,17 +42,17 @@ public abstract class MinecraftClientMixin {
   )
   )
   private Screen modifyCurrentScreen(Screen screen) {
-    return screen instanceof PassesEventsThrough && ((PassesEventsThrough) screen).shouldPassEvents() ? null : screen;
+    return screen instanceof PassesEventsThrough passScreen && passScreen.shouldPassEvents() ? null : screen;
   }
 
   @WrapWithCondition(
       method = "setScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/KeyBinding;unpressAll()V")
   )
   private boolean shouldUnpressAll(@Local(argsOnly = true) Screen screen) {
-    if (!(screen instanceof AbstractArmorStandScreen armorStandScreen)) {
+    if (!(screen instanceof PassesEventsThrough passScreen)) {
       return true;
     }
-    return !armorStandScreen.shouldPassEvents();
+    return !passScreen.shouldPassEvents();
   }
 
   @WrapWithCondition(
@@ -61,11 +61,13 @@ public abstract class MinecraftClientMixin {
   )
   )
   private boolean shouldSkipGameRender(
-      MinecraftClient client, boolean skipGameRender, @Local(argsOnly = true) Screen screen
+      MinecraftClient client,
+      boolean skipGameRender,
+      @Local(argsOnly = true) Screen screen
   ) {
-    if (!(screen instanceof AbstractArmorStandScreen armorStandScreen)) {
+    if (!(screen instanceof PassesEventsThrough passScreen)) {
       return true;
     }
-    return !armorStandScreen.shouldPassEvents();
+    return !passScreen.shouldPassEvents();
   }
 }

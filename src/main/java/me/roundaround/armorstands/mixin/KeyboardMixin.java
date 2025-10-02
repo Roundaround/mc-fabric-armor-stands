@@ -13,11 +13,10 @@ public class KeyboardMixin {
       method = "onKey", at = @At(
       value = "FIELD",
       target = "Lnet/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/client/gui/screen/Screen;",
-      ordinal = 2
+      ordinal = 4
   )
   )
   private Screen modifyCurrentScreen(Screen screen) {
-    return screen instanceof PassesEventsThrough passesEventsThrough &&
-        passesEventsThrough.shouldPassEvents() ? null : screen;
+    return screen instanceof PassesEventsThrough passScreen && passScreen.shouldPassEvents() ? null : screen;
   }
 }

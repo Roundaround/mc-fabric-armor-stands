@@ -104,7 +104,7 @@ public enum UtilityAction {
         editor.applyAction(SnapToGroundAction.create(this == SNAP_SITTING));
         break;
       case SNAP_PLAYER:
-        editor.setPos(new Vec3d(player.getX(), player.getY(), player.getZ()));
+        editor.setPos(player.armorstands$getPos());
         break;
       case FACE_TOWARD:
         editor.setRotation(ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));

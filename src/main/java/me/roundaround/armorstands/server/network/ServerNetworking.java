@@ -123,7 +123,7 @@ public final class ServerNetworking {
         return;
       }
 
-      player.openArmorStandScreen(armorStand, payload.screenType());
+      player.armorstands$openScreen(armorStand, payload.screenType());
     });
   }
 
