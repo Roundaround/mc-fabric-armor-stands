@@ -1,7 +1,5 @@
 package me.roundaround.armorstands.util;
 
-import java.util.Optional;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.util.math.BlockPos;
@@ -9,15 +7,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.Optional;
+
 public class ArmorStandHelper {
   public static Vec3d getCornerPos(ArmorStandEntity armorStand) {
-    Vec3d position = armorStand.getPos();
-    return new Vec3d(Math.floor(position.x), position.y, Math.floor(position.z));
+    return new Vec3d(Math.floor(armorStand.getX()), armorStand.getY(), Math.floor(armorStand.getZ()));
   }
 
   public static Vec3d getCenterPos(ArmorStandEntity armorStand) {
-    Vec3d position = armorStand.getPos();
-    return new Vec3d(Math.round(position.x + 0.5) - 0.5, position.y, Math.round(position.z + 0.5) - 0.5);
+    return new Vec3d(
+        Math.round(armorStand.getX() + 0.5) - 0.5,
+        armorStand.getY(),
+        Math.round(armorStand.getZ() + 0.5) - 0.5
+    );
   }
 
   public static Optional<Vec3d> getStandingPos(ArmorStandEntity armorStand) {
@@ -29,9 +31,7 @@ public class ArmorStandHelper {
   }
 
   public static Optional<Vec3d> getGroundPos(ArmorStandEntity armorStand, boolean sitting) {
-    Vec3d position = armorStand.getPos();
-
-    World world = armorStand.getWorld();
+    World world = armorStand.getEntityWorld();
     BlockPos blockPos = armorStand.getBlockPos().up(2);
     boolean failed = false;
 
@@ -48,7 +48,7 @@ public class ArmorStandHelper {
       return Optional.empty();
     }
 
-    Vec3d newPosition = new Vec3d(position.x, blockPos.getY(), position.z);
+    Vec3d newPosition = new Vec3d(armorStand.getX(), blockPos.getY(), armorStand.getZ());
 
     if (sitting) {
       newPosition = newPosition.subtract(0, 11 * 0.0625, 0);
@@ -75,21 +75,15 @@ public class ArmorStandHelper {
 
     Vec3d vec3d4 = vec3d2.crossProduct(vec3d3).multiply(-1);
 
-    double x = vec3d2.x * amount.z
-        + vec3d3.x * amount.y
-        + vec3d4.x * amount.x;
-    double y = vec3d2.y * amount.z
-        + vec3d3.y * amount.y
-        + vec3d4.y * amount.x;
-    double z = vec3d2.z * amount.z
-        + vec3d3.z * amount.y
-        + vec3d4.z * amount.x;
+    double x = vec3d2.x * amount.z + vec3d3.x * amount.y + vec3d4.x * amount.x;
+    double y = vec3d2.y * amount.z + vec3d3.y * amount.y + vec3d4.y * amount.x;
+    double z = vec3d2.z * amount.z + vec3d3.z * amount.y + vec3d4.z * amount.x;
 
     return new Vec3d(x, y, z);
   }
 
   public static float getLookYaw(ArmorStandEntity armorStand, Vec3d point) {
-    Vec3d pos = armorStand.getPos();
+    Vec3d pos = armorStand.getTrackedPosition().getPos();
     double dX = point.x - pos.x;
     double dZ = point.z - pos.z;
     return MathHelper.wrapDegrees((float) Math.toDegrees(MathHelper.atan2(dZ, dX)) - 90.0f);

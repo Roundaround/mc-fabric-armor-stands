@@ -14,17 +14,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
+
 @Mixin(Entity.class)
 @MixinEnv(MixinEnv.CLIENT)
 public abstract class EntityMixin {
-  @Inject(method = "updateTrackedPositionAndAngles", at = @At(value = "HEAD"), cancellable = true)
-  public void updateTrackedPositionAndAngles(Vec3d pos, float yaw, float pitch, CallbackInfo info) {
+  @Inject(method = "updateTrackedPositionAndAngles(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V", at = @At(value = "HEAD"), cancellable = true)
+  public void updateTrackedPositionAndAngles(
+      Optional<Vec3d> pos,
+      Optional<Float> yaw,
+      Optional<Float> pitch,
+      CallbackInfo info
+  ) {
     if (!(this.self() instanceof ArmorStandEntity self)) {
       return;
     }
 
-    World world = self.getWorld();
-    if (!world.isClient) {
+    World world = self.getEntityWorld();
+    if (!world.isClient()) {
       return;
     }
 

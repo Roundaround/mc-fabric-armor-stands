@@ -3,6 +3,7 @@ package me.roundaround.armorstands.mixin;
 import me.roundaround.armorstands.client.gui.screen.PassesEventsThrough;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,11 +16,10 @@ public abstract class HandledScreenMixin extends Screen {
   }
 
   @Inject(method = "keyPressed", at = @At(value = "HEAD"), cancellable = true)
-  public void keyPressed(
-      int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> info) {
-    if (this instanceof PassesEventsThrough passesEventsThrough &&
-        passesEventsThrough.shouldPassEvents()) {
-      info.setReturnValue(super.keyPressed(keyCode, scanCode, modifiers));
-    }
+  public void keyPressed(KeyInput input, CallbackInfoReturnable<Boolean> info) {
+    // TODO: Remove
+//    if (this instanceof PassesEventsThrough passesEventsThrough && passesEventsThrough.shouldPassEvents()) {
+//      info.setReturnValue(super.keyPressed(input));
+//    }
   }
 }

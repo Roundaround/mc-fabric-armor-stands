@@ -113,7 +113,7 @@ public final class ClientNetworking {
   private static void handleOpenScreen(Networking.OpenScreenS2C payload, ClientPlayNetworking.Context context) {
     context.client().execute(() -> {
       ClientPlayerEntity player = context.player();
-      if (!(player.getWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
+      if (!(player.getEntityWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
         return;
       }
 

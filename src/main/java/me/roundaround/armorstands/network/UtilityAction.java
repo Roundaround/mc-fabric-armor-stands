@@ -11,6 +11,7 @@ import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.Arrays;
 
@@ -103,7 +104,7 @@ public enum UtilityAction {
         editor.applyAction(SnapToGroundAction.create(this == SNAP_SITTING));
         break;
       case SNAP_PLAYER:
-        editor.setPos(player.getPos());
+        editor.setPos(new Vec3d(player.getX(), player.getY(), player.getZ()));
         break;
       case FACE_TOWARD:
         editor.setRotation(ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));

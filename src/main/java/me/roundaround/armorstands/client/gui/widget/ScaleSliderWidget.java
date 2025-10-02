@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.widget;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.util.actions.ScaleAction;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -28,9 +29,7 @@ public class ScaleSliderWidget extends SliderWidget {
   private boolean isDragging = false;
   private boolean pendingDragPing = false;
 
-  public ScaleSliderWidget(
-      AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand
-  ) {
+  public ScaleSliderWidget(AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand) {
     super(0, 0, width, height, Text.empty(), 0);
 
     this.parent = parent;
@@ -104,15 +103,15 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   @Override
-  public void onClick(double mouseX, double mouseY) {
-    super.onClick(mouseX, mouseY);
+  public void onClick(Click click, boolean doubled) {
+    super.onClick(click, doubled);
 
     this.isDragging = true;
   }
 
   @Override
-  public void onRelease(double mouseX, double mouseY) {
-    super.onRelease(mouseX, mouseY);
+  public void onRelease(Click click) {
+    super.onRelease(click);
 
     this.isDragging = false;
     this.pendingDragPing = true;
@@ -122,9 +121,7 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   @Override
-  public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
-  ) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (this.isMouseOver(mouseX, mouseY)) {
       if (verticalAmount > 0) {
         this.increment();
@@ -140,9 +137,9 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   @Override
-  protected void onDrag(double mouseX, double mouseY, double deltaX, double deltaY) {
+  protected void onDrag(Click click, double deltaX, double deltaY) {
     this.isDragging = true;
-    super.onDrag(mouseX, mouseY, deltaX, deltaY);
+    super.onDrag(click, deltaX, deltaY);
   }
 
   @Override

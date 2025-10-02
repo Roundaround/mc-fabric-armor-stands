@@ -17,11 +17,14 @@ import me.roundaround.armorstands.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.FrameWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.SystemKeycodes;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -135,14 +138,13 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   private Text buildHelpTooltipText() {
     String alt = Text.translatable("armorstands.help.alt").getString();
     String inventory = this.getClient().options.inventoryKey.getBoundKeyLocalizedText().getString();
-    String esc = InputUtil.fromKeyCode(GLFW.GLFW_KEY_ESCAPE, 0).getLocalizedText().getString();
+    String esc = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_ESCAPE).getLocalizedText().getString();
     String highlight = ArmorStandsClientMod.highlightArmorStandKeyBinding.getBoundKeyLocalizedText().getString();
-    String control = Text.translatable("armorstands.help." + (MinecraftClient.IS_SYSTEM_MAC ? "cmd" : "ctrl"))
-        .getString();
-    String z = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Z, 0).getLocalizedText().getString();
-    String y = InputUtil.fromKeyCode(GLFW.GLFW_KEY_Y, 0).getLocalizedText().getString();
-    String c = InputUtil.fromKeyCode(GLFW.GLFW_KEY_C, 0).getLocalizedText().getString();
-    String v = InputUtil.fromKeyCode(GLFW.GLFW_KEY_V, 0).getLocalizedText().getString();
+    String control = Text.translatable("armorstands.help." + (SystemKeycodes.IS_MAC_OS ? "cmd" : "ctrl")).getString();
+    String z = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Z).getLocalizedText().getString();
+    String y = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Y).getLocalizedText().getString();
+    String c = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_C).getLocalizedText().getString();
+    String v = InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_V).getLocalizedText().getString();
 
     return Text.translatable(
         "armorstands.help",
@@ -202,6 +204,11 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
 
     this.messageRenderer.tick();
+
+    if (this.shouldPassEvents()) {
+      // TODO: Is there a better way than updating all?
+      KeyBinding.updatePressedStates();
+    }
   }
 
   @Override
@@ -240,12 +247,12 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseClicked(double mouseX, double mouseY, int button) {
+  public boolean mouseClicked(Click click, boolean doubled) {
     if (this.cursorLocked) {
       return false;
     }
     Element focused = getFocused();
-    boolean result = super.mouseClicked(mouseX, mouseY, button);
+    boolean result = super.mouseClicked(click, doubled);
 
     if (this.utilizesInventory) {
       setFocused(focused);
@@ -255,37 +262,36 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+  public boolean mouseDragged(Click click, double deltaX, double deltaY) {
     if (this.cursorLocked) {
       return false;
     }
     if (this.utilizesInventory) {
-      return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+      return super.mouseDragged(click, deltaX, deltaY);
     }
 
-    if (getFocused() != null && isDragging() && button == 0) {
-      return getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    if (getFocused() != null && isDragging() && click.button() == 0) {
+      return getFocused().mouseDragged(click, deltaX, deltaY);
     }
     return false;
   }
 
   @Override
-  public boolean mouseReleased(double mouseX, double mouseY, int button) {
+  public boolean mouseReleased(Click click) {
     if (this.cursorLocked) {
       return false;
     }
     if (this.utilizesInventory) {
-      return super.mouseReleased(mouseX, mouseY, button);
+      return super.mouseReleased(click);
     }
 
-    if (isDragging() && getFocused() != null && button == 0) {
+    if (isDragging() && getFocused() != null && click.button() == 0) {
       setDragging(false);
-      return getFocused().mouseReleased(mouseX, mouseY, button);
+      return getFocused().mouseReleased(click);
     }
 
     setDragging(false);
-    return hoveredElement(mouseX, mouseY).filter((element) -> element.mouseReleased(mouseX, mouseY, button))
-        .isPresent();
+    return hoveredElement(click.x(), click.y()).filter((element) -> element.mouseReleased(click)).isPresent();
   }
 
   @Override
@@ -315,20 +321,20 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+  public boolean keyPressed(KeyInput input) {
     assert this.client != null;
 
     // Allow jump to pass through without pressing buttons
-    if (this.client.options.jumpKey.matchesKey(keyCode, scanCode)) {
+    if (this.client.options.jumpKey.matchesKey(input)) {
       return false;
     }
 
-    if (this.client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+    if (this.client.options.inventoryKey.matchesKey(input)) {
       close();
       return true;
     }
 
-    switch (keyCode) {
+    switch (input.getKeycode()) {
       case GLFW.GLFW_KEY_ESCAPE:
         close();
         return true;
@@ -340,42 +346,42 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         lockCursor();
         return true;
       case GLFW.GLFW_KEY_LEFT:
-        if (!Screen.hasControlDown()) {
+        if (!input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
         goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
-        if (!Screen.hasControlDown()) {
+        if (!input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
         goToNextScreen();
         return true;
       case GLFW.GLFW_KEY_Z:
-        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(false);
         return true;
       case GLFW.GLFW_KEY_Y:
-        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(true);
         return true;
       case GLFW.GLFW_KEY_C:
-        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
-        if (!this.supportsUndoRedo || !Screen.hasControlDown()) {
+        if (!this.supportsUndoRedo || !input.hasCtrl()) {
           break;
         }
         GuiUtil.playClickSound();
@@ -387,28 +393,29 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       if (screenType == this.getScreenType()) {
         continue;
       }
-      if (this.client.options.hotbarKeys[screenType.getIndex()].matchesKey(keyCode, scanCode)) {
+      if (this.client.options.hotbarKeys[screenType.getIndex()].matchesKey(input)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
       }
     }
 
-    if (getFocused() != null && getFocused().keyPressed(keyCode, scanCode, modifiers)) {
+    if (getFocused() != null && getFocused().keyPressed(input)) {
       return true;
     }
 
-    return super.keyPressed(keyCode, scanCode, modifiers);
+    return super.keyPressed(input);
   }
 
   @Override
-  public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-    if (this.passEvents && (keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT)) {
+  public boolean keyReleased(KeyInput input) {
+    if (this.passEvents &&
+        (input.getKeycode() == GLFW.GLFW_KEY_LEFT_ALT || input.getKeycode() == GLFW.GLFW_KEY_RIGHT_ALT)) {
       unlockCursor();
       return true;
     }
 
-    return getFocused() != null && getFocused().keyReleased(keyCode, scanCode, modifiers);
+    return getFocused() != null && getFocused().keyReleased(input);
   }
 
   public boolean shouldHighlight(Entity entity) {
@@ -456,7 +463,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
+    InputUtil.setCursorParameters(this.client.getWindow(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
   }
 
   protected void unlockCursor() {
@@ -467,7 +474,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
     int y = this.client.getWindow().getHeight() / 2;
     ((MouseAccessor) this.client.mouse).setX(x);
     ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow().getHandle(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+    InputUtil.setCursorParameters(this.client.getWindow(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
   }
 
   protected void goToPreviousScreen() {

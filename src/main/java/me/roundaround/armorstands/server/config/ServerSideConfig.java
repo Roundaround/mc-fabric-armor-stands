@@ -14,6 +14,7 @@ import net.minecraft.server.Whitelist;
 import net.minecraft.server.WhitelistEntry;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.dedicated.ServerPropertiesHandler;
+import net.minecraft.server.dedicated.management.listener.BlankManagementListener;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -149,7 +150,7 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       return List.of();
     }
 
-    Whitelist legacyAllowlist = new Whitelist(path.toFile());
+    Whitelist legacyAllowlist = new Whitelist(path.toFile(), new BlankManagementListener());
 
     try {
       legacyAllowlist.load();
@@ -177,6 +178,6 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
 
   @SuppressWarnings("unchecked")
   private String extractUuid(WhitelistEntry entry) {
-    return ((ServerConfigEntryAccessor<GameProfile>) entry).invokeGetKey().getId().toString();
+    return ((ServerConfigEntryAccessor<GameProfile>) entry).invokeGetKey().id().toString();
   }
 }

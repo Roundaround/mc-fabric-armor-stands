@@ -1,12 +1,12 @@
 package me.roundaround.armorstands.util.actions;
 
-import java.util.Optional;
-
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
+
+import java.util.Optional;
 
 public class MoveToGroundAction implements ArmorStandAction {
   private Optional<Vec3d> originalPosition = Optional.empty();
@@ -35,12 +35,10 @@ public class MoveToGroundAction implements ArmorStandAction {
 
   @Override
   public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(
-        armorStand,
-        this.sitting);
+    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.sitting);
 
     if (maybeGround.isPresent()) {
-      originalPosition = Optional.of(armorStand.getPos());
+      originalPosition = Optional.of(new Vec3d(armorStand.getX(), armorStand.getY(), armorStand.getZ()));
       MoveAction.setPosition(armorStand, maybeGround.get());
     }
   }

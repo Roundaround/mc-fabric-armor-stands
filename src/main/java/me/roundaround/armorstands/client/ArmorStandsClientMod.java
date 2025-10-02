@@ -24,7 +24,7 @@ public class ArmorStandsClientMod implements ClientModInitializer {
         "armorstands.key.highlight_armor_stand",
         InputUtil.Type.KEYSYM,
         InputUtil.UNKNOWN_KEY.getCode(),
-        KeyBinding.MISC_CATEGORY
+        KeyBinding.Category.MISC
     ));
 
     BuiltinResourcePack.register(Constants.MOD_ID, RESOURCE_PACK_ID, Text.translatable("armorstands.resource.darkui"));

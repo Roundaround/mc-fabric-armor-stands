@@ -1,12 +1,12 @@
 package me.roundaround.armorstands.server;
 
-import com.mojang.authlib.GameProfile;
 import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.PlayerConfigEntry;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -25,7 +25,7 @@ public class ArmorStandUsers {
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public static boolean canEditArmorStands(ServerPlayerEntity player) {
-    MinecraftServer server = player.getServer();
+    MinecraftServer server = player.getEntityWorld().getServer();
     if (!(server instanceof MinecraftDedicatedServer)) {
       return true;
     }
@@ -43,23 +43,23 @@ public class ArmorStandUsers {
       return true;
     }
 
-    return contains(player.getGameProfile());
+    return contains(player.getPlayerConfigEntry());
   }
 
-  public static boolean contains(GameProfile profile) {
-    return ServerSideConfig.getInstance().allowedUsers.getValue().contains(profile.getId().toString());
+  public static boolean contains(PlayerConfigEntry player) {
+    return ServerSideConfig.getInstance().allowedUsers.getValue().contains(player.id().toString());
   }
 
-  public static void add(GameProfile profile) {
+  public static void add(PlayerConfigEntry player) {
     StringListConfigOption allowedUsers = ServerSideConfig.getInstance().allowedUsers;
-    String toAdd = profile.getId().toString();
+    String toAdd = player.id().toString();
     if (allowedUsers.getValue().stream().noneMatch((uuid) -> uuid.equalsIgnoreCase(toAdd))) {
       allowedUsers.add(toAdd);
     }
   }
 
-  public static void remove(GameProfile profile) {
-    ServerSideConfig.getInstance().allowedUsers.remove(profile.getId().toString());
+  public static void remove(PlayerConfigEntry player) {
+    ServerSideConfig.getInstance().allowedUsers.remove(player.id().toString());
   }
 
   public static void reload() {
@@ -73,8 +73,8 @@ public class ArmorStandUsers {
     values.addAll(uuids.stream()
         .map(playerManager::getPlayer)
         .filter(Objects::nonNull)
-        .map(PlayerEntity::getGameProfile)
-        .map(GameProfile::getName)
+        .map(PlayerEntity::getPlayerConfigEntry)
+        .map(PlayerConfigEntry::name)
         .collect(Collectors.toSet()));
     return values;
   }

@@ -3,6 +3,7 @@ package me.roundaround.armorstands.client.gui.widget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -24,7 +25,11 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   private Optional<Long> lastScroll = Optional.empty();
 
   public AdjustPoseSliderWidget(
-      int width, int height, PosePart part, EulerAngleParameter parameter, ArmorStandEntity armorStand
+      int width,
+      int height,
+      PosePart part,
+      EulerAngleParameter parameter,
+      ArmorStandEntity armorStand
   ) {
     super(0, 0, width, height, Text.empty(), 0);
 
@@ -104,16 +109,14 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   @Override
-  public void onRelease(double mouseX, double mouseY) {
-    super.onRelease(mouseX, mouseY);
+  public void onRelease(Click click) {
+    super.onRelease(click);
 
     persistValue();
   }
 
   @Override
-  public boolean mouseScrolled(
-      double mouseX, double mouseY, double horizontalAmount, double verticalAmount
-  ) {
+  public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (isMouseOver(mouseX, mouseY)) {
       setAngle(getAngle() + (float) verticalAmount);
       applyValue();
