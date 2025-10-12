@@ -50,7 +50,7 @@ public class ArmorStandsCommand {
     LiteralArgumentBuilder<ServerCommandSource> removeSub = CommandManager.literal("remove")
         .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
             .suggests((context, builder) -> CommandSource.suggestMatching(
-                ArmorStandUsers.getNamesAndUuids(context.getSource()
+                ArmorStandUsers.listNames(context.getSource()
                     .getServer()), builder
             ))
             .executes((context) -> executeRemove(

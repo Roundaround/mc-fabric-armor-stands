@@ -4,17 +4,13 @@ import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerConfigEntry;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.NameToIdCache;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ArmorStandUsers {
@@ -55,27 +51,36 @@ public class ArmorStandUsers {
     String toAdd = player.id().toString();
     if (allowedUsers.getValue().stream().noneMatch((uuid) -> uuid.equalsIgnoreCase(toAdd))) {
       allowedUsers.add(toAdd);
+      if (allowedUsers.isDirty()) {
+        ServerSideConfig.getInstance().writeToStore();
+      }
     }
   }
 
   public static void remove(PlayerConfigEntry player) {
-    ServerSideConfig.getInstance().allowedUsers.remove(player.id().toString());
+    StringListConfigOption allowedUsers = ServerSideConfig.getInstance().allowedUsers;
+    allowedUsers.remove(player.id().toString());
+    if (allowedUsers.isDirty()) {
+      ServerSideConfig.getInstance().writeToStore();
+    }
   }
 
   public static void reload() {
     ServerSideConfig.getInstance().syncWithStore();
   }
 
-  public static Collection<String> getNamesAndUuids(MinecraftServer server) {
-    List<String> uuids = ServerSideConfig.getInstance().allowedUsers.getValue();
-    List<String> values = new ArrayList<>(uuids);
-    PlayerManager playerManager = server.getPlayerManager();
-    values.addAll(uuids.stream()
-        .map(playerManager::getPlayer)
-        .filter(Objects::nonNull)
-        .map(PlayerEntity::getPlayerConfigEntry)
-        .map(PlayerConfigEntry::name)
-        .collect(Collectors.toSet()));
-    return values;
+  public static Collection<String> listNames(MinecraftServer server) {
+    NameToIdCache cache = server.getApiServices().nameToIdCache();
+    return ServerSideConfig.getInstance().allowedUsers.getValue().stream().map((rawUuid) -> {
+      UUID uuid;
+      try {
+        uuid = UUID.fromString(rawUuid);
+      } catch (IllegalArgumentException unused) {
+        return null;
+      }
+
+      Optional<PlayerConfigEntry> opt = cache.getByUuid(uuid);
+      return opt.map(PlayerConfigEntry::name).orElse(null);
+    }).filter(Objects::nonNull).collect(Collectors.toSet());
   }
 }
