@@ -68,9 +68,8 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     first.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.source.label"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    first.add(CyclingButtonWidget.builder(Source::getDisplayName)
+    first.add(CyclingButtonWidget.builder(Source::getDisplayName, Source.ALL)
         .values(Source.getSources())
-        .initially(Source.ALL)
         .omitKeyText()
         .build(
             0,
@@ -88,9 +87,8 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     second.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.presets.category.label"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    second.add(CyclingButtonWidget.builder(Category::getDisplayName)
+    second.add(CyclingButtonWidget.builder(Category::getDisplayName, Category.ALL)
         .values(Category.getCategories())
-        .initially(Category.ALL)
         .omitKeyText()
         .build(
             0,

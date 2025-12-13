@@ -148,17 +148,15 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.layout.bottomRight.defaultOffAxisContentAlignEnd();
 
     this.layout.bottomRight.add(
-        CyclingButtonWidget.builder(MoveMode::getOptionValueText)
+        CyclingButtonWidget.builder(MoveMode::getOptionValueText, this.mode)
             .values(MoveMode.values())
-            .initially(this.mode)
             .build(MoveMode.getOptionLabelText(), this::onMoveModeChange),
         (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );
 
     this.unitsButton = this.layout.bottomRight.add(
-        CyclingButtonWidget.builder(MoveUnits::getOptionValueText)
+        CyclingButtonWidget.builder(MoveUnits::getOptionValueText, this.units)
             .values(MoveUnits.values())
-            .initially(this.units)
             .build(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange),
         (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );

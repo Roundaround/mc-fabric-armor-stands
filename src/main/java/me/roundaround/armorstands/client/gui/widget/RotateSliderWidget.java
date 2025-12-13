@@ -153,11 +153,6 @@ public class RotateSliderWidget extends SliderWidget {
     setValue(angleToValue(value, this.min, this.max));
   }
 
-  private void setValue(double value) {
-    this.value = MathHelper.clamp(value, 0, 1);
-    updateMessage();
-  }
-
   private static double angleToValue(float value, int min, int max) {
     // Map angle (min-max) to value (0-1)
     return (value - min) / (max - min);

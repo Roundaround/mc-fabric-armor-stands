@@ -211,8 +211,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .build());
 
     block.add(
-        CyclingButtonWidget.builder(SliderRange::getDisplayName)
-            .initially(SliderRange.FULL)
+        CyclingButtonWidget.builder(SliderRange::getDisplayName, SliderRange.FULL)
             .values(SliderRange.values())
             .omitKeyText()
             .build(

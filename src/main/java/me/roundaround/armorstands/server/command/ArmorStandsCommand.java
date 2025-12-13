@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.DefaultPermissions;
 import net.minecraft.command.argument.GameProfileArgumentType;
 import net.minecraft.server.PlayerConfigEntry;
 import net.minecraft.server.PlayerManager;
@@ -30,7 +31,8 @@ public class ArmorStandsCommand {
 
   public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
     LiteralArgumentBuilder<ServerCommandSource> baseCommand = CommandManager.literal(ArmorStandsMod.MOD_ID)
-        .requires(source -> source.hasPermissionLevel(2) || source.getServer().isSingleplayer());
+        .requires(source -> source.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS) ||
+                            source.getServer().isSingleplayer());
 
     LiteralArgumentBuilder<ServerCommandSource> addSub = CommandManager.literal("add")
         .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())

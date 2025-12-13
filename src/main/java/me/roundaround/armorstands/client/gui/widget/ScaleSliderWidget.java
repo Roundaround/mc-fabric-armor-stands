@@ -155,11 +155,6 @@ public class ScaleSliderWidget extends SliderWidget {
     this.setValue(scaleToValue(scale));
   }
 
-  private void setValue(double value) {
-    this.value = MathHelper.clamp(value, 0, 1);
-    updateMessage();
-  }
-
   private static float nextTickUp(float from) {
     float stepAmount = stepAmount(from, true);
     return (float) (Math.ceil(from / stepAmount) * stepAmount);
