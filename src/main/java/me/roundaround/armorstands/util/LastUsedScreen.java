@@ -4,48 +4,48 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import me.roundaround.armorstands.network.ScreenType;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class LastUsedScreen {
   private static final HashMap<UUID, Entry> lastUsedScreens = new HashMap<>();
 
-  public static void set(ServerPlayerEntity player, ArmorStandEntity armorStand, ScreenType screenType) {
-    lastUsedScreens.put(player.getUuid(), new Entry(armorStand, screenType));
+  public static void set(ServerPlayer player, ArmorStand armorStand, ScreenType screenType) {
+    lastUsedScreens.put(player.getUUID(), new Entry(armorStand, screenType));
   }
 
-  public static ScreenType get(ServerPlayerEntity player, ArmorStandEntity armorStand) {
-    if (!lastUsedScreens.containsKey(player.getUuid())) {
+  public static ScreenType get(ServerPlayer player, ArmorStand armorStand) {
+    if (!lastUsedScreens.containsKey(player.getUUID())) {
       return null;
     }
 
-    Entry entry = lastUsedScreens.get(player.getUuid());
+    Entry entry = lastUsedScreens.get(player.getUUID());
     return entry.matches(armorStand, entry.screenType) ? entry.screenType : null;
   }
 
   public static ScreenType getOrDefault(
-      ServerPlayerEntity player,
-      ArmorStandEntity armorStand,
+      ServerPlayer player,
+      ArmorStand armorStand,
       ScreenType defaultScreenType) {
     ScreenType screenType = get(player, armorStand);
     return screenType == null ? defaultScreenType : screenType;
   }
 
-  public static void remove(ServerPlayerEntity player) {
-    lastUsedScreens.remove(player.getUuid());
+  public static void remove(ServerPlayer player) {
+    lastUsedScreens.remove(player.getUUID());
   }
 
   private static class Entry {
     private final UUID armorStandUuid;
     private final ScreenType screenType;
 
-    private Entry(ArmorStandEntity armorStand, ScreenType screenType) {
-      this.armorStandUuid = armorStand.getUuid();
+    private Entry(ArmorStand armorStand, ScreenType screenType) {
+      this.armorStandUuid = armorStand.getUUID();
       this.screenType = screenType;
     }
 
-    public boolean matches(ArmorStandEntity armorStand, ScreenType screenType) {
-      return this.armorStandUuid.equals(armorStand.getUuid()) && this.screenType == screenType;
+    public boolean matches(ArmorStand armorStand, ScreenType screenType) {
+      return this.armorStandUuid.equals(armorStand.getUUID()) && this.screenType == screenType;
     }
   }
 }

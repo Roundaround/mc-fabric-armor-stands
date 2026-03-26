@@ -3,25 +3,25 @@ package me.roundaround.armorstands.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.roundaround.armorstands.util.Pose.PoseSupplier;
-import net.minecraft.util.math.EulerAngle;
+import net.minecraft.core.Rotations;
 
 public class SavedPose implements PoseSupplier {
   private final String name;
-  private final EulerAngle head;
-  private final EulerAngle body;
-  private final EulerAngle rightArm;
-  private final EulerAngle leftArm;
-  private final EulerAngle rightLeg;
-  private final EulerAngle leftLeg;
+  private final Rotations head;
+  private final Rotations body;
+  private final Rotations rightArm;
+  private final Rotations leftArm;
+  private final Rotations rightLeg;
+  private final Rotations leftLeg;
 
   public SavedPose(
       String name,
-      EulerAngle head,
-      EulerAngle body,
-      EulerAngle rightArm,
-      EulerAngle leftArm,
-      EulerAngle rightLeg,
-      EulerAngle leftLeg
+      Rotations head,
+      Rotations body,
+      Rotations rightArm,
+      Rotations leftArm,
+      Rotations rightLeg,
+      Rotations leftLeg
   ) {
     this.name = name;
     this.head = head;
@@ -53,27 +53,27 @@ public class SavedPose implements PoseSupplier {
     return name;
   }
 
-  public EulerAngle getHead() {
+  public Rotations getHead() {
     return head;
   }
 
-  public EulerAngle getBody() {
+  public Rotations getBody() {
     return body;
   }
 
-  public EulerAngle getRightArm() {
+  public Rotations getRightArm() {
     return rightArm;
   }
 
-  public EulerAngle getLeftArm() {
+  public Rotations getLeftArm() {
     return leftArm;
   }
 
-  public EulerAngle getRightLeg() {
+  public Rotations getRightLeg() {
     return rightLeg;
   }
 
-  public EulerAngle getLeftLeg() {
+  public Rotations getLeftLeg() {
     return leftLeg;
   }
 
@@ -93,29 +93,29 @@ public class SavedPose implements PoseSupplier {
 
   public static SavedPose fromJson(JsonObject json) {
     String name = json.get("name").getAsString();
-    EulerAngle head = jsonToEulerAngle(json.getAsJsonArray("head"));
-    EulerAngle body = jsonToEulerAngle(json.getAsJsonArray("body"));
-    EulerAngle rightArm = jsonToEulerAngle(json.getAsJsonArray("rightArm"));
-    EulerAngle leftArm = jsonToEulerAngle(json.getAsJsonArray("leftArm"));
-    EulerAngle rightLeg = jsonToEulerAngle(json.getAsJsonArray("rightLeg"));
-    EulerAngle leftLeg = jsonToEulerAngle(json.getAsJsonArray("leftLeg"));
+    Rotations head = jsonToEulerAngle(json.getAsJsonArray("head"));
+    Rotations body = jsonToEulerAngle(json.getAsJsonArray("body"));
+    Rotations rightArm = jsonToEulerAngle(json.getAsJsonArray("rightArm"));
+    Rotations leftArm = jsonToEulerAngle(json.getAsJsonArray("leftArm"));
+    Rotations rightLeg = jsonToEulerAngle(json.getAsJsonArray("rightLeg"));
+    Rotations leftLeg = jsonToEulerAngle(json.getAsJsonArray("leftLeg"));
 
     return new SavedPose(name, head, body, rightArm, leftArm, rightLeg, leftLeg);
   }
 
-  private static EulerAngle jsonToEulerAngle(JsonArray json) {
+  private static Rotations jsonToEulerAngle(JsonArray json) {
     float pitch = json.get(0).getAsFloat();
     float yaw = json.get(1).getAsFloat();
     float roll = json.get(2).getAsFloat();
 
-    return new EulerAngle(pitch, yaw, roll);
+    return new Rotations(pitch, yaw, roll);
   }
 
-  private static JsonArray eulerAngleToJson(EulerAngle angle) {
+  private static JsonArray eulerAngleToJson(Rotations angle) {
     JsonArray json = new JsonArray();
-    json.add(angle.pitch());
-    json.add(angle.yaw());
-    json.add(angle.roll());
+    json.add(angle.x());
+    json.add(angle.y());
+    json.add(angle.z());
 
     return json;
   }

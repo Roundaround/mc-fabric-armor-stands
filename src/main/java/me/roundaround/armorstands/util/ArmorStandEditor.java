@@ -4,50 +4,49 @@ import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
 import me.roundaround.armorstands.util.actions.*;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.EulerAngle;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.core.Direction;
+import net.minecraft.core.Rotations;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.phys.Vec3;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.UUID;
 
 public class ArmorStandEditor {
-  private static final HashMap<UUID, Pair<UUID, ArmorStandEditor>> editors = new HashMap<>();
+  private static final HashMap<UUID, Tuple<UUID, ArmorStandEditor>> editors = new HashMap<>();
 
-  private final ServerPlayerEntity player;
-  private final ArmorStandEntity armorStand;
+  private final ServerPlayer player;
+  private final ArmorStand armorStand;
   private final SizeLimitedStack<ArmorStandAction> actions = new SizeLimitedStack<>(30);
   private final SizeLimitedStack<ArmorStandAction> undos = new SizeLimitedStack<>(30);
 
-  public static ArmorStandEditor get(ServerPlayerEntity player, ArmorStandEntity armorStand) {
-    UUID uuid = player.getUuid();
+  public static ArmorStandEditor get(ServerPlayer player, ArmorStand armorStand) {
+    UUID uuid = player.getUUID();
 
     if (!editors.containsKey(uuid)) {
-      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(player, armorStand)));
+      editors.put(uuid, new Tuple<>(armorStand.getUUID(), new ArmorStandEditor(player, armorStand)));
     }
 
-    Pair<UUID, ArmorStandEditor> pair = editors.get(uuid);
-    if (!pair.getLeft().equals(armorStand.getUuid())) {
-      editors.put(uuid, new Pair<>(armorStand.getUuid(), new ArmorStandEditor(player, armorStand)));
+    Tuple<UUID, ArmorStandEditor> pair = editors.get(uuid);
+    if (!pair.getA().equals(armorStand.getUUID())) {
+      editors.put(uuid, new Tuple<>(armorStand.getUUID(), new ArmorStandEditor(player, armorStand)));
     }
 
-    return editors.get(uuid).getRight();
+    return editors.get(uuid).getB();
   }
 
-  public static void remove(ServerPlayerEntity player) {
-    editors.remove(player.getUuid());
+  public static void remove(ServerPlayer player) {
+    editors.remove(player.getUUID());
   }
 
-  private ArmorStandEditor(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+  private ArmorStandEditor(ServerPlayer player, ArmorStand armorStand) {
     this.player = player;
     this.armorStand = armorStand;
   }
 
-  public ArmorStandEntity getArmorStand() {
+  public ArmorStand getArmorStand() {
     return this.armorStand;
   }
 
@@ -91,22 +90,22 @@ public class ArmorStandEditor {
   }
 
   public void movePos(Direction direction, int pixels) {
-    movePos(new Vec3d(direction.getUnitVector()).multiply(pixels * 0.0625), true);
+    movePos(new Vec3(direction.step()).scale(pixels * 0.0625), true);
   }
 
-  public void movePos(Vec3d amount) {
+  public void movePos(Vec3 amount) {
     movePos(amount, false);
   }
 
-  public void movePos(Vec3d amount, boolean roundToPixel) {
+  public void movePos(Vec3 amount, boolean roundToPixel) {
     applyAction(MoveAction.relative(amount, roundToPixel));
   }
 
   public void setPos(double x, double y, double z) {
-    setPos(new Vec3d(x, y, z));
+    setPos(new Vec3(x, y, z));
   }
 
-  public void setPos(Vec3d position) {
+  public void setPos(Vec3 position) {
     applyAction(MoveAction.absolute(position));
   }
 
@@ -139,7 +138,7 @@ public class ArmorStandEditor {
   }
 
   public void setPose(
-      EulerAngle head, EulerAngle body, EulerAngle rightArm, EulerAngle leftArm, EulerAngle rightLeg, EulerAngle leftLeg
+      Rotations head, Rotations body, Rotations rightArm, Rotations leftArm, Rotations rightLeg, Rotations leftLeg
   ) {
     setPose(new Pose(head, body, rightArm, leftArm, rightLeg, leftLeg));
   }

@@ -1,15 +1,14 @@
 package me.roundaround.armorstands.mixin;
 
+import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.Mouse;
-
-@Mixin(Mouse.class)
+@Mixin(MouseHandler.class)
 public interface MouseAccessor {
-  @Accessor("x")
+  @Accessor("xpos")
   void setX(double x);
   
-  @Accessor("y")
+  @Accessor("ypos")
   void setY(double y);
 }

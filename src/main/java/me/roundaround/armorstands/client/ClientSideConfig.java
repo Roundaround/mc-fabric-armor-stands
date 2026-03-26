@@ -6,7 +6,7 @@ import me.roundaround.armorstands.roundalib.config.manage.ModConfigImpl;
 import me.roundaround.armorstands.roundalib.config.manage.store.GameScopedFileStore;
 import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.armorstands.roundalib.config.option.IntConfigOption;
-import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.resources.language.I18n;
 
 public class ClientSideConfig extends ModConfigImpl implements GameScopedFileStore {
   private static ClientSideConfig instance = null;
@@ -40,9 +40,9 @@ public class ClientSideConfig extends ModConfigImpl implements GameScopedFileSto
         .setStep(4)
         .setToStringFunction((val) -> {
           if (val == 0) {
-            return I18n.translate("armorstands.nameRenderDistance.value.default");
+            return I18n.get("armorstands.nameRenderDistance.value.default");
           }
-          return I18n.translate("armorstands.nameRenderDistance.value", val);
+          return I18n.get("armorstands.nameRenderDistance.value", val);
         })
         .setComment("How far away armor stand names should be visible.", "Set to 0 to fall back to default.")
         .build()).clientOnly().commit();

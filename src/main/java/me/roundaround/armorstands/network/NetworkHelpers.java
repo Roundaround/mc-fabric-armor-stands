@@ -1,16 +1,16 @@
 package me.roundaround.armorstands.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.math.EulerAngle;
+import net.minecraft.core.Rotations;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class NetworkHelpers {
-  public static EulerAngle readEulerAngle(PacketByteBuf buf) {
-    return new EulerAngle(buf.readFloat(), buf.readFloat(), buf.readFloat());
+  public static Rotations readEulerAngle(FriendlyByteBuf buf) {
+    return new Rotations(buf.readFloat(), buf.readFloat(), buf.readFloat());
   }
 
-  public static void writeEulerAngle(PacketByteBuf buf, EulerAngle eulerAngle) {
-    buf.writeFloat(eulerAngle.pitch());
-    buf.writeFloat(eulerAngle.yaw());
-    buf.writeFloat(eulerAngle.roll());
+  public static void writeEulerAngle(FriendlyByteBuf buf, Rotations eulerAngle) {
+    buf.writeFloat(eulerAngle.x());
+    buf.writeFloat(eulerAngle.y());
+    buf.writeFloat(eulerAngle.z());
   }
 }

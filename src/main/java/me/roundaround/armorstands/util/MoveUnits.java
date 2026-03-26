@@ -1,22 +1,21 @@
 package me.roundaround.armorstands.util;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-
 import java.util.function.IntFunction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
 
 public enum MoveUnits {
   PIXELS(0, "pixels"), BLOCKS(1, "blocks");
 
-  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<MoveUnits> ID_TO_VALUE_FUNCTION = ByIdMap.continuous(
       MoveUnits::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.CLAMP
+      ByIdMap.OutOfBoundsStrategy.CLAMP
   );
-  public static final PacketCodec<ByteBuf, MoveUnits> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, MoveUnits> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       MoveUnits::getIndex
   );
@@ -37,12 +36,12 @@ public enum MoveUnits {
     return this.id;
   }
 
-  public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.units." + this.id);
+  public Component getOptionValueText() {
+    return Component.translatable("armorstands.move.units." + this.id);
   }
 
-  public Text getButtonText(int amount) {
-    return Text.translatable("armorstands.move." + this.id + "." + amount);
+  public Component getButtonText(int amount) {
+    return Component.translatable("armorstands.move." + this.id + "." + amount);
   }
 
   public double getAmount(int amount) {
@@ -70,8 +69,8 @@ public enum MoveUnits {
     };
   }
 
-  public static Text getOptionLabelText() {
-    return Text.translatable("armorstands.move.units");
+  public static Component getOptionLabelText() {
+    return Component.translatable("armorstands.move.units");
   }
 
   public static MoveUnits fromId(String id) {

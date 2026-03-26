@@ -4,14 +4,12 @@ import me.roundaround.armorstands.network.Networking;
 import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.command.permission.LeveledPermissionPredicate;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerConfigEntry;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.NameToIdCache;
-
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.server.players.UserNameToIdResolver;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,9 +23,9 @@ public class ArmorStandUsers {
   public static final int PERMISSION_LEVEL = 2;
 
   @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-  public static boolean canEditArmorStands(ServerPlayerEntity player) {
-    MinecraftServer server = player.getEntityWorld().getServer();
-    if (!(server instanceof MinecraftDedicatedServer)) {
+  public static boolean canEditArmorStands(ServerPlayer player) {
+    MinecraftServer server = player.level().getServer();
+    if (!(server instanceof DedicatedServer)) {
       return true;
     }
 
@@ -40,18 +38,18 @@ public class ArmorStandUsers {
       return true;
     }
 
-    if (config.opsHavePermissions.getValue() && player.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS)) {
+    if (config.opsHavePermissions.getValue() && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
       return true;
     }
 
-    return contains(player.getPlayerConfigEntry());
+    return contains(player.nameAndId());
   }
 
-  public static boolean contains(PlayerConfigEntry player) {
+  public static boolean contains(NameAndId player) {
     return ServerSideConfig.getInstance().allowedUsers.getValue().contains(player.id().toString());
   }
 
-  public static void add(PlayerConfigEntry player) {
+  public static void add(NameAndId player) {
     StringListConfigOption allowedUsers = ServerSideConfig.getInstance().allowedUsers;
     String toAdd = player.id().toString();
     if (allowedUsers.getValue().stream().noneMatch((uuid) -> uuid.equalsIgnoreCase(toAdd))) {
@@ -62,7 +60,7 @@ public class ArmorStandUsers {
     }
   }
 
-  public static void remove(PlayerConfigEntry player) {
+  public static void remove(NameAndId player) {
     StringListConfigOption allowedUsers = ServerSideConfig.getInstance().allowedUsers;
     allowedUsers.remove(player.id().toString());
     if (allowedUsers.isDirty()) {
@@ -75,7 +73,7 @@ public class ArmorStandUsers {
   }
 
   public static Collection<String> listNames(MinecraftServer server) {
-    NameToIdCache cache = server.getApiServices().nameToIdCache();
+    UserNameToIdResolver cache = server.services().nameToIdCache();
     return ServerSideConfig.getInstance().allowedUsers.getValue().stream().map((rawUuid) -> {
       UUID uuid;
       try {
@@ -84,8 +82,8 @@ public class ArmorStandUsers {
         return null;
       }
 
-      Optional<PlayerConfigEntry> opt = cache.getByUuid(uuid);
-      return opt.map(PlayerConfigEntry::name).orElse(null);
+      Optional<NameAndId> opt = cache.get(uuid);
+      return opt.map(NameAndId::name).orElse(null);
     }).filter(Objects::nonNull).collect(Collectors.toSet());
   }
 }

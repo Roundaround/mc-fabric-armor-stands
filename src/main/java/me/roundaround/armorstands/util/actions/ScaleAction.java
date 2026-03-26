@@ -1,11 +1,11 @@
 package me.roundaround.armorstands.util.actions;
 
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
 
 public class ScaleAction implements ArmorStandAction {
   private final float argument;
@@ -36,12 +36,12 @@ public class ScaleAction implements ArmorStandAction {
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.scale");
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.scale");
   }
 
   @Override
-  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void apply(Player player, ArmorStand armorStand) {
     this.originalScale = armorStand.getScale();
 
     float scale = this.argument;
@@ -53,19 +53,19 @@ public class ScaleAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void undo(Player player, ArmorStand armorStand) {
     if (this.originalScale == null) {
       return;
     }
     setScale(armorStand, this.originalScale);
   }
 
-  public static void setScale(ArmorStandEntity armorStand, float scale) {
+  public static void setScale(ArmorStand armorStand, float scale) {
     setScale(armorStand, scale, false);
   }
 
-  public static void setScale(ArmorStandEntity armorStand, float scale, boolean round) {
-    float target = MathHelper.clamp(scale, 0.01f, 10f);
+  public static void setScale(ArmorStand armorStand, float scale, boolean round) {
+    float target = Mth.clamp(scale, 0.01f, 10f);
     if (round) {
       if (target < 1) {
         target = Math.round(target * 4) / 4f;
@@ -74,7 +74,7 @@ public class ScaleAction implements ArmorStandAction {
       }
     }
 
-    EntityAttributeInstance attribute = armorStand.getAttributes().getCustomInstance(EntityAttributes.SCALE);
+    AttributeInstance attribute = armorStand.getAttributes().getInstance(Attributes.SCALE);
     if (attribute != null) {
       attribute.setBaseValue(target);
     }

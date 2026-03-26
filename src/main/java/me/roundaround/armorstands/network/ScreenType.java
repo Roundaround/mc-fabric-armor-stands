@@ -4,11 +4,10 @@ import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.roundalib.client.gui.icon.BuiltinIcon;
 import me.roundaround.armorstands.roundalib.client.gui.icon.CustomIcon;
 import me.roundaround.armorstands.roundalib.client.gui.icon.Icon;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
 import java.util.Arrays;
 import java.util.function.IntFunction;
 
@@ -20,12 +19,12 @@ public enum ScreenType {
   PRESETS(4, "presets", new CustomIcon("pose", 20)),
   INVENTORY(5, "inventory", new CustomIcon("inventory", 20));
 
-  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<ScreenType> ID_TO_VALUE_FUNCTION = ByIdMap.continuous(
       ScreenType::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.ZERO
+      ByIdMap.OutOfBoundsStrategy.ZERO
   );
-  public static final PacketCodec<ByteBuf, ScreenType> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, ScreenType> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       ScreenType::getIndex
   );
@@ -52,8 +51,8 @@ public enum ScreenType {
     return this.icon;
   }
 
-  public Text getDisplayName() {
-    return Text.translatable("armorstands.screen." + id);
+  public Component getDisplayName() {
+    return Component.translatable("armorstands.screen." + id);
   }
 
   public boolean usesInventory() {

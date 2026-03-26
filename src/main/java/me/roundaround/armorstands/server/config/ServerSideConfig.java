@@ -2,19 +2,19 @@ package me.roundaround.armorstands.server.config;
 
 import com.mojang.authlib.GameProfile;
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.mixin.AbstractPropertiesHandlerAccessor;
-import me.roundaround.armorstands.mixin.ServerConfigEntryAccessor;
+import me.roundaround.armorstands.mixin.SettingsAccessor;
+import me.roundaround.armorstands.mixin.StoredUserEntryAccessor;
 import me.roundaround.armorstands.roundalib.config.ConfigPath;
+import me.roundaround.armorstands.roundalib.config.io.ConfigDoc;
 import me.roundaround.armorstands.roundalib.config.manage.ModConfigImpl;
 import me.roundaround.armorstands.roundalib.config.manage.store.WorldScopedFileStore;
 import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
-import me.roundaround.armorstands.roundalib.nightconfig.core.Config;
-import net.minecraft.server.Whitelist;
-import net.minecraft.server.WhitelistEntry;
-import net.minecraft.server.dedicated.MinecraftDedicatedServer;
-import net.minecraft.server.dedicated.ServerPropertiesHandler;
-import net.minecraft.server.dedicated.management.listener.BlankManagementListener;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.DedicatedServerProperties;
+import net.minecraft.server.notifications.EmptyNotificationService;
+import net.minecraft.server.players.UserWhiteList;
+import net.minecraft.server.players.UserWhiteListEntry;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -37,7 +37,7 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
     return instance;
   }
 
-  public static ServerSideConfig create(MinecraftDedicatedServer server) {
+  public static ServerSideConfig create(DedicatedServer server) {
     if (instance != null) {
       instance.close();
     }
@@ -53,9 +53,9 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
   public BooleanConfigOption opsHavePermissions;
   public StringListConfigOption allowedUsers;
 
-  private MinecraftDedicatedServer server;
+  private DedicatedServer server;
 
-  private ServerSideConfig(MinecraftDedicatedServer server) {
+  private ServerSideConfig(DedicatedServer server) {
     super(ArmorStandsMod.MOD_ID, "server");
     this.server = server;
   }
@@ -87,17 +87,17 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
   }
 
   @Override
-  public boolean performConfigUpdate(int versionSnapshot, Config inMemoryConfigSnapshot) {
+  public boolean performConfigUpdate(int versionSnapshot, ConfigDoc inMemoryConfigSnapshot) {
     return this.performLegacyMigration(inMemoryConfigSnapshot);
   }
 
-  private boolean performLegacyMigration(Config config) {
+  private boolean performLegacyMigration(ConfigDoc config) {
     AtomicBoolean modified = new AtomicBoolean(false);
 
     String enforcePermissionsPath = this.enforcePermissions.getPath().toString();
     if (!config.contains(enforcePermissionsPath)) {
-      getLegacyPermissionsEnforced().ifPresent((enforced) -> {
-        config.add(enforcePermissionsPath, enforced);
+      this.getLegacyPermissionsEnforced().ifPresent((enforced) -> {
+        config.set(enforcePermissionsPath, enforced);
         modified.set(true);
       });
     }
@@ -111,7 +111,7 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
         );
       }
     } else {
-      config.set(allowedUsersPath, getLegacyAllowlist());
+      config.set(allowedUsersPath, this.getLegacyAllowlist());
       modified.set(true);
     }
 
@@ -128,8 +128,8 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       return Optional.empty();
     }
 
-    ServerPropertiesHandler propertiesHandler = this.server.getProperties();
-    Properties properties = ((AbstractPropertiesHandlerAccessor) propertiesHandler).getProperties();
+    DedicatedServerProperties propertiesHandler = this.server.getProperties();
+    Properties properties = ((SettingsAccessor) propertiesHandler).getProperties();
     String legacyValueRaw = properties.getProperty(LEGACY_PROP_KEY);
 
     // Removing it from the Properties instance should be enough - the game will save the in-memory map
@@ -150,7 +150,7 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       return List.of();
     }
 
-    Whitelist legacyAllowlist = new Whitelist(path.toFile(), new BlankManagementListener());
+    UserWhiteList legacyAllowlist = new UserWhiteList(path.toFile(), new EmptyNotificationService());
 
     try {
       legacyAllowlist.load();
@@ -173,11 +173,11 @@ public class ServerSideConfig extends ModConfigImpl implements WorldScopedFileSt
       );
     }
 
-    return legacyAllowlist.values().stream().map(this::extractUuid).toList();
+    return legacyAllowlist.getEntries().stream().map(this::extractUuid).toList();
   }
 
   @SuppressWarnings("unchecked")
-  private String extractUuid(WhitelistEntry entry) {
-    return ((ServerConfigEntryAccessor<GameProfile>) entry).invokeGetKey().id().toString();
+  private String extractUuid(UserWhiteListEntry entry) {
+    return ((StoredUserEntryAccessor<GameProfile>) entry).invokeGetUser().id().toString();
   }
 }

@@ -8,39 +8,38 @@ import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.actions.AdjustPosAction;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import java.util.function.Supplier;
 
 public final class ServerNetworking {
   private ServerNetworking() {
   }
 
-  public static void sendClientUpdatePacket(ServerPlayerEntity player, ArmorStandEntity armorStand) {
+  public static void sendClientUpdatePacket(ServerPlayer player, ArmorStand armorStand) {
     if (ServerPlayNetworking.canSend(player, Networking.ClientUpdateS2C.ID)) {
       ServerPlayNetworking.send(player, new Networking.ClientUpdateS2C(armorStand));
     }
   }
 
-  public static void sendMessagePacket(ServerPlayerEntity player, String message) {
+  public static void sendMessagePacket(ServerPlayer player, String message) {
     if (ServerPlayNetworking.canSend(player, Networking.MessageS2C.ID)) {
       ServerPlayNetworking.send(player, new Networking.MessageS2C(message));
     }
   }
 
-  public static void sendMessagePacket(ServerPlayerEntity player, String message, int color) {
+  public static void sendMessagePacket(ServerPlayer player, String message, int color) {
     if (ServerPlayNetworking.canSend(player, Networking.MessageS2C.ID)) {
       ServerPlayNetworking.send(player, new Networking.MessageS2C(message, color));
     }
   }
 
   public static void sendOpenScreenPacket(
-      ServerPlayerEntity player,
+      ServerPlayer player,
       int syncId,
-      ArmorStandEntity armorStand,
+      ArmorStand armorStand,
       ScreenType screenType
   ) {
     if (ServerPlayNetworking.canSend(player, Networking.OpenScreenS2C.ID)) {
@@ -48,8 +47,8 @@ public final class ServerNetworking {
     }
   }
 
-  public static void sendPongPacket(ServerPlayerEntity player) {
-    ServerPlayNetworking.send(player, new Networking.PongS2C(player.getUuid()));
+  public static void sendPongPacket(ServerPlayer player) {
+    ServerPlayNetworking.send(player, new Networking.PongS2C(player.getUUID()));
   }
 
   public static void registerReceivers() {
@@ -69,7 +68,7 @@ public final class ServerNetworking {
 
   private static void handleAdjustPose(Networking.AdjustPoseC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -81,7 +80,7 @@ public final class ServerNetworking {
 
   private static void handleAdjustPos(Networking.AdjustPosC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -100,7 +99,7 @@ public final class ServerNetworking {
 
   private static void handleAdjustYaw(Networking.AdjustYawC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -118,8 +117,8 @@ public final class ServerNetworking {
 
   private static void handleRequestScreen(Networking.RequestScreenC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ServerPlayerEntity player = context.player();
-      if (!(player.getEntityWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
+      ServerPlayer player = context.player();
+      if (!(player.level().getEntity(payload.armorStandId()) instanceof ArmorStand armorStand)) {
         return;
       }
 
@@ -129,8 +128,8 @@ public final class ServerNetworking {
 
   private static void handleSetFlag(Networking.SetFlagC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ServerPlayerEntity player = context.player();
-      ScreenHandler currentScreenHandler = player.currentScreenHandler;
+      ServerPlayer player = context.player();
+      AbstractContainerMenu currentScreenHandler = player.containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -144,7 +143,7 @@ public final class ServerNetworking {
 
   private static void handleSetPose(Networking.SetPoseC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -163,7 +162,7 @@ public final class ServerNetworking {
 
   private static void handleSetPosePreset(Networking.SetPosePresetC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -175,7 +174,7 @@ public final class ServerNetworking {
 
   private static void handleSetScale(Networking.SetScaleC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -187,7 +186,7 @@ public final class ServerNetworking {
 
   private static void handleSetYaw(Networking.SetYawC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ScreenHandler currentScreenHandler = context.player().currentScreenHandler;
+      AbstractContainerMenu currentScreenHandler = context.player().containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -199,8 +198,8 @@ public final class ServerNetworking {
 
   private static void handleUndo(Networking.UndoC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ServerPlayerEntity player = context.player();
-      ScreenHandler currentScreenHandler = player.currentScreenHandler;
+      ServerPlayer player = context.player();
+      AbstractContainerMenu currentScreenHandler = player.containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }
@@ -220,8 +219,8 @@ public final class ServerNetworking {
 
   private static void handleUtilityAction(Networking.UtilityActionC2S payload, ServerPlayNetworking.Context context) {
     context.server().execute(() -> {
-      ServerPlayerEntity player = context.player();
-      ScreenHandler currentScreenHandler = player.currentScreenHandler;
+      ServerPlayer player = context.player();
+      AbstractContainerMenu currentScreenHandler = player.containerMenu;
       if (!(currentScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
         return;
       }

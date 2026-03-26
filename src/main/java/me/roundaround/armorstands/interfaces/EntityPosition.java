@@ -1,9 +1,9 @@
 package me.roundaround.armorstands.interfaces;
 
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.Vec3;
 
 public interface EntityPosition {
-  default Vec3d armorstands$getPos() {
-    return Vec3d.ZERO;
+  default Vec3 armorstands$getPos() {
+    return Vec3.ZERO;
   }
 }

@@ -1,9 +1,9 @@
 package me.roundaround.armorstands.util;
 
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
 
 @FunctionalInterface
 public interface ArmorStandApplyable {
-  void apply(PlayerEntity player, ArmorStandEntity armorStand);
+  void apply(Player player, ArmorStand armorStand);
 }

@@ -9,18 +9,19 @@ import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.roundalib.client.gui.widget.ToggleWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.inventory.Slot;
+import org.jspecify.annotations.NonNull;
 
 public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_WIDTH = 176;
   private static final int BACKGROUND_HEIGHT = 166;
   private static final int TOGGLE_HEIGHT = 16;
-  private static final Identifier CUSTOM_TEXTURE = Identifier.of(
+  private static final Identifier CUSTOM_TEXTURE = Identifier.fromNamespaceAndPath(
       ArmorStandsMod.MOD_ID, "textures/gui/container/inventory.png");
 
   private float prevMouseX;
@@ -49,7 +50,7 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   private ToggleWidget createToggleWidget(ArmorStandFlag flag) {
-    return ToggleWidget.yesNoBuilder(this.textRenderer, (value) -> flag.getDisplayName())
+    return ToggleWidget.yesNoBuilder(this.font, (value) -> flag.getDisplayName())
         .initially(this.getFlagValue(flag))
         .onPress((toggle) -> ClientNetworking.sendSetFlagPacket(flag, !this.getFlagValue(flag)))
         .matchTooltipToLabel()
@@ -63,27 +64,27 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void refreshWidgetPositions() {
-    this.x = (this.width - BACKGROUND_WIDTH) / 2;
-    this.y = (this.height - BACKGROUND_HEIGHT) / 2;
-    super.refreshWidgetPositions();
+  protected void repositionElements() {
+    this.leftPos = (this.width - BACKGROUND_WIDTH) / 2;
+    this.topPos = (this.height - BACKGROUND_HEIGHT) / 2;
+    super.repositionElements();
   }
 
   @Override
-  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+  public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
     super.render(context, mouseX, mouseY, delta);
-    this.drawMouseoverTooltip(context, mouseX, mouseY);
+    this.renderTooltip(context, mouseX, mouseY);
     this.prevMouseX = mouseX;
     this.prevMouseY = mouseY;
   }
 
   @Override
-  protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-    context.drawTexture(
+  protected void renderBg(@NonNull GuiGraphics context, float delta, int mouseX, int mouseY) {
+    context.blit(
         RenderPipelines.GUI_TEXTURED,
         CUSTOM_TEXTURE,
-        this.x,
-        this.y,
+        this.leftPos,
+        this.topPos,
         0,
         0,
         BACKGROUND_WIDTH,
@@ -91,22 +92,22 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
         256,
         256);
 
-    ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.handler.getArmorSlots();
+    ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.menu.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
       if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
-        context.fill(x + slot.x, this.y + slot.y, this.x + slot.x + 16, y + slot.y + 16, 0x80000000);
+        context.fill(leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, topPos + slot.y + 16, 0x80000000);
       }
     }
 
-    InventoryScreen.drawEntity(context, this.x + 62, this.y + 8, this.x + 114, this.y + 78, 30, 0.0625f,
+    InventoryScreen.renderEntityInInventoryFollowsMouse(context, this.leftPos + 62, this.topPos + 8, this.leftPos + 114, this.topPos + 78, 30, 0.0625f,
         this.prevMouseX, this.prevMouseY, this.getArmorStand());
   }
 
   @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
+  public void containerTick() {
+    super.containerTick();
 
     this.showArmsToggle.setValue(ArmorStandFlag.SHOW_ARMS.getValue(this.getArmorStand()));
     this.lockInventoryToggle.setValue(ArmorStandFlag.LOCK_INVENTORY.getValue(this.getArmorStand()));

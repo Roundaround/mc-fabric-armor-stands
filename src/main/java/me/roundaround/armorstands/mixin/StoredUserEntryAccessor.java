@@ -1,11 +1,11 @@
 package me.roundaround.armorstands.mixin;
 
-import net.minecraft.server.ServerConfigEntry;
+import net.minecraft.server.players.StoredUserEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(ServerConfigEntry.class)
-public interface ServerConfigEntryAccessor<T> {
+@Mixin(StoredUserEntry.class)
+public interface StoredUserEntryAccessor<T> {
   @Invoker
-  T invokeGetKey();
+  T invokeGetUser();
 }

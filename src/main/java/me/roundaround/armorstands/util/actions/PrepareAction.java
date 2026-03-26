@@ -5,15 +5,15 @@ import java.util.List;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.util.PosePreset;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class PrepareAction extends ComboAction {
   private PrepareAction(Collection<ArmorStandAction> actions) {
-    super(Text.translatable("armorstands.action.prepare"), actions);
+    super(Component.translatable("armorstands.action.prepare"), actions);
   }
 
-  public static PrepareAction create(ArmorStandEntity armorStand) {
+  public static PrepareAction create(ArmorStand armorStand) {
     return new PrepareAction(List.of(
         FlagAction.set(ArmorStandFlag.SHOW_ARMS, true),
         FlagAction.set(ArmorStandFlag.HIDE_BASE_PLATE, true),

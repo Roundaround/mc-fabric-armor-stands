@@ -7,12 +7,10 @@ import me.roundaround.armorstands.util.ArmorStandEditor;
 import me.roundaround.armorstands.util.ArmorStandHelper;
 import me.roundaround.armorstands.util.Clipboard;
 import me.roundaround.armorstands.util.actions.*;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import java.util.Arrays;
 
 public enum UtilityAction {
@@ -38,8 +36,8 @@ public enum UtilityAction {
   FACE_WITH("face_with"),
   UNKNOWN("unknown");
 
-  public static final PacketCodec<ByteBuf, UtilityAction> PACKET_CODEC = PacketCodec.tuple(
-      PacketCodecs.STRING, UtilityAction::getId, UtilityAction::fromString);
+  public static final StreamCodec<ByteBuf, UtilityAction> PACKET_CODEC = StreamCodec.composite(
+      ByteBufCodecs.STRING_UTF8, UtilityAction::getId, UtilityAction::fromString);
 
   private final String id;
 
@@ -56,8 +54,8 @@ public enum UtilityAction {
     return this.id;
   }
 
-  public void apply(ArmorStandEditor editor, ServerPlayerEntity player) {
-    ArmorStandEntity armorStand = editor.getArmorStand();
+  public void apply(ArmorStandEditor editor, ServerPlayer player) {
+    ArmorStand armorStand = editor.getArmorStand();
 
     switch (this) {
       case COPY:
@@ -107,13 +105,13 @@ public enum UtilityAction {
         editor.setPos(player.armorstands$getPos());
         break;
       case FACE_TOWARD:
-        editor.setRotation(ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));
+        editor.setRotation(ArmorStandHelper.getLookYaw(armorStand, player.getEyePosition()));
         break;
       case FACE_AWAY:
-        editor.setRotation(180 + ArmorStandHelper.getLookYaw(armorStand, player.getEyePos()));
+        editor.setRotation(180 + ArmorStandHelper.getLookYaw(armorStand, player.getEyePosition()));
         break;
       case FACE_WITH:
-        editor.setRotation(player.getYaw());
+        editor.setRotation(player.getYRot());
         break;
       case UNKNOWN:
       default:

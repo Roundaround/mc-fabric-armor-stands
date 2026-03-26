@@ -2,17 +2,17 @@ package me.roundaround.armorstands.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import me.roundaround.armorstands.client.gui.screen.PassesEventsThrough;
-import net.minecraft.client.Keyboard;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(Keyboard.class)
+@Mixin(KeyboardHandler.class)
 public class KeyboardMixin {
   @ModifyExpressionValue(
-      method = "onKey", at = @At(
+      method = "keyPress", at = @At(
       value = "FIELD",
-      target = "Lnet/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/client/gui/screen/Screen;",
+      target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;",
       ordinal = 4
   )
   )

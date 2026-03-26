@@ -1,11 +1,11 @@
 package me.roundaround.armorstands.mixin;
 
-import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(ArmorStandEntity.class)
+@Mixin(ArmorStand.class)
 public interface ArmorStandEntityAccessor {
   @Invoker("setSmall")
   void invokeSetSmall(boolean small);
@@ -13,7 +13,7 @@ public interface ArmorStandEntityAccessor {
   @Invoker("setShowArms")
   void invokeSetShowArms(boolean showArms);
 
-  @Invoker("setHideBasePlate")
+  @Invoker("setNoBasePlate")
   void invokeSetHideBasePlate(boolean hideBasePlate);
 
   @Accessor("disabledSlots")

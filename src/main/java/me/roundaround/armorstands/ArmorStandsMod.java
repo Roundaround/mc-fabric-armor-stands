@@ -26,7 +26,7 @@ public final class ArmorStandsMod implements ModInitializer {
     ServerNetworking.registerReceivers();
 
     CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-      if (environment.dedicated) {
+      if (environment.includeDedicated) {
         ArmorStandsCommand.register(dispatcher);
       }
     });

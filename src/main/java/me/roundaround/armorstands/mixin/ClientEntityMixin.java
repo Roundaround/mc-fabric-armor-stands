@@ -3,12 +3,12 @@ package me.roundaround.armorstands.mixin;
 import me.roundaround.armorstands.interfaces.EntityPosition;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.gradle.api.annotation.MixinEnv;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,31 +21,31 @@ import java.util.Optional;
 @MixinEnv(MixinEnv.CLIENT)
 public abstract class ClientEntityMixin implements EntityPosition {
   @Inject(
-      method = "updateTrackedPositionAndAngles(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V",
+      method = "moveOrInterpolateTo(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V",
       at = @At(value = "HEAD"),
       cancellable = true
   )
   public void updateTrackedPositionAndAngles(
-      Optional<Vec3d> pos,
+      Optional<Vec3> pos,
       Optional<Float> yaw,
       Optional<Float> pitch,
       CallbackInfo info
   ) {
-    if (!(this.self() instanceof ArmorStandEntity self)) {
+    if (!(this.self() instanceof ArmorStand self)) {
       return;
     }
 
-    World world = self.getEntityWorld();
-    if (!world.isClient()) {
+    Level world = self.level();
+    if (!world.isClientSide()) {
       return;
     }
 
-    MinecraftClient client = MinecraftClient.getInstance();
+    Minecraft client = Minecraft.getInstance();
     if (client.player == null) {
       return;
     }
 
-    ScreenHandler rawScreenHandler = client.player.currentScreenHandler;
+    AbstractContainerMenu rawScreenHandler = client.player.containerMenu;
     if (!(rawScreenHandler instanceof ArmorStandScreenHandler screenHandler)) {
       return;
     }

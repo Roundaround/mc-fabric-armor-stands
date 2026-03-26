@@ -2,21 +2,20 @@ package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.network.ClientNetworking;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import java.util.Optional;
 
-public class RotateSliderWidget extends SliderWidget {
+public class RotateSliderWidget extends AbstractSliderButton {
   private final AbstractArmorStandScreen parent;
-  private final ArmorStandEntity armorStand;
+  private final ArmorStand armorStand;
 
   private Optional<Float> lastAngle = Optional.empty();
   private int min = -180;
@@ -25,8 +24,8 @@ public class RotateSliderWidget extends SliderWidget {
   private boolean isDragging = false;
   private boolean pendingDragPing = false;
 
-  public RotateSliderWidget(AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand) {
-    super(0, 0, width, height, Text.empty(), 0);
+  public RotateSliderWidget(AbstractArmorStandScreen parent, int width, int height, ArmorStand armorStand) {
+    super(0, 0, width, height, Component.empty(), 0);
 
     this.parent = parent;
     this.armorStand = armorStand;
@@ -45,8 +44,8 @@ public class RotateSliderWidget extends SliderWidget {
   }
 
   public void refresh() {
-    float armorStandAngle = this.armorStand.getYaw();
-    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    float armorStandAngle = this.armorStand.getYRot();
+    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < Mth.EPSILON) {
       return;
     }
 
@@ -61,7 +60,7 @@ public class RotateSliderWidget extends SliderWidget {
 
   public void increment() {
     double up = Math.ceil(getAngle());
-    if (up - getAngle() < MathHelper.EPSILON) {
+    if (up - getAngle() < Mth.EPSILON) {
       up += 1;
     }
     setAngle((float) up);
@@ -70,7 +69,7 @@ public class RotateSliderWidget extends SliderWidget {
 
   public void decrement() {
     double down = Math.floor(getAngle());
-    if (getAngle() - down < MathHelper.EPSILON) {
+    if (getAngle() - down < Mth.EPSILON) {
       down -= 1;
     }
     setAngle((float) down);
@@ -96,23 +95,23 @@ public class RotateSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable("armorstands.angle", String.format("%.2f", getAngle())));
+    setMessage(Component.translatable("armorstands.angle", String.format("%.2f", getAngle())));
   }
 
   @Override
   protected void applyValue() {
-    this.armorStand.setYaw(getAngle());
+    this.armorStand.setYRot(getAngle());
   }
 
   @Override
-  public void onClick(Click click, boolean doubled) {
+  public void onClick(MouseButtonEvent click, boolean doubled) {
     super.onClick(click, doubled);
 
     this.isDragging = true;
   }
 
   @Override
-  public void onRelease(Click click) {
+  public void onRelease(MouseButtonEvent click) {
     super.onRelease(click);
 
     this.isDragging = false;
@@ -135,14 +134,14 @@ public class RotateSliderWidget extends SliderWidget {
   }
 
   @Override
-  protected void onDrag(Click click, double deltaX, double deltaY) {
+  protected void onDrag(MouseButtonEvent click, double deltaX, double deltaY) {
     this.isDragging = true;
     super.onDrag(click, deltaX, deltaY);
   }
 
   @Override
   public void playDownSound(SoundManager soundManager) {
-    soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
+    soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
   }
 
   private float getAngle() {

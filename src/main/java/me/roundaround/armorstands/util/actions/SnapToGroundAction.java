@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.List;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class SnapToGroundAction extends ComboAction {
   private SnapToGroundAction(Collection<ArmorStandAction> actions) {
-    super(Text.translatable("armorstands.action.snapToGround"), actions);
+    super(Component.translatable("armorstands.action.snapToGround"), actions);
   }
 
   public static SnapToGroundAction standing() {

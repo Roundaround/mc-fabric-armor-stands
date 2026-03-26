@@ -3,19 +3,18 @@ package me.roundaround.armorstands.client.gui.widget;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.EulerAngleParameter;
 import me.roundaround.armorstands.network.PosePart;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import java.util.Optional;
 
-public class AdjustPoseSliderWidget extends SliderWidget {
-  private final ArmorStandEntity armorStand;
+public class AdjustPoseSliderWidget extends AbstractSliderButton {
+  private final ArmorStand armorStand;
 
   private PosePart part;
   private EulerAngleParameter parameter;
@@ -29,9 +28,9 @@ public class AdjustPoseSliderWidget extends SliderWidget {
       int height,
       PosePart part,
       EulerAngleParameter parameter,
-      ArmorStandEntity armorStand
+      ArmorStand armorStand
   ) {
-    super(0, 0, width, height, Text.empty(), 0);
+    super(0, 0, width, height, Component.empty(), 0);
 
     this.part = part;
     this.parameter = parameter;
@@ -58,7 +57,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandAngle = this.parameter.get(this.part.get(this.armorStand));
-    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < MathHelper.EPSILON) {
+    if (this.lastAngle.isPresent() && Math.abs(armorStandAngle - this.lastAngle.get()) < Mth.EPSILON) {
       return;
     }
 
@@ -73,7 +72,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void increment() {
     double up = Math.ceil(getAngle());
-    if (up - getAngle() < MathHelper.EPSILON) {
+    if (up - getAngle() < Mth.EPSILON) {
       up += 1;
     }
     setAngle((float) up);
@@ -82,7 +81,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   public void decrement() {
     double down = Math.floor(getAngle());
-    if (getAngle() - down < MathHelper.EPSILON) {
+    if (getAngle() - down < Mth.EPSILON) {
       down -= 1;
     }
     setAngle((float) down);
@@ -100,7 +99,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    setMessage(Text.translatable("armorstands.angle", String.format("%.2f", getAngle())));
+    setMessage(Component.translatable("armorstands.angle", String.format("%.2f", getAngle())));
   }
 
   @Override
@@ -109,7 +108,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
   }
 
   @Override
-  public void onRelease(Click click) {
+  public void onRelease(MouseButtonEvent click) {
     super.onRelease(click);
 
     persistValue();
@@ -129,7 +128,7 @@ public class AdjustPoseSliderWidget extends SliderWidget {
 
   @Override
   public void playDownSound(SoundManager soundManager) {
-    soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
+    soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
   }
 
   private float getAngle() {

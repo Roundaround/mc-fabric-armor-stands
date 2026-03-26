@@ -6,8 +6,9 @@ import me.roundaround.armorstands.roundalib.client.gui.layout.linear.LinearLayou
 import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.Screen;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -50,25 +51,25 @@ public class ArmorStandLayoutWidget extends SizableLayoutWidget {
   }
 
   @Override
-  public void forEachElement(Consumer<Widget> consumer) {
-    this.topLeft.forEachElement(consumer);
-    this.bottomLeft.forEachElement(consumer);
-    this.topRight.forEachElement(consumer);
-    this.bottomRight.forEachElement(consumer);
-    this.nonPositioned.forEachElement(consumer);
+  public void visitChildren(@NonNull Consumer<LayoutElement> consumer) {
+    this.topLeft.visitChildren(consumer);
+    this.bottomLeft.visitChildren(consumer);
+    this.topRight.visitChildren(consumer);
+    this.bottomRight.visitChildren(consumer);
+    this.nonPositioned.visitChildren(consumer);
   }
 
   @Override
-  public void refreshPositions() {
+  public void arrangeElements() {
     this.topLeft.setPosition(GuiUtil.PADDING, GuiUtil.PADDING);
     this.bottomLeft.setPosition(GuiUtil.PADDING, this.screen.height - GuiUtil.PADDING);
     this.topRight.setPosition(this.screen.width - GuiUtil.PADDING, GuiUtil.PADDING);
     this.bottomRight.setPosition(this.screen.width - GuiUtil.PADDING, this.screen.height - GuiUtil.PADDING);
 
-    this.topLeft.refreshPositions();
-    this.bottomLeft.refreshPositions();
-    this.topRight.refreshPositions();
-    this.bottomRight.refreshPositions();
-    this.nonPositioned.refreshPositions();
+    this.topLeft.arrangeElements();
+    this.bottomLeft.arrangeElements();
+    this.topRight.arrangeElements();
+    this.bottomRight.arrangeElements();
+    this.nonPositioned.arrangeElements();
   }
 }

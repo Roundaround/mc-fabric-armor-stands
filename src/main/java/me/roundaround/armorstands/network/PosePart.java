@@ -1,16 +1,15 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-import net.minecraft.util.math.EulerAngle;
-
 import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
+import net.minecraft.core.Rotations;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public enum PosePart {
   HEAD(0, "head"),
@@ -20,12 +19,12 @@ public enum PosePart {
   RIGHT_LEG(4, "rightLeg"),
   LEFT_LEG(5, "leftLeg");
 
-  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<PosePart> ID_TO_VALUE_FUNCTION = ByIdMap.continuous(
       PosePart::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.CLAMP
+      ByIdMap.OutOfBoundsStrategy.CLAMP
   );
-  public static final PacketCodec<ByteBuf, PosePart> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, PosePart> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       PosePart::getIndex
   );
@@ -47,34 +46,34 @@ public enum PosePart {
     return this.index;
   }
 
-  public Text getDisplayName() {
-    return Text.translatable("armorstands.part." + id);
+  public Component getDisplayName() {
+    return Component.translatable("armorstands.part." + id);
   }
 
-  public EulerAngle get(ArmorStandEntity armorStand) {
+  public Rotations get(ArmorStand armorStand) {
     return switch (this) {
-      case HEAD -> armorStand.getHeadRotation();
-      case BODY -> armorStand.getBodyRotation();
-      case RIGHT_ARM -> armorStand.getRightArmRotation();
-      case LEFT_ARM -> armorStand.getLeftArmRotation();
-      case RIGHT_LEG -> armorStand.getRightLegRotation();
-      case LEFT_LEG -> armorStand.getLeftLegRotation();
+      case HEAD -> armorStand.getHeadPose();
+      case BODY -> armorStand.getBodyPose();
+      case RIGHT_ARM -> armorStand.getRightArmPose();
+      case LEFT_ARM -> armorStand.getLeftArmPose();
+      case RIGHT_LEG -> armorStand.getRightLegPose();
+      case LEFT_LEG -> armorStand.getLeftLegPose();
     };
   }
 
-  public void set(ArmorStandEntity armorStand, EulerAngle angle) {
-    Consumer<EulerAngle> consumer = switch (this) {
-      case HEAD -> armorStand::setHeadRotation;
-      case BODY -> armorStand::setBodyRotation;
-      case RIGHT_ARM -> armorStand::setRightArmRotation;
-      case LEFT_ARM -> armorStand::setLeftArmRotation;
-      case RIGHT_LEG -> armorStand::setRightLegRotation;
-      case LEFT_LEG -> armorStand::setLeftLegRotation;
+  public void set(ArmorStand armorStand, Rotations angle) {
+    Consumer<Rotations> consumer = switch (this) {
+      case HEAD -> armorStand::setHeadPose;
+      case BODY -> armorStand::setBodyPose;
+      case RIGHT_ARM -> armorStand::setRightArmPose;
+      case LEFT_ARM -> armorStand::setLeftArmPose;
+      case RIGHT_LEG -> armorStand::setRightLegPose;
+      case LEFT_LEG -> armorStand::setLeftLegPose;
     };
     consumer.accept(angle);
   }
 
-  public void set(ArmorStandEntity armorStand, EulerAngleParameter parameter, float value) {
+  public void set(ArmorStand armorStand, EulerAngleParameter parameter, float value) {
     set(armorStand, parameter.set(get(armorStand), value));
   }
 

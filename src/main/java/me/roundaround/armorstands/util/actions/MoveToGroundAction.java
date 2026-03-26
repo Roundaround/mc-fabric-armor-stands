@@ -1,15 +1,14 @@
 package me.roundaround.armorstands.util.actions;
 
 import me.roundaround.armorstands.util.ArmorStandHelper;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import java.util.Optional;
 
 public class MoveToGroundAction implements ArmorStandAction {
-  private Optional<Vec3d> originalPosition = Optional.empty();
+  private Optional<Vec3> originalPosition = Optional.empty();
   private boolean sitting;
 
   private MoveToGroundAction(boolean sitting) {
@@ -29,13 +28,13 @@ public class MoveToGroundAction implements ArmorStandAction {
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.moveToGround");
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.moveToGround");
   }
 
   @Override
-  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    Optional<Vec3d> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.sitting);
+  public void apply(Player player, ArmorStand armorStand) {
+    Optional<Vec3> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.sitting);
 
     if (maybeGround.isPresent()) {
       originalPosition = Optional.of(armorStand.armorstands$getPos());
@@ -44,7 +43,7 @@ public class MoveToGroundAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void undo(Player player, ArmorStand armorStand) {
     if (originalPosition.isEmpty()) {
       return;
     }

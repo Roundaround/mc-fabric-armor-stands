@@ -14,11 +14,11 @@ import me.roundaround.armorstands.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.HorizontalLineWidget;
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.LabelWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   private static final int BUTTON_WIDTH = 46;
@@ -57,27 +57,27 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignStart();
 
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player"))
+    player.add(LabelWidget.builder(this.font, Component.translatable("armorstands.current.player"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.playerFacingLabel = player.add(LabelWidget.builder(this.textRenderer, getCurrentFacingText(this.getPlayer()))
+    this.playerFacingLabel = player.add(LabelWidget.builder(this.font, getCurrentFacingText(this.getPlayer()))
         .bgColor(BACKGROUND_COLOR)
         .build());
     this.playerRotationLabel = player.add(LabelWidget.builder(
-        this.textRenderer,
+        this.font,
         getCurrentRotationText(this.getPlayer())
     ).bgColor(BACKGROUND_COLOR).build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand"))
+    stand.add(LabelWidget.builder(this.font, Component.translatable("armorstands.current.stand"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.standFacingLabel = stand.add(LabelWidget.builder(this.textRenderer, getCurrentFacingText(this.getArmorStand()))
+    this.standFacingLabel = stand.add(LabelWidget.builder(this.font, getCurrentFacingText(this.getArmorStand()))
         .bgColor(BACKGROUND_COLOR)
         .build());
     this.standRotationLabel = stand.add(LabelWidget.builder(
-        this.textRenderer,
+        this.font,
         getCurrentRotationText(this.getArmorStand())
     ).bgColor(BACKGROUND_COLOR).build());
     labels.add(stand);
@@ -95,29 +95,29 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.snap"))
+    snaps.add(LabelWidget.builder(this.font, Component.translatable("armorstands.rotate.snap"))
         .bgColor(BACKGROUND_COLOR)
         .build());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    firstRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.snap." + Direction.SOUTH.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.SOUTH.getPositiveHorizontalDegrees()))
+    firstRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.snap." + Direction.SOUTH.getName()),
+        (button) -> ClientNetworking.sendSetYawPacket(Mth.wrapDegrees(Direction.SOUTH.toYRot()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
-    firstRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.snap." + Direction.NORTH.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.NORTH.getPositiveHorizontalDegrees()))
+    firstRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.snap." + Direction.NORTH.getName()),
+        (button) -> ClientNetworking.sendSetYawPacket(Mth.wrapDegrees(Direction.NORTH.toYRot()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     snaps.add(firstRow);
 
     LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    secondRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.snap." + Direction.EAST.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.EAST.getPositiveHorizontalDegrees()))
+    secondRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.snap." + Direction.EAST.getName()),
+        (button) -> ClientNetworking.sendSetYawPacket(Mth.wrapDegrees(Direction.EAST.toYRot()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
-    secondRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.snap." + Direction.WEST.getId()),
-        (button) -> ClientNetworking.sendSetYawPacket(MathHelper.wrapDegrees(Direction.WEST.getPositiveHorizontalDegrees()))
+    secondRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.snap." + Direction.WEST.getName()),
+        (button) -> ClientNetworking.sendSetYawPacket(Mth.wrapDegrees(Direction.WEST.toYRot()))
     ).size(DIRECTION_BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     snaps.add(secondRow);
 
@@ -127,21 +127,21 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    faces.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate.face"))
+    faces.add(LabelWidget.builder(this.font, Component.translatable("armorstands.rotate.face"))
         .bgColor(BACKGROUND_COLOR)
         .build());
 
     LinearLayoutWidget buttonRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    buttonRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.face.toward"),
+    buttonRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.face.toward"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_TOWARD)
     ).size(BUTTON_WIDTH, ELEMENT_HEIGHT).build());
-    buttonRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.face.away"),
+    buttonRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.face.away"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_AWAY)
     ).size(BUTTON_WIDTH, ELEMENT_HEIGHT).build());
-    buttonRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.rotate.face.with"),
+    buttonRow.add(Button.builder(
+        Component.translatable("armorstands.rotate.face.with"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.FACE_WITH)
     ).size(BUTTON_WIDTH, ELEMENT_HEIGHT).build());
     faces.add(buttonRow);
@@ -165,24 +165,24 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2);
 
     firstRow.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.rotate"))
+        LabelWidget.builder(this.font, Component.translatable("armorstands.rotate"))
             .bgColor(BACKGROUND_COLOR)
             .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing()))
     );
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.MINUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.rotateSlider.decrement())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.subtract")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.rotate.subtract")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.PLUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.rotateSlider.increment())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.add")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.rotate.add")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.ROTATE_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.rotateSlider.zero())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.rotate.zero")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.rotate.zero")))
         .build());
 
     rotateSection.add(firstRow);
@@ -200,7 +200,7 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignEnd();
 
-    block.add(LabelWidget.builder(this.textRenderer, direction.getLabel()).bgColor(BACKGROUND_COLOR).build());
+    block.add(LabelWidget.builder(this.font, direction.getLabel()).bgColor(BACKGROUND_COLOR).build());
 
     LinearLayoutWidget row = LinearLayoutWidget.horizontal()
         .spacing(GuiUtil.PADDING / 2)
@@ -208,26 +208,26 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
 
     String modifier = direction.getModifier();
 
-    row.add(ButtonWidget.builder(
-            Text.literal(modifier + "1"),
+    row.add(Button.builder(
+            Component.literal(modifier + "1"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset())
         )
         .size(MINI_BUTTON_WIDTH, ELEMENT_HEIGHT)
         .build());
-    row.add(ButtonWidget.builder(
-            Text.literal(modifier + "5"),
+    row.add(Button.builder(
+            Component.literal(modifier + "5"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 5)
         )
         .size(MINI_BUTTON_WIDTH, ELEMENT_HEIGHT)
         .build());
-    row.add(ButtonWidget.builder(
-            Text.literal(modifier + "15"),
+    row.add(Button.builder(
+            Component.literal(modifier + "15"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 15)
         )
         .size(MINI_BUTTON_WIDTH, ELEMENT_HEIGHT)
         .build());
-    row.add(ButtonWidget.builder(
-            Text.literal(modifier + "45"),
+    row.add(Button.builder(
+            Component.literal(modifier + "45"),
             (button) -> ClientNetworking.sendAdjustYawPacket(direction.offset() * 45)
         )
         .size(MINI_BUTTON_WIDTH, ELEMENT_HEIGHT)
@@ -238,8 +238,8 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
+  public void containerTick() {
+    super.containerTick();
 
     this.playerFacingLabel.setText(getCurrentFacingText(this.getPlayer()));
     this.playerRotationLabel.setText(getCurrentRotationText(this.getPlayer()));
@@ -274,18 +274,18 @@ public class ArmorStandRotateScreen extends AbstractArmorStandScreen {
     CLOCKWISE(1, "armorstands.rotate.clockwise"), COUNTERCLOCKWISE(-1, "armorstands.rotate.counter");
 
     private final int offset;
-    private final Text label;
+    private final Component label;
 
     RotateDirection(int offset, String i18n) {
       this.offset = offset;
-      label = Text.translatable(i18n);
+      label = Component.translatable(i18n);
     }
 
     public int offset() {
       return offset;
     }
 
-    public Text getLabel() {
+    public Component getLabel() {
       return label;
     }
 

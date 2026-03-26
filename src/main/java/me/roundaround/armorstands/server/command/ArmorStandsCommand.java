@@ -6,78 +6,77 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.server.ArmorStandUsers;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.command.argument.GameProfileArgumentType;
-import net.minecraft.server.PlayerConfigEntry;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.players.NameAndId;
+import net.minecraft.server.players.PlayerList;
 import java.util.Collection;
 import java.util.stream.Stream;
 
 public class ArmorStandsCommand {
   private static final SimpleCommandExceptionType ADD_FAILED_EXCEPTION =
-      new SimpleCommandExceptionType(Text.translatable(
+      new SimpleCommandExceptionType(Component.translatable(
       "armorstands.commands.add.failed"));
   private static final SimpleCommandExceptionType REMOVE_FAILED_EXCEPTION =
-      new SimpleCommandExceptionType(Text.translatable(
+      new SimpleCommandExceptionType(Component.translatable(
       "armorstands.commands.remove.failed"));
   private static final SimpleCommandExceptionType RELOAD_FAILED_EXCEPTION =
-      new SimpleCommandExceptionType(Text.translatable(
+      new SimpleCommandExceptionType(Component.translatable(
       "armorstands.commands.reload.failed"));
 
-  public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-    LiteralArgumentBuilder<ServerCommandSource> baseCommand = CommandManager.literal(ArmorStandsMod.MOD_ID)
-        .requires(source -> source.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS));
+  public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    LiteralArgumentBuilder<CommandSourceStack> baseCommand = Commands.literal(ArmorStandsMod.MOD_ID)
+        .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER));
 
-    LiteralArgumentBuilder<ServerCommandSource> addSub = CommandManager.literal("add")
-        .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
+    LiteralArgumentBuilder<CommandSourceStack> addSub = Commands.literal("add")
+        .then(Commands.argument("targets", GameProfileArgument.gameProfile())
             .suggests((context, builder) -> {
-              PlayerManager playerManager = context.getSource().getServer().getPlayerManager();
-              Stream<String> playerNames = playerManager.getPlayerList()
+              PlayerList playerManager = context.getSource().getServer().getPlayerList();
+              Stream<String> playerNames = playerManager.getPlayers()
                   .stream()
-                  .filter((player) -> !ArmorStandUsers.contains(player.getPlayerConfigEntry()))
+                  .filter((player) -> !ArmorStandUsers.contains(player.nameAndId()))
                   .map((player) -> player.getGameProfile().name());
-              return CommandSource.suggestMatching(playerNames, builder);
+              return SharedSuggestionProvider.suggest(playerNames, builder);
             })
             .executes((context) -> executeAdd(
                 context.getSource(),
-                GameProfileArgumentType.getProfileArgument(context, "targets")
+                GameProfileArgument.getGameProfiles(context, "targets")
             )));
 
-    LiteralArgumentBuilder<ServerCommandSource> removeSub = CommandManager.literal("remove")
-        .then(CommandManager.argument("targets", GameProfileArgumentType.gameProfile())
-            .suggests((context, builder) -> CommandSource.suggestMatching(
+    LiteralArgumentBuilder<CommandSourceStack> removeSub = Commands.literal("remove")
+        .then(Commands.argument("targets", GameProfileArgument.gameProfile())
+            .suggests((context, builder) -> SharedSuggestionProvider.suggest(
                 ArmorStandUsers.listNames(context.getSource()
                     .getServer()), builder
             ))
             .executes((context) -> executeRemove(
                 context.getSource(),
-                GameProfileArgumentType.getProfileArgument(context, "targets")
+                GameProfileArgument.getGameProfiles(context, "targets")
             )));
 
-    LiteralArgumentBuilder<ServerCommandSource> reloadSub = CommandManager.literal("reload")
+    LiteralArgumentBuilder<CommandSourceStack> reloadSub = Commands.literal("reload")
         .executes((context) -> executeReload(context.getSource()));
 
-    LiteralArgumentBuilder<ServerCommandSource> finalCommand = baseCommand.then(addSub).then(removeSub).then(reloadSub);
+    LiteralArgumentBuilder<CommandSourceStack> finalCommand = baseCommand.then(addSub).then(removeSub).then(reloadSub);
 
     dispatcher.register(finalCommand);
   }
 
-  private static int executeAdd(ServerCommandSource source, Collection<PlayerConfigEntry> targets)
+  private static int executeAdd(CommandSourceStack source, Collection<NameAndId> targets)
       throws CommandSyntaxException {
     int added = 0;
 
-    for (PlayerConfigEntry target : targets) {
+    for (NameAndId target : targets) {
       if (ArmorStandUsers.contains(target)) {
         continue;
       }
 
       ArmorStandUsers.add(target);
-      source.sendFeedback(() -> Text.translatable("armorstands.commands.add.success", target.name()), true);
+      source.sendSuccess(() -> Component.translatable("armorstands.commands.add.success", target.name()), true);
       added++;
     }
 
@@ -88,17 +87,17 @@ public class ArmorStandsCommand {
     return added;
   }
 
-  private static int executeRemove(ServerCommandSource source, Collection<PlayerConfigEntry> targets)
+  private static int executeRemove(CommandSourceStack source, Collection<NameAndId> targets)
       throws CommandSyntaxException {
     int removed = 0;
 
-    for (PlayerConfigEntry target : targets) {
+    for (NameAndId target : targets) {
       if (!ArmorStandUsers.contains(target)) {
         continue;
       }
 
       ArmorStandUsers.remove(target);
-      source.sendFeedback(() -> Text.translatable("armorstands.commands.remove.success", target.name()), true);
+      source.sendSuccess(() -> Component.translatable("armorstands.commands.remove.success", target.name()), true);
       removed++;
     }
 
@@ -109,7 +108,7 @@ public class ArmorStandsCommand {
     return removed;
   }
 
-  private static int executeReload(ServerCommandSource source) throws CommandSyntaxException {
+  private static int executeReload(CommandSourceStack source) throws CommandSyntaxException {
     try {
       ArmorStandUsers.reload();
     } catch (Exception exception) {
@@ -117,7 +116,7 @@ public class ArmorStandsCommand {
       throw RELOAD_FAILED_EXCEPTION.create();
     }
 
-    source.sendFeedback(() -> Text.translatable("armorstands.commands.reload.success"), true);
+    source.sendSuccess(() -> Component.translatable("armorstands.commands.reload.success"), true);
     return 1;
   }
 }

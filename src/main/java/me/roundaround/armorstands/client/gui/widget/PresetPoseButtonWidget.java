@@ -2,11 +2,11 @@ package me.roundaround.armorstands.client.gui.widget;
 
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.util.PosePreset;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.MutableText;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.MutableComponent;
 
-public class PresetPoseButtonWidget extends ButtonWidget.Text {
+public class PresetPoseButtonWidget extends Button.Plain {
   private PosePreset pose = PosePreset.DEFAULT;
 
   public PresetPoseButtonWidget(int width, int height) {
@@ -15,9 +15,9 @@ public class PresetPoseButtonWidget extends ButtonWidget.Text {
         0,
         width,
         height,
-        net.minecraft.text.Text.empty(),
+        net.minecraft.network.chat.Component.empty(),
         (button) -> ClientNetworking.sendSetPosePresetPacket(((PresetPoseButtonWidget) button).getPose()),
-        ButtonWidget.DEFAULT_NARRATION_SUPPLIER
+        Button.DEFAULT_NARRATION
     );
 
     updateMessage();
@@ -33,15 +33,15 @@ public class PresetPoseButtonWidget extends ButtonWidget.Text {
   }
 
   private void updateMessage() {
-    MutableText category = net.minecraft.text.Text.translatable(
+    MutableComponent category = net.minecraft.network.chat.Component.translatable(
         "armorstands.presets.category",
         pose.getCategory().getDisplayName()
     );
-    MutableText source = net.minecraft.text.Text.translatable(
+    MutableComponent source = net.minecraft.network.chat.Component.translatable(
         "armorstands.presets.source",
         pose.getSource().getDisplayName()
     );
-    setTooltip(Tooltip.of(category.append(net.minecraft.text.Text.literal("\n")).append(source)));
+    setTooltip(Tooltip.create(category.append(net.minecraft.network.chat.Component.literal("\n")).append(source)));
     setMessage(this.pose.getDisplayName());
   }
 }

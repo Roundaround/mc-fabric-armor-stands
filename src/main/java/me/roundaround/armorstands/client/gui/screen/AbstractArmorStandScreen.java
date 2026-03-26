@@ -16,32 +16,32 @@ import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
 import me.roundaround.armorstands.roundalib.client.gui.widget.IconButtonWidget;
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.FrameWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.input.SystemKeycodes;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.InputQuirks;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
-
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandScreenHandler> implements
+public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<ArmorStandScreenHandler> implements
     PassesEventsThrough {
   protected static final CustomIcon COPY_ICON = new CustomIcon("copy", 20);
   protected static final CustomIcon PASTE_ICON = new CustomIcon("paste", 20);
@@ -49,7 +49,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   protected static final int ELEMENT_HEIGHT = 16;
 
   protected final ArmorStandLayoutWidget layout = new ArmorStandLayoutWidget(this);
-  protected final ArmorStandEntity armorStand;
+  protected final ArmorStand armorStand;
   protected final MessageRenderer messageRenderer;
 
   protected LinearLayoutWidget utilRow;
@@ -63,7 +63,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   private boolean cursorLocked = false;
   private long lastPing = 0;
 
-  protected AbstractArmorStandScreen(ArmorStandScreenHandler handler, Text title) {
+  protected AbstractArmorStandScreen(ArmorStandScreenHandler handler, Component title) {
     super(handler, handler.getPlayerInventory(), title);
     this.armorStand = handler.getArmorStand();
 
@@ -72,7 +72,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public abstract ScreenType getScreenType();
 
-  public ArmorStandEntity getArmorStand() {
+  public ArmorStand getArmorStand() {
     return this.armorStand;
   }
 
@@ -89,14 +89,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   public void init() {
     this.populateLayout();
     this.collectElements();
-    this.refreshWidgetPositions();
+    this.repositionElements();
   }
 
-  protected MinecraftClient getClient() {
-    return Objects.requireNonNull(this.client);
+  protected Minecraft getClient() {
+    return Objects.requireNonNull(this.minecraft);
   }
 
-  protected ClientPlayerEntity getPlayer() {
+  protected LocalPlayer getPlayer() {
     return this.getClient().player;
   }
 
@@ -117,71 +117,71 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
         .build());
     this.utilRow.add(IconButtonWidget.builder(COPY_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
-        .messageAndTooltip(Text.translatable("armorstands.utility.copy"))
-        .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
+        .messageAndTooltip(Component.translatable("armorstands.utility.copy"))
+        .onPress((_) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY))
         .build());
     this.utilRow.add(IconButtonWidget.builder(PASTE_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
-        .messageAndTooltip(Text.translatable("armorstands.utility.paste"))
-        .onPress((button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
+        .messageAndTooltip(Component.translatable("armorstands.utility.paste"))
+        .onPress((_) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.PASTE))
         .build());
     this.utilRow.add(IconButtonWidget.builder(BuiltinIcon.UNDO_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
-        .messageAndTooltip(Text.translatable("armorstands.utility.undo"))
-        .onPress((button) -> ClientNetworking.sendUndoPacket(false))
+        .messageAndTooltip(Component.translatable("armorstands.utility.undo"))
+        .onPress((_) -> ClientNetworking.sendUndoPacket(false))
         .build());
     this.utilRow.add(IconButtonWidget.builder(BuiltinIcon.REDO_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
-        .messageAndTooltip(Text.translatable("armorstands.utility.redo"))
-        .onPress((button) -> ClientNetworking.sendUndoPacket(true))
+        .messageAndTooltip(Component.translatable("armorstands.utility.redo"))
+        .onPress((_) -> ClientNetworking.sendUndoPacket(true))
         .build());
     this.layout.topLeft.add(this.utilRow);
   }
 
-  private Text buildHelpTooltipText() {
-    String control = Text.translatable("armorstands.help." + (SystemKeycodes.IS_MAC_OS ? "cmd" : "ctrl")).getString();
+  private Component buildHelpTooltipText() {
+    String control = Component.translatable("armorstands.help." + (InputQuirks.REPLACE_CTRL_KEY_WITH_CMD_KEY ? "cmd" : "ctrl")).getString();
 
-    ArrayList<Text> lines = new ArrayList<>();
-    lines.add(Text.translatable("armorstands.help.main").append(ScreenTexts.LINE_BREAK));
-    lines.add(Text.translatable("armorstands.help.shortcuts"));
-    lines.add(Text.translatable("armorstands.help.look", Text.translatable("armorstands.help.alt")));
-    lines.add(Text.translatable(
+    ArrayList<Component> lines = new ArrayList<>();
+    lines.add(Component.translatable("armorstands.help.main").append(CommonComponents.NEW_LINE));
+    lines.add(Component.translatable("armorstands.help.shortcuts"));
+    lines.add(Component.translatable("armorstands.help.look", Component.translatable("armorstands.help.alt")));
+    lines.add(Component.translatable(
         "armorstands.help.close",
-        this.getStyledBoundText(this.getClient().options.inventoryKey),
-        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_ESCAPE).getLocalizedText()
+        this.getStyledBoundText(this.getClient().options.keyInventory),
+        InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_ESCAPE).getDisplayName()
     ));
-    lines.add(Text.translatable("armorstands.help.change", ScreenType.values().length));
-    lines.add(Text.translatable(
+    lines.add(Component.translatable("armorstands.help.change", ScreenType.values().length));
+    lines.add(Component.translatable(
         "armorstands.help.highlight",
         this.getStyledBoundText(ArmorStandsClientMod.highlightArmorStandKeyBinding)
     ));
-    lines.add(Text.translatable(
+    lines.add(Component.translatable(
         "armorstands.help.undo",
         control,
-        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Z).getLocalizedText()
+        InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_Z).getDisplayName()
     ));
-    lines.add(Text.translatable(
+    lines.add(Component.translatable(
         "armorstands.help.redo",
         control,
-        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_Y).getLocalizedText()
+        InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_Y).getDisplayName()
     ));
-    lines.add(Text.translatable(
+    lines.add(Component.translatable(
         "armorstands.help.copy",
         control,
-        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_C).getLocalizedText()
+        InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_C).getDisplayName()
     ));
-    lines.add(Text.translatable(
+    lines.add(Component.translatable(
         "armorstands.help.paste",
         control,
-        InputUtil.Type.KEYSYM.createFromCode(GLFW.GLFW_KEY_V).getLocalizedText()
+        InputConstants.Type.KEYSYM.getOrCreate(GLFW.GLFW_KEY_V).getDisplayName()
     ));
-    return ScreenTexts.joinLines(lines);
+    return CommonComponents.joinLines(lines);
   }
 
-  private Text getStyledBoundText(KeyBinding binding) {
-    Text base = binding.getBoundKeyLocalizedText();
+  private Component getStyledBoundText(KeyMapping binding) {
+    Component base = binding.getTranslatedKeyMessage();
     if (binding.isUnbound()) {
-      return Text.literal("(").append(base).append(")").formatted(Formatting.ITALIC, Formatting.GRAY);
+      return Component.literal("(").append(base).append(")").withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY);
     }
     return base;
   }
@@ -194,7 +194,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
           .vanillaSize()
           .disableIconDim()
           .messageAndTooltip(screenType.getDisplayName())
-          .onPress((button) -> ClientNetworking.sendRequestScreenPacket(this.getArmorStand(), screenType))
+          .onPress((_) -> ClientNetworking.sendRequestScreenPacket(this.getArmorStand(), screenType))
           .build();
       if (this.getScreenType() == screenType) {
         navButton.active = false;
@@ -211,19 +211,17 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   protected void collectElements() {
-    this.layout.forEachChild(this::addDrawableChild);
+    this.layout.visitWidgets(this::addRenderableWidget);
   }
 
   @Override
-  protected void refreshWidgetPositions() {
-    this.layout.refreshPositions();
+  protected void repositionElements() {
+    this.layout.arrangeElements();
   }
 
   @Override
-  protected void handledScreenTick() {
-    assert this.client != null;
-
-    ((InGameHudAccessor) this.client.inGameHud).invokeUpdateVignetteDarkness(this.client.getCameraEntity());
+  protected void containerTick() {
+    ((InGameHudAccessor) this.minecraft.gui).invokeUpdateVignetteDarkness(this.minecraft.getCameraEntity());
 
     this.messageRenderer.tick();
 
@@ -234,13 +232,11 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-    assert this.client != null;
+  public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
+    int adjustedMouseX = this.cursorLocked ? -1 : mouseX;
+    int adjustedMouseY = this.cursorLocked ? -1 : mouseY;
 
-    int adjustedMouseX = cursorLocked ? -1 : mouseX;
-    int adjustedMouseY = cursorLocked ? -1 : mouseY;
-
-    ((InGameHudAccessor) this.client.inGameHud).invokeRenderVignetteOverlay(context, this.client.getCameraEntity());
+    ((InGameHudAccessor) this.minecraft.gui).invokeRenderVignetteOverlay(context, this.minecraft.getCameraEntity());
 
     super.render(context, adjustedMouseX, adjustedMouseY, delta);
 
@@ -248,16 +244,16 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public void renderInGameBackground(DrawContext context) {
+  public void renderTransparentBackground(@NonNull GuiGraphics context) {
     // No grayed out background
   }
 
   @Override
-  protected void drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY) {
+  protected void renderBg(@NonNull GuiGraphics drawContext, float delta, int mouseX, int mouseY) {
   }
 
   @Override
-  protected void drawForeground(DrawContext drawContext, int mouseX, int mouseY) {
+  protected void renderLabels(@NonNull GuiGraphics drawContext, int mouseX, int mouseY) {
   }
 
   @Override
@@ -269,22 +265,22 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean mouseClicked(Click click, boolean doubled) {
+  public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
     if (this.cursorLocked) {
       return false;
     }
-    Element focused = getFocused();
+    GuiEventListener focused = this.getFocused();
     boolean result = super.mouseClicked(click, doubled);
 
     if (this.utilizesInventory) {
-      setFocused(focused);
+      this.setFocused(focused);
     }
 
     return result;
   }
 
   @Override
-  public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+  public boolean mouseDragged(@NonNull MouseButtonEvent click, double deltaX, double deltaY) {
     if (this.cursorLocked) {
       return false;
     }
@@ -292,14 +288,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return super.mouseDragged(click, deltaX, deltaY);
     }
 
-    if (getFocused() != null && isDragging() && click.button() == 0) {
-      return getFocused().mouseDragged(click, deltaX, deltaY);
+    if (this.getFocused() != null && this.isDragging() && click.button() == 0) {
+      return this.getFocused().mouseDragged(click, deltaX, deltaY);
     }
     return false;
   }
 
   @Override
-  public boolean mouseReleased(Click click) {
+  public boolean mouseReleased(@NonNull MouseButtonEvent click) {
     if (this.cursorLocked) {
       return false;
     }
@@ -307,13 +303,13 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       return super.mouseReleased(click);
     }
 
-    if (isDragging() && getFocused() != null && click.button() == 0) {
-      setDragging(false);
-      return getFocused().mouseReleased(click);
+    if (this.isDragging() && this.getFocused() != null && click.button() == 0) {
+      this.setDragging(false);
+      return this.getFocused().mouseReleased(click);
     }
 
-    setDragging(false);
-    return hoveredElement(click.x(), click.y()).filter((element) -> element.mouseReleased(click)).isPresent();
+    this.setDragging(false);
+    return this.getChildAt(click.x(), click.y()).filter((element) -> element.mouseReleased(click)).isPresent();
   }
 
   @Override
@@ -324,9 +320,9 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
     if (this.navRow != null && this.navRow.getBounds().contains(mouseX, mouseY)) {
       if (verticalAmount > 0) {
-        goToPreviousScreen();
+        this.goToPreviousScreen();
       } else {
-        goToNextScreen();
+        this.goToNextScreen();
       }
       return true;
     }
@@ -335,75 +331,73 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public Optional<Element> hoveredElement(double mouseX, double mouseY) {
+  public @NonNull Optional<GuiEventListener> getChildAt(double mouseX, double mouseY) {
     if (this.cursorLocked) {
       return Optional.empty();
     }
-    return super.hoveredElement(mouseX, mouseY);
+    return super.getChildAt(mouseX, mouseY);
   }
 
   @Override
-  public boolean keyPressed(KeyInput input) {
-    assert this.client != null;
-
+  public boolean keyPressed(@NonNull KeyEvent input) {
     // Allow jump to pass through without pressing buttons
-    if (this.client.options.jumpKey.matchesKey(input)) {
+    if (this.minecraft.options.keyJump.matches(input)) {
       return false;
     }
 
-    if (this.client.options.inventoryKey.matchesKey(input)) {
-      close();
+    if (this.minecraft.options.keyInventory.matches(input)) {
+      this.onClose();
       return true;
     }
 
-    switch (input.getKeycode()) {
+    switch (input.input()) {
       case GLFW.GLFW_KEY_ESCAPE:
-        close();
+        this.onClose();
         return true;
       case GLFW.GLFW_KEY_LEFT_ALT:
       case GLFW.GLFW_KEY_RIGHT_ALT:
         if (!this.passEvents) {
           break;
         }
-        lockCursor();
+        this.lockCursor();
         return true;
       case GLFW.GLFW_KEY_LEFT:
-        if (!input.hasCtrl()) {
+        if (!input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
-        goToPreviousScreen();
+        this.goToPreviousScreen();
         return true;
       case GLFW.GLFW_KEY_RIGHT:
-        if (!input.hasCtrl()) {
+        if (!input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
-        goToNextScreen();
+        this.goToNextScreen();
         return true;
       case GLFW.GLFW_KEY_Z:
-        if (!this.supportsUndoRedo || !input.hasCtrl()) {
+        if (!this.supportsUndoRedo || !input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(false);
         return true;
       case GLFW.GLFW_KEY_Y:
-        if (!this.supportsUndoRedo || !input.hasCtrl()) {
+        if (!this.supportsUndoRedo || !input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUndoPacket(true);
         return true;
       case GLFW.GLFW_KEY_C:
-        if (!this.supportsUndoRedo || !input.hasCtrl()) {
+        if (!this.supportsUndoRedo || !input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
         ClientNetworking.sendUtilityActionPacket(UtilityAction.COPY);
         return true;
       case GLFW.GLFW_KEY_V:
-        if (!this.supportsUndoRedo || !input.hasCtrl()) {
+        if (!this.supportsUndoRedo || !input.hasControlDown()) {
           break;
         }
         GuiUtil.playClickSound();
@@ -415,14 +409,14 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
       if (screenType == this.getScreenType()) {
         continue;
       }
-      if (this.client.options.hotbarKeys[screenType.getIndex()].matchesKey(input)) {
+      if (this.minecraft.options.keyHotbarSlots[screenType.getIndex()].matches(input)) {
         GuiUtil.playClickSound();
         ClientNetworking.sendRequestScreenPacket(this.armorStand, screenType);
         return true;
       }
     }
 
-    if (getFocused() != null && getFocused().keyPressed(input)) {
+    if (this.getFocused() != null && this.getFocused().keyPressed(input)) {
       return true;
     }
 
@@ -430,18 +424,18 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   @Override
-  public boolean keyReleased(KeyInput input) {
+  public boolean keyReleased(@NonNull KeyEvent input) {
     if (this.passEvents &&
-        (input.getKeycode() == GLFW.GLFW_KEY_LEFT_ALT || input.getKeycode() == GLFW.GLFW_KEY_RIGHT_ALT)) {
-      unlockCursor();
+        (input.input() == GLFW.GLFW_KEY_LEFT_ALT || input.input() == GLFW.GLFW_KEY_RIGHT_ALT)) {
+      this.unlockCursor();
       return true;
     }
 
-    return getFocused() != null && getFocused().keyReleased(input);
+    return this.getFocused() != null && this.getFocused().keyReleased(input);
   }
 
   public boolean shouldHighlight(Entity entity) {
-    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isPressed() && entity == this.armorStand;
+    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isDown() && entity == this.armorStand;
   }
 
   public boolean isCursorLocked() {
@@ -450,7 +444,7 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
 
   public void sendPing() {
     this.lastPing = System.currentTimeMillis();
-    ClientNetworking.sendPingPacket(Objects.requireNonNull(this.client).player);
+    ClientNetworking.sendPingPacket(Objects.requireNonNull(this.minecraft).player);
   }
 
   public void onPong() {
@@ -458,15 +452,15 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   public void updatePosOnClient(double x, double y, double z) {
-    this.armorStand.setPos(x, y, z);
+    this.armorStand.setPosRaw(x, y, z);
   }
 
   public void updateYawOnClient(float yaw) {
-    this.armorStand.setYaw(yaw);
+    this.armorStand.setYRot(yaw);
   }
 
   public void updatePitchOnClient(float pitch) {
-    this.armorStand.setPitch(pitch);
+    this.armorStand.setXRot(pitch);
   }
 
   public void updateInvulnerableOnClient(boolean invulnerable) {
@@ -478,67 +472,63 @@ public abstract class AbstractArmorStandScreen extends HandledScreen<ArmorStandS
   }
 
   protected void lockCursor() {
-    assert this.client != null;
-
     this.cursorLocked = true;
-    int x = this.client.getWindow().getWidth() / 2;
-    int y = this.client.getWindow().getHeight() / 2;
-    ((MouseAccessor) this.client.mouse).setX(x);
-    ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow(), InputUtil.GLFW_CURSOR_DISABLED, x, y);
+    int x = this.minecraft.getWindow().getScreenWidth() / 2;
+    int y = this.minecraft.getWindow().getScreenHeight() / 2;
+    ((MouseAccessor) this.minecraft.mouseHandler).setX(x);
+    ((MouseAccessor) this.minecraft.mouseHandler).setY(y);
+    InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), InputConstants.CURSOR_DISABLED, x, y);
   }
 
   protected void unlockCursor() {
-    assert this.client != null;
-
     this.cursorLocked = false;
-    int x = this.client.getWindow().getWidth() / 2;
-    int y = this.client.getWindow().getHeight() / 2;
-    ((MouseAccessor) this.client.mouse).setX(x);
-    ((MouseAccessor) this.client.mouse).setY(y);
-    InputUtil.setCursorParameters(this.client.getWindow(), InputUtil.GLFW_CURSOR_NORMAL, x, y);
+    int x = this.minecraft.getWindow().getScreenWidth() / 2;
+    int y = this.minecraft.getWindow().getScreenHeight() / 2;
+    ((MouseAccessor) this.minecraft.mouseHandler).setX(x);
+    ((MouseAccessor) this.minecraft.mouseHandler).setY(y);
+    InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), InputConstants.CURSOR_NORMAL, x, y);
   }
 
   protected void goToPreviousScreen() {
-    ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().previous());
+    ClientNetworking.sendRequestScreenPacket(this.armorStand, this.getScreenType().previous());
   }
 
   protected void goToNextScreen() {
-    ClientNetworking.sendRequestScreenPacket(this.armorStand, getScreenType().next());
+    ClientNetworking.sendRequestScreenPacket(this.armorStand, this.getScreenType().next());
   }
 
-  protected static Text getCurrentPosText(Entity entity) {
+  protected static Component getCurrentPosText(Entity entity) {
     String xStr = String.format("%.2f", entity.getX());
     String yStr = String.format("%.2f", entity.getY());
     String zStr = String.format("%.2f", entity.getZ());
-    return Text.translatable("armorstands.current.position", xStr, yStr, zStr);
+    return Component.translatable("armorstands.current.position", xStr, yStr, zStr);
   }
 
-  protected static Text getCurrentBlockPosText(Entity entity) {
-    BlockPos pos = entity.getBlockPos();
-    return Text.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
+  protected static Component getCurrentBlockPosText(Entity entity) {
+    BlockPos pos = entity.blockPosition();
+    return Component.translatable("armorstands.current.block", pos.getX(), pos.getY(), pos.getZ());
   }
 
-  protected static Text getCurrentRotationText(Entity entity) {
-    float currentRotation = entity.getYaw();
-    return Text.translatable(
+  protected static Component getCurrentRotationText(Entity entity) {
+    float currentRotation = entity.getYRot();
+    return Component.translatable(
         "armorstands.current.rotation",
-        String.format(Locale.ROOT, "%.1f", MathHelper.wrapDegrees(currentRotation))
+        String.format(Locale.ROOT, "%.1f", Mth.wrapDegrees(currentRotation))
     );
   }
 
-  protected static Text getCurrentFacingText(Entity entity) {
-    return getFacingText(Direction.fromHorizontalDegrees(entity.getYaw()));
+  protected static Component getCurrentFacingText(Entity entity) {
+    return getFacingText(Direction.fromYRot(entity.getYRot()));
   }
 
-  protected static Text getFacingText(Direction facing) {
+  protected static Component getFacingText(Direction facing) {
     String towardsI18n = switch (facing) {
       case NORTH -> "negZ";
       case SOUTH -> "posZ";
       case WEST -> "negX";
       default -> "posX";
     };
-    Text towards = Text.translatable("armorstands.current.facing." + towardsI18n);
-    return Text.translatable("armorstands.current.facing", facing.toString(), towards.getString());
+    Component towards = Component.translatable("armorstands.current.facing." + towardsI18n);
+    return Component.translatable("armorstands.current.facing", facing.toString(), towards.getString());
   }
 }

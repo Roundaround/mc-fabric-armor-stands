@@ -6,12 +6,12 @@ import me.roundaround.armorstands.network.*;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.*;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public final class ClientNetworking {
   private ClientNetworking() {
@@ -29,13 +29,13 @@ public final class ClientNetworking {
     ClientPlayNetworking.send(new Networking.AdjustYawC2S(amount));
   }
 
-  public static void sendPingPacket(ClientPlayerEntity player) {
+  public static void sendPingPacket(LocalPlayer player) {
     if (ClientPlayNetworking.canSend(Networking.PingC2S.ID)) {
-      ClientPlayNetworking.send(new Networking.PingC2S(player.getUuid()));
+      ClientPlayNetworking.send(new Networking.PingC2S(player.getUUID()));
     }
   }
 
-  public static void sendRequestScreenPacket(ArmorStandEntity armorStand, ScreenType screenType) {
+  public static void sendRequestScreenPacket(ArmorStand armorStand, ScreenType screenType) {
     ClientPlayNetworking.send(new Networking.RequestScreenC2S(armorStand.getId(), screenType));
   }
 
@@ -82,14 +82,14 @@ public final class ClientNetworking {
 
   private static void handleClientUpdate(Networking.ClientUpdateS2C payload, ClientPlayNetworking.Context context) {
     context.client().execute(() -> {
-      Screen currentScreen = context.client().currentScreen;
+      Screen currentScreen = context.client().screen;
       if (!(currentScreen instanceof AbstractArmorStandScreen screen)) {
         return;
       }
 
       screen.updatePosOnClient(payload.x(), payload.y(), payload.z());
-      screen.updateYawOnClient(MathHelper.wrapDegrees(payload.yaw()));
-      screen.updatePitchOnClient(MathHelper.wrapDegrees(payload.pitch()));
+      screen.updateYawOnClient(Mth.wrapDegrees(payload.yaw()));
+      screen.updatePitchOnClient(Mth.wrapDegrees(payload.pitch()));
       screen.updateInvulnerableOnClient(payload.invulnerable());
       screen.updateDisabledSlotsOnClient(payload.disabledSlots());
     });
@@ -97,14 +97,14 @@ public final class ClientNetworking {
 
   private static void handleMessage(Networking.MessageS2C payload, ClientPlayNetworking.Context context) {
     context.client().execute(() -> {
-      Screen currentScreen = context.client().currentScreen;
+      Screen currentScreen = context.client().screen;
       if (!(currentScreen instanceof AbstractArmorStandScreen screen)) {
         return;
       }
 
       MessageRenderer messageRenderer = screen.getMessageRenderer();
       messageRenderer.addMessage(
-          payload.translatable() ? Text.translatable(payload.message()) : Text.literal(payload.message()),
+          payload.translatable() ? Component.translatable(payload.message()) : Component.literal(payload.message()),
           payload.styled() ? payload.color() : MessageRenderer.BASE_COLOR
       );
     });
@@ -112,15 +112,15 @@ public final class ClientNetworking {
 
   private static void handleOpenScreen(Networking.OpenScreenS2C payload, ClientPlayNetworking.Context context) {
     context.client().execute(() -> {
-      ClientPlayerEntity player = context.player();
-      if (!(player.getEntityWorld().getEntityById(payload.armorStandId()) instanceof ArmorStandEntity armorStand)) {
+      LocalPlayer player = context.player();
+      if (!(player.level().getEntity(payload.armorStandId()) instanceof ArmorStand armorStand)) {
         return;
       }
 
       ArmorStandScreenHandler screenHandler = new ArmorStandScreenHandler(payload.syncId(), player.getInventory(),
           armorStand, payload.screenType()
       );
-      player.currentScreenHandler = screenHandler;
+      player.containerMenu = screenHandler;
       context.client().setScreen(switch (screenHandler.getScreenType()) {
         case UTILITIES -> new ArmorStandUtilitiesScreen(screenHandler);
         case MOVE -> new ArmorStandMoveScreen(screenHandler);
@@ -134,7 +134,7 @@ public final class ClientNetworking {
 
   private static void handlePong(Networking.PongS2C payload, ClientPlayNetworking.Context context) {
     context.client().execute(() -> {
-      Screen currentScreen = context.client().currentScreen;
+      Screen currentScreen = context.client().screen;
       if (!(currentScreen instanceof AbstractArmorStandScreen screen)) {
         return;
       }

@@ -1,24 +1,23 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-import net.minecraft.util.math.EulerAngle;
-
 import java.util.Arrays;
 import java.util.function.IntFunction;
+import net.minecraft.core.Rotations;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
 
 public enum EulerAngleParameter {
   PITCH(0, "pitch"), YAW(1, "yaw"), ROLL(2, "roll");
 
   public static final IntFunction<EulerAngleParameter> ID_TO_VALUE_FUNCTION =
-      ValueLists.createIndexToValueFunction(EulerAngleParameter::getIndex,
+      ByIdMap.continuous(EulerAngleParameter::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.CLAMP
+      ByIdMap.OutOfBoundsStrategy.CLAMP
   );
-  public static final PacketCodec<ByteBuf, EulerAngleParameter> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, EulerAngleParameter> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       EulerAngleParameter::getIndex
   );
@@ -40,23 +39,23 @@ public enum EulerAngleParameter {
     return this.index;
   }
 
-  public Text getDisplayName() {
-    return Text.translatable("armorstands.parameter." + id);
+  public Component getDisplayName() {
+    return Component.translatable("armorstands.parameter." + id);
   }
 
-  public float get(EulerAngle angle) {
+  public float get(Rotations angle) {
     return switch (this) {
-      case PITCH -> angle.pitch();
-      case YAW -> angle.yaw();
-      case ROLL -> angle.roll();
+      case PITCH -> angle.x();
+      case YAW -> angle.y();
+      case ROLL -> angle.z();
     };
   }
 
-  public EulerAngle set(EulerAngle angle, float value) {
+  public Rotations set(Rotations angle, float value) {
     return switch (this) {
-      case PITCH -> new EulerAngle(value, angle.yaw(), angle.roll());
-      case YAW -> new EulerAngle(angle.pitch(), value, angle.roll());
-      case ROLL -> new EulerAngle(angle.pitch(), angle.yaw(), value);
+      case PITCH -> new Rotations(value, angle.y(), angle.z());
+      case YAW -> new Rotations(angle.x(), value, angle.z());
+      case ROLL -> new Rotations(angle.x(), angle.y(), value);
     };
   }
 

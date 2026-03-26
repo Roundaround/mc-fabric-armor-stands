@@ -1,25 +1,24 @@
 package me.roundaround.armorstands.util;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-import net.minecraft.util.math.Direction;
-
 import java.util.function.IntFunction;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
 
 public enum MoveMode {
   RELATIVE(0, "relative", false, false),
   LOCAL_TO_STAND(1, "stand", true, false),
   LOCAL_TO_PLAYER(2, "player", true, true);
 
-  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ValueLists.createIndexToValueFunction(
+  public static final IntFunction<MoveMode> ID_TO_VALUE_FUNCTION = ByIdMap.continuous(
       MoveMode::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.CLAMP
+      ByIdMap.OutOfBoundsStrategy.CLAMP
   );
-  public static final PacketCodec<ByteBuf, MoveMode> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, MoveMode> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       MoveMode::getIndex
   );
@@ -60,20 +59,20 @@ public enum MoveMode {
 
   }
 
-  public Text getOptionValueText() {
-    return Text.translatable("armorstands.move.mode." + this.id);
+  public Component getOptionValueText() {
+    return Component.translatable("armorstands.move.mode." + this.id);
   }
 
-  public Text getDirectionText(Direction direction) {
+  public Component getDirectionText(Direction direction) {
     if (this.equals(RELATIVE)) {
-      return Text.translatable("armorstands.move." + direction.getId());
+      return Component.translatable("armorstands.move." + direction.getName());
     } else {
-      return Text.translatable("armorstands.move.local." + direction.getId());
+      return Component.translatable("armorstands.move.local." + direction.getName());
     }
   }
 
-  public static Text getOptionLabelText() {
-    return Text.translatable("armorstands.move.mode");
+  public static Component getOptionLabelText() {
+    return Component.translatable("armorstands.move.mode");
   }
 
   public static MoveMode fromId(String id) {

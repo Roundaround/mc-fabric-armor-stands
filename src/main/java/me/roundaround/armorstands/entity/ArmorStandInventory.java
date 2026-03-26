@@ -2,47 +2,46 @@ package me.roundaround.armorstands.entity;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.entity.EntityEquipment;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-
 import java.util.Map;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
-public class ArmorStandInventory implements Inventory {
+public class ArmorStandInventory implements Container {
   public static final Int2ObjectMap<EquipmentSlot> EQUIPMENT_SLOTS = new Int2ObjectArrayMap<>(Map.of(
-      EquipmentSlot.MAINHAND.getEntitySlotId(),
+      EquipmentSlot.MAINHAND.getIndex(),
       EquipmentSlot.MAINHAND,
-      EquipmentSlot.OFFHAND.getEntitySlotId(),
+      EquipmentSlot.OFFHAND.getIndex(),
       EquipmentSlot.OFFHAND,
-      EquipmentSlot.FEET.getOffsetEntitySlotId(2),
+      EquipmentSlot.FEET.getIndex(2),
       EquipmentSlot.FEET,
-      EquipmentSlot.LEGS.getOffsetEntitySlotId(2),
+      EquipmentSlot.LEGS.getIndex(2),
       EquipmentSlot.LEGS,
-      EquipmentSlot.CHEST.getOffsetEntitySlotId(2),
+      EquipmentSlot.CHEST.getIndex(2),
       EquipmentSlot.CHEST,
-      EquipmentSlot.HEAD.getOffsetEntitySlotId(2),
+      EquipmentSlot.HEAD.getIndex(2),
       EquipmentSlot.HEAD
   ));
 
-  public final ArmorStandEntity armorStand;
+  public final ArmorStand armorStand;
 
   private final EntityEquipment equipment;
 
-  public ArmorStandInventory(ArmorStandEntity armorStand, EntityEquipment equipment) {
+  public ArmorStandInventory(ArmorStand armorStand, EntityEquipment equipment) {
     this.armorStand = armorStand;
     this.equipment = equipment;
   }
 
   @Override
-  public int size() {
+  public int getContainerSize() {
     return EQUIPMENT_SLOTS.size();
   }
 
   @Override
-  public void clear() {
+  public void clearContent() {
     this.equipment.clear();
   }
 
@@ -57,27 +56,27 @@ public class ArmorStandInventory implements Inventory {
   }
 
   @Override
-  public ItemStack getStack(int slot) {
+  public ItemStack getItem(int slot) {
     EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
     return equipmentSlot != null ? this.equipment.get(equipmentSlot) : ItemStack.EMPTY;
   }
 
   @Override
-  public void setStack(int slot, ItemStack stack) {
+  public void setItem(int slot, ItemStack stack) {
     EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
     if (equipmentSlot != null) {
-      this.equipment.put(equipmentSlot, stack);
+      this.equipment.set(equipmentSlot, stack);
     }
   }
 
   @Override
-  public ItemStack removeStack(int slot) {
+  public ItemStack removeItemNoUpdate(int slot) {
     EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
-    return equipmentSlot != null ? this.equipment.put(equipmentSlot, ItemStack.EMPTY) : ItemStack.EMPTY;
+    return equipmentSlot != null ? this.equipment.set(equipmentSlot, ItemStack.EMPTY) : ItemStack.EMPTY;
   }
 
   @Override
-  public ItemStack removeStack(int slot, int amount) {
+  public ItemStack removeItem(int slot, int amount) {
     EquipmentSlot equipmentSlot = EQUIPMENT_SLOTS.get(slot);
     if (equipmentSlot != null) {
       ItemStack itemStack = this.equipment.get(equipmentSlot);
@@ -90,11 +89,11 @@ public class ArmorStandInventory implements Inventory {
   }
 
   @Override
-  public void markDirty() {
+  public void setChanged() {
   }
 
   @Override
-  public boolean canPlayerUse(PlayerEntity player) {
-    return player.squaredDistanceTo(this.armorStand) <= 64;
+  public boolean stillValid(Player player) {
+    return player.distanceToSqr(this.armorStand) <= 64;
   }
 }

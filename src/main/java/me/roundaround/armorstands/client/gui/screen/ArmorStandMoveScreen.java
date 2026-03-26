@@ -12,11 +12,11 @@ import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.LabelWidg
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.entity.Entity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
   private LabelWidget standBlockLabel;
   private Direction prevFacing;
   private LabelWidget facingLabel;
-  private CyclingButtonWidget<MoveUnits> unitsButton;
+  private CycleButton<MoveUnits> unitsButton;
   private MoveMode mode = MoveMode.RELATIVE;
   private MoveUnits units = MoveUnits.PIXELS;
 
@@ -74,28 +74,27 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignStart();
 
     LinearLayoutWidget player = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    player.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.player"))
+    player.add(LabelWidget.builder(this.font, Component.translatable("armorstands.current.player"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.playerPosLabel = player.add(LabelWidget.builder(this.textRenderer, getCurrentPosText(this.getPlayer()))
+    this.playerPosLabel = player.add(LabelWidget.builder(this.font, getCurrentPosText(this.getPlayer()))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.playerBlockLabel = player.add(LabelWidget.builder(this.textRenderer, getCurrentBlockPosText(this.getPlayer()))
+    this.playerBlockLabel = player.add(LabelWidget.builder(this.font, getCurrentBlockPosText(this.getPlayer()))
         .bgColor(BACKGROUND_COLOR)
         .build());
     labels.add(player);
 
     LinearLayoutWidget stand = LinearLayoutWidget.vertical().spacing(1).defaultOffAxisContentAlignStart();
-    stand.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.current.stand"))
+    stand.add(LabelWidget.builder(this.font, Component.translatable("armorstands.current.stand"))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.standPosLabel = stand.add(LabelWidget.builder(this.textRenderer, getCurrentPosText(this.getArmorStand()))
+    this.standPosLabel = stand.add(LabelWidget.builder(this.font, getCurrentPosText(this.getArmorStand()))
         .bgColor(BACKGROUND_COLOR)
         .build());
-    this.standBlockLabel = stand.add(LabelWidget.builder(
-        this.textRenderer,
-        getCurrentBlockPosText(this.getArmorStand())
-    ).bgColor(BACKGROUND_COLOR).build());
+    this.standBlockLabel = stand.add(LabelWidget.builder(this.font, getCurrentBlockPosText(this.getArmorStand()))
+        .bgColor(BACKGROUND_COLOR)
+        .build());
     labels.add(stand);
 
     this.layout.topLeft.add(
@@ -111,32 +110,32 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignStart();
 
-    snaps.add(LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.move.snap"))
+    snaps.add(LabelWidget.builder(this.font, Component.translatable("armorstands.move.snap"))
         .bgColor(BACKGROUND_COLOR)
         .build());
 
     LinearLayoutWidget firstRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    firstRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.move.snap.standing"),
+    firstRow.add(Button.builder(
+        Component.translatable("armorstands.move.snap.standing"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_STANDING)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    firstRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.move.snap.sitting"),
+    firstRow.add(Button.builder(
+        Component.translatable("armorstands.move.snap.sitting"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_SITTING)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     snaps.add(firstRow);
 
     LinearLayoutWidget secondRow = LinearLayoutWidget.horizontal().spacing(GuiUtil.PADDING / 2);
-    secondRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.move.snap.corner"),
+    secondRow.add(Button.builder(
+        Component.translatable("armorstands.move.snap.corner"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CORNER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    secondRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.move.snap.center"),
+    secondRow.add(Button.builder(
+        Component.translatable("armorstands.move.snap.center"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_CENTER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
-    secondRow.add(ButtonWidget.builder(
-        Text.translatable("armorstands.move.snap.player"),
+    secondRow.add(Button.builder(
+        Component.translatable("armorstands.move.snap.player"),
         (button) -> ClientNetworking.sendUtilityActionPacket(UtilityAction.SNAP_PLAYER)
     ).size(BUTTON_WIDTH, BUTTON_HEIGHT).build());
     snaps.add(secondRow);
@@ -148,23 +147,23 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.layout.bottomRight.defaultOffAxisContentAlignEnd();
 
     this.layout.bottomRight.add(
-        CyclingButtonWidget.builder(MoveMode::getOptionValueText, this.mode)
-            .values(MoveMode.values())
-            .build(MoveMode.getOptionLabelText(), this::onMoveModeChange),
-        (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
+        CycleButton.builder(MoveMode::getOptionValueText, this.mode)
+            .withValues(MoveMode.values())
+            .create(MoveMode.getOptionLabelText(), this::onMoveModeChange),
+        (parent, self) -> self.setSize(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );
 
     this.unitsButton = this.layout.bottomRight.add(
-        CyclingButtonWidget.builder(MoveUnits::getOptionValueText, this.units)
-            .values(MoveUnits.values())
-            .build(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange),
-        (parent, self) -> self.setDimensions(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
+        CycleButton.builder(MoveUnits::getOptionValueText, this.units)
+            .withValues(MoveUnits.values())
+            .create(MoveUnits.getOptionLabelText(), this::onMoveUnitsChange),
+        (parent, self) -> self.setSize(LARGE_BUTTON_WIDTH, BUTTON_HEIGHT)
     );
 
     this.layout.bottomRight.add(FillerWidget.ofHeight(2 * GuiUtil.PADDING));
 
     this.facingLabel = this.layout.bottomRight.add(LabelWidget.builder(
-        this.textRenderer,
+        this.font,
         getFacingText(this.getCurrentFacing())
     ).bgColor(BACKGROUND_COLOR).build());
 
@@ -176,7 +175,7 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
         .spacing(GuiUtil.PADDING / 2)
         .defaultOffAxisContentAlignCenter();
 
-    LabelWidget label = LabelWidget.builder(this.textRenderer, this.mode.getDirectionText(direction))
+    LabelWidget label = LabelWidget.builder(this.font, this.mode.getDirectionText(direction))
         .bgColor(BACKGROUND_COLOR)
         .build();
     this.directionLabels.put(direction, label);
@@ -189,15 +188,15 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     this.layout.bottomRight.add(row);
   }
 
-  private ButtonWidget createMoveButton(Direction direction, int amount) {
+  private Button createMoveButton(Direction direction, int amount) {
     MoveButtonRef ref = new MoveButtonRef(direction, amount, this.mode, this.units);
     this.moveButtons.add(ref);
     return ref.getButton();
   }
 
   @Override
-  public void handledScreenTick() {
-    super.handledScreenTick();
+  public void containerTick() {
+    super.containerTick();
 
     this.playerPosLabel.setText(getCurrentPosText(this.getPlayer()));
     this.playerBlockLabel.setText(getCurrentBlockPosText(this.getPlayer()));
@@ -207,12 +206,12 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     Direction currentFacing = this.getCurrentFacing();
     if (!currentFacing.equals(this.prevFacing)) {
       this.facingLabel.setText(getFacingText(this.getCurrentFacing()));
-      this.layout.refreshPositions();
+      this.layout.arrangeElements();
     }
     this.prevFacing = currentFacing;
   }
 
-  private void onMoveModeChange(CyclingButtonWidget<MoveMode> button, MoveMode value) {
+  private void onMoveModeChange(CycleButton<MoveMode> button, MoveMode value) {
     this.mode = value;
     this.units = this.mode.getDefaultUnits();
     this.unitsButton.setValue(this.units);
@@ -224,22 +223,22 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
     });
 
     this.directionLabels.forEach((direction, label) -> label.setText(this.mode.getDirectionText(direction)));
-    this.layout.bottomRight.refreshPositions();
-    this.layout.refreshPositions();
+    this.layout.bottomRight.arrangeElements();
+    this.layout.arrangeElements();
   }
 
-  private void onMoveUnitsChange(CyclingButtonWidget<MoveUnits> button, MoveUnits value) {
+  private void onMoveUnitsChange(CycleButton<MoveUnits> button, MoveUnits value) {
     this.units = value;
     this.moveButtons.forEach((moveButton) -> moveButton.setUnits(this.units));
   }
 
   private Direction getCurrentFacing() {
     Entity entity = this.mode.equals(MoveMode.LOCAL_TO_STAND) ? this.getArmorStand() : this.getPlayer();
-    return Direction.fromHorizontalDegrees(entity.getYaw());
+    return Direction.fromYRot(entity.getYRot());
   }
 
   private static class MoveButtonRef {
-    private final ButtonWidget button;
+    private final Button button;
     private final Direction direction;
     private final int amount;
 
@@ -252,12 +251,10 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
       this.mode = mode;
       this.units = units;
 
-      this.button = ButtonWidget.builder(this.getMessage(), this::onPress)
-          .size(MINI_BUTTON_WIDTH, BUTTON_HEIGHT)
-          .build();
+      this.button = Button.builder(this.getMessage(), this::onPress).size(MINI_BUTTON_WIDTH, BUTTON_HEIGHT).build();
     }
 
-    public ButtonWidget getButton() {
+    public Button getButton() {
       return this.button;
     }
 
@@ -270,11 +267,11 @@ public class ArmorStandMoveScreen extends AbstractArmorStandScreen {
       this.mode = mode;
     }
 
-    private Text getMessage() {
+    private Component getMessage() {
       return this.units.getButtonText(this.amount);
     }
 
-    private void onPress(ButtonWidget button) {
+    private void onPress(Button button) {
       ClientNetworking.sendAdjustPosPacket(this.direction, this.amount, this.mode, this.units);
     }
   }

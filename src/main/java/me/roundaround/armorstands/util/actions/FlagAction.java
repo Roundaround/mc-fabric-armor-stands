@@ -3,9 +3,9 @@ package me.roundaround.armorstands.util.actions;
 import java.util.Optional;
 
 import me.roundaround.armorstands.network.ArmorStandFlag;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
 
 public class FlagAction implements ArmorStandAction {
   private final ArmorStandFlag flag;
@@ -28,12 +28,12 @@ public class FlagAction implements ArmorStandAction {
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.flag", flag);
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.flag", flag);
   }
 
   @Override
-  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void apply(Player player, ArmorStand armorStand) {
     if (toggle) {
       flag.setValue(armorStand, !flag.getValue(armorStand));
       return;
@@ -44,7 +44,7 @@ public class FlagAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void undo(Player player, ArmorStand armorStand) {
     if (toggle) {
       flag.setValue(armorStand, !flag.getValue(armorStand));
       return;

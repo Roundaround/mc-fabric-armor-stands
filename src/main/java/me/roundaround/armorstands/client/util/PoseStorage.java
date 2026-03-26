@@ -6,9 +6,8 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.util.Pose;
 import me.roundaround.armorstands.util.SavedPose;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.util.JsonHelper;
-
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,7 +22,7 @@ public class PoseStorage {
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   private static final HashMap<UUID, SavedPose> map = new HashMap<>();
 
-  public static void add(String name, ArmorStandEntity armorStand) {
+  public static void add(String name, ArmorStand armorStand) {
     add(name, new Pose(armorStand));
   }
 
@@ -89,7 +88,7 @@ public class PoseStorage {
 
       JsonArray jsonArray = GSON.fromJson(bufferedReader, JsonArray.class);
       for (JsonElement jsonElement : jsonArray) {
-        JsonObject jsonObject = JsonHelper.asObject(jsonElement, "entry");
+        JsonObject jsonObject = GsonHelper.convertToJsonObject(jsonElement, "entry");
         map.put(UUID.randomUUID(), SavedPose.fromJson(jsonObject));
       }
     }

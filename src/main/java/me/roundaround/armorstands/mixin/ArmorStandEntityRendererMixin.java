@@ -2,28 +2,28 @@ package me.roundaround.armorstands.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import me.roundaround.armorstands.client.ClientSideConfig;
-import net.minecraft.client.render.entity.ArmorStandEntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.ArmorStandArmorEntityModel;
-import net.minecraft.client.render.entity.state.ArmorStandEntityRenderState;
-import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.client.model.object.armorstand.ArmorStandArmorModel;
+import net.minecraft.client.renderer.entity.ArmorStandRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.ArmorStandRenderState;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(ArmorStandEntityRenderer.class)
-public abstract class ArmorStandEntityRendererMixin extends LivingEntityRenderer<ArmorStandEntity,
-    ArmorStandEntityRenderState, ArmorStandArmorEntityModel> {
+@Mixin(ArmorStandRenderer.class)
+public abstract class ArmorStandEntityRendererMixin extends LivingEntityRenderer<ArmorStand,
+    ArmorStandRenderState, ArmorStandArmorModel> {
 
-  @ModifyReturnValue(method = "hasLabel(Lnet/minecraft/entity/decoration/ArmorStandEntity;D)Z", at = @At("RETURN"))
-  private boolean adjustHasLabel(boolean original, ArmorStandEntity entity, double squaredDistanceToCamera) {
+  @ModifyReturnValue(method = "shouldShowName(Lnet/minecraft/world/entity/decoration/ArmorStand;D)Z", at = @At("RETURN"))
+  private boolean adjustHasLabel(boolean original, ArmorStand entity, double squaredDistanceToCamera) {
     if (!original) {
       return false;
     }
 
     ClientSideConfig config = ClientSideConfig.getInstance();
 
-    if (config.directOnlyNameRender.getPendingValue() && this.dispatcher.targetedEntity != entity) {
+    if (config.directOnlyNameRender.getPendingValue() && this.entityRenderDispatcher.crosshairPickEntity != entity) {
       return false;
     }
 
@@ -37,8 +37,8 @@ public abstract class ArmorStandEntityRendererMixin extends LivingEntityRenderer
   }
 
   private ArmorStandEntityRendererMixin(
-      EntityRendererFactory.Context ctx,
-      ArmorStandArmorEntityModel model,
+      EntityRendererProvider.Context ctx,
+      ArmorStandArmorModel model,
       float shadowRadius
   ) {
     super(ctx, model, shadowRadius);

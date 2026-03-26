@@ -2,25 +2,25 @@ package me.roundaround.armorstands.util.actions;
 
 import me.roundaround.armorstands.util.Clipboard;
 import me.roundaround.armorstands.util.Clipboard.Entry;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
-public class ClipboardPasteAction extends SimpleArmorStandAction<Clipboard.Entry> {
-  private ClipboardPasteAction(Clipboard.Entry entry) {
+public class ClipboardPasteAction extends SimpleArmorStandAction<Entry> {
+  private ClipboardPasteAction(Entry entry) {
     super(entry);
   }
 
-  public static ClipboardPasteAction create(Clipboard.Entry entry) {
+  public static ClipboardPasteAction create(Entry entry) {
     return new ClipboardPasteAction(entry);
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.paste");
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.paste");
   }
 
   @Override
-  protected Entry get(ArmorStandEntity armorStand) {
-    return Clipboard.Entry.everything(armorStand);
+  protected Entry get(ArmorStand armorStand) {
+    return Entry.everything(armorStand);
   }
 }

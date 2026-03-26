@@ -1,10 +1,9 @@
 package me.roundaround.armorstands.util.actions;
 
 import java.util.Optional;
-
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
 
 public class RotateAction implements ArmorStandAction {
   private final float argument;
@@ -35,13 +34,13 @@ public class RotateAction implements ArmorStandAction {
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.rotate");
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.rotate");
   }
 
   @Override
-  public void apply(PlayerEntity player, ArmorStandEntity armorStand) {
-    originalRotation = Optional.of(armorStand.getYaw());
+  public void apply(Player player, ArmorStand armorStand) {
+    originalRotation = Optional.of(armorStand.getYRot());
 
     float rotation = argument;
 
@@ -53,23 +52,23 @@ public class RotateAction implements ArmorStandAction {
   }
 
   @Override
-  public void undo(PlayerEntity player, ArmorStandEntity armorStand) {
+  public void undo(Player player, ArmorStand armorStand) {
     if (originalRotation.isEmpty()) {
       return;
     }
     setRotation(armorStand, originalRotation.get());
   }
 
-  public static void setRotation(ArmorStandEntity armorStand, float rotation) {
+  public static void setRotation(ArmorStand armorStand, float rotation) {
     setRotation(armorStand, rotation, false);
   }
 
-  public static void setRotation(ArmorStandEntity armorStand, float rotation, boolean round) {
+  public static void setRotation(ArmorStand armorStand, float rotation, boolean round) {
     float target = rotation % 360f;
     if (round) {
       target = Math.round(target);
     }
 
-    armorStand.setYaw(target);
+    armorStand.setYRot(target);
   }
 }

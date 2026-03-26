@@ -3,34 +3,33 @@ package me.roundaround.armorstands.client.gui.widget;
 import me.roundaround.armorstands.client.gui.screen.AbstractArmorStandScreen;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.util.actions.ScaleAction;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import java.util.Optional;
 
-public class ScaleSliderWidget extends SliderWidget {
+public class ScaleSliderWidget extends AbstractSliderButton {
   private static final float MIN = 0.01f;
   private static final float MAX = 10f;
   private static final float SPLIT_SCALE = 2f;
   private static final double SPLIT_VALUE = 0.5;
 
   private final AbstractArmorStandScreen parent;
-  private final ArmorStandEntity armorStand;
+  private final ArmorStand armorStand;
 
   private Optional<Float> lastScale = Optional.empty();
   private Optional<Long> lastScroll = Optional.empty();
   private boolean isDragging = false;
   private boolean pendingDragPing = false;
 
-  public ScaleSliderWidget(AbstractArmorStandScreen parent, int width, int height, ArmorStandEntity armorStand) {
-    super(0, 0, width, height, Text.empty(), 0);
+  public ScaleSliderWidget(AbstractArmorStandScreen parent, int width, int height, ArmorStand armorStand) {
+    super(0, 0, width, height, Component.empty(), 0);
 
     this.parent = parent;
     this.armorStand = armorStand;
@@ -44,7 +43,7 @@ public class ScaleSliderWidget extends SliderWidget {
 
   public void refresh() {
     float armorStandScale = this.armorStand.getScale();
-    if (this.lastScale.isPresent() && Math.abs(armorStandScale - this.lastScale.get()) < MathHelper.EPSILON) {
+    if (this.lastScale.isPresent() && Math.abs(armorStandScale - this.lastScale.get()) < Mth.EPSILON) {
       return;
     }
 
@@ -59,7 +58,7 @@ public class ScaleSliderWidget extends SliderWidget {
 
   public void increment() {
     float nextTick = nextTickUp(this.getScale());
-    if (nextTick - this.getScale() < MathHelper.EPSILON) {
+    if (nextTick - this.getScale() < Mth.EPSILON) {
       nextTick += stepAmount(nextTick, true);
     }
     this.setScale(nextTick);
@@ -68,7 +67,7 @@ public class ScaleSliderWidget extends SliderWidget {
 
   public void decrement() {
     float nextTick = nextTickDown(this.getScale());
-    if (this.getScale() - nextTick < MathHelper.EPSILON) {
+    if (this.getScale() - nextTick < Mth.EPSILON) {
       nextTick -= stepAmount(nextTick, false);
     }
     this.setScale(nextTick);
@@ -94,7 +93,7 @@ public class ScaleSliderWidget extends SliderWidget {
 
   @Override
   protected void updateMessage() {
-    this.setMessage(Text.of(String.format("%.2f", this.getScale())));
+    this.setMessage(Component.nullToEmpty(String.format("%.2f", this.getScale())));
   }
 
   @Override
@@ -103,14 +102,14 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   @Override
-  public void onClick(Click click, boolean doubled) {
+  public void onClick(MouseButtonEvent click, boolean doubled) {
     super.onClick(click, doubled);
 
     this.isDragging = true;
   }
 
   @Override
-  public void onRelease(Click click) {
+  public void onRelease(MouseButtonEvent click) {
     super.onRelease(click);
 
     this.isDragging = false;
@@ -137,14 +136,14 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   @Override
-  protected void onDrag(Click click, double deltaX, double deltaY) {
+  protected void onDrag(MouseButtonEvent click, double deltaX, double deltaY) {
     this.isDragging = true;
     super.onDrag(click, deltaX, deltaY);
   }
 
   @Override
   public void playDownSound(SoundManager soundManager) {
-    soundManager.play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1));
+    soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1));
   }
 
   private float getScale() {
@@ -166,7 +165,7 @@ public class ScaleSliderWidget extends SliderWidget {
   }
 
   private static float stepAmount(float from, boolean up) {
-    return from < SPLIT_SCALE || (!up && Math.abs(from - SPLIT_SCALE) < MathHelper.EPSILON) ? 0.1f : 0.5f;
+    return from < SPLIT_SCALE || (!up && Math.abs(from - SPLIT_SCALE) < Mth.EPSILON) ? 0.1f : 0.5f;
   }
 
   private static double scaleToValue(float scale) {

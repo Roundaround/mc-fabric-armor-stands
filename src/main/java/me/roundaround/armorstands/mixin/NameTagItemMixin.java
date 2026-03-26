@@ -1,14 +1,14 @@
 package me.roundaround.armorstands.mixin;
 
 import me.roundaround.armorstands.server.ArmorStandUsers;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.NameTagItem;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.NameTagItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,22 +17,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(NameTagItem.class)
 public abstract class NameTagItemMixin {
   @Inject(
-      method = "useOnEntity", at = @At(
-      value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setCustomName(Lnet/minecraft/text/Text;)V"
+      method = "interactLivingEntity", at = @At(
+      value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setCustomName(Lnet/minecraft/network/chat/Component;)V"
   )
   )
   public void useOnEntity(
       ItemStack stack,
-      PlayerEntity playerEntity,
+      Player playerEntity,
       LivingEntity entity,
-      Hand hand,
-      CallbackInfoReturnable<ActionResult> info
+      InteractionHand hand,
+      CallbackInfoReturnable<InteractionResult> info
   ) {
-    if (!(playerEntity instanceof ServerPlayerEntity player) || !ArmorStandUsers.canEditArmorStands(player)) {
+    if (!(playerEntity instanceof ServerPlayer player) || !ArmorStandUsers.canEditArmorStands(player)) {
       return;
     }
 
-    if (entity instanceof ArmorStandEntity) {
+    if (entity instanceof ArmorStand) {
       entity.setCustomNameVisible(true);
     }
   }

@@ -18,11 +18,11 @@ import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.Horizonta
 import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.LabelWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import me.roundaround.armorstands.util.Pose;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CyclingButtonWidget;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private static final int SLIDER_WIDTH = 100;
@@ -36,7 +36,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   private PosePart posePart = PosePart.HEAD;
 
   private ScaleSliderWidget scaleSlider;
-  private ButtonWidget activePosePartButton;
+  private Button activePosePartButton;
   private FrameWidget activePosePartFrame;
   private LabelWidget posePartLabelLeft;
   private LabelWidget posePartLabelRight;
@@ -49,7 +49,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.supportsUndoRedo = true;
   }
 
-  public void onArmorStandPoseChanged(ArmorStandEntity armorStand, PosePart part) {
+  public void onArmorStandPoseChanged(ArmorStand armorStand, PosePart part) {
     if (this.pitchSlider == null || this.yawSlider == null || this.rollSlider == null) {
       return;
     }
@@ -89,8 +89,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignCenter();
 
     this.posePartLabelLeft = partPicker.add(LabelWidget.builder(
-            this.textRenderer,
-            Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName())
+            this.font,
+            Component.translatable("armorstands.pose.editing", this.posePart.getDisplayName())
         )
         .width(SLIDER_WIDTH)
         .overflowBehavior(LabelWidget.OverflowBehavior.SCROLL)
@@ -102,7 +102,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.HEAD.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.HEAD))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.HEAD))
         .build());
     this.activePosePartButton.active = false;
 
@@ -111,19 +111,19 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.RIGHT_ARM.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.RIGHT_ARM))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.RIGHT_ARM))
         .build());
     torsoRow.add(IconButtonWidget.builder(BODY_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.BODY.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.BODY))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.BODY))
         .build());
     torsoRow.add(IconButtonWidget.builder(LEFT_ARM_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.LEFT_ARM.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.LEFT_ARM))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.LEFT_ARM))
         .build());
     partPicker.add(torsoRow);
 
@@ -132,13 +132,13 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.RIGHT_LEG.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.RIGHT_LEG))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.RIGHT_LEG))
         .build());
     feetRow.add(IconButtonWidget.builder(LEFT_LEG_ICON, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .disableIconDim()
         .messageAndTooltip(PosePart.LEFT_LEG.getDisplayName())
-        .onPress((button) -> setActivePosePart(button, PosePart.LEFT_LEG))
+        .onPress((button) -> this.setActivePosePart(button, PosePart.LEFT_LEG))
         .build());
     partPicker.add(feetRow);
 
@@ -147,10 +147,7 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     this.layout.bottomLeft.add(new HorizontalLineWidget(SLIDER_WIDTH - 2 * GuiUtil.PADDING).margin(
         2 * GuiUtil.PADDING));
 
-    this.layout.bottomLeft.add(ButtonWidget.builder(
-            Text.translatable("armorstands.pose.mirror"),
-            this::handleMirrorPose
-        )
+    this.layout.bottomLeft.add(Button.builder(Component.translatable("armorstands.pose.mirror"), this::handleMirrorPose)
         .size(SLIDER_WIDTH, ELEMENT_HEIGHT)
         .build());
 
@@ -163,24 +160,25 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignEnd();
 
     firstRow.add(
-        LabelWidget.builder(this.textRenderer, Text.translatable("armorstands.scale"))
+        LabelWidget.builder(this.font, Component.translatable("armorstands.scale"))
             .bgColor(BACKGROUND_COLOR)
-            .build(), (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing()))
+            .build(),
+        (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing()))
     );
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.MINUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.scaleSlider.decrement())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.subtract")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.scale.subtract")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.PLUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.scaleSlider.increment())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.add")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.scale.add")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.ROTATE_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> this.scaleSlider.setToOne())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.scale.zero")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.scale.zero")))
         .build());
 
     scaleSection.add(firstRow);
@@ -201,8 +199,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignEnd();
 
     this.posePartLabelRight = block.add(LabelWidget.builder(
-            this.textRenderer,
-            Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName())
+            this.font,
+            Component.translatable("armorstands.pose.editing", this.posePart.getDisplayName())
         )
         .width(SLIDER_WIDTH)
         .overflowBehavior(LabelWidget.OverflowBehavior.SCROLL)
@@ -211,26 +209,26 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .build());
 
     block.add(
-        CyclingButtonWidget.builder(SliderRange::getDisplayName, SliderRange.FULL)
-            .values(SliderRange.values())
-            .omitKeyText()
-            .build(
-                Text.translatable("armorstands.pose.range"), (button, value) -> {
+        CycleButton.builder(SliderRange::getDisplayName, SliderRange.FULL)
+            .withValues(SliderRange.values())
+            .displayOnlyValue()
+            .create(
+                Component.translatable("armorstands.pose.range"), (button, value) -> {
                   this.pitchSlider.setRange(value.getMin(), value.getMax());
                   this.yawSlider.setRange(value.getMin(), value.getMax());
                   this.rollSlider.setRange(value.getMin(), value.getMax());
                 }
             ), (adder) -> {
-          adder.layoutHook((parent, self) -> self.setDimensions(SLIDER_WIDTH, ELEMENT_HEIGHT));
+          adder.layoutHook((parent, self) -> self.setSize(SLIDER_WIDTH, ELEMENT_HEIGHT));
           adder.margin(Spacing.of(0, 0, 2 * GuiUtil.PADDING, 0));
         }
     );
 
     this.layout.bottomRight.add(block);
 
-    this.pitchSlider = addAdjustSlider(EulerAngleParameter.PITCH);
-    this.yawSlider = addAdjustSlider(EulerAngleParameter.YAW);
-    this.rollSlider = addAdjustSlider(EulerAngleParameter.ROLL);
+    this.pitchSlider = this.addAdjustSlider(EulerAngleParameter.PITCH);
+    this.yawSlider = this.addAdjustSlider(EulerAngleParameter.YAW);
+    this.rollSlider = this.addAdjustSlider(EulerAngleParameter.ROLL);
   }
 
   private AdjustPoseSliderWidget addAdjustSlider(EulerAngleParameter parameter) {
@@ -248,23 +246,23 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
         .defaultOffAxisContentAlignEnd()
         .spacing(GuiUtil.PADDING);
     firstRow.add(
-        LabelWidget.builder(this.textRenderer, parameter.getDisplayName()).bgColor(BACKGROUND_COLOR).build(),
+        LabelWidget.builder(this.font, parameter.getDisplayName()).bgColor(BACKGROUND_COLOR).build(),
         (parent, self) -> self.setWidth(SLIDER_WIDTH - 3 * (ELEMENT_HEIGHT + parent.getSpacing()))
     );
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.MINUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> slider.decrement())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.subtract")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.pose.subtract")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.PLUS_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> slider.increment())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.add")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.pose.add")))
         .build());
     firstRow.add(IconButtonWidget.builder(BuiltinIcon.ROTATE_13, ArmorStandsMod.MOD_ID)
         .dimensions(ELEMENT_HEIGHT)
         .onPress((button) -> slider.zero())
-        .tooltip(Tooltip.of(Text.translatable("armorstands.pose.zero")))
+        .tooltip(Tooltip.create(Component.translatable("armorstands.pose.zero")))
         .build());
 
     block.add(firstRow);
@@ -289,8 +287,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  protected void handledScreenTick() {
-    super.handledScreenTick();
+  protected void containerTick() {
+    super.containerTick();
 
     this.scaleSlider.tick();
     this.pitchSlider.tick();
@@ -307,13 +305,13 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
     }
   }
 
-  private void setActivePosePart(ButtonWidget button, PosePart part) {
+  private void setActivePosePart(Button button, PosePart part) {
     this.posePart = part;
     this.pitchSlider.setPart(part);
     this.yawSlider.setPart(part);
     this.rollSlider.setPart(part);
-    this.posePartLabelLeft.setText(Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName()));
-    this.posePartLabelRight.setText(Text.translatable("armorstands.pose.editing", this.posePart.getDisplayName()));
+    this.posePartLabelLeft.setText(Component.translatable("armorstands.pose.editing", this.posePart.getDisplayName()));
+    this.posePartLabelRight.setText(Component.translatable("armorstands.pose.editing", this.posePart.getDisplayName()));
 
     if (this.activePosePartButton != null) {
       this.activePosePartButton.active = true;
@@ -323,10 +321,10 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
 
     this.activePosePartFrame.frame(this.activePosePartButton);
 
-    this.layout.refreshPositions();
+    this.layout.arrangeElements();
   }
 
-  private void handleMirrorPose(ButtonWidget button) {
+  private void handleMirrorPose(Button button) {
     ClientNetworking.sendSetPosePacket(new Pose(this.getArmorStand()).mirror());
 
     this.pitchSlider.refresh();
@@ -353,8 +351,8 @@ public class ArmorStandPoseScreen extends AbstractArmorStandScreen {
       return this.max;
     }
 
-    public Text getDisplayName() {
-      return Text.translatable("armorstands.pose.range." + this.name().toLowerCase());
+    public Component getDisplayName() {
+      return Component.translatable("armorstands.pose.range." + this.name().toLowerCase());
     }
   }
 }

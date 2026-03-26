@@ -1,8 +1,8 @@
 package me.roundaround.armorstands.util.actions;
 
 import me.roundaround.armorstands.util.Pose;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.decoration.ArmorStand;
 
 public class PoseAction extends SimpleArmorStandAction<Pose> {
   private PoseAction(Pose pose) {
@@ -14,12 +14,12 @@ public class PoseAction extends SimpleArmorStandAction<Pose> {
   }
 
   @Override
-  public Text getName(ArmorStandEntity armorStand) {
-    return Text.translatable("armorstands.action.pose");
+  public Component getName(ArmorStand armorStand) {
+    return Component.translatable("armorstands.action.pose");
   }
 
   @Override
-  protected Pose get(ArmorStandEntity armorStand) {
+  protected Pose get(ArmorStand armorStand) {
     return new Pose(armorStand);
   }
 }

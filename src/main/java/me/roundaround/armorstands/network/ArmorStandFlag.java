@@ -3,14 +3,13 @@ package me.roundaround.armorstands.network;
 import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
-import net.minecraft.entity.MovementType;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.text.Text;
-import net.minecraft.util.function.ValueLists;
-import net.minecraft.util.math.Vec3d;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.phys.Vec3;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntFunction;
@@ -27,11 +26,11 @@ public enum ArmorStandFlag {
   LOCK_INVENTORY(8, "inventory", false);
 
   public static final IntFunction<ArmorStandFlag> ID_TO_VALUE_FUNCTION =
-      ValueLists.createIndexToValueFunction(ArmorStandFlag::getIndex,
+      ByIdMap.continuous(ArmorStandFlag::getIndex,
       values(),
-      ValueLists.OutOfBoundsHandling.ZERO
+      ByIdMap.OutOfBoundsStrategy.ZERO
   );
-  public static final PacketCodec<ByteBuf, ArmorStandFlag> PACKET_CODEC = PacketCodecs.indexed(
+  public static final StreamCodec<ByteBuf, ArmorStandFlag> PACKET_CODEC = ByteBufCodecs.idMapper(
       ID_TO_VALUE_FUNCTION,
       ArmorStandFlag::getIndex
   );
@@ -58,22 +57,22 @@ public enum ArmorStandFlag {
     return this.index;
   }
 
-  public Text getDisplayName() {
-    return Text.translatable("armorstands.flags." + this.id);
+  public Component getDisplayName() {
+    return Component.translatable("armorstands.flags." + this.id);
   }
 
   public boolean invertControl() {
     return this.invertControl;
   }
 
-  public boolean getValue(ArmorStandEntity armorStand) {
+  public boolean getValue(ArmorStand armorStand) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
     return switch (this) {
-      case HIDE_BASE_PLATE -> !armorStand.shouldShowBasePlate();
-      case SHOW_ARMS -> armorStand.shouldShowArms();
+      case HIDE_BASE_PLATE -> !armorStand.showBasePlate();
+      case SHOW_ARMS -> armorStand.showArms();
       case SMALL -> armorStand.isSmall();
-      case NO_GRAVITY -> armorStand.hasNoGravity();
+      case NO_GRAVITY -> armorStand.isNoGravity();
       case INVISIBLE -> armorStand.isInvisible();
       case NAME -> armorStand.isCustomNameVisible();
       case INVULNERABLE -> armorStand.isInvulnerable();
@@ -82,7 +81,7 @@ public enum ArmorStandFlag {
     };
   }
 
-  public void setValue(ArmorStandEntity armorStand, boolean value) {
+  public void setValue(ArmorStand armorStand, boolean value) {
     ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
 
     switch (this) {
@@ -98,13 +97,13 @@ public enum ArmorStandFlag {
       case NO_GRAVITY:
         armorStand.setNoGravity(value);
 
-        Vec3d vel = armorStand.getVelocity();
-        armorStand.setVelocity(vel.x, 0, vel.z);
+        Vec3 vel = armorStand.getDeltaMovement();
+        armorStand.setDeltaMovement(vel.x, 0, vel.z);
 
         if (!value) {
-          armorStand.noClip = false;
-          armorStand.refreshPositionAndAngles(armorStand.getX(), armorStand.getY() + 0.01, armorStand.getZ(), armorStand.getYaw(), armorStand.getPitch());
-          armorStand.move(MovementType.SELF, new Vec3d(0, -0.009, 0));
+          armorStand.noPhysics = false;
+          armorStand.snapTo(armorStand.getX(), armorStand.getY() + 0.01, armorStand.getZ(), armorStand.getYRot(), armorStand.getXRot());
+          armorStand.move(MoverType.SELF, new Vec3(0, -0.009, 0));
         }
         break;
       case INVISIBLE:
