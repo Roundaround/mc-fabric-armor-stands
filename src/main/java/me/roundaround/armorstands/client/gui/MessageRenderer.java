@@ -1,19 +1,21 @@
 package me.roundaround.armorstands.client.gui;
 
-import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+
+import java.util.Optional;
 
 public class MessageRenderer {
   public static final int BASE_COLOR = 0xFFFFFF;
 
   private final Screen screen;
 
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   private Optional<Message> shownMessage = Optional.empty();
 
   public MessageRenderer(Screen screen) {
@@ -21,29 +23,29 @@ public class MessageRenderer {
   }
 
   public void addMessage(Component text) {
-    shownMessage = Optional.of(new Message(text));
+    this.shownMessage = Optional.of(new Message(text));
   }
 
   public void addMessage(Component text, int color) {
-    shownMessage = Optional.of(new Message(text, color));
+    this.shownMessage = Optional.of(new Message(text, color));
   }
 
   public void tick() {
-    if (shownMessage.isEmpty()) {
+    if (this.shownMessage.isEmpty()) {
       return;
     }
 
-    Message current = shownMessage.get();
+    Message current = this.shownMessage.get();
     current.tick();
 
     if (current.isExpired()) {
-      shownMessage = Optional.empty();
+      this.shownMessage = Optional.empty();
     }
   }
 
-  public void render(GuiGraphics drawContext) {
-    shownMessage.ifPresent((message) -> {
-      message.render(screen, drawContext);
+  public void render(GuiGraphicsExtractor drawContext) {
+    this.shownMessage.ifPresent((message) -> {
+      message.render(this.screen, drawContext);
     });
   }
 
@@ -62,20 +64,20 @@ public class MessageRenderer {
       this.text = text;
       this.baseTextColor = baseTextColor;
 
-      timeRemaining = SHOW_DURATION;
+      this.timeRemaining = SHOW_DURATION;
     }
 
     public void tick() {
-      timeRemaining--;
+      this.timeRemaining--;
     }
 
-    public void render(Screen screen, GuiGraphics context) {
+    public void render(Screen screen, GuiGraphicsExtractor context) {
       Minecraft client = Minecraft.getInstance();
       Font textRenderer = client.font;
-      int width = textRenderer.width(text);
+      int width = textRenderer.width(this.text);
       int x = (screen.width - width) / 2;
       int y = screen.height - Button.DEFAULT_HEIGHT - 1 - 6 - textRenderer.lineHeight;
-      float opacity = Mth.clamp(timeRemaining / 10f, 0f, 1f);
+      float opacity = Mth.clamp(this.timeRemaining / 10f, 0f, 1f);
 
       int backgroundAlpha = client.options.getBackgroundColor(0) >> 24 & 0xFF;
 
@@ -83,11 +85,11 @@ public class MessageRenderer {
       int textColor = this.baseTextColor + ((int) (opacity * 255) << 24);
 
       context.fill(x - 2, y - 2, x + width + 2, y + textRenderer.lineHeight + 2, backgroundColor);
-      context.drawString(textRenderer, text, x, y, textColor);
+      context.text(textRenderer, this.text, x, y, textColor);
     }
 
     public boolean isExpired() {
-      return timeRemaining <= 0;
+      return this.timeRemaining <= 0;
     }
   }
 

@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ArmorStand.class)
-public interface ArmorStandEntityAccessor {
+public interface ArmorStandAccessor {
   @Invoker("setSmall")
   void invokeSetSmall(boolean small);
 

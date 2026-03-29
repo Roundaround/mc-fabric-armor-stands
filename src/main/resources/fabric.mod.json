@@ -13,12 +13,20 @@
     "issues": "https://github.com/Roundaround/mc-fabric-armor-stands/issues"
   },
   "license": "MIT",
+  "loom:injected_interfaces": {
+    "net/minecraft/server/level/ServerPlayer": [
+      "me/roundaround/armorstands/interfaces/ArmorStandScreenHandlerAccess"
+    ],
+    "net/minecraft/world/entity/Entity": [
+      "me/roundaround/armorstands/interfaces/EntityPosition"
+    ]
+  },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_3222": [
+      "net/minecraft/server/level/ServerPlayer": [
         "me/roundaround/armorstands/interfaces/ArmorStandScreenHandlerAccess"
       ],
-      "net/minecraft/class_1297": [
+      "net/minecraft/world/entity/Entity": [
         "me/roundaround/armorstands/interfaces/EntityPosition"
       ]
     }

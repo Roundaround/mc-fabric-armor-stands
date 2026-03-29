@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(MouseHandler.class)
-public interface MouseAccessor {
+public interface MouseHandlerAccessor {
   @Accessor("xpos")
-  void setX(double x);
+  void setXpos(double xpos);
   
   @Accessor("ypos")
-  void setY(double y);
+  void setYpos(double ypos);
 }

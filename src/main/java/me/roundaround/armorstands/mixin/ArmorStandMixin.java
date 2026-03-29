@@ -2,7 +2,7 @@ package me.roundaround.armorstands.mixin;
 
 import me.roundaround.armorstands.client.ClientSideConfig;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.roundalib.config.option.BooleanConfigOption;
 import me.roundaround.armorstands.server.ArmorStandUsers;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import me.roundaround.armorstands.util.LastUsedScreen;
@@ -20,31 +20,31 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ArmorStand.class)
-public abstract class ArmorStandEntityServerMixin {
+public abstract class ArmorStandMixin {
   @Inject(
-      method = "interactAt", at = @At(
+      method = "interact", at = @At(
       value = "INVOKE",
       target = "Lnet/minecraft/world/entity/decoration/ArmorStand;getEquipmentSlotForItem(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/entity/EquipmentSlot;"
   ), cancellable = true
   )
-  public void interactAt(
-      Player playerEntity,
-      Vec3 hitPos,
+  public void interact(
+      Player player,
       InteractionHand hand,
-      CallbackInfoReturnable<InteractionResult> info
+      Vec3 location,
+      CallbackInfoReturnable<InteractionResult> cir
   ) {
-    if (!(playerEntity instanceof ServerPlayer player) || !ArmorStandUsers.canEditArmorStands(player)) {
+    if (!(player instanceof ServerPlayer serverPlayer) || !ArmorStandUsers.canEditArmorStands(serverPlayer)) {
       return;
     }
 
-    if (player.isShiftKeyDown() != doesConfigRequireSneaking(player)) {
+    if (serverPlayer.isShiftKeyDown() != doesConfigRequireSneaking(serverPlayer)) {
       return;
     }
 
     ArmorStand self = (ArmorStand) (Object) this;
-    ScreenType screenType = LastUsedScreen.getOrDefault(player, self, ScreenType.UTILITIES);
-    player.armorstands$openScreen(self, screenType);
-    info.setReturnValue(InteractionResult.PASS);
+    ScreenType screenType = LastUsedScreen.getOrDefault(serverPlayer, self, ScreenType.UTILITIES);
+    serverPlayer.armorstands$openScreen(self, screenType);
+    cir.setReturnValue(InteractionResult.PASS);
   }
 
   @Unique

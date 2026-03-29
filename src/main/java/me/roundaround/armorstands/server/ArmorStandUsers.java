@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.server;
 
 import me.roundaround.armorstands.network.Networking;
-import me.roundaround.armorstands.roundalib.config.option.StringListConfigOption;
+import me.roundaround.roundalib.config.option.StringListConfigOption;
 import me.roundaround.armorstands.server.config.ServerSideConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;

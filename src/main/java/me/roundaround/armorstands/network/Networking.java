@@ -1,7 +1,7 @@
 package me.roundaround.armorstands.network;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.mixin.ArmorStandAccessor;
 import me.roundaround.armorstands.util.MoveMode;
 import me.roundaround.armorstands.util.MoveUnits;
 import me.roundaround.armorstands.util.Pose;
@@ -17,50 +17,79 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 public final class Networking {
   private Networking() {
   }
 
-  public static final Identifier CLIENT_UPDATE_S2C = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "client_update_s2c");
+  public static final Identifier CLIENT_UPDATE_S2C = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "client_update_s2c"
+  );
   public static final Identifier MESSAGE_S2C = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "message_s2c");
-  public static final Identifier OPEN_SCREEN_S2C = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "open_screen_s2c");
+  public static final Identifier OPEN_SCREEN_S2C = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "open_screen_s2c"
+  );
   public static final Identifier PONG_S2C = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "pong_s2c");
 
-  public static final Identifier ADJUST_POSE_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "adjust_pose_c2s");
-  public static final Identifier ADJUST_POS_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "adjust_pos_c2s");
-  public static final Identifier ADJUST_YAW_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "adjust_yaw_c2s");
+  public static final Identifier ADJUST_POSE_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "adjust_pose_c2s"
+  );
+  public static final Identifier ADJUST_POS_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "adjust_pos_c2s"
+  );
+  public static final Identifier ADJUST_YAW_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "adjust_yaw_c2s"
+  );
   public static final Identifier PING_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "ping_c2s");
-  public static final Identifier REQUEST_SCREEN_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "request_screen_c2s");
+  public static final Identifier REQUEST_SCREEN_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "request_screen_c2s"
+  );
   public static final Identifier SET_FLAG_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "set_flag_c2s");
   public static final Identifier SET_POSE_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "set_pose_c2s");
-  public static final Identifier SET_POSE_PRESET_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "set_pose_preset_c2s");
-  public static final Identifier SET_SCALE_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "set_scale_c2s");
+  public static final Identifier SET_POSE_PRESET_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "set_pose_preset_c2s"
+  );
+  public static final Identifier SET_SCALE_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "set_scale_c2s"
+  );
   public static final Identifier SET_YAW_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "set_yaw_c2s");
   public static final Identifier UNDO_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "undo_c2s");
-  public static final Identifier UTILITY_ACTION_C2S = Identifier.fromNamespaceAndPath(ArmorStandsMod.MOD_ID, "utility_action_c2s");
+  public static final Identifier UTILITY_ACTION_C2S = Identifier.fromNamespaceAndPath(
+      ArmorStandsMod.MOD_ID,
+      "utility_action_c2s"
+  );
 
   public static void registerS2CPayloads() {
-    PayloadTypeRegistry.playS2C().register(ClientUpdateS2C.ID, ClientUpdateS2C.CODEC);
-    PayloadTypeRegistry.playS2C().register(MessageS2C.ID, MessageS2C.CODEC);
-    PayloadTypeRegistry.playS2C().register(OpenScreenS2C.ID, OpenScreenS2C.CODEC);
-    PayloadTypeRegistry.playS2C().register(PongS2C.ID, PongS2C.CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(ClientUpdateS2C.ID, ClientUpdateS2C.CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(MessageS2C.ID, MessageS2C.CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(OpenScreenS2C.ID, OpenScreenS2C.CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(PongS2C.ID, PongS2C.CODEC);
   }
 
   public static void registerC2SPayloads() {
-    PayloadTypeRegistry.playC2S().register(AdjustPoseC2S.ID, AdjustPoseC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(AdjustPosC2S.ID, AdjustPosC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(AdjustYawC2S.ID, AdjustYawC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(PingC2S.ID, PingC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(RequestScreenC2S.ID, RequestScreenC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(SetFlagC2S.ID, SetFlagC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(SetPoseC2S.ID, SetPoseC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(SetPosePresetC2S.ID, SetPosePresetC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(SetScaleC2S.ID, SetScaleC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(SetYawC2S.ID, SetYawC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(UndoC2S.ID, UndoC2S.CODEC);
-    PayloadTypeRegistry.playC2S().register(UtilityActionC2S.ID, UtilityActionC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(AdjustPoseC2S.ID, AdjustPoseC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(AdjustPosC2S.ID, AdjustPosC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(AdjustYawC2S.ID, AdjustYawC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(PingC2S.ID, PingC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(RequestScreenC2S.ID, RequestScreenC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(SetFlagC2S.ID, SetFlagC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(SetPoseC2S.ID, SetPoseC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(SetPosePresetC2S.ID, SetPosePresetC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(SetScaleC2S.ID, SetScaleC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(SetYawC2S.ID, SetYawC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(UndoC2S.ID, UndoC2S.CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(UtilityActionC2S.ID, UtilityActionC2S.CODEC);
   }
 
   public record ClientUpdateS2C(double x,
@@ -70,9 +99,10 @@ public final class Networking {
                                 float pitch,
                                 boolean invulnerable,
                                 int disabledSlots) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<ClientUpdateS2C> ID = new CustomPacketPayload.Type<>(CLIENT_UPDATE_S2C);
-    public static final StreamCodec<RegistryFriendlyByteBuf, ClientUpdateS2C> CODEC = StreamCodec.ofMember(
-        ClientUpdateS2C::write,
+    public static final CustomPacketPayload.Type<ClientUpdateS2C> ID =
+        new CustomPacketPayload.Type<>(CLIENT_UPDATE_S2C);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ClientUpdateS2C> CODEC =
+        StreamCodec.ofMember(ClientUpdateS2C::write,
         ClientUpdateS2C::new
     );
 
@@ -84,7 +114,7 @@ public final class Networking {
           armorStand.getYRot(),
           armorStand.getXRot(),
           armorStand.isInvulnerable(),
-          ((ArmorStandEntityAccessor) armorStand).getDisabledSlots()
+          ((ArmorStandAccessor) armorStand).getDisabledSlots()
       );
     }
 
@@ -111,12 +141,14 @@ public final class Networking {
     }
 
     @Override
+    @NotNull
     public Type<ClientUpdateS2C> type() {
       return ID;
     }
   }
 
-  public record MessageS2C(boolean translatable, String message, boolean styled, int color) implements CustomPacketPayload {
+  public record MessageS2C(boolean translatable, String message, boolean styled, int color) implements
+      CustomPacketPayload {
     public static final CustomPacketPayload.Type<MessageS2C> ID = new CustomPacketPayload.Type<>(MESSAGE_S2C);
     public static final StreamCodec<RegistryFriendlyByteBuf, MessageS2C> CODEC = StreamCodec.composite(
         ByteBufCodecs.BOOL,
@@ -147,6 +179,7 @@ public final class Networking {
     }
 
     @Override
+    @NotNull
     public Type<MessageS2C> type() {
       return ID;
     }
@@ -165,6 +198,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<OpenScreenS2C> type() {
       return ID;
     }
@@ -179,12 +213,15 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<PongS2C> type() {
       return ID;
     }
   }
 
-  public record AdjustPoseC2S(PosePart part, EulerAngleParameter parameter, float amount) implements CustomPacketPayload {
+  public record AdjustPoseC2S(PosePart part,
+                              EulerAngleParameter parameter,
+                              float amount) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<AdjustPoseC2S> ID = new CustomPacketPayload.Type<>(ADJUST_POSE_C2S);
     public static final StreamCodec<RegistryFriendlyByteBuf, AdjustPoseC2S> CODEC = StreamCodec.composite(
         PosePart.PACKET_CODEC,
@@ -197,12 +234,14 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<AdjustPoseC2S> type() {
       return ID;
     }
   }
 
-  public record AdjustPosC2S(Direction direction, int amount, MoveMode mode, MoveUnits units) implements CustomPacketPayload {
+  public record AdjustPosC2S(Direction direction, int amount, MoveMode mode, MoveUnits units) implements
+      CustomPacketPayload {
     public static final CustomPacketPayload.Type<AdjustPosC2S> ID = new CustomPacketPayload.Type<>(ADJUST_POS_C2S);
     public static final StreamCodec<RegistryFriendlyByteBuf, AdjustPosC2S> CODEC = StreamCodec.composite(
         Direction.STREAM_CODEC,
@@ -217,6 +256,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<AdjustPosC2S> type() {
       return ID;
     }
@@ -231,6 +271,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<AdjustYawC2S> type() {
       return ID;
     }
@@ -245,13 +286,15 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<PingC2S> type() {
       return ID;
     }
   }
 
   public record RequestScreenC2S(int armorStandId, ScreenType screenType) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<RequestScreenC2S> ID = new CustomPacketPayload.Type<>(REQUEST_SCREEN_C2S);
+    public static final CustomPacketPayload.Type<RequestScreenC2S> ID = new CustomPacketPayload.Type<>(
+        REQUEST_SCREEN_C2S);
     public static final StreamCodec<RegistryFriendlyByteBuf, RequestScreenC2S> CODEC = StreamCodec.composite(
         ByteBufCodecs.INT,
         RequestScreenC2S::armorStandId,
@@ -261,6 +304,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<RequestScreenC2S> type() {
       return ID;
     }
@@ -277,6 +321,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<SetFlagC2S> type() {
       return ID;
     }
@@ -317,22 +362,24 @@ public final class Networking {
     }
 
     private void write(FriendlyByteBuf buf) {
-      NetworkHelpers.writeEulerAngle(buf, head);
-      NetworkHelpers.writeEulerAngle(buf, body);
-      NetworkHelpers.writeEulerAngle(buf, rightArm);
-      NetworkHelpers.writeEulerAngle(buf, leftArm);
-      NetworkHelpers.writeEulerAngle(buf, rightLeg);
-      NetworkHelpers.writeEulerAngle(buf, leftLeg);
+      NetworkHelpers.writeEulerAngle(buf, this.head);
+      NetworkHelpers.writeEulerAngle(buf, this.body);
+      NetworkHelpers.writeEulerAngle(buf, this.rightArm);
+      NetworkHelpers.writeEulerAngle(buf, this.leftArm);
+      NetworkHelpers.writeEulerAngle(buf, this.rightLeg);
+      NetworkHelpers.writeEulerAngle(buf, this.leftLeg);
     }
 
     @Override
+    @NotNull
     public Type<SetPoseC2S> type() {
       return ID;
     }
   }
 
   public record SetPosePresetC2S(PosePreset pose) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SetPosePresetC2S> ID = new CustomPacketPayload.Type<>(SET_POSE_PRESET_C2S);
+    public static final CustomPacketPayload.Type<SetPosePresetC2S> ID = new CustomPacketPayload.Type<>(
+        SET_POSE_PRESET_C2S);
     public static final StreamCodec<RegistryFriendlyByteBuf, SetPosePresetC2S> CODEC = StreamCodec.composite(
         PosePreset.PACKET_CODEC,
         SetPosePresetC2S::pose,
@@ -340,6 +387,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<SetPosePresetC2S> type() {
       return ID;
     }
@@ -354,6 +402,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<SetScaleC2S> type() {
       return ID;
     }
@@ -368,6 +417,7 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<SetYawC2S> type() {
       return ID;
     }
@@ -382,20 +432,23 @@ public final class Networking {
     );
 
     @Override
+    @NotNull
     public Type<UndoC2S> type() {
       return ID;
     }
   }
 
   public record UtilityActionC2S(UtilityAction action) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<UtilityActionC2S> ID = new CustomPacketPayload.Type<>(UTILITY_ACTION_C2S);
-    public static final StreamCodec<RegistryFriendlyByteBuf, UtilityActionC2S> CODEC = StreamCodec.composite(
-        UtilityAction.PACKET_CODEC,
+    public static final CustomPacketPayload.Type<UtilityActionC2S> ID = new CustomPacketPayload.Type<>(
+        UTILITY_ACTION_C2S);
+    public static final StreamCodec<RegistryFriendlyByteBuf, UtilityActionC2S> CODEC =
+        StreamCodec.composite(UtilityAction.PACKET_CODEC,
         UtilityActionC2S::action,
         UtilityActionC2S::new
     );
 
     @Override
+    @NotNull
     public Type<UtilityActionC2S> type() {
       return ID;
     }

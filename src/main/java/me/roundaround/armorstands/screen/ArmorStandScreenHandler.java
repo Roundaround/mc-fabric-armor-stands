@@ -3,7 +3,7 @@ package me.roundaround.armorstands.screen;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import me.roundaround.armorstands.entity.ArmorStandInventory;
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.mixin.ArmorStandAccessor;
 import me.roundaround.armorstands.mixin.LivingEntityAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.server.network.ServerNetworking;
@@ -265,6 +265,6 @@ public class ArmorStandScreenHandler extends AbstractContainerMenu {
   }
 
   public static boolean isSlotDisabled(ArmorStand armorStand, EquipmentSlot slot) {
-    return (((ArmorStandEntityAccessor) armorStand).getDisabledSlots() & 1 << slot.getIndex()) != 0;
+    return (((ArmorStandAccessor) armorStand).getDisabledSlots() & 1 << slot.getIndex()) != 0;
   }
 }

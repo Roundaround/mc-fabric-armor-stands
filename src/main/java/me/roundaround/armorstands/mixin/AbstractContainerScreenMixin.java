@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractContainerScreen.class)
-public abstract class HandledScreenMixin extends Screen {
-  protected HandledScreenMixin() {
+public abstract class AbstractContainerScreenMixin extends Screen {
+  protected AbstractContainerScreenMixin() {
     super(null);
   }
 

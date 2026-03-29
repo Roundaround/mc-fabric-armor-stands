@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerEntityMixin implements ArmorStandScreenHandlerAccess {
+public abstract class ServerPlayerMixin implements ArmorStandScreenHandlerAccess {
   @Shadow
   private int containerCounter;
 

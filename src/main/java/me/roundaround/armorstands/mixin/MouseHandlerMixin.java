@@ -6,6 +6,7 @@ import me.roundaround.armorstands.client.gui.screen.PassesEventsThrough;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.gui.screens.Screen;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,14 +15,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MouseHandler.class)
-public abstract class MouseMixin {
+public abstract class MouseHandlerMixin {
   @Shadow
   @Final
   private Minecraft minecraft;
 
   @Inject(method = "isMouseGrabbed", at = @At(value = "HEAD"), cancellable = true)
   public void isCursorLocked(CallbackInfoReturnable<Boolean> info) {
-    if (minecraft.screen instanceof AbstractArmorStandScreen standScreen) {
+    if (this.minecraft.screen instanceof AbstractArmorStandScreen standScreen) {
       info.setReturnValue(standScreen.isCursorLocked());
     }
   }
@@ -29,6 +30,7 @@ public abstract class MouseMixin {
   @ModifyExpressionValue(
       method = "onButton", at = @At(
       value = "FIELD",
+      opcode = Opcodes.GETFIELD,
       target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;",
       ordinal = 3
   )

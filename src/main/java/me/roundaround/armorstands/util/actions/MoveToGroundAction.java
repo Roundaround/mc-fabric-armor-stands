@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class MoveToGroundAction implements ArmorStandAction {
   private Optional<Vec3> originalPosition = Optional.empty();
-  private boolean sitting;
+  private final boolean sitting;
 
   private MoveToGroundAction(boolean sitting) {
     this.sitting = sitting;
@@ -37,17 +37,17 @@ public class MoveToGroundAction implements ArmorStandAction {
     Optional<Vec3> maybeGround = ArmorStandHelper.getGroundPos(armorStand, this.sitting);
 
     if (maybeGround.isPresent()) {
-      originalPosition = Optional.of(armorStand.armorstands$getPos());
+      this.originalPosition = Optional.of(armorStand.armorstands$getPos());
       MoveAction.setPosition(armorStand, maybeGround.get());
     }
   }
 
   @Override
   public void undo(Player player, ArmorStand armorStand) {
-    if (originalPosition.isEmpty()) {
+    if (this.originalPosition.isEmpty()) {
       return;
     }
 
-    MoveAction.setPosition(armorStand, originalPosition.get());
+    MoveAction.setPosition(armorStand, this.originalPosition.get());
   }
 }

@@ -4,22 +4,22 @@ import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.ArmorStandsClientMod;
 import me.roundaround.armorstands.client.gui.MessageRenderer;
 import me.roundaround.armorstands.client.network.ClientNetworking;
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
-import me.roundaround.armorstands.mixin.InGameHudAccessor;
-import me.roundaround.armorstands.mixin.MouseAccessor;
+import me.roundaround.armorstands.mixin.ArmorStandAccessor;
+import me.roundaround.armorstands.mixin.GuiAccessor;
+import me.roundaround.armorstands.mixin.MouseHandlerAccessor;
 import me.roundaround.armorstands.network.ScreenType;
 import me.roundaround.armorstands.network.UtilityAction;
-import me.roundaround.armorstands.roundalib.client.gui.icon.BuiltinIcon;
-import me.roundaround.armorstands.roundalib.client.gui.icon.CustomIcon;
-import me.roundaround.armorstands.roundalib.client.gui.layout.linear.LinearLayoutWidget;
-import me.roundaround.armorstands.roundalib.client.gui.util.GuiUtil;
-import me.roundaround.armorstands.roundalib.client.gui.widget.IconButtonWidget;
-import me.roundaround.armorstands.roundalib.client.gui.widget.drawable.FrameWidget;
+import me.roundaround.roundalib.client.gui.icon.BuiltinIcon;
+import me.roundaround.roundalib.client.gui.icon.CustomIcon;
+import me.roundaround.roundalib.client.gui.layout.linear.LinearLayoutWidget;
+import me.roundaround.roundalib.client.gui.util.GuiUtil;
+import me.roundaround.roundalib.client.gui.widget.IconButtonWidget;
+import me.roundaround.roundalib.client.gui.widget.drawable.FrameWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.input.InputQuirks;
@@ -153,7 +153,7 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
     lines.add(Component.translatable("armorstands.help.change", ScreenType.values().length));
     lines.add(Component.translatable(
         "armorstands.help.highlight",
-        this.getStyledBoundText(ArmorStandsClientMod.highlightArmorStandKeyBinding)
+        this.getStyledBoundText(ArmorStandsClientMod.highlightArmorStandKeyMapping)
     ));
     lines.add(Component.translatable(
         "armorstands.help.undo",
@@ -221,7 +221,7 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
 
   @Override
   protected void containerTick() {
-    ((InGameHudAccessor) this.minecraft.gui).invokeUpdateVignetteDarkness(this.minecraft.getCameraEntity());
+    ((GuiAccessor) this.minecraft.gui).invokeUpdateVignetteDarkness(this.minecraft.getCameraEntity());
 
     this.messageRenderer.tick();
 
@@ -232,28 +232,28 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
   }
 
   @Override
-  public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
+  public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
     int adjustedMouseX = this.cursorLocked ? -1 : mouseX;
     int adjustedMouseY = this.cursorLocked ? -1 : mouseY;
 
-    ((InGameHudAccessor) this.minecraft.gui).invokeRenderVignetteOverlay(context, this.minecraft.getCameraEntity());
+    ((GuiAccessor) this.minecraft.gui).invokeExtractVignette(context, this.minecraft.getCameraEntity());
 
-    super.render(context, adjustedMouseX, adjustedMouseY, delta);
+    super.extractRenderState(context, adjustedMouseX, adjustedMouseY, delta);
 
     this.messageRenderer.render(context);
   }
 
   @Override
-  public void renderTransparentBackground(@NonNull GuiGraphics context) {
+  public void extractBlurredBackground(@NonNull GuiGraphicsExtractor context) {
     // No grayed out background
   }
 
   @Override
-  protected void renderBg(@NonNull GuiGraphics drawContext, float delta, int mouseX, int mouseY) {
+  public void extractBackground(@NonNull GuiGraphicsExtractor drawContext, int mouseX, int mouseY, float delta) {
   }
 
   @Override
-  protected void renderLabels(@NonNull GuiGraphics drawContext, int mouseX, int mouseY) {
+  protected void extractLabels(@NonNull GuiGraphicsExtractor drawContext, int mouseX, int mouseY) {
   }
 
   @Override
@@ -435,7 +435,7 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
   }
 
   public boolean shouldHighlight(Entity entity) {
-    return ArmorStandsClientMod.highlightArmorStandKeyBinding.isDown() && entity == this.armorStand;
+    return ArmorStandsClientMod.highlightArmorStandKeyMapping.isDown() && entity == this.armorStand;
   }
 
   public boolean isCursorLocked() {
@@ -468,15 +468,15 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
   }
 
   public void updateDisabledSlotsOnClient(int disabledSlots) {
-    ((ArmorStandEntityAccessor) this.armorStand).setDisabledSlots(disabledSlots);
+    ((ArmorStandAccessor) this.armorStand).setDisabledSlots(disabledSlots);
   }
 
   protected void lockCursor() {
     this.cursorLocked = true;
     int x = this.minecraft.getWindow().getScreenWidth() / 2;
     int y = this.minecraft.getWindow().getScreenHeight() / 2;
-    ((MouseAccessor) this.minecraft.mouseHandler).setX(x);
-    ((MouseAccessor) this.minecraft.mouseHandler).setY(y);
+    ((MouseHandlerAccessor) this.minecraft.mouseHandler).setXpos(x);
+    ((MouseHandlerAccessor) this.minecraft.mouseHandler).setYpos(y);
     InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), InputConstants.CURSOR_DISABLED, x, y);
   }
 
@@ -484,8 +484,8 @@ public abstract class AbstractArmorStandScreen extends AbstractContainerScreen<A
     this.cursorLocked = false;
     int x = this.minecraft.getWindow().getScreenWidth() / 2;
     int y = this.minecraft.getWindow().getScreenHeight() / 2;
-    ((MouseAccessor) this.minecraft.mouseHandler).setX(x);
-    ((MouseAccessor) this.minecraft.mouseHandler).setY(y);
+    ((MouseHandlerAccessor) this.minecraft.mouseHandler).setXpos(x);
+    ((MouseHandlerAccessor) this.minecraft.mouseHandler).setYpos(y);
     InputConstants.grabOrReleaseMouse(this.minecraft.getWindow(), InputConstants.CURSOR_NORMAL, x, y);
   }
 

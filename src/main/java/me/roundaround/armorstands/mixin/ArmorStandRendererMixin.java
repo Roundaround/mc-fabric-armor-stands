@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(ArmorStandRenderer.class)
-public abstract class ArmorStandEntityRendererMixin extends LivingEntityRenderer<ArmorStand,
+public abstract class ArmorStandRendererMixin extends LivingEntityRenderer<ArmorStand,
     ArmorStandRenderState, ArmorStandArmorModel> {
 
   @ModifyReturnValue(method = "shouldShowName(Lnet/minecraft/world/entity/decoration/ArmorStand;D)Z", at = @At("RETURN"))
@@ -36,7 +36,7 @@ public abstract class ArmorStandEntityRendererMixin extends LivingEntityRenderer
     return true;
   }
 
-  private ArmorStandEntityRendererMixin(
+  private ArmorStandRendererMixin(
       EntityRendererProvider.Context ctx,
       ArmorStandArmorModel model,
       float shadowRadius

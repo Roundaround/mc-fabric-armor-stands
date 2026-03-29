@@ -1,9 +1,9 @@
 package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
-import me.roundaround.armorstands.roundalib.client.gui.icon.BuiltinIcon;
-import me.roundaround.armorstands.roundalib.client.gui.icon.CustomIcon;
-import me.roundaround.armorstands.roundalib.client.gui.icon.Icon;
+import me.roundaround.roundalib.client.gui.icon.BuiltinIcon;
+import me.roundaround.roundalib.client.gui.icon.CustomIcon;
+import me.roundaround.roundalib.client.gui.icon.Icon;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -1,11 +1,11 @@
 package me.roundaround.armorstands.client;
 
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.roundalib.config.ConfigPath;
-import me.roundaround.armorstands.roundalib.config.manage.ModConfigImpl;
-import me.roundaround.armorstands.roundalib.config.manage.store.GameScopedFileStore;
-import me.roundaround.armorstands.roundalib.config.option.BooleanConfigOption;
-import me.roundaround.armorstands.roundalib.config.option.IntConfigOption;
+import me.roundaround.roundalib.config.ConfigPath;
+import me.roundaround.roundalib.config.manage.ModConfigImpl;
+import me.roundaround.roundalib.config.manage.store.GameScopedFileStore;
+import me.roundaround.roundalib.config.option.BooleanConfigOption;
+import me.roundaround.roundalib.config.option.IntConfigOption;
 import net.minecraft.client.resources.language.I18n;
 
 public class ClientSideConfig extends ModConfigImpl implements GameScopedFileStore {

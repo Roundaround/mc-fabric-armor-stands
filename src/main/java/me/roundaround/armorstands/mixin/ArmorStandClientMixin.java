@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ArmorStand.class)
 @MixinEnv(MixinEnv.CLIENT)
-public class ArmorStandEntityClientMixin {
+public class ArmorStandClientMixin {
   @Inject(method = "setHeadPose", at = @At("RETURN"))
   public void setHeadRotation(Rotations headRotation, CallbackInfo info) {
     Minecraft client = Minecraft.getInstance();

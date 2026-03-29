@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Mixin(Entity.class)
 @MixinEnv(MixinEnv.CLIENT)
-public abstract class ClientEntityMixin implements EntityPosition {
+public abstract class EntityClientMixin implements EntityPosition {
   @Inject(
       method = "moveOrInterpolateTo(Ljava/util/Optional;Ljava/util/Optional;Ljava/util/Optional;)V",
       at = @At(value = "HEAD"),

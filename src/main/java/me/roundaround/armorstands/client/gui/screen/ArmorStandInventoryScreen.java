@@ -2,14 +2,13 @@ package me.roundaround.armorstands.client.gui.screen;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-
 import me.roundaround.armorstands.ArmorStandsMod;
 import me.roundaround.armorstands.client.network.ClientNetworking;
 import me.roundaround.armorstands.network.ArmorStandFlag;
 import me.roundaround.armorstands.network.ScreenType;
-import me.roundaround.armorstands.roundalib.client.gui.widget.ToggleWidget;
 import me.roundaround.armorstands.screen.ArmorStandScreenHandler;
-import net.minecraft.client.gui.GuiGraphics;
+import me.roundaround.roundalib.client.gui.widget.ToggleWidget;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
@@ -22,7 +21,9 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   private static final int BACKGROUND_HEIGHT = 166;
   private static final int TOGGLE_HEIGHT = 16;
   private static final Identifier CUSTOM_TEXTURE = Identifier.fromNamespaceAndPath(
-      ArmorStandsMod.MOD_ID, "textures/gui/container/inventory.png");
+      ArmorStandsMod.MOD_ID,
+      "textures/gui/container/inventory.png"
+  );
 
   private float prevMouseX;
   private float prevMouseY;
@@ -71,15 +72,15 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
   }
 
   @Override
-  public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
-    super.render(context, mouseX, mouseY, delta);
-    this.renderTooltip(context, mouseX, mouseY);
+  public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+    super.extractRenderState(context, mouseX, mouseY, delta);
+    this.extractTooltip(context, mouseX, mouseY);
     this.prevMouseX = mouseX;
     this.prevMouseY = mouseY;
   }
 
   @Override
-  protected void renderBg(@NonNull GuiGraphics context, float delta, int mouseX, int mouseY) {
+  public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
     context.blit(
         RenderPipelines.GUI_TEXTURED,
         CUSTOM_TEXTURE,
@@ -90,19 +91,36 @@ public class ArmorStandInventoryScreen extends AbstractArmorStandScreen {
         BACKGROUND_WIDTH,
         BACKGROUND_HEIGHT,
         256,
-        256);
+        256
+    );
 
     ImmutableList<Pair<Slot, EquipmentSlot>> armorSlots = this.menu.getArmorSlots();
     for (int index = 0; index < armorSlots.size(); index++) {
       Slot slot = armorSlots.get(index).getFirst();
       EquipmentSlot equipmentSlot = armorSlots.get(index).getSecond();
-      if (ArmorStandScreenHandler.isSlotDisabled(armorStand, equipmentSlot)) {
-        context.fill(leftPos + slot.x, this.topPos + slot.y, this.leftPos + slot.x + 16, topPos + slot.y + 16, 0x80000000);
+      if (ArmorStandScreenHandler.isSlotDisabled(this.armorStand, equipmentSlot)) {
+        context.fill(
+            this.leftPos + slot.x,
+            this.topPos + slot.y,
+            this.leftPos + slot.x + 16,
+            this.topPos + slot.y + 16,
+            0x80000000
+        );
       }
     }
 
-    InventoryScreen.renderEntityInInventoryFollowsMouse(context, this.leftPos + 62, this.topPos + 8, this.leftPos + 114, this.topPos + 78, 30, 0.0625f,
-        this.prevMouseX, this.prevMouseY, this.getArmorStand());
+    InventoryScreen.extractEntityInInventoryFollowsMouse(
+        context,
+        this.leftPos + 62,
+        this.topPos + 8,
+        this.leftPos + 114,
+        this.topPos + 78,
+        30,
+        0.0625f,
+        this.prevMouseX,
+        this.prevMouseY,
+        this.getArmorStand()
+    );
   }
 
   @Override

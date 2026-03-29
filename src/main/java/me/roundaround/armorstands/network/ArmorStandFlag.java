@@ -2,7 +2,7 @@ package me.roundaround.armorstands.network;
 
 import io.netty.buffer.ByteBuf;
 import me.roundaround.armorstands.ArmorStandsMod;
-import me.roundaround.armorstands.mixin.ArmorStandEntityAccessor;
+import me.roundaround.armorstands.mixin.ArmorStandAccessor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -66,7 +66,7 @@ public enum ArmorStandFlag {
   }
 
   public boolean getValue(ArmorStand armorStand) {
-    ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
+    ArmorStandAccessor accessor = (ArmorStandAccessor) armorStand;
 
     return switch (this) {
       case HIDE_BASE_PLATE -> !armorStand.showBasePlate();
@@ -82,7 +82,7 @@ public enum ArmorStandFlag {
   }
 
   public void setValue(ArmorStand armorStand, boolean value) {
-    ArmorStandEntityAccessor accessor = (ArmorStandEntityAccessor) armorStand;
+    ArmorStandAccessor accessor = (ArmorStandAccessor) armorStand;
 
     switch (this) {
       case HIDE_BASE_PLATE:
