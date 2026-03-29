@@ -76,7 +76,7 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
             CONTROL_WIDTH,
             CONTROL_HEIGHT,
             Component.translatable("armorstands.presets.source.label"),
-            (button, source) -> filter(source)
+            (button, source) -> this.filter(source)
         ));
     this.layout.bottomLeft.add(first);
 
@@ -95,7 +95,7 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
             CONTROL_WIDTH,
             CONTROL_HEIGHT,
             Component.translatable("armorstands.presets.category.label"),
-            (button, category) -> filter(category)
+            (button, category) -> this.filter(category)
         ));
     this.layout.bottomLeft.add(second);
   }
@@ -115,7 +115,7 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     this.prevPageButton = pagination.add(IconButtonWidget.builder(BuiltinIcon.PREV_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Component.translatable("armorstands.presets.previous"))
-        .onPress((button) -> previousPage())
+        .onPress((button) -> this.previousPage())
         .build());
 
     int maxPage =
@@ -133,7 +133,7 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
     this.nextPageButton = pagination.add(IconButtonWidget.builder(BuiltinIcon.NEXT_18, ArmorStandsMod.MOD_ID)
         .vanillaSize()
         .messageAndTooltip(Component.translatable("armorstands.presets.next"))
-        .onPress((button) -> nextPage())
+        .onPress((button) -> this.nextPage())
         .build());
 
     this.layout.bottomRight.add(pagination);
@@ -143,9 +143,9 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
   public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
     if (this.layout.bottomRight.getBounds().contains(mouseX, mouseY)) {
       if (verticalAmount < 0) {
-        nextPage();
+        this.nextPage();
       } else {
-        previousPage();
+        this.previousPage();
       }
       return true;
     }
@@ -154,17 +154,17 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
 
   private void filter(Source source) {
     this.source = source;
-    updateFilters();
+    this.updateFilters();
   }
 
   private void filter(Category category) {
     this.category = category;
-    updateFilters();
+    this.updateFilters();
   }
 
   private void updateFilters() {
     this.matchingPresets = PosePreset.getPresets(this.source, this.category);
-    setPage(0);
+    this.setPage(0);
   }
 
   private void setPage(int page) {
@@ -198,13 +198,13 @@ public class ArmorStandPresetsScreen extends AbstractArmorStandScreen {
   private void nextPage() {
     int maxPage = Mth.ceil(this.matchingPresets.size() / (float) BUTTONS_PER_PAGE) - 1;
     if (this.page < maxPage) {
-      setPage(this.page + 1);
+      this.setPage(this.page + 1);
     }
   }
 
   private void previousPage() {
     if (this.page > 0) {
-      setPage(this.page - 1);
+      this.setPage(this.page - 1);
     }
   }
 }
